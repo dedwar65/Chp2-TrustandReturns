@@ -1,0 +1,1064 @@
+--------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_descriptive_returns.log
+  log type:  text
+ opened on:   5 Feb 2026, 11:47:47
+
+. 
+. capture mkdir "${BASE_PATH}/Descriptive"
+
+. capture mkdir "${BASE_PATH}/Descriptive/Figures"
+
+. capture mkdir "${BASE_PATH}/Descriptive/Tables"
+
+. 
+. * ---------------------------------------------------------------------
+. * Part A: Components, flows, incomes, wealth, debt (from all_data_merged)
+. * ---------------------------------------------------------------------
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. 
+. * Respondent weight (optional)
+. local wtvar "RwWTRESP"
+
+. capture confirm variable `wtvar'
+
+. local wopt ""
+
+. if !_rc local wopt "[aw=`wtvar']"
+
+. 
+. * Build wealth_total_YYYY (net) and gross_wealth_YYYY
+. local years "2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
+
+. forvalues w = 5/16 {
+  2.     local y = 1990 + (2*`w')
+  3.     capture confirm variable h`w'atotb
+  4.     if !_rc {
+  5.         capture drop wealth_total_`y' gross_wealth_`y'
+  6.         local has_net 1
+  7.         foreach v in h`w'atoth h`w'anethb h`w'arles h`w'atran h`w'absns h`w'aira h`w'astck h`w'achck h`w'
+> acd h`w'abond h`w'aothr ///
+>                      h`w'amort h`w'ahmln h`w'adebt h`w'amrtb {
+  8.             capture confirm variable `v'
+  9.             if _rc local has_net 0
+ 10.         }
+ 11.         if `has_net' {
+ 12.             gen double wealth_total_`y' = (h`w'atoth + h`w'anethb + h`w'arles + h`w'atran + h`w'absns + h
+> `w'aira + h`w'astck + h`w'achck + h`w'acd + h`w'abond + h`w'aothr) - ///
+>                 (h`w'amort + h`w'ahmln + h`w'adebt + h`w'amrtb)
+ 13.         }
+ 14.         gen double gross_wealth_`y' = ///
+>             max(h`w'atoth,0) + max(h`w'anethb,0) + max(h`w'arles,0) + max(h`w'atran,0) + ///
+>             max(h`w'absns,0) + max(h`w'aira,0) + max(h`w'astck,0) + max(h`w'achck,0) + ///
+>             max(h`w'acd,0) + max(h`w'abond,0) + max(h`w'aothr,0)
+ 15.     }
+ 16. }
+(25,657 missing values generated)
+(27,069 missing values generated)
+(25,113 missing values generated)
+(26,769 missing values generated)
+(28,017 missing values generated)
+(23,207 missing values generated)
+(24,683 missing values generated)
+(26,490 missing values generated)
+(24,328 missing values generated)
+(28,092 missing values generated)
+(29,512 missing values generated)
+(29,386 missing values generated)
+
+. 
+. * Capital gains components over time (selected series on one graph)
+. preserve
+
+. keep hhidpn cg_res_* cg_res2_* cg_re_* cg_bus_* cg_ira_* cg_stk_* cg_bnd_* cg_chk_* cg_cd_* cg_veh_* cg_oth_
+> *
+
+. reshape long cg_res_ cg_res2_ cg_re_ cg_bus_ cg_ira_ cg_stk_ cg_bnd_ cg_chk_ cg_cd_ cg_veh_ cg_oth_, i(hhidp
+> n) j(year)
+(j = 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   497,574     
+Number of variables                 144   ->   35          
+j variable (11 values)                    ->   year
+xij variables:
+cg_res_2002 cg_res_2004 ... cg_res_2022   ->   cg_res_
+cg_res2_2002 cg_res2_2004 ... cg_res2_2022->   cg_res2_
+   cg_re_2002 cg_re_2004 ... cg_re_2022   ->   cg_re_
+cg_bus_2002 cg_bus_2004 ... cg_bus_2022   ->   cg_bus_
+cg_ira_2002 cg_ira_2004 ... cg_ira_2022   ->   cg_ira_
+cg_stk_2002 cg_stk_2004 ... cg_stk_2022   ->   cg_stk_
+cg_bnd_2002 cg_bnd_2004 ... cg_bnd_2022   ->   cg_bnd_
+cg_chk_2002 cg_chk_2004 ... cg_chk_2022   ->   cg_chk_
+   cg_cd_2002 cg_cd_2004 ... cg_cd_2022   ->   cg_cd_
+cg_veh_2002 cg_veh_2004 ... cg_veh_2022   ->   cg_veh_
+cg_oth_2002 cg_oth_2004 ... cg_oth_2022   ->   cg_oth_
+-----------------------------------------------------------------------------
+
+. collapse (mean) cg_res_=cg_res_ cg_res2_=cg_res2_ cg_re_=cg_re_ cg_bus_=cg_bus_ cg_ira_=cg_ira_ ///
+>     cg_stk_=cg_stk_ cg_bnd_=cg_bnd_ cg_chk_=cg_chk_ cg_cd_=cg_cd_ cg_veh_=cg_veh_ cg_oth_=cg_oth_ `wopt', by
+> (year)
+
+. twoway line cg_res_ year || line cg_res2_ year || line cg_re_ year || line cg_bus_ year || ///
+>     line cg_stk_ year || line cg_bnd_ year, ///
+>     title("Mean capital gains by year") ///
+>     xtitle("Year") ytitle("Mean capital gain") ///
+>     legend(order(1 "Primary residence" 2 "Secondary residence" 3 "Real estate" 4 "Business" 5 "Stocks" 6 "Bo
+> nds"))
+
+. graph export "${BASE_PATH}/Descriptive/Figures/cg_components_mean_by_year.png", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/cg_components_mean_by_year.png
+    saved as PNG format
+
+. restore
+
+. 
+. * Income components (capital/IRA/total interest) on the same graph
+. preserve
+
+. keep hhidpn y_core_inc_* y_ira_inc_* y_total_int_* 
+
+. reshape long y_core_inc_ y_ira_inc_ y_total_int_, i(hhidpn) j(year)
+(j = 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   497,574     
+Number of variables                  34   ->   5           
+j variable (11 values)                    ->   year
+xij variables:
+y_core_inc_2002 y_core_inc_2004 ... y_core_inc_2022->y_core_inc_
+y_ira_inc_2002 y_ira_inc_2004 ... y_ira_inc_2022->y_ira_inc_
+y_total_int_2002 y_total_int_2004 ... y_total_int_2022->y_total_int_
+-----------------------------------------------------------------------------
+
+. collapse (mean) y_core_inc_=y_core_inc_ y_ira_inc_=y_ira_inc_ y_total_int_=y_total_int_ `wopt', by(year)
+
+. twoway line y_core_inc_ year || line y_ira_inc_ year || line y_total_int_ year, ///
+>     title("Mean interest income by year") ///
+>     xtitle("Year") ytitle("Mean value") ///
+>     legend(order(1 "Capital income (core)" 2 "Retirement income (IRA)" 3 "Total interest income (excl. labor
+> )"))
+
+. graph export "${BASE_PATH}/Descriptive/Figures/interest_income_mean_by_year.png", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/interest_income_mean_by_year.png
+    saved as PNG format
+
+. restore
+
+. 
+. * Flow measures by asset class on the same graph
+. preserve
+
+. keep hhidpn flow_bus_* flow_re_* flow_stk_* flow_ira_* flow_res_*
+
+. reshape long flow_bus_ flow_re_ flow_stk_ flow_ira_ flow_res_, i(hhidpn) j(year)
+(j = 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   497,574     
+Number of variables                  78   ->   29          
+j variable (11 values)                    ->   year
+xij variables:
+flow_bus_2002 flow_bus_2004 ... flow_bus_2022->flow_bus_
+flow_re_2002 flow_re_2004 ... flow_re_2022->   flow_re_
+flow_stk_2002 flow_stk_2004 ... flow_stk_2022->flow_stk_
+flow_ira_2002 flow_ira_2004 ... flow_ira_2022->flow_ira_
+flow_res_2002 flow_res_2004 ... flow_res_2022->flow_res_
+-----------------------------------------------------------------------------
+
+. collapse (mean) flow_bus_=flow_bus_ flow_re_=flow_re_ flow_stk_=flow_stk_ flow_ira_=flow_ira_ flow_res_=flow
+> _res_ `wopt', by(year)
+
+. twoway line flow_bus_ year || line flow_re_ year || line flow_stk_ year || line flow_ira_ year || line flow_
+> res_ year, ///
+>     title("Mean net investment flows by asset class") ///
+>     xtitle("Year") ytitle("Mean value") ///
+>     legend(order(1 "Business" 2 "Real estate" 3 "Stocks" 4 "IRA" 5 "Residences"))
+
+. graph export "${BASE_PATH}/Descriptive/Figures/flows_by_asset_mean_by_year.png", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/flows_by_asset_mean_by_year.png
+    saved as PNG format
+
+. restore
+
+. 
+. * Wealth measures over time (total net vs gross)
+. preserve
+
+. keep hhidpn wealth_total_* gross_wealth_*
+
+. reshape long wealth_total_ gross_wealth_, i(hhidpn) j(year)
+(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   542,808     
+Number of variables                  25   ->   4           
+j variable (12 values)                    ->   year
+xij variables:
+wealth_total_2000 wealth_total_2002 ... wealth_total_2022->wealth_total_
+gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
+-----------------------------------------------------------------------------
+
+. collapse (mean) wealth_total_=wealth_total_ gross_wealth_=gross_wealth_ `wopt', by(year)
+
+. twoway line wealth_total_ year || line gross_wealth_ year, ///
+>     title("Mean wealth by year") ///
+>     xtitle("Year") ytitle("Mean wealth") ///
+>     legend(order(1 "Total net wealth" 2 "Gross wealth"))
+
+. graph export "${BASE_PATH}/Descriptive/Figures/wealth_mean_by_year.png", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/wealth_mean_by_year.png saved as
+    PNG format
+
+. restore
+
+. 
+. * Debt measures over time (same graph)
+. preserve
+
+. keep hhidpn debt_long_* debt_other_*
+
+. reshape long debt_long_ debt_other_, i(hhidpn) j(year)
+(j = 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   497,574     
+Number of variables                  69   ->   50          
+j variable (11 values)                    ->   year
+xij variables:
+debt_long_2002 debt_long_2004 ... debt_long_2022->debt_long_
+debt_other_2002 debt_other_2004 ... debt_other_2022->debt_other_
+-----------------------------------------------------------------------------
+
+. collapse (mean) debt_long_=debt_long_ debt_other_=debt_other_ `wopt', by(year)
+
+. twoway line debt_long_ year || line debt_other_ year, ///
+>     title("Mean debt by year") ///
+>     xtitle("Year") ytitle("Mean debt") ///
+>     legend(order(1 "Long-term debt" 2 "Other debt"))
+
+. graph export "${BASE_PATH}/Descriptive/Figures/debt_mean_by_year.png", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/debt_mean_by_year.png saved as
+    PNG format
+
+. restore
+
+. 
+. * ---------------------------------------------------------------------
+. * Part B: Returns (from analysis_ready_processed)
+. * ---------------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. 
+. * Respondent weight (optional)
+. local wtvar "RwWTRESP"
+
+. capture confirm variable `wtvar'
+
+. local wopt ""
+
+. if !_rc local wopt "[aw=`wtvar']"
+
+. 
+. * Returns list (waves + averages)
+. local years "2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
+
+. local retvars ""
+
+. foreach y of local years {
+  2.     foreach v in r1_annual_`y' r2_annual_`y' r3_annual_`y' r4_annual_`y' debt_long_annual_`y' debt_other_
+> annual_`y' {
+  3.         capture confirm variable `v'
+  4.         if !_rc {
+  5.             local retvars "`retvars' `v'"
+  6.         }
+  7.     }
+  8. }
+
+. foreach v in r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg debt_long_annual_avg debt_other_annual_
+> avg {
+  2.     capture confirm variable `v'
+  3.     if !_rc {
+  4.         local retvars "`retvars' `v'"
+  5.     }
+  6. }
+
+. 
+. * Tabstat for final return measures
+. display "=== Return measures tabstat ==="
+=== Return measures tabstat ===
+
+. tabstat `retvars' `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+
+   Stats |  r1_~2002  r2_~2002  r3_~2002  r4_~2002  debt_l..  debt_o..  r1_~2004  r2_~2004  r3_~2004  r4_~2004
+---------+----------------------------------------------------------------------------------------------------
+       N |       488      5098     12897         0         0         0       405      4992     12491         0
+    Mean |   .322775  .4260509  .1407576         .         .         .  .2836188  .6760234  .1276713         .
+      SD |  1.592743  1.855662  .7076652         .         .         .   1.05498  2.545318  .7667202         .
+      p1 | -.6925015 -.7283282        -1         .         .         . -.7270282 -.6780661        -1         .
+      p5 | -.5847726       -.5 -.4059115         .         .         .  -.504519  -.412281 -.4604268         .
+     p50 |  .0388615  .0488088   .069045         .         .         .  .0649181  .1090914  .0614456         .
+     p95 |  1.786083  2.316625  .7593289         .         .         .  1.510725  3.080441  .7563929         .
+     p99 |  6.301751  7.286535   2.05329         .         .         .  4.040937  12.26047  2.041381         .
+     Min |        -1        -1        -1         .         .         . -.7889915        -1        -1         .
+     Max |  19.59612  59.65476  30.60696         .         .         .  12.55237  47.12006  35.30677         .
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  debt_l..  debt_o..  r1_~2006  r2_~2006  r3_~2006  r4_~2006  debt_l..  debt_o..  r1_~2008  r2_~2008
+---------+----------------------------------------------------------------------------------------------------
+       N |         0         0       374      5444     13540         0         0         0       394      5020
+    Mean |         .         .  .2759532  .6364207  .1657402         .         .         .  .1672604  .5548121
+      SD |         .         .  .7699836  2.280267   .716838         .         .         .  .8356232  1.990116
+      p1 |         .         .  -.761715 -.6388424        -1         .         .         . -.7955938 -.6742557
+      p5 |         .         .  -.464263 -.3733563  -.455811         .         .         . -.5950029 -.4030505
+     p50 |         .         .  .1343682   .145428  .0954451         .         .         . -.0030136  .1042061
+     p95 |         .         .  1.228013  2.687818  .8708287         .         .         .  1.209404  2.811963
+     p99 |         .         .  4.132576  11.83846  2.060612         .         .         .   4.61153  9.123899
+     Min |         .         . -.8298309        -1        -1         .         .         . -.9457674        -1
+     Max |         .         .  6.063521  66.20495  30.09662         .         .         .  7.103497   43.5413
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  r3_~2008  r4_~2008  debt_l..  debt_o..  r1_~2010  r2_~2010  r3_~2010  r4_~2010  debt_l..  debt_o..
+---------+----------------------------------------------------------------------------------------------------
+       N |     12644         0         0         0       306      4702     11328         0         0         0
+    Mean |  .0336422         .         .         .  .1710999  .5545831  .0095618         .         .         .
+      SD |  .6775705         .         .         .  1.820661  2.226002  3.339352         .         .         .
+      p1 |        -1         .         .         . -.8093999 -.6837722        -1         .         .         .
+      p5 | -.5216881         .         .         . -.6114555 -.4509388 -.6220355         .         .         .
+     p50 |         0         .         .         . -.0707033  .0597663 -.0392311         .         .         .
+     p95 |  .5811388         .         .         .  1.068548  2.872983  .5411035         .         .         .
+     p99 |  1.675284         .         .         .  3.051173  9.928547  1.542319         .         .         .
+     Min |        -1         .         .         .        -1        -1        -1         .         .         .
+     Max |  35.51484         .         .         .  21.47243  34.17572  351.1363         .         .         .
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  r1_~2012  r2_~2012  r3_~2012  r4_~2012  debt_l..  debt_o..  r1_~2014  r2_~2014  r3_~2014  r4_~2014
+---------+----------------------------------------------------------------------------------------------------
+       N |       318      5338     13353         0         0         0       255      4891     12148         0
+    Mean |  .1155579  .5403249    .14253         .         .         .  .3517545  .5490084  .1054625         .
+      SD |  .6242321  1.999642  8.682591         .         .         .  1.441858  1.860245  .6871321         .
+      p1 |  -.738288 -.7101457        -1         .         .         . -.8659933  -.686292        -1         .
+      p5 | -.6465306 -.4306076 -.5702502         .         .         . -.5571926 -.4226497       -.5         .
+     p50 |  .0284967  .0820591         0         .         .         .  .0677111  .1231979  .0327956         .
+     p95 |  1.096477  2.819359  .6514456         .         .         .  1.244835  2.739948  .8257419         .
+     p99 |  3.177456  9.098405  2.162278         .         .         .  7.066826  8.545942  2.291403         .
+     Min | -.8401678        -1        -1         .         .         . -.9025688        -1        -1         .
+     Max |  3.453521  33.29972  707.3617         .         .         .  13.68071  40.92681  26.92848         .
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  debt_l..  debt_o..  r1_~2016  r2_~2016  r3_~2016  r4_~2016  debt_l..  debt_o..  r1_~2018  r2_~2018
+---------+----------------------------------------------------------------------------------------------------
+       N |         0         0       196      4261     10814         0         0         0       179      4219
+    Mean |         .         .  .0565488  .6393014  .0985479         .         .         .  .1467782  .6383111
+      SD |         .         .  .4622357  2.632425   .535123         .         .         .  .6421293  3.002825
+      p1 |         .         .  -.835402 -.6480987        -1         .         .         .  -.800947 -.6837722
+      p5 |         .         . -.6608183 -.3969773 -.5088052         .         .         . -.4665064 -.3969773
+     p50 |         .         .  .0274147  .0819175  .0447146         .         .         .  .0295357  .1077906
+     p95 |         .         .  .7491521  3.295063  .7666953         .         .         .  1.366217  2.822041
+     p99 |         .         .  1.876081   9.89428  2.162278         .         .         .  3.330127  10.37834
+     Min |         .         . -.9303267 -.9469716        -1         .         .         . -.8588606        -1
+     Max |         .         .  2.041627  62.24555  9.148892         .         .         .  3.971812  90.65151
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  r3_~2018  r4_~2018  debt_l..  debt_o..  r1_~2020  r2_~2020  r3_~2020  r4_~2020  debt_l..  debt_o..
+---------+----------------------------------------------------------------------------------------------------
+       N |     10474         0         0         0       140      3690      9471         0         0         0
+    Mean |  .1297329         .         .         .  .0904864  .5461117  .1284372         .         .         .
+      SD |   .582386         .         .         .  .8400884  2.053359   .829461         .         .         .
+      p1 |        -1         .         .         . -.8717362 -.6953916        -1         .         .         .
+      p5 | -.4226497         .         .         . -.5639711 -.4516017 -.4694517         .         .         .
+     p50 |  .0540926         .         .         . -.0234191  .0791628  .0519823         .         .         .
+     p95 |  .8257419         .         .         .  .8523435  2.848521  .7770466         .         .         .
+     p99 |   2.22933         .         .         .  5.542629  9.392305  2.222517         .         .         .
+     Min |        -1         .         .         . -.9175597        -1        -1         .         .         .
+     Max |  11.84523         .         .         .  6.501644  36.46845  34.35534         .         .         .
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  r1_~2022  r2_~2022  r3_~2022  r4_~2022  debt_l..  debt_o..  r1_ann~g  r2_ann~g  r3_ann~g  r4_ann~g
+---------+----------------------------------------------------------------------------------------------------
+       N |       120      3257      8139         0         0         0      1624     12354     25307         0
+    Mean |  .3932573  .5664734  .2261521         .         .         .    .25784  .8306897  .1137551         .
+      SD |  1.188803  1.961921  .7143917         .         .         .  1.224371  2.319934   1.69235         .
+      p1 | -.6702768 -.6448892        -1         .         .         . -.6980787 -.5565925        -1         .
+      p5 | -.5264398 -.3095605 -.4226497         .         .         . -.4665064  -.239019 -.4153293         .
+     p50 |  .1249725  .1191627  .1385501         .         .         .  .0583632  .2309149  .0659536         .
+     p95 |    2.1966  2.511885  1.007561         .         .         .  1.515677  3.514073  .5897398         .
+     p99 |  5.885792  10.90238  2.559026         .         .         .   4.18884  10.54746  1.577749         .
+     Min | -.7400605        -1        -1         .         .         .        -1        -1        -1         .
+     Max |  5.885792  31.21801  16.88854         .         .         .  21.47243  59.65476  177.0617         .
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  debt_l~g  debt_o~g
+---------+--------------------
+       N |         0         0
+    Mean |         .         .
+      SD |         .         .
+      p1 |         .         .
+      p5 |         .         .
+     p50 |         .         .
+     p95 |         .         .
+     p99 |         .         .
+     Min |         .         .
+     Max |         .         .
+------------------------------
+
+. 
+. * Mean returns by year (single graph with 6 lines)
+. preserve
+
+. keep hhidpn r1_annual_* r2_annual_* r3_annual_* r4_annual_* debt_long_annual_* debt_other_annual_*
+
+. reshape long r1_annual_ r2_annual_ r3_annual_ r4_annual_ debt_long_annual_ debt_other_annual_, i(hhidpn) j(y
+> ear)
+(j = 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   497,574     
+Number of variables                 217   ->   158         
+j variable (11 values)                    ->   year
+xij variables:
+r1_annual_2002 r1_annual_2004 ... r1_annual_2022->r1_annual_
+r2_annual_2002 r2_annual_2004 ... r2_annual_2022->r2_annual_
+r3_annual_2002 r3_annual_2004 ... r3_annual_2022->r3_annual_
+r4_annual_2002 r4_annual_2004 ... r4_annual_2022->r4_annual_
+debt_long_annual_2002 debt_long_annual_2004 ... debt_long_annual_2022->debt_long_annual_
+debt_other_annual_2002 debt_other_annual_2004 ... debt_other_annual_2022->debt_other_annual_
+-----------------------------------------------------------------------------
+
+. collapse (mean) r1=r1_annual_ r2=r2_annual_ r3=r3_annual_ r4=r4_annual_ dlong=debt_long_annual_ doth=debt_ot
+> her_annual_ `wopt', by(year)
+
+. twoway line r1 year || line r2 year || line r3 year || line r4 year || line dlong year || line doth year, //
+> /
+>     title("Mean returns by year") ///
+>     xtitle("Year") ytitle("Mean return") ///
+>     legend(order(1 "r1" 2 "r2" 3 "r3" 4 "r4" 5 "debt_long" 6 "debt_other"))
+
+. graph export "${BASE_PATH}/Descriptive/Figures/returns_mean_by_year.png", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/returns_mean_by_year.png saved
+    as PNG format
+
+. restore
+
+. 
+. * Mean returns by age group and education group
+. preserve
+
+. keep hhidpn educ_yrs age_* r1_annual_* r2_annual_* r3_annual_* r4_annual_* debt_long_annual_* debt_other_ann
+> ual_*
+
+. reshape long age_ r1_annual_ r2_annual_ r3_annual_ r4_annual_ debt_long_annual_ debt_other_annual_, i(hhidpn
+> ) j(year)
+(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+(variable r1_annual_2000 not found)
+(variable r2_annual_2000 not found)
+(variable r3_annual_2000 not found)
+(variable r4_annual_2000 not found)
+(variable debt_long_annual_2000 not found)
+(variable debt_other_annual_2000 not found)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   542,808     
+Number of variables                 230   ->   160         
+j variable (12 values)                    ->   year
+xij variables:
+         age_2000 age_2002 ... age_2022   ->   age_
+r1_annual_2000 r1_annual_2002 ... r1_annual_2022->r1_annual_
+r2_annual_2000 r2_annual_2002 ... r2_annual_2022->r2_annual_
+r3_annual_2000 r3_annual_2002 ... r3_annual_2022->r3_annual_
+r4_annual_2000 r4_annual_2002 ... r4_annual_2022->r4_annual_
+debt_long_annual_2000 debt_long_annual_2002 ... debt_long_annual_2022->debt_long_annual_
+debt_other_annual_2000 debt_other_annual_2002 ... debt_other_annual_2022->debt_other_annual_
+-----------------------------------------------------------------------------
+
+. rename age_ age
+
+. gen int age_group = floor(age/5)*5 if !missing(age)
+(318,278 missing values generated)
+
+. tabstat r1_annual_ r2_annual_ r3_annual_ r4_annual_ debt_long_annual_ debt_other_annual_ `wopt', by(age_grou
+> p) statistics(n mean sd p50 p95)
+
+Summary statistics: N, Mean, SD, p50, p95
+Group variable: age_group 
+
+age_group |  r1_ann~_  r2_ann~_  r3_ann~_  r4_ann~_  debt_l~_  debt_o~_
+----------+------------------------------------------------------------
+       15 |         0         0         0         0         0         0
+          |         .         .         .         .         .         .
+          |         .         .         .         .         .         .
+          |         .         .         .         .         .         .
+          |         .         .         .         .         .         .
+----------+------------------------------------------------------------
+       20 |         0         0         0         0         0         0
+          |         .         .         .         .         .         .
+          |         .         .         .         .         .         .
+          |         .         .         .         .         .         .
+          |         .         .         .         .         .         .
+----------+------------------------------------------------------------
+       25 |         0         1         4         0         0         0
+          |         .  .1313708 -.6737744         .         .         .
+          |         .         .  .5765666         .         .         .
+          |         .  .1313708 -.9410744         .         .         .
+          |         .  .1313708  .1870514         .         .         .
+----------+------------------------------------------------------------
+       30 |         1        10        40         0         0         0
+          |  .0432921  .3419758  .3932718         .         .         .
+          |         .  .7997151    1.4138         .         .         .
+          |  .0432921  .0740206  .2329134         .         .         .
+          |  .0432921  2.162278  3.470805         .         .         .
+----------+------------------------------------------------------------
+       35 |         3        30       131         0         0         0
+          | -.0498571  .2784462  .1361476         .         .         .
+          |  .1989734  .6443339  .6678198         .         .         .
+          |  -.156511  .0826469   .069045         .         .         .
+          |  .1797058  1.586949  1.293659         .         .         .
+----------+------------------------------------------------------------
+       40 |        14       135       469         0         0         0
+          |  .2552584  .3133191  .1974964         .         .         .
+          |  .8095028  1.078855  .9311146         .         .         .
+          |  .0746052  .0741723  .0540926         .         .         .
+          |   2.52575         2  1.329929         .         .         .
+----------+------------------------------------------------------------
+       45 |        37       491      1478         0         0         0
+          |  .7020812  .5881132  .1903483         .         .         .
+          |  1.459743  4.476474  .8374425         .         .         .
+          |  .2004483  .0736749  .0776167         .         .         .
+          |  4.932959  2.464102  1.202486         .         .         .
+----------+------------------------------------------------------------
+       50 |       194      2398      6354         0         0         0
+          |  .4455957  .4228156  .1684555         .         .         .
+          |  1.835803    1.5249  .9309587         .         .         .
+          |  .0923408  .0837234   .069045         .         .         .
+          |  2.069724  2.481379         1         .         .         .
+----------+------------------------------------------------------------
+       55 |       490      7223     17603         0         0         0
+          |  .3372219  .4415896  .1969151         .         .         .
+          |  1.279932  1.841667  5.391694         .         .         .
+          |  .0817465  .0788579  .0633527         .         .         .
+          |  1.783991  2.316625  .9397622         .         .         .
+----------+------------------------------------------------------------
+       60 |       664      8916     20817         0         0         0
+          |  .2714532  .4882463  .1773329         .         .         .
+          |  .9793064  2.057562  4.959958         .         .         .
+          |  .0496746   .089466  .0600988         .         .         .
+          |  1.783991  2.328663  .8874586         .         .         .
+----------+------------------------------------------------------------
+       65 |       570      9502     21557         0         0         0
+          |  .2219543  .5941555  .1168434         .         .         .
+          |  1.379116  2.207693  .5856753         .         .         .
+          |  .0524791   .123423  .0504515         .         .         .
+          |  1.177836   2.70045  .7928429         .         .         .
+----------+------------------------------------------------------------
+       70 |       455      8435     20115         0         0         0
+          |  .1562464  .6506951  .0770044         .         .         .
+          |  1.097408  2.316767  .5187459         .         .         .
+          |  .0307388  .0998891  .0307764         .         .         .
+          |  .9396611  3.089966  .6495242         .         .         .
+----------+------------------------------------------------------------
+       75 |       354      6770     17082         0         0         0
+          |  .0932878  .6558073  .0860835         .         .         .
+          |  .8476492  2.569209  2.752027         .         .         .
+          | -.0311681  .0860319  .0206207         .         .         .
+          |  .8114221  3.162417  .6035675         .         .         .
+----------+------------------------------------------------------------
+       80 |       219      4462     12383         0         0         0
+          |  .0657348  .6618613  .0485651         .         .         .
+          |  .6194098  2.309717  .7299831         .         .         .
+          |  .0001632  .1008779  .0141851         .         .         .
+          |  .8888664  3.661282  .5459625         .         .         .
+----------+------------------------------------------------------------
+       85 |       125      1951      6415         0         0         0
+          |  .0413756  .6370774  .0184727         .         .         .
+          |  .5401004  2.532469   .447536         .         .         .
+          | -.0007781  .1333333         0         .         .         .
+          |  .8329637  2.855905  .5537972         .         .         .
+----------+------------------------------------------------------------
+       90 |        38       518      2346         0         0         0
+          |   .170869  1.006394 -.0086389         .         .         .
+          |  .9237529  2.945398  .7589969         .         .         .
+          | -.0617104  .2103695         0         .         .         .
+          |  2.867779  4.844998  .5585798         .         .         .
+----------+------------------------------------------------------------
+       95 |        10        67       468         0         0         0
+          | -.0546499  .7757759 -.0236611         .         .         .
+          |  .5639697  1.391111  .5041257         .         .         .
+          | -.1892282  .3151136         0         .         .         .
+          |  1.213613  4.364816  .7308167         .         .         .
+----------+------------------------------------------------------------
+      100 |         1         3        36         0         0         0
+          | -.0137989  2.558524  -.136805         .         .         .
+          |         .  2.058474  .8774339         .         .         .
+          | -.0137989  1.641969 -.0438463         .         .         .
+          | -.0137989   4.91608  .6903085         .         .         .
+----------+------------------------------------------------------------
+      105 |         0         0         1         0         0         0
+          |         .         .        -1         .         .         .
+          |         .         .         .         .         .         .
+          |         .         .        -1         .         .         .
+          |         .         .        -1         .         .         .
+----------+------------------------------------------------------------
+    Total |      3175     50912    127299         0         0         0
+          |  .2259856  .5745385  .1166849         .         .         .
+          |  1.157738  2.240209  3.048301         .         .         .
+          |  .0384861  .0990384   .038925         .         .         .
+          |  1.274699  2.758324  .7606817         .         .         .
+-----------------------------------------------------------------------
+
+. 
+. gen byte educ_group = .
+(542,808 missing values generated)
+
+. replace educ_group = 1 if educ_yrs < 12
+(144,840 real changes made)
+
+. replace educ_group = 2 if educ_yrs == 12
+(163,332 real changes made)
+
+. replace educ_group = 3 if inrange(educ_yrs,13,15)
+(116,088 real changes made)
+
+. replace educ_group = 4 if educ_yrs == 16
+(59,616 real changes made)
+
+. replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
+(51,144 real changes made)
+
+. label define educ_group 1 "lt12" 2 "hs" 3 "some_college" 4 "college" 5 "grad"
+
+. label values educ_group educ_group
+
+. tabstat r1_annual_ r2_annual_ r3_annual_ r4_annual_ debt_long_annual_ debt_other_annual_ `wopt', by(educ_gro
+> up) statistics(n mean sd p50 p95)
+
+Summary statistics: N, Mean, SD, p50, p95
+Group variable: educ_group 
+
+  educ_group |  r1_ann~_  r2_ann~_  r3_ann~_  r4_ann~_  debt_l~_  debt_o~_
+-------------+------------------------------------------------------------
+        lt12 |       228      3417     23165         0         0         0
+             |  .1203424   .921319  .1042824         .         .         .
+             |  .7588978  3.385256  4.702563         .         .         .
+             | -.0318178  .1478472  .0153583         .         .         .
+             |  1.224119  4.587486  .8257419         .         .         .
+-------------+------------------------------------------------------------
+          hs |       839     14502     40420         0         0         0
+             |  .2654494  .6484849  .1032778         .         .         .
+             |  1.462343  2.331734  3.575812         .         .         .
+             |  .0248758  .1055416  .0317539         .         .         .
+             |  1.307974  3.216401  .7149859         .         .         .
+-------------+------------------------------------------------------------
+some_college |       809     12571     29284         0         0         0
+             |  .1789878  .5636683  .1281275         .         .         .
+             |  .7091286   2.30607  2.167023         .         .         .
+             |   .048445  .0892386  .0454775         .         .         .
+             |  1.200337  2.831222  .7888544         .         .         .
+-------------+------------------------------------------------------------
+     college |       626      9775     17101         0         0         0
+             |  .2930704  .4573982  .1328558         .         .         .
+             |  1.532866  1.798977  .7023255         .         .         .
+             |   .036939  .0846523  .0547619         .         .         .
+             |  1.672103   2.17634  .7702933         .         .         .
+-------------+------------------------------------------------------------
+        grad |       666     10559     17040         0         0         0
+             |  .2059069  .4823459  .1297468         .         .         .
+             |  .8195869   1.89561  .6748614         .         .         .
+             |  .0473886  .1022573  .0540926         .         .         .
+             |  1.233842  2.258834  .7419685         .         .         .
+-------------+------------------------------------------------------------
+       Total |      3168     50824    127010         0         0         0
+             |  .2258672   .574581  .1167241         .         .         .
+             |  1.158845  2.240492   3.05167         .         .         .
+             |  .0382131  .0991151  .0388703         .         .         .
+             |  1.274699  2.756898  .7606817         .         .         .
+--------------------------------------------------------------------------
+
+. restore
+
+. 
+. * ---------------------------------------------------------------------
+. * Asset share concentration table (top share thresholds)
+. * ---------------------------------------------------------------------
+. preserve
+
+. keep hhidpn gross_wealth_* ///
+>     share_m3_pri_res_* share_m3_sec_res_* share_m3_re_* share_m3_bus_* share_m3_ira_* ///
+>     share_m3_stk_* share_m3_bond_* share_m3_chck_* share_m3_cd_* share_m3_vehicles_* share_m3_other_*
+
+. 
+. local years "2002 2022"
+
+. tempfile share_conc
+
+. postfile handle str10 asset int year int threshold double pct_of_asset using "`share_conc'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.00000a not found)
+
+. 
+. foreach y of local years {
+  2.     foreach asset in pri_res sec_res re bus ira stk bond chck cd vehicles other {
+  3.         capture confirm variable share_m3_`asset'_`y'
+  4.         capture confirm variable gross_wealth_`y'
+  5.         if !_rc {
+  6.             gen double asset_value = share_m3_`asset'_`y' * gross_wealth_`y'
+  7.             if "`wopt'" != "" {
+  8.                 gen double asset_value_w = asset_value * `wtvar'
+  9.                 quietly summarize asset_value_w if !missing(asset_value_w)
+ 10.                 local total = r(sum)
+ 11.                 foreach t in 25 50 75 90 95 {
+ 12.                     quietly summarize asset_value_w if share_m3_`asset'_`y' >= `t'/100 & !missing(asset_v
+> alue_w)
+ 13.                     local part = r(sum)
+ 14.                     local pct = .
+ 15.                     if `total' > 0 local pct = 100 * (`part' / `total')
+ 16.                     post handle ("`asset'") (`y') (`t') (`pct')
+ 17.                 }
+ 18.                 drop asset_value_w
+ 19.             }
+ 20.             else {
+ 21.                 quietly summarize asset_value if !missing(asset_value)
+ 22.                 local total = r(sum)
+ 23.                 foreach t in 25 50 75 90 95 {
+ 24.                     quietly summarize asset_value if share_m3_`asset'_`y' >= `t'/100 & !missing(asset_val
+> ue)
+ 25.                     local part = r(sum)
+ 26.                     local pct = .
+ 27.                     if `total' > 0 local pct = 100 * (`part' / `total')
+ 28.                     post handle ("`asset'") (`y') (`t') (`pct')
+ 29.                 }
+ 30.             }
+ 31.             drop asset_value
+ 32.         }
+ 33.     }
+ 34. }
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,771 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+
+. postclose handle
+
+. use "`share_conc'", clear
+
+. export delimited using "${BASE_PATH}/Descriptive/Tables/share_concentration_by_asset.csv", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/share_concentration_by_asset.csv
+    not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/share_concentration_by_asset.csv sa
+> ved
+
+. restore
+
+. 
+. * Scatterplots: returns vs wealth measures (2002 and 2022)
+. capture confirm variable wealth_core_2002
+
+. if !_rc {
+.     * Bring wealth measures into long format
+.     keep hhidpn wealth_core_* wealth_ira_* wealth_res_* wealth_total_* gross_wealth_* ///
+>         r1_annual_* r2_annual_* r3_annual_* r4_annual_* debt_long_annual_* debt_other_annual_*
+.     reshape long wealth_core_ wealth_ira_ wealth_res_ wealth_total_ gross_wealth_ ///
+>         r1_annual_ r2_annual_ r3_annual_ r4_annual_ debt_long_annual_ debt_other_annual_, i(hhidpn) j(year)
+(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+(variable r1_annual_2000 not found)
+(variable r2_annual_2000 not found)
+(variable r3_annual_2000 not found)
+(variable r4_annual_2000 not found)
+(variable debt_long_annual_2000 not found)
+(variable debt_other_annual_2000 not found)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   542,808     
+Number of variables                 673   ->   559         
+j variable (12 values)                    ->   year
+xij variables:
+wealth_core_2000 wealth_core_2002 ... wealth_core_2022->wealth_core_
+wealth_ira_2000 wealth_ira_2002 ... wealth_ira_2022->wealth_ira_
+wealth_res_2000 wealth_res_2002 ... wealth_res_2022->wealth_res_
+wealth_total_2000 wealth_total_2002 ... wealth_total_2022->wealth_total_
+gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
+r1_annual_2000 r1_annual_2002 ... r1_annual_2022->r1_annual_
+r2_annual_2000 r2_annual_2002 ... r2_annual_2022->r2_annual_
+r3_annual_2000 r3_annual_2002 ... r3_annual_2022->r3_annual_
+r4_annual_2000 r4_annual_2002 ... r4_annual_2022->r4_annual_
+debt_long_annual_2000 debt_long_annual_2002 ... debt_long_annual_2022->debt_long_annual_
+debt_other_annual_2000 debt_other_annual_2002 ... debt_other_annual_2022->debt_other_annual_
+-----------------------------------------------------------------------------
+.     rename wealth_core_ wealth_core
+.     rename wealth_ira_ wealth_ira
+.     rename wealth_res_ wealth_res
+.     rename wealth_total_ wealth_total
+.     rename gross_wealth_ gross_wealth
+. 
+.     local pctvars "wealth_core wealth_ira wealth_res wealth_total gross_wealth"
+.     foreach v of local pctvars {
+  2.         sort year `v'
+  3.         by year: gen long _rank_`v' = sum(!missing(`v'))
+  4.         by year: gen long _N_`v' = _rank_`v'[_N]
+  5.         gen int `v'_pct = .
+  6.         replace `v'_pct = ceil(100 * _rank_`v' / _N_`v') if !missing(`v')
+  7.         drop _rank_`v' _N_`v'
+  8.     }
+(542,808 missing values generated)
+(224,494 real changes made)
+(542,808 missing values generated)
+(224,528 real changes made)
+(542,808 missing values generated)
+(224,528 real changes made)
+(542,808 missing values generated)
+(140,111 real changes made)
+(542,808 missing values generated)
+(224,530 real changes made)
+. 
+.     foreach yr in 2002 2022 {
+  2.         * r1 vs wealth_core, r2 vs wealth_ira, r3 vs wealth_res, r4 vs wealth_total
+.         foreach pair in "r1_annual_ wealth_core_pct r1 Wealth core percentile" ///
+>                          "r2_annual_ wealth_ira_pct r2 Wealth IRA percentile" ///
+>                          "r3_annual_ wealth_res_pct r3 Wealth residential percentile" ///
+>                          "r4_annual_ wealth_total_pct r4 Wealth total percentile" {
+  3.             tokenize `pair'
+  4.             local retvar "``1''"
+  5.             local wvar "``2''"
+  6.             local retlabel "``3'' return"
+  7.             local wlabel "``4''"
+  8.             twoway scatter `retvar' `wvar' if year == `yr' & !missing(`retvar') & !missing(`wvar'), ///
+>                 title("`retlabel' vs `wlabel' (`yr')") ///
+>                 xtitle("`wlabel'") ytitle("`retlabel'")
+  9.             graph export "${BASE_PATH}/Descriptive/Figures/``3''_vs_``2''_`yr'.png", replace
+ 10.         }
+ 11. 
+.         * Debt returns vs gross wealth percentile
+.         twoway scatter debt_long_annual_ gross_wealth_pct if year == `yr' & !missing(debt_long_annual_) & !m
+> issing(gross_wealth_pct), ///
+>             title("Debt long return vs gross wealth percentile (`yr')") ///
+>             xtitle("Gross wealth percentile") ytitle("Debt long return")
+ 12.         graph export "${BASE_PATH}/Descriptive/Figures/debt_long_vs_gross_wealth_pct_`yr'.png", replace
+ 13. 
+.         twoway scatter debt_other_annual_ gross_wealth_pct if year == `yr' & !missing(debt_other_annual_) & 
+> !missing(gross_wealth_pct), ///
+>             title("Debt other return vs gross wealth percentile (`yr')") ///
+>             xtitle("Gross wealth percentile") ytitle("Debt other return")
+ 14.         graph export "${BASE_PATH}/Descriptive/Figures/debt_other_vs_gross_wealth_pct_`yr'.png", replace
+ 15.     }
+varlist required
+r(100);
+. }
+r(100);
+
+end of do-file
+r(100);
+
+end of do-file
+
+r(100);
+
+. summarize wealth_total gross_wealth
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+wealth_total |    140,111    477771.4     1280639   -6664733   1.16e+08
+gross_wealth |    224,530    461117.9     1370337          0   3.09e+08
+
+. do "/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/0_run_pipeline_00_05.do"
+
+. * 00_run_pipeline_00_05.do
+. * Run pipeline through processing (00–05).
+. * Order: config -> merge -> returns -> prep controls -> income processing -> returns processing
+. 
+. clear
+
+. set more off
+
+. 
+. * Resolve BASE_PATH and load config
+. capture confirm global BASE_PATH
+
+. if _rc {
+.     while regexm("`c(pwd)'", "[\/]Code[\/]") {
+  2.         cd ..
+  3.     }
+/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code
+.     if regexm("`c(pwd)'", "[\/]HRS$") {
+.         cd ..
+.     }
+.     if regexm("`c(pwd)'", "[\/]Raw data$") {
+.         cd ..
+.         cd ..
+.     }
+.     if regexm("`c(pwd)'", "[\/]Code$") {
+.         cd ..
+/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns
+.     }
+.     global BASE_PATH "`c(pwd)'"
+. }
+
+. 
+. do "${BASE_PATH}/Code/Raw data/00_config.do"
+
+. * 00_config.do
+. * Set base path and logging. Run from repository root (parent of Code/).
+. * All paths are relative to BASE_PATH.
+. 
+. clear all
+
+. set more off
+
+. 
+. * Repository root: directory containing Code/, Paper/, Notes/
+. * Run from repo root, or from Code/Raw data (script will cd to repo root).
+. global BASE_PATH "`c(pwd)'"
+
+. if regexm("`c(pwd)'", "[\/]Raw data$") {
+.     cd ..
+.     cd ..
+.     global BASE_PATH "`c(pwd)'"
+. }
+
+. if regexm("`c(pwd)'", "[\/]Code$") {
+.     cd ..
+.     global BASE_PATH "`c(pwd)'"
+. }
+
+. 
+. * Paths used by downstream do-files
+. global RAW_DATA   "${BASE_PATH}/Code/Raw data"
+
+. global HRS_DATA   "${RAW_DATA}/HRS"
+
+. global FRED_DATA  "${RAW_DATA}/FRED"
+
+. global CLEANED    "${BASE_PATH}/Code/Cleaned data"
+
+. global PROCESSED  "${BASE_PATH}/Code/Processing"
+
+. global LOG_DIR    "${BASE_PATH}/Notes/Logs"
+
+. 
+. * Create log directory, Cleaned data, and Processing
+. capture mkdir "${LOG_DIR}"
+
+. capture mkdir "${CLEANED}"
+
+. capture mkdir "${PROCESSED}"
+
+. 
+. * Start log for the current do-file (caller should pass log name via -do 01_merge_all_data.do, log- or set l
+> og here)
+. * This script only sets globals; the calling do-file opens its own log.
+. 
+end of do-file
+
+. 
+. * 01: Merge all data
+. do "${BASE_PATH}/Code/Raw data/01_merge_all_data.do"
+
+. * 01_merge_all_data.do
+. * Master script: FRED CPI, then merge flows and trust one wave per sub-script (like old repo create_wide_RAN
+> D_long).
+. * Each sub-script uses one tempfile per run to avoid r(693) I/O errors.
+. * Output: Code/Cleaned data/all_data_merged.dta
+. * Run from repository root or from Code/Raw data; BASE_PATH is set here so 00_config is always found.
+. 
+. * Set BASE_PATH to repo root (directory containing Code/, Paper/, Notes/)
+. * If run from Code/Cleaned data, Code/Raw data, or other Code subdir, cd up to repo root first
+. while regexm("`c(pwd)'", "[\/]Code[\/]") {
+  2.     cd ..
+  3. }
+
+. if regexm("`c(pwd)'", "[\/]HRS$") {
+.     cd ..
+. }
+
+. if regexm("`c(pwd)'", "[\/]Raw data$") {
+.     cd ..
+.     cd ..
+. }
+
+. if regexm("`c(pwd)'", "[\/]Code$") {
+.     cd ..
+. }
+
+. global BASE_PATH "`c(pwd)'"
+
+. do "${BASE_PATH}/Code/Raw data/00_config.do"
+
+. * 00_config.do
+. * Set base path and logging. Run from repository root (parent of Code/).
+. * All paths are relative to BASE_PATH.
+. 
+. clear all
+
+. set more off
+
+. 
+. * Repository root: directory containing Code/, Paper/, Notes/
+. * Run from repo root, or from Code/Raw data (script will cd to repo root).
+. global BASE_PATH "`c(pwd)'"
+
+. if regexm("`c(pwd)'", "[\/]Raw data$") {
+.     cd ..
+.     cd ..
+.     global BASE_PATH "`c(pwd)'"
+. }
+
+. if regexm("`c(pwd)'", "[\/]Code$") {
+.     cd ..
+.     global BASE_PATH "`c(pwd)'"
+. }
+
+. 
+. * Paths used by downstream do-files
+. global RAW_DATA   "${BASE_PATH}/Code/Raw data"
+
+. global HRS_DATA   "${RAW_DATA}/HRS"
+
+. global FRED_DATA  "${RAW_DATA}/FRED"
+
+. global CLEANED    "${BASE_PATH}/Code/Cleaned data"
+
+. global PROCESSED  "${BASE_PATH}/Code/Processing"
+
+. global LOG_DIR    "${BASE_PATH}/Notes/Logs"
+
+. 
+. * Create log directory, Cleaned data, and Processing
+. capture mkdir "${LOG_DIR}"
+
+. capture mkdir "${CLEANED}"
+
+. capture mkdir "${PROCESSED}"
+
+. 
+. * Start log for the current do-file (caller should pass log name via -do 01_merge_all_data.do, log- or set l
+> og here)
+. * This script only sets globals; the calling do-file opens its own log.
+. 
+end of do-file
+
+. 
+. capture log close

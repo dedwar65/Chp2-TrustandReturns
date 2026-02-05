@@ -35,6 +35,12 @@ capture mkdir "${BASE_PATH}/Descriptive/Tables"
 
 use "${PROCESSED}/analysis_ready_processed.dta", clear
 
+* Respondent weight (optional)
+local wtvar "RwWTRESP"
+capture confirm variable `wtvar'
+local wopt ""
+if !_rc local wopt "[aw=`wtvar']"
+
 * Label definitions for region and population size
 capture label define region_lbl 1 "Northeast" 2 "Midwest" 3 "South" 4 "West" 5 "Other", replace
 capture label define pop_lbl 1 "Less than 1,000" 2 "1,000 to 10,000" 3 "10,000 to 50,000" ///
@@ -50,24 +56,24 @@ capture label values population_2020 pop_lbl
 * ---------------------------------------------------------------------
 display "=== Trust variables summary ==="
 summarize trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
-    trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020
+    trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 `wopt'
 
 display "=== Financial literacy + IV variables summary ==="
 summarize interest_2020 inflation_2020 risk_div_2020 ///
-    par_citizen_2020 par_loyalty_2020 population_2020
+    par_citizen_2020 par_loyalty_2020 population_2020 `wopt'
 
 display "=== Additional trust regression controls summary ==="
 summarize depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 ///
-    beq_any_2020 num_divorce_2020 num_widow_2020
+    beq_any_2020 num_divorce_2020 num_widow_2020 `wopt'
 
 display "=== Contextual trust IVs summary ==="
-summarize townsize_trust_* pop_trust_* regional_trust_*
+summarize townsize_trust_* pop_trust_* regional_trust_* `wopt'
 
 display "=== Region + population summaries ==="
-summarize population_2020
-summarize region_*
-summarize region_pop_group_*
-summarize hometown_size_*
+summarize population_2020 `wopt'
+summarize region_* `wopt'
+summarize region_pop_group_* `wopt'
+summarize hometown_size_* `wopt'
 
 * Export label mappings for region and population
 preserve
@@ -106,7 +112,7 @@ keep if year == 2020
 keep if !missing(trust_others_2020) & !missing(region_)
 decode region_, gen(region_label)
 contract year region_ region_label, freq(n)
-export delimited using "${BASE_PATH}/Descriptive/Tables/trust_region_groups_by_year.csv", replace
+export delimited using "${BASE_PATH}/Descriptive/Tables/trust_region_groups_2020.csv", replace
 restore
 
 display "=== Overlap: trust x region_pop_group (2020 only) ==="
@@ -119,7 +125,7 @@ decode region_, gen(region_label)
 decode population_2020, gen(pop_label)
 gen int region_pop_group = region_ * 100 + population_2020
 contract year region_ region_label population_2020 pop_label region_pop_group, freq(n)
-export delimited using "${BASE_PATH}/Descriptive/Tables/trust_regionpop_groups_by_year.csv", replace
+export delimited using "${BASE_PATH}/Descriptive/Tables/trust_regionpop_groups_2020.csv", replace
 restore
 
 display "=== Overlap: trust x hometown_size (2020 only) ==="
@@ -129,7 +135,7 @@ reshape long hometown_size_, i(hhidpn) j(year)
 keep if year == 2020
 keep if !missing(trust_others_2020) & !missing(hometown_size_)
 contract year hometown_size_, freq(n)
-export delimited using "${BASE_PATH}/Descriptive/Tables/trust_hometownsize_groups_by_year.csv", replace
+export delimited using "${BASE_PATH}/Descriptive/Tables/trust_hometownsize_groups_2020.csv", replace
 restore
 
 * ---------------------------------------------------------------------
@@ -228,29 +234,141 @@ restore
 * ---------------------------------------------------------------------
 display "=== Shares summary (2002) ==="
 local sharevars_2002 ""
-foreach v in share_m1_re_2002 share_m1_vehicles_2002 share_m1_bus_2002 share_m1_stk_2002 share_m1_chck_2002 share_m1_cd_2002 share_m1_bond_2002 share_m1_other_2002 ///
-            share_m2_re_2002 share_m2_vehicles_2002 share_m2_bus_2002 share_m2_ira_2002 share_m2_stk_2002 share_m2_chck_2002 share_m2_cd_2002 share_m2_bond_2002 share_m2_other_2002 ///
+foreach v in share_m1_re_2002 share_m1_bus_2002 share_m1_stk_2002 share_m1_chck_2002 share_m1_cd_2002 share_m1_bond_2002 ///
+            share_m2_re_2002 share_m2_bus_2002 share_m2_ira_2002 share_m2_stk_2002 share_m2_chck_2002 share_m2_cd_2002 share_m2_bond_2002 ///
             share_m3_pri_res_2002 share_m3_sec_res_2002 share_m3_re_2002 share_m3_vehicles_2002 share_m3_bus_2002 share_m3_ira_2002 share_m3_stk_2002 share_m3_chck_2002 share_m3_cd_2002 share_m3_bond_2002 share_m3_other_2002 ///
             share_debt_long_2002 share_debt_other_2002 {
     capture confirm variable `v'
     if !_rc local sharevars_2002 "`sharevars_2002' `v'"
 }
 if "`sharevars_2002'" != "" {
-    summarize `sharevars_2002'
+    tabstat `sharevars_2002' `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 }
 
 display "=== Shares summary (2022) ==="
 local sharevars_2022 ""
-foreach v in share_m1_re_2022 share_m1_vehicles_2022 share_m1_bus_2022 share_m1_stk_2022 share_m1_chck_2022 share_m1_cd_2022 share_m1_bond_2022 share_m1_other_2022 ///
-            share_m2_re_2022 share_m2_vehicles_2022 share_m2_bus_2022 share_m2_ira_2022 share_m2_stk_2022 share_m2_chck_2022 share_m2_cd_2022 share_m2_bond_2022 share_m2_other_2022 ///
+foreach v in share_m1_re_2022 share_m1_bus_2022 share_m1_stk_2022 share_m1_chck_2022 share_m1_cd_2022 share_m1_bond_2022 ///
+            share_m2_re_2022 share_m2_bus_2022 share_m2_ira_2022 share_m2_stk_2022 share_m2_chck_2022 share_m2_cd_2022 share_m2_bond_2022 ///
             share_m3_pri_res_2022 share_m3_sec_res_2022 share_m3_re_2022 share_m3_vehicles_2022 share_m3_bus_2022 share_m3_ira_2022 share_m3_stk_2022 share_m3_chck_2022 share_m3_cd_2022 share_m3_bond_2022 share_m3_other_2022 ///
             share_debt_long_2022 share_debt_other_2022 {
     capture confirm variable `v'
     if !_rc local sharevars_2022 "`sharevars_2022' `v'"
 }
 if "`sharevars_2022'" != "" {
-    summarize `sharevars_2022'
+    tabstat `sharevars_2022' `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 }
+
+* ---------------------------------------------------------------------
+* Portfolio composition vs wealth/income percentiles (2002 & 2022)
+* ---------------------------------------------------------------------
+display "=== Portfolio composition by wealth/income percentiles (2002 & 2022) ==="
+preserve
+keep hhidpn ///
+    wealth_core_2002 wealth_ira_2002 wealth_res_2002 wealth_total_2002 ///
+    wealth_core_2022 wealth_ira_2022 wealth_res_2022 wealth_total_2022 ///
+    labor_income_real_win_2002 total_income_real_win_2002 labor_income_real_win_2022 total_income_real_win_2022 ///
+    share_m1_re_2002 share_m1_bus_2002 share_m1_stk_2002 share_m1_chck_2002 share_m1_cd_2002 share_m1_bond_2002 ///
+    share_m2_re_2002 share_m2_bus_2002 share_m2_ira_2002 share_m2_stk_2002 share_m2_chck_2002 share_m2_cd_2002 share_m2_bond_2002 ///
+    share_m3_pri_res_2002 share_m3_sec_res_2002 share_m3_re_2002 share_m3_vehicles_2002 share_m3_bus_2002 share_m3_ira_2002 share_m3_stk_2002 share_m3_chck_2002 share_m3_cd_2002 share_m3_bond_2002 share_m3_other_2002 ///
+    share_m1_re_2022 share_m1_bus_2022 share_m1_stk_2022 share_m1_chck_2022 share_m1_cd_2022 share_m1_bond_2022 ///
+    share_m2_re_2022 share_m2_bus_2022 share_m2_ira_2022 share_m2_stk_2022 share_m2_chck_2022 share_m2_cd_2022 share_m2_bond_2022 ///
+    share_m3_pri_res_2022 share_m3_sec_res_2022 share_m3_re_2022 share_m3_vehicles_2022 share_m3_bus_2022 share_m3_ira_2022 share_m3_stk_2022 share_m3_chck_2022 share_m3_cd_2022 share_m3_bond_2022 share_m3_other_2022
+
+
+* Wealth percentile bins (20/40/60/80/100) and income percentile bins
+foreach y in 2002 2022 {
+    * Core shares vs wealth_core percentiles
+    preserve
+    keep hhidpn wealth_core_`y' share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' ///
+        share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y'
+    xtile wbin = wealth_core_`y', nq(5)
+    collapse (mean) share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' ///
+        share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y' `wopt', by(wbin)
+    graph bar (mean) share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' ///
+        share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y', ///
+        over(wbin) stack ///
+        title("Core portfolio by wealth percentile (`y')") ///
+        xtitle("Wealth percentile bin (20/40/60/80/100)") ytitle("Mean share")
+    graph export "${BASE_PATH}/Descriptive/Figures/share_m1_by_wealth_pct_`y'.png", replace
+    restore
+
+    * Core+IRA shares vs wealth_core+ira percentiles
+    preserve
+    keep hhidpn wealth_core_`y' wealth_ira_`y' share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' ///
+        share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y'
+    gen double wealth_coreira = wealth_core_`y' + wealth_ira_`y' if !missing(wealth_core_`y') & !missing(wealth_ira_`y')
+    xtile wbin = wealth_coreira, nq(5)
+    collapse (mean) share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' ///
+        share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y' `wopt', by(wbin)
+    graph bar (mean) share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' ///
+        share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y', ///
+        over(wbin) stack ///
+        title("Core+IRA portfolio by wealth percentile (`y')") ///
+        xtitle("Wealth percentile bin (20/40/60/80/100)") ytitle("Mean share")
+    graph export "${BASE_PATH}/Descriptive/Figures/share_m2_by_wealth_pct_`y'.png", replace
+    restore
+
+    * Total portfolio shares vs wealth_total percentiles
+    preserve
+    keep hhidpn wealth_total_`y' share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' ///
+        share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y'
+    xtile wbin = wealth_total_`y', nq(5)
+    collapse (mean) share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' ///
+        share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y' `wopt', by(wbin)
+    graph bar (mean) share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' ///
+        share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y', ///
+        over(wbin) stack ///
+        title("Total portfolio by wealth percentile (`y')") ///
+        xtitle("Wealth percentile bin (20/40/60/80/100)") ytitle("Mean share")
+    graph export "${BASE_PATH}/Descriptive/Figures/share_m3_by_wealth_pct_`y'.png", replace
+    restore
+
+    * Core shares vs income percentiles (total income, deflated + winsorized)
+    preserve
+    keep hhidpn total_income_real_win_`y' share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' ///
+        share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y'
+    xtile ibin = total_income_real_win_`y', nq(5)
+    collapse (mean) share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' ///
+        share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y' `wopt', by(ibin)
+    graph bar (mean) share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' ///
+        share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y', ///
+        over(ibin) stack ///
+        title("Core portfolio by income percentile (`y')") ///
+        xtitle("Income percentile bin (20/40/60/80/100)") ytitle("Mean share")
+    graph export "${BASE_PATH}/Descriptive/Figures/share_m1_by_income_pct_`y'.png", replace
+    restore
+
+    * Core+IRA shares vs income percentiles
+    preserve
+    keep hhidpn total_income_real_win_`y' share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' ///
+        share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y'
+    xtile ibin = total_income_real_win_`y', nq(5)
+    collapse (mean) share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' ///
+        share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y' `wopt', by(ibin)
+    graph bar (mean) share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' ///
+        share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y', ///
+        over(ibin) stack ///
+        title("Core+IRA portfolio by income percentile (`y')") ///
+        xtitle("Income percentile bin (20/40/60/80/100)") ytitle("Mean share")
+    graph export "${BASE_PATH}/Descriptive/Figures/share_m2_by_income_pct_`y'.png", replace
+    restore
+
+    * Total portfolio shares vs income percentiles
+    preserve
+    keep hhidpn total_income_real_win_`y' share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' ///
+        share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y'
+    xtile ibin = total_income_real_win_`y', nq(5)
+    collapse (mean) share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' ///
+        share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y' `wopt', by(ibin)
+    graph bar (mean) share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' ///
+        share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y', ///
+        over(ibin) stack ///
+        title("Total portfolio by income percentile (`y')") ///
+        xtitle("Income percentile bin (20/40/60/80/100)") ytitle("Mean share")
+    graph export "${BASE_PATH}/Descriptive/Figures/share_m3_by_income_pct_`y'.png", replace
+    restore
+}
+restore
 
 * ---------------------------------------------------------------------
 * Trust correlations and PCA
@@ -386,8 +504,8 @@ keep hhidpn age_* depression_2020 health_cond_2020
 reshape long age_, i(hhidpn) j(year)
 rename age_ age
 gen int age_group = floor(age/5)*5 if !missing(age)
-tabstat depression_2020 health_cond_2020, by(age_group) statistics(n mean sd p50 p95)
-collapse (mean) mean_depression=depression_2020 mean_health=health_cond_2020 (count) n=depression_2020, by(age_group)
+tabstat depression_2020 health_cond_2020 `wopt', by(age_group) statistics(n mean sd p50 p95)
+collapse (mean) mean_depression=depression_2020 mean_health=health_cond_2020 (count) n=depression_2020 `wopt', by(age_group)
 export delimited using "${BASE_PATH}/Descriptive/Tables/depression_health_by_agegroup.csv", replace
 restore
 
@@ -430,21 +548,35 @@ capture mkdir "${BASE_PATH}/Descriptive/Figures"
 foreach v in ln_lab_inc_final_2022 ln_tot_inc_final_2022 {
     capture confirm variable `v'
     if !_rc {
+        local vlabel = cond("`v'"=="ln_lab_inc_final_2022","Final log labor income (2022)","Final log total income (2022)")
         twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_others_2020), ///
-            title("`v' vs trust_others_2020 (2022)") ///
-            xtitle("General trust (2020)") ytitle("`v'")
+            title("`vlabel' vs general trust") ///
+            xtitle("General trust (2020)") ytitle("`vlabel'")
         graph export "${BASE_PATH}/Descriptive/Figures/`v'_vs_trust_2022.png", replace
     }
 }
 
 * Return measures
-foreach v in r1_annual_2022 r2_annual_2022 r3_annual_2022 debt_long_annual_2022 debt_other_annual_2022 ///
-            r1_annual_2022_win r2_annual_2022_win r3_annual_2022_win debt_long_annual_2022_win debt_other_annual_2022_win {
+foreach v in r1_annual_2022 r2_annual_2022 r3_annual_2022 r4_annual_2022 debt_long_annual_2022 debt_other_annual_2022 ///
+            r1_annual_2022_win r2_annual_2022_win r3_annual_2022_win r4_annual_2022_win debt_long_annual_2022_win debt_other_annual_2022_win {
     capture confirm variable `v'
     if !_rc {
+        local vlabel "`v'"
+        if "`v'"=="r1_annual_2022" local vlabel "r1 return (2022)"
+        if "`v'"=="r2_annual_2022" local vlabel "r2 return (2022)"
+        if "`v'"=="r3_annual_2022" local vlabel "r3 return (2022)"
+        if "`v'"=="r4_annual_2022" local vlabel "r4 return (2022)"
+        if "`v'"=="debt_long_annual_2022" local vlabel "debt_long return (2022)"
+        if "`v'"=="debt_other_annual_2022" local vlabel "debt_other return (2022)"
+        if "`v'"=="r1_annual_2022_win" local vlabel "r1 return (2022, winsorized)"
+        if "`v'"=="r2_annual_2022_win" local vlabel "r2 return (2022, winsorized)"
+        if "`v'"=="r3_annual_2022_win" local vlabel "r3 return (2022, winsorized)"
+        if "`v'"=="r4_annual_2022_win" local vlabel "r4 return (2022, winsorized)"
+        if "`v'"=="debt_long_annual_2022_win" local vlabel "debt_long return (2022, winsorized)"
+        if "`v'"=="debt_other_annual_2022_win" local vlabel "debt_other return (2022, winsorized)"
         twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_others_2020), ///
-            title("`v' vs trust_others_2020 (2022)") ///
-            xtitle("General trust (2020)") ytitle("`v'")
+            title("`vlabel' vs general trust") ///
+            xtitle("General trust (2020)") ytitle("`vlabel'")
         graph export "${BASE_PATH}/Descriptive/Figures/`v'_vs_trust_2022.png", replace
     }
 }

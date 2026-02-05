@@ -249,69 +249,105 @@ if !_rc {
 }
 
 * ---------------------------------------------------------------------
-* Wealth deciles by year (three concepts: m1, m2, total net wealth)
+* Wealth deciles by year (four concepts: core, ira-only, residential-only, total net wealth)
 * RAND: h5atotb (2000), h6atotb (2002), ... h16atotb (2022). Lowercase.
-* m1: non-residential, non-IRA (total - primary - secondary - IRA)
-* m2: non-residential (total - primary - secondary), includes IRA
-* total: h*atotb
 * ---------------------------------------------------------------------
 local wyears "2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
 local watotb "h5atotb h6atotb h7atotb h8atotb h9atotb h10atotb h11atotb h12atotb h13atotb h14atotb h15atotb h16atotb"
 local watoth "h5atoth h6atoth h7atoth h8atoth h9atoth h10atoth h11atoth h12atoth h13atoth h14atoth h15atoth h16atoth"
 local wanethb "h5anethb h6anethb h7anethb h8anethb h9anethb h10anethb h11anethb h12anethb h13anethb h14anethb h15anethb h16anethb"
 local waira "h5aira h6aira h7aira h8aira h9aira h10aira h11aira h12aira h13aira h14aira h15aira h16aira"
+local warles "h5arles h6arles h7arles h8arles h9arles h10arles h11arles h12arles h13arles h14arles h15arles h16arles"
+local wabsns "h5absns h6absns h7absns h8absns h9absns h10absns h11absns h12absns h13absns h14absns h15absns h16absns"
+local wastck "h5astck h6astck h7astck h8astck h9astck h10astck h11astck h12astck h13astck h14astck h15astck h16astck"
+local wabond "h5abond h6abond h7abond h8abond h9abond h10abond h11abond h12abond h13abond h14abond h15abond h16abond"
+local wachck "h5achck h6achck h7achck h8achck h9achck h10achck h11achck h12achck h13achck h14achck h15achck h16achck"
+local wacd "h5acd h6acd h7acd h8acd h9acd h10acd h11acd h12acd h13acd h14acd h15acd h16acd"
+local watran "h5atran h6atran h7atran h8atran h9atran h10atran h11atran h12atran h13atran h14atran h15atran h16atran"
+local waothr "h5aothr h6aothr h7aothr h8aothr h9aothr h10aothr h11aothr h12aothr h13aothr h14aothr h15aothr h16aothr"
 forvalues j = 1/12 {
     local y : word `j' of `wyears'
     local w : word `j' of `watotb'
     local wpri : word `j' of `watoth'
     local wsec : word `j' of `wanethb'
     local wira : word `j' of `waira'
+    local wre : word `j' of `warles'
+    local wbus : word `j' of `wabsns'
+    local wstk : word `j' of `wastck'
+    local wbond : word `j' of `wabond'
+    local wchck : word `j' of `wachck'
+    local wcd : word `j' of `wacd'
+    local wtran : word `j' of `watran'
+    local woth : word `j' of `waothr'
     capture confirm variable `w'
     capture confirm variable `wpri'
     capture confirm variable `wsec'
     capture confirm variable `wira'
     if !_rc {
-        * Total net wealth (level) and deciles
-        capture drop wealth_total_`y'
-        gen double wealth_total_`y' = `w'
+        local has_core 1
+        foreach v in `wre' `wbus' `wstk' `wbond' `wchck' `wcd' {
+            capture confirm variable `v'
+            if _rc local has_core 0
+        }
+        * Total net wealth (constructed from components, allow partial nonmissing)
+        capture drop wealth_total_`y' _gross_assets_`y' _gross_n_`y' _debt_total_`y' _debt_n_`y'
+        egen double _gross_assets_`y' = rowtotal(`wre' `wbus' `wstk' `wbond' `wchck' `wcd' `wpri' `wsec' `wira' `wtran' `woth'), missing
+        egen byte _gross_n_`y' = rownonmiss(`wre' `wbus' `wstk' `wbond' `wchck' `wcd' `wpri' `wsec' `wira' `wtran' `woth')
+        egen double _debt_total_`y' = rowtotal(h`j'amort h`j'ahmln h`j'adebt h`j'amrtb), missing
+        egen byte _debt_n_`y' = rownonmiss(h`j'amort h`j'ahmln h`j'adebt h`j'amrtb)
+        gen double wealth_total_`y' = _gross_assets_`y' - _debt_total_`y'
+        replace wealth_total_`y' = . if _gross_n_`y' == 0 & _debt_n_`y' == 0
         capture drop wealth_decile_`y'
-        xtile wealth_decile_`y' = `w', nq(10)
-        replace wealth_decile_`y' = . if missing(`w')
+        xtile wealth_decile_`y' = wealth_total_`y', nq(10)
+        replace wealth_decile_`y' = . if missing(wealth_total_`y')
         forvalues d = 1/10 {
             capture drop wealth_d`d'_`y'
             gen byte wealth_d`d'_`y' = wealth_decile_`y' == `d' if !missing(wealth_decile_`y')
         }
 
-        * m2 wealth (exclude residences, include IRA)
-        capture drop wealth_m2_`y'
-        gen double wealth_m2_`y' = `w' - `wpri' - `wsec' if !missing(`w') & !missing(`wpri') & !missing(`wsec')
-        capture drop wealth_m2_decile_`y'
-        xtile wealth_m2_decile_`y' = wealth_m2_`y', nq(10)
-        replace wealth_m2_decile_`y' = . if missing(wealth_m2_`y')
-        forvalues d = 1/10 {
-            capture drop wealth_m2_d`d'_`y'
-            gen byte wealth_m2_d`d'_`y' = wealth_m2_decile_`y' == `d' if !missing(wealth_m2_decile_`y')
+        * Core wealth (exclude residences and IRA)
+        if `has_core' {
+            capture drop wealth_core_`y'
+            gen double wealth_core_`y' = `wre' + `wbus' + `wstk' + `wbond' + `wchck' + `wcd' if !missing(`wre') & !missing(`wbus') & !missing(`wstk') & !missing(`wbond') & !missing(`wchck') & !missing(`wcd')
+            capture drop wealth_core_decile_`y'
+            xtile wealth_core_decile_`y' = wealth_core_`y', nq(10)
+            replace wealth_core_decile_`y' = . if missing(wealth_core_`y')
+            forvalues d = 1/10 {
+                capture drop wealth_core_d`d'_`y'
+                gen byte wealth_core_d`d'_`y' = wealth_core_decile_`y' == `d' if !missing(wealth_core_decile_`y')
+            }
         }
 
-        * m1 wealth (exclude residences and IRA)
-        capture drop wealth_m1_`y'
-        gen double wealth_m1_`y' = `w' - `wpri' - `wsec' - `wira' if !missing(`w') & !missing(`wpri') & !missing(`wsec') & !missing(`wira')
-        capture drop wealth_m1_decile_`y'
-        xtile wealth_m1_decile_`y' = wealth_m1_`y', nq(10)
-        replace wealth_m1_decile_`y' = . if missing(wealth_m1_`y')
+        * IRA-only wealth
+        capture drop wealth_ira_`y'
+        gen double wealth_ira_`y' = `wira' if !missing(`wira')
+        capture drop wealth_ira_decile_`y'
+        xtile wealth_ira_decile_`y' = wealth_ira_`y', nq(10)
+        replace wealth_ira_decile_`y' = . if missing(wealth_ira_`y')
         forvalues d = 1/10 {
-            capture drop wealth_m1_d`d'_`y'
-            gen byte wealth_m1_d`d'_`y' = wealth_m1_decile_`y' == `d' if !missing(wealth_m1_decile_`y')
+            capture drop wealth_ira_d`d'_`y'
+            gen byte wealth_ira_d`d'_`y' = wealth_ira_decile_`y' == `d' if !missing(wealth_ira_decile_`y')
+        }
+
+        * Residential-only wealth (primary + secondary)
+        capture drop wealth_res_`y'
+        gen double wealth_res_`y' = `wpri' + `wsec' if !missing(`wpri') & !missing(`wsec')
+        capture drop wealth_res_decile_`y'
+        xtile wealth_res_decile_`y' = wealth_res_`y', nq(10)
+        replace wealth_res_decile_`y' = . if missing(wealth_res_`y')
+        forvalues d = 1/10 {
+            capture drop wealth_res_d`d'_`y'
+            gen byte wealth_res_d`d'_`y' = wealth_res_decile_`y' == `d' if !missing(wealth_res_decile_`y')
         }
     }
 }
 
-* Asset shares by return-scope per wave (m1, m2, m3)
+* Asset shares by return-scope per wave (core; core+IRA; total)
 forvalues j = 5/16 {
     local y = 1990 + (2*`j')  // wave 5=2000, 16=2022
     capture drop share_pri_res_`y' share_sec_res_`y' share_re_`y' share_vehicles_`y' share_bus_`y' share_ira_`y' share_stk_`y' share_chck_`y' share_cd_`y' share_bond_`y' share_other_`y'
-    capture drop share_m1_re_`y' share_m1_vehicles_`y' share_m1_bus_`y' share_m1_stk_`y' share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y' share_m1_other_`y'
-    capture drop share_m2_re_`y' share_m2_vehicles_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y' share_m2_other_`y'
+    capture drop share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y'
+    capture drop share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y'
     capture drop share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y'
     capture drop share_debt_long_`y' share_debt_other_`y'
     capture drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_`y'
@@ -338,12 +374,12 @@ forvalues j = 5/16 {
         replace base_m3_assets_`y' = . if base_m3_n_`y' == 0
         gen double gross_wealth_`y' = base_m3_assets_`y'
 
-        egen double base_m2_assets_`y' = rowtotal(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
-        egen byte base_m2_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+        egen double base_m2_assets_`y' = rowtotal(h`j'arles_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos)
+        egen byte base_m2_n_`y' = rownonmiss(h`j'arles_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos)
         replace base_m2_assets_`y' = . if base_m2_n_`y' == 0
 
-        egen double base_m1_assets_`y' = rowtotal(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
-        egen byte base_m1_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+        egen double base_m1_assets_`y' = rowtotal(h`j'arles_pos h`j'absns_pos h`j'astck_pos h`j'abond_pos h`j'achck_pos h`j'acd_pos)
+        egen byte base_m1_n_`y' = rownonmiss(h`j'arles_pos h`j'absns_pos h`j'astck_pos h`j'abond_pos h`j'achck_pos h`j'acd_pos)
         replace base_m1_assets_`y' = . if base_m1_n_`y' == 0
 
         * m3 shares (gross total assets base)
@@ -366,26 +402,24 @@ forvalues j = 5/16 {
         replace share_debt_long_`y' = . if missing(h`j'amort) & missing(h`j'ahmln)
         gen double share_debt_other_`y' = max(h`j'adebt, 0) / base_m3_assets_`y' if !missing(h`j'adebt) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
 
-        * m2 shares (exclude residences; gross assets base)
+        * core+IRA shares (exclude residences; gross assets base)
         gen double share_m2_re_`y' = h`j'arles_pos / base_m2_assets_`y' if !missing(h`j'arles_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_vehicles_`y' = h`j'atran_pos / base_m2_assets_`y' if !missing(h`j'atran_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
         gen double share_m2_bus_`y' = h`j'absns_pos / base_m2_assets_`y' if !missing(h`j'absns_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
         gen double share_m2_ira_`y' = h`j'aira_pos / base_m2_assets_`y' if !missing(h`j'aira_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
         gen double share_m2_stk_`y' = h`j'astck_pos / base_m2_assets_`y' if !missing(h`j'astck_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
         gen double share_m2_chck_`y' = h`j'achck_pos / base_m2_assets_`y' if !missing(h`j'achck_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
         gen double share_m2_cd_`y' = h`j'acd_pos / base_m2_assets_`y' if !missing(h`j'acd_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
         gen double share_m2_bond_`y' = h`j'abond_pos / base_m2_assets_`y' if !missing(h`j'abond_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_other_`y' = h`j'aothr_pos / base_m2_assets_`y' if !missing(h`j'aothr_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+        capture drop share_m2_other_`y'
 
-        * m1 shares (exclude residences and IRA; gross assets base)
+        * core shares (exclude residences and IRA; gross assets base)
         gen double share_m1_re_`y' = h`j'arles_pos / base_m1_assets_`y' if !missing(h`j'arles_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        gen double share_m1_vehicles_`y' = h`j'atran_pos / base_m1_assets_`y' if !missing(h`j'atran_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
         gen double share_m1_bus_`y' = h`j'absns_pos / base_m1_assets_`y' if !missing(h`j'absns_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
         gen double share_m1_stk_`y' = h`j'astck_pos / base_m1_assets_`y' if !missing(h`j'astck_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
         gen double share_m1_chck_`y' = h`j'achck_pos / base_m1_assets_`y' if !missing(h`j'achck_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
         gen double share_m1_cd_`y' = h`j'acd_pos / base_m1_assets_`y' if !missing(h`j'acd_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
         gen double share_m1_bond_`y' = h`j'abond_pos / base_m1_assets_`y' if !missing(h`j'abond_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        gen double share_m1_other_`y' = h`j'aothr_pos / base_m1_assets_`y' if !missing(h`j'aothr_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
+        capture drop share_m1_other_`y'
 
         drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_`y' ///
             h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
@@ -393,8 +427,8 @@ forvalues j = 5/16 {
 }
 
 * Reduce dataset to relevant variables
-capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* debt_long_annual_* debt_other_annual_* r1_annual_avg r2_annual_avg r3_annual_avg debt_long_annual_avg debt_other_annual_avg
-capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_m1_* wealth_m2_*
+capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* debt_long_annual_* debt_other_annual_* r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg debt_long_annual_avg debt_other_annual_avg
+capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_res_*
 capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_debt_*
 capture unab _incvars : labor_income_* total_income_*
 capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_*

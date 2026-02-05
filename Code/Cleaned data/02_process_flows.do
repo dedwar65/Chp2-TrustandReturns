@@ -1,8 +1,8 @@
 * 02_process_flows.do
-* Standalone: (1) Recode HRS special values to missing for flow/flag vars, (2) flag==5 -> flow 0, (3) construct flow_*_YYYY per wave.
-* Same logic is inlined in 02_compute_returns_income.do when flow_bus_2022 is missing, so you can run 01 then 02_compute_returns_income only.
-* Use this file only if you want to build flows separately (e.g. run 01, then this, then 02_compute_returns_income).
-* Expects: run after 01_merge_all_data. Input: ${CLEANED}/all_data_merged.dta. Output: same file with flow_*_2002 ... flow_*_2022.
+* Standalone: (1) recode HRS special values to missing for flow/flag vars,
+* (2) flag==5 -> flow 0, (3) construct flow_*_YYYY per wave.
+* Expects: run after 01_merge_all_data. Input: ${CLEANED}/all_data_merged.dta.
+* Output: same file with flow_*_2002 ... flow_*_2022.
 
 clear
 set more off
@@ -30,17 +30,9 @@ use "${CLEANED}/all_data_merged.dta", clear
 
 local waves "h j k l m n o p q r s"
 local years "2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
-* Startup: count how many wave flow vars exist (raw data must come from 01_merge_all_data)
-local nraw 0
-forvalues i = 1/11 {
-    local w : word `i' of `waves'
-    capture confirm variable `w'r050
-    if !_rc local nraw = `nraw' + 1
-}
-display "02_process_flows: Loaded N=" _N ". Raw flow vars (r050 per wave): `nraw'/11 present."
-if `nraw' == 0 {
-    display as error "  No hr050, jr050, ..., sr050 found. Run 01_merge_all_data.do first and ensure flow merges (01_1, 01_3-01_12) ran."
-}
+* Ensure flow vars exist from 01_merge_all_data
+capture confirm variable hr050
+if _rc display as error "02_process_flows: No hr050 found. Run 01_merge_all_data.do first and ensure flow merges ran."
 
 * (1) Recode special values to missing for ALL variables imported from fat files (flow + flag, every wave)
 * Use inlist() so -8/-9 are handled reliably (no macro expansion of negative numbers).
@@ -200,23 +192,13 @@ forvalues i = 1/11 {
         replace flow_residences_`y' = . if missing(`w'r013) & missing(`w'r007) & missing(`w'r024)
     }
 
-    * Flow aggregates by measure (all waves)
-    capture drop flow_m1_`y' flow_m2_`y' flow_total_`y'
-    gen double flow_m1_`y' = flow_bus_`y' + flow_re_`y' + flow_stk_`y'
-    gen double flow_m2_`y' = flow_m1_`y' + flow_ira_`y'
-    gen double flow_total_`y' = flow_m2_`y' + flow_residences_`y'
+    * Flow aggregates by scope (all waves)
+    capture drop flow_core_`y' flow_res_`y' flow_total_`y'
+    gen double flow_core_`y' = flow_bus_`y' + flow_re_`y' + flow_stk_`y'
+    * flow_ira_`y' is defined above from q171_* (use as IRA-only scope)
+    gen double flow_res_`y' = flow_residences_`y'
+    gen double flow_total_`y' = flow_core_`y' + flow_ira_`y' + flow_res_`y'
 }
-
-* Diagnostic: list flow variables created and non-missing counts
-capture unab _flowvars : flow_bus_* flow_stk_* flow_re_* flow_ira_* flow_residences_*
-if _rc == 0 {
-    display "02_process_flows: Created flow variables: " _N " obs"
-    quietly count if !missing(flow_bus_2022)
-    display "  flow_bus_2022 non-missing: " r(N)
-    quietly count if !missing(flow_stk_2022)
-    display "  flow_stk_2022 non-missing: " r(N)
-}
-else display "02_process_flows: Warning - no flow_* variables found after loop"
 
 save "${CLEANED}/all_data_merged.dta", replace
 display "02_process_flows: Saved " _N " obs to ${CLEANED}/all_data_merged.dta"
