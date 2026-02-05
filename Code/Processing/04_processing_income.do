@@ -13,6 +13,20 @@ use "${PROCESSED}/analysis_ready.dta", clear
 
 * Keep all variables; only modify income series below
 
+* Require income series to exist
+capture unab _lab_any : labor_income_*
+if _rc {
+    display as error "04: labor_income_* not found in analysis_ready.dta. Run 02_compute_returns_income.do and 03_prep_controls.do first."
+    log close
+    exit 0
+}
+capture unab _tot_any : total_income_*
+if _rc {
+    display as error "04: total_income_* not found in analysis_ready.dta. Run 02_compute_returns_income.do and 03_prep_controls.do first."
+    log close
+    exit 0
+}
+
 * Year list (even years, 2000–2022)
 local years "2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
 
@@ -84,6 +98,39 @@ foreach y of local years {
 
 display "Tabstat income after deflation"
 tabstat `labreal' `totreal', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+
+* ---------------------------------------------------------------------
+* Winsorize deflated levels (separate toggle on deflated series)
+* ---------------------------------------------------------------------
+display "=== 1% winsorization on deflated levels ==="
+display "Tabstat deflated income before winsorization"
+tabstat `labreal' `totreal', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+
+local labrealwin ""
+local totrealwin ""
+foreach y of local years {
+    quietly summarize labor_income_real_`y', detail
+    local p1_lab = r(p1)
+    local p99_lab = r(p99)
+    capture drop labor_income_real_win_`y'
+    gen double labor_income_real_win_`y' = labor_income_real_`y'
+    replace labor_income_real_win_`y' = `p1_lab' if labor_income_real_win_`y' < `p1_lab' & !missing(labor_income_real_win_`y')
+    replace labor_income_real_win_`y' = `p99_lab' if labor_income_real_win_`y' > `p99_lab' & !missing(labor_income_real_win_`y')
+
+    quietly summarize total_income_real_`y', detail
+    local p1_tot = r(p1)
+    local p99_tot = r(p99)
+    capture drop total_income_real_win_`y'
+    gen double total_income_real_win_`y' = total_income_real_`y'
+    replace total_income_real_win_`y' = `p1_tot' if total_income_real_win_`y' < `p1_tot' & !missing(total_income_real_win_`y')
+    replace total_income_real_win_`y' = `p99_tot' if total_income_real_win_`y' > `p99_tot' & !missing(total_income_real_win_`y')
+
+    local labrealwin "`labrealwin' labor_income_real_win_`y'"
+    local totrealwin "`totrealwin' total_income_real_win_`y'"
+}
+
+display "Tabstat deflated income after winsorization"
+tabstat `labrealwin' `totrealwin', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 
 * ---------------------------------------------------------------------
 * Log income (separate toggle on original series)

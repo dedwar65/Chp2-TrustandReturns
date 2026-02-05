@@ -2,13 +2,33 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_processing_income.log
   log type:  text
- opened on:   4 Feb 2026, 19:05:05
+ opened on:   4 Feb 2026, 23:01:30
 
 . 
 . use "${PROCESSED}/analysis_ready.dta", clear
 
 . 
 . * Keep all variables; only modify income series below
+. 
+. * Require income series to exist
+. capture unab _lab_any : labor_income_*
+
+. if _rc {
+.     display as error "04: labor_income_* not found in analysis_ready.dta. Run 02_compute_returns_income.do a
+> nd 03_prep_controls.do first."
+.     log close
+.     exit 0
+. }
+
+. capture unab _tot_any : total_income_*
+
+. if _rc {
+.     display as error "04: total_income_* not found in analysis_ready.dta. Run 02_compute_returns_income.do a
+> nd 03_prep_controls.do first."
+.     log close
+.     exit 0
+. }
+
 . 
 . * Year list (even years, 2000–2022)
 . local years "2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
@@ -223,6 +243,210 @@ Tabstat income after deflation
      p99 |  454154.6  457538.5  450428.9  423781.9
      Min |         0         0         0         0
      Max |  1.13e+07   7949613   5999789   4354338
+--------------------------------------------------
+
+. 
+. * ---------------------------------------------------------------------
+. * Winsorize deflated levels (separate toggle on deflated series)
+. * ---------------------------------------------------------------------
+. display "=== 1% winsorization on deflated levels ==="
+=== 1% winsorization on deflated levels ===
+
+. display "Tabstat deflated income before winsorization"
+Tabstat deflated income before winsorization
+
+. tabstat `labreal' `totreal', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+
+   Stats |  l~l_2000  l~l_2002  l~l_2004  l~l_2006  l~l_2008  l~l_2010  l~l_2012  l~l_2014  l~l_2016  l~l_2018
+---------+----------------------------------------------------------------------------------------------------
+       N |         0     18165     20129     18469     17217     22034     20554     18747     20912     17146
+    Mean |         .  33340.64  36793.77  34466.35  38111.07  35799.74  34629.65  35268.45  37990.44  37741.75
+      SD |         .  46766.26  69932.71  84046.84  578083.8  67557.56   48275.5  53555.82  54602.21  91236.87
+      p1 |         .         0         0         0         0         0         0         0         0         0
+      p5 |         .         0         0         0         0         0         0         0         0         0
+     p50 |         .  20666.58  21664.01  20972.09  20513.85  21694.71  20989.49  21209.02   22374.5  21582.51
+     p95 |         .    100935  111882.3  102542.9  100706.2  111828.4  107992.5  109891.3    122836  118703.8
+     p99 |         .  195241.5  215158.3  194798.5  196377.1  207503.8  210201.7  206046.2  227883.8  226616.4
+     Min |         .         0         0         0         0         0         0         0         0         0
+     Max |         .   1814535   3955969   9401143  7.55e+07   6734009   1242798   2472554   1580611   7934397
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  l~l_2020  l~l_2022  t~l_2000  t~l_2002  t~l_2004  t~l_2006  t~l_2008  t~l_2010  t~l_2012  t~l_2014
+---------+----------------------------------------------------------------------------------------------------
+       N |     15723     15856         0     18165     20129     18469     17217     22034     20554     18747
+    Mean |  37504.38  36119.35         .  55780.66  59957.99  62629.44  61193.08  53959.02  52902.68  54521.52
+      SD |  61354.24  57391.23         .  127809.3  123740.4  405661.7  586880.6  107633.1  102878.9  147947.5
+      p1 |         0         0         .         0         0         0         0         0         0         0
+      p5 |         0         0         .  3865.662   3235.98  4436.404  4531.778  869.7766  1227.455  1373.641
+     p50 |  22271.53  21380.16         .  30190.13  31556.55  30651.52  29723.43  29266.74  27766.46  27987.94
+     p95 |    115147  114333.4         .  174149.9  192724.4  179792.2  182559.4  168118.3  167599.6  166563.2
+     p99 |  222568.8  231497.2         .  416775.3  444681.9  452135.4  439330.7  377045.7  389510.5  407175.4
+     Min |         0         0         .         0         0         0         0         0         0         0
+     Max |   3297811   3423020         .  1.11e+07   5073107  3.41e+07  7.55e+07   6757990   4323565  1.25e+07
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  t~l_2016  t~l_2018  t~l_2020  t~l_2022
+---------+----------------------------------------
+       N |     20912     17146     15723     15856
+    Mean |  58469.23  57964.53  56517.29  54656.99
+      SD |  164525.2  146572.3  117526.6  119298.6
+      p1 |         0         0         0         0
+      p5 |  216.7694  107.9126  732.7539   255.573
+     p50 |  29321.51  28057.27   29048.9  26985.26
+     p95 |  183099.8  180753.6    181723  179641.9
+     p99 |  454154.6  457538.5  450428.9  423781.9
+     Min |         0         0         0         0
+     Max |  1.13e+07   7949613   5999789   4354338
+--------------------------------------------------
+
+. 
+. local labrealwin ""
+
+. local totrealwin ""
+
+. foreach y of local years {
+  2.     quietly summarize labor_income_real_`y', detail
+  3.     local p1_lab = r(p1)
+  4.     local p99_lab = r(p99)
+  5.     capture drop labor_income_real_win_`y'
+  6.     gen double labor_income_real_win_`y' = labor_income_real_`y'
+  7.     replace labor_income_real_win_`y' = `p1_lab' if labor_income_real_win_`y' < `p1_lab' & !missing(labor
+> _income_real_win_`y')
+  8.     replace labor_income_real_win_`y' = `p99_lab' if labor_income_real_win_`y' > `p99_lab' & !missing(lab
+> or_income_real_win_`y')
+  9. 
+.     quietly summarize total_income_real_`y', detail
+ 10.     local p1_tot = r(p1)
+ 11.     local p99_tot = r(p99)
+ 12.     capture drop total_income_real_win_`y'
+ 13.     gen double total_income_real_win_`y' = total_income_real_`y'
+ 14.     replace total_income_real_win_`y' = `p1_tot' if total_income_real_win_`y' < `p1_tot' & !missing(total
+> _income_real_win_`y')
+ 15.     replace total_income_real_win_`y' = `p99_tot' if total_income_real_win_`y' > `p99_tot' & !missing(tot
+> al_income_real_win_`y')
+ 16. 
+.     local labrealwin "`labrealwin' labor_income_real_win_`y'"
+ 17.     local totrealwin "`totrealwin' total_income_real_win_`y'"
+ 18. }
+(45,234 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(45,234 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(27,069 missing values generated)
+(0 real changes made)
+(181 real changes made)
+(27,069 missing values generated)
+(0 real changes made)
+(181 real changes made)
+(25,105 missing values generated)
+(0 real changes made)
+(210 real changes made)
+(25,105 missing values generated)
+(0 real changes made)
+(201 real changes made)
+(26,765 missing values generated)
+(0 real changes made)
+(185 real changes made)
+(26,765 missing values generated)
+(0 real changes made)
+(184 real changes made)
+(28,017 missing values generated)
+(0 real changes made)
+(172 real changes made)
+(28,017 missing values generated)
+(0 real changes made)
+(172 real changes made)
+(23,200 missing values generated)
+(0 real changes made)
+(219 real changes made)
+(23,200 missing values generated)
+(0 real changes made)
+(220 real changes made)
+(24,680 missing values generated)
+(0 real changes made)
+(206 real changes made)
+(24,680 missing values generated)
+(0 real changes made)
+(205 real changes made)
+(26,487 missing values generated)
+(0 real changes made)
+(172 real changes made)
+(26,487 missing values generated)
+(0 real changes made)
+(187 real changes made)
+(24,322 missing values generated)
+(0 real changes made)
+(209 real changes made)
+(24,322 missing values generated)
+(0 real changes made)
+(209 real changes made)
+(28,088 missing values generated)
+(0 real changes made)
+(171 real changes made)
+(28,088 missing values generated)
+(0 real changes made)
+(171 real changes made)
+(29,511 missing values generated)
+(0 real changes made)
+(157 real changes made)
+(29,511 missing values generated)
+(0 real changes made)
+(158 real changes made)
+(29,378 missing values generated)
+(0 real changes made)
+(162 real changes made)
+(29,378 missing values generated)
+(0 real changes made)
+(158 real changes made)
+
+. 
+. display "Tabstat deflated income after winsorization"
+Tabstat deflated income after winsorization
+
+. tabstat `labrealwin' `totrealwin', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+
+   Stats |  l~n_2000  l~n_2002  l~n_2004  l~n_2006  l~n_2008  l~n_2010  l~n_2012  l~n_2014  l~n_2016  l~n_2018
+---------+----------------------------------------------------------------------------------------------------
+       N |         0     18165     20129     18469     17217     22034     20554     18747     20912     17146
+    Mean |         .  32051.03  34677.44   32623.4  32118.26   34179.6  33343.22  33797.75  36431.51  35166.32
+      SD |         .  34377.05  38343.38  34869.15  34501.77  37638.02  37227.33  37111.92  41677.96   40663.4
+      p1 |         .         0         0         0         0         0         0         0         0         0
+      p5 |         .         0         0         0         0         0         0         0         0         0
+     p50 |         .  20666.58  21664.01  20972.09  20513.85  21694.71  20989.49  21209.02   22374.5  21582.51
+     p95 |         .    100935  111882.3  102542.9  100706.2  111828.4  107992.5  109891.3    122836  118703.8
+     p99 |         .  195241.5  215158.3  194798.5  196377.1  207503.8  210201.7  206046.2  227883.8  226616.4
+     Min |         .         0         0         0         0         0         0         0         0         0
+     Max |         .  195241.5  215158.3  194798.5  196377.1  207503.8  210201.7  206046.2  227883.8  226616.4
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  l~n_2020  l~n_2022  t~n_2000  t~n_2002  t~n_2004  t~n_2006  t~n_2008  t~n_2010  t~n_2012  t~n_2014
+---------+----------------------------------------------------------------------------------------------------
+       N |     15723     15856         0     18165     20129     18469     17217     22034     20554     18747
+    Mean |  35752.92  34617.21         .  51878.52  55397.87  53489.83  52958.06  50369.49  49178.34  49727.29
+      SD |  39964.27  39802.65         .  66407.29   71841.8  70022.36  69115.31  62362.26   63012.2  63834.37
+      p1 |         0         0         .         0         0         0         0         0         0         0
+      p5 |         0         0         .  3865.662   3235.98  4436.404  4531.778  869.7766  1227.455  1373.641
+     p50 |  22271.53  21380.16         .  30190.13  31556.55  30651.52  29723.43  29266.74  27766.46  27987.94
+     p95 |    115147  114333.4         .  174149.9  192724.4  179792.2  182559.4  168118.3  167599.6  166563.2
+     p99 |  222568.8  231497.2         .  416775.3  444681.9  452135.4  439330.7  377045.7  389510.5  407175.4
+     Min |         0         0         .         0         0         0         0         0         0         0
+     Max |  222568.8  231497.2         .  416775.3  444681.9  452135.4  439330.7  377045.7  389510.5  407175.4
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |  t~n_2016  t~n_2018  t~n_2020  t~n_2022
+---------+----------------------------------------
+       N |     20912     17146     15723     15856
+    Mean |  53539.05   52319.7  52701.74  50624.16
+      SD |  71987.89   71354.6  70307.45  68371.47
+      p1 |         0         0         0         0
+      p5 |  216.7694  107.9126  732.7539   255.573
+     p50 |  29321.51  28057.27   29048.9  26985.26
+     p95 |  183099.8  180753.6    181723  179641.9
+     p99 |  454154.6  457538.5  450428.9  423781.9
+     Min |         0         0         0         0
+     Max |  454154.6  457538.5  450428.9  423781.9
 --------------------------------------------------
 
 . 
@@ -702,7 +926,7 @@ Tabstat income after winsorization
 
 . tabstat `labwin' `totwin', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 
-   Stats |  l~n_2000  l~n_2002  l~n_2004  l~n_2006  l~n_2008  l~n_2010  l~n_2012  l~n_2014  l~n_2016  l~n_2018
+   Stats |  labor_..  labor_..  labor_..  labor_..  labor_..  labor_..  labor_..  labor_..  labor_..  labor_..
 ---------+----------------------------------------------------------------------------------------------------
        N |         0     18165     20129     18469     17217     22034     20554     18747     20912     17146
     Mean |         .  21275.25  24175.77  24266.77  25514.42  27507.89  28251.09  29525.39  32268.62  32587.79
@@ -716,7 +940,7 @@ Tabstat income after winsorization
      Max |         .    129600    150000    144900    156000    167000    178100    180000  201844.3    210000
 --------------------------------------------------------------------------------------------------------------
 
-   Stats |  l~n_2020  l~n_2022  t~n_2000  t~n_2002  t~n_2004  t~n_2006  t~n_2008  t~n_2010  t~n_2012  t~n_2014
+   Stats |  labor_..  labor_..  total_..  total_..  total_..  total_..  total_..  total_..  total_..  total_..
 ---------+----------------------------------------------------------------------------------------------------
        N |     15723     15856         0     18165     20129     18469     17217     22034     20554     18747
     Mean |  34154.78  37384.04         .  34436.61  38621.25  39788.18  42069.36  40537.59   41667.9  43441.29
@@ -730,7 +954,7 @@ Tabstat income after winsorization
      Max |    212620    250000         .  276652.6    310015    336319    349000    303448    330025  355704.5
 --------------------------------------------------------------------------------------------------------------
 
-   Stats |  t~n_2016  t~n_2018  t~n_2020  t~n_2022
+   Stats |  total_..  total_..  total_..  total_..
 ---------+----------------------------------------
        N |     20912     17146     15723     15856
     Mean |  47421.34  48483.41  50345.99  54670.37
@@ -748,8 +972,8 @@ Tabstat income after winsorization
 . * ---------------------------------------------------------------------
 . * Final toggle (apply all: deflate -> log -> winsorize)
 . * ---------------------------------------------------------------------
-. display "=== Final toggle: deflate->log->trim->winsorize ==="
-=== Final toggle: deflate->log->trim->winsorize ===
+. display "=== Final toggle: deflate->log->winsorize ==="
+=== Final toggle: deflate->log->winsorize ===
 
 . display "Tabstat income before final toggle (original series)"
 Tabstat income before final toggle (original series)
@@ -1066,5 +1290,5 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_processing_income.log
   log type:  text
- closed on:   4 Feb 2026, 19:05:11
+ closed on:   4 Feb 2026, 23:01:38
 --------------------------------------------------------------------------------------------------------------

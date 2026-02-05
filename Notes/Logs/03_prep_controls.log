@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_prep_controls.log
   log type:  text
- opened on:   4 Feb 2026, 19:01:29
+ opened on:   4 Feb 2026, 22:58:45
 
 . 
 . use "${CLEANED}/all_data_merged.dta", clear
@@ -122,6 +122,72 @@
 .     capture drop risk_div_2020
 .     gen risk_div_2020 = rv567_2020
 (44,162 missing values generated)
+. }
+
+. 
+. * Additional trust regression controls (2020 wave)
+. capture confirm variable r15cesd
+
+. if !_rc {
+.     capture drop depression_2020
+.     gen depression_2020 = r15cesd
+(30,236 missing values generated)
+. }
+
+. capture confirm variable r15conde
+
+. if !_rc {
+.     capture drop health_cond_2020
+.     gen health_cond_2020 = r15conde
+(29,511 missing values generated)
+. }
+
+. capture confirm variable r15govmr
+
+. if !_rc {
+.     capture drop medicare_2020
+.     gen medicare_2020 = r15govmr
+(29,736 missing values generated)
+. }
+
+. capture confirm variable r15govmd
+
+. if !_rc {
+.     capture drop medicaid_2020
+.     gen medicaid_2020 = r15govmd
+(29,851 missing values generated)
+. }
+
+. capture confirm variable r15lifein
+
+. if !_rc {
+.     capture drop life_ins_2020
+.     gen life_ins_2020 = r15lifein
+(29,894 missing values generated)
+. }
+
+. capture confirm variable r15beqany
+
+. if !_rc {
+.     capture drop beq_any_2020
+.     gen beq_any_2020 = r15beqany
+(37,746 missing values generated)
+. }
+
+. capture confirm variable r15mdiv
+
+. if !_rc {
+.     capture drop num_divorce_2020
+.     gen num_divorce_2020 = r15mdiv
+(29,511 missing values generated)
+. }
+
+. capture confirm variable r15mwid
+
+. if !_rc {
+.     capture drop num_widow_2020
+.     gen num_widow_2020 = r15mwid
+(29,511 missing values generated)
 . }
 
 . 
@@ -321,6 +387,20 @@
 (1 missing value generated)
 (44,345 missing values generated)
 (1 missing value generated)
+. }
+
+. 
+. * Contextual trust by population only (all waves)
+. capture confirm variable population_2020
+
+. capture confirm variable trust_others_2020
+
+. if !_rc {
+.     forvalues w = 5/16 {
+  2.         local y = 1990 + (2*`w')
+  3.         capture drop pop_trust_`y'
+  4.         egen double pop_trust_`y' = mean(trust_others_2020), by(population_2020)
+  5.     }
 . }
 
 . 
@@ -856,119 +936,121 @@
   7.     capture drop share_debt_long_`y' share_debt_other_`y'
   8.     capture drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' bas
 > e_m1_n_`y'
-  9.     capture drop h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'
+  9.     capture drop gross_wealth_`y'
+ 10.     capture drop h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'
 > astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
- 10.     capture confirm variable h`j'atotb
- 11.     if !_rc {
- 12.         * Asset-base denominators (gross total assets, not net wealth)
+ 11.     capture confirm variable h`j'atotb
+ 12.     if !_rc {
+ 13.         * Asset-base denominators (gross total assets, not net wealth)
 .         * Use nonnegative components for gross assets and shares
 .         gen double h`j'atoth_pos = cond(missing(h`j'atoth), ., max(h`j'atoth, 0))
- 13.         gen double h`j'anethb_pos = cond(missing(h`j'anethb), ., max(h`j'anethb, 0))
- 14.         gen double h`j'arles_pos = cond(missing(h`j'arles), ., max(h`j'arles, 0))
- 15.         gen double h`j'atran_pos = cond(missing(h`j'atran), ., max(h`j'atran, 0))
- 16.         gen double h`j'absns_pos = cond(missing(h`j'absns), ., max(h`j'absns, 0))
- 17.         gen double h`j'aira_pos = cond(missing(h`j'aira), ., max(h`j'aira, 0))
- 18.         gen double h`j'astck_pos = cond(missing(h`j'astck), ., max(h`j'astck, 0))
- 19.         gen double h`j'achck_pos = cond(missing(h`j'achck), ., max(h`j'achck, 0))
- 20.         gen double h`j'acd_pos = cond(missing(h`j'acd), ., max(h`j'acd, 0))
- 21.         gen double h`j'abond_pos = cond(missing(h`j'abond), ., max(h`j'abond, 0))
- 22.         gen double h`j'aothr_pos = cond(missing(h`j'aothr), ., max(h`j'aothr, 0))
- 23. 
+ 14.         gen double h`j'anethb_pos = cond(missing(h`j'anethb), ., max(h`j'anethb, 0))
+ 15.         gen double h`j'arles_pos = cond(missing(h`j'arles), ., max(h`j'arles, 0))
+ 16.         gen double h`j'atran_pos = cond(missing(h`j'atran), ., max(h`j'atran, 0))
+ 17.         gen double h`j'absns_pos = cond(missing(h`j'absns), ., max(h`j'absns, 0))
+ 18.         gen double h`j'aira_pos = cond(missing(h`j'aira), ., max(h`j'aira, 0))
+ 19.         gen double h`j'astck_pos = cond(missing(h`j'astck), ., max(h`j'astck, 0))
+ 20.         gen double h`j'achck_pos = cond(missing(h`j'achck), ., max(h`j'achck, 0))
+ 21.         gen double h`j'acd_pos = cond(missing(h`j'acd), ., max(h`j'acd, 0))
+ 22.         gen double h`j'abond_pos = cond(missing(h`j'abond), ., max(h`j'abond, 0))
+ 23.         gen double h`j'aothr_pos = cond(missing(h`j'aothr), ., max(h`j'aothr, 0))
+ 24. 
 .         egen double base_m3_assets_`y' = rowtotal(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h
 > `j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
- 24.         egen byte base_m3_n_`y' = rownonmiss(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j
+ 25.         egen byte base_m3_n_`y' = rownonmiss(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j
 > 'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
- 25.         replace base_m3_assets_`y' = . if base_m3_n_`y' == 0
- 26. 
+ 26.         replace base_m3_assets_`y' = . if base_m3_n_`y' == 0
+ 27.         gen double gross_wealth_`y' = base_m3_assets_`y'
+ 28. 
 .         egen double base_m2_assets_`y' = rowtotal(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j
 > 'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
- 27.         egen byte base_m2_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'a
+ 29.         egen byte base_m2_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'a
 > stck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
- 28.         replace base_m2_assets_`y' = . if base_m2_n_`y' == 0
- 29. 
+ 30.         replace base_m2_assets_`y' = . if base_m2_n_`y' == 0
+ 31. 
 .         egen double base_m1_assets_`y' = rowtotal(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'astck_pos h`
 > j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
- 30.         egen byte base_m1_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'astck_pos h`j'
+ 32.         egen byte base_m1_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'astck_pos h`j'
 > achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
- 31.         replace base_m1_assets_`y' = . if base_m1_n_`y' == 0
- 32. 
+ 33.         replace base_m1_assets_`y' = . if base_m1_n_`y' == 0
+ 34. 
 .         * m3 shares (gross total assets base)
 .         gen double share_m3_pri_res_`y' = h`j'atoth_pos / base_m3_assets_`y' if !missing(h`j'atoth_pos) & !m
 > issing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 33.         gen double share_m3_sec_res_`y' = h`j'anethb_pos / base_m3_assets_`y' if !missing(h`j'anethb_pos)
+ 35.         gen double share_m3_sec_res_`y' = h`j'anethb_pos / base_m3_assets_`y' if !missing(h`j'anethb_pos)
 >  & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 34.         gen double share_m3_re_`y' = h`j'arles_pos / base_m3_assets_`y' if !missing(h`j'arles_pos) & !mis
+ 36.         gen double share_m3_re_`y' = h`j'arles_pos / base_m3_assets_`y' if !missing(h`j'arles_pos) & !mis
 > sing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 35.         gen double share_m3_vehicles_`y' = h`j'atran_pos / base_m3_assets_`y' if !missing(h`j'atran_pos) 
+ 37.         gen double share_m3_vehicles_`y' = h`j'atran_pos / base_m3_assets_`y' if !missing(h`j'atran_pos) 
 > & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 36.         gen double share_m3_bus_`y' = h`j'absns_pos / base_m3_assets_`y' if !missing(h`j'absns_pos) & !mi
+ 38.         gen double share_m3_bus_`y' = h`j'absns_pos / base_m3_assets_`y' if !missing(h`j'absns_pos) & !mi
 > ssing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 37.         gen double share_m3_ira_`y' = h`j'aira_pos / base_m3_assets_`y' if !missing(h`j'aira_pos) & !miss
+ 39.         gen double share_m3_ira_`y' = h`j'aira_pos / base_m3_assets_`y' if !missing(h`j'aira_pos) & !miss
 > ing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 38.         gen double share_m3_stk_`y' = h`j'astck_pos / base_m3_assets_`y' if !missing(h`j'astck_pos) & !mi
+ 40.         gen double share_m3_stk_`y' = h`j'astck_pos / base_m3_assets_`y' if !missing(h`j'astck_pos) & !mi
 > ssing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 39.         gen double share_m3_chck_`y' = h`j'achck_pos / base_m3_assets_`y' if !missing(h`j'achck_pos) & !m
+ 41.         gen double share_m3_chck_`y' = h`j'achck_pos / base_m3_assets_`y' if !missing(h`j'achck_pos) & !m
 > issing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 40.         gen double share_m3_cd_`y' = h`j'acd_pos / base_m3_assets_`y' if !missing(h`j'acd_pos) & !missing
+ 42.         gen double share_m3_cd_`y' = h`j'acd_pos / base_m3_assets_`y' if !missing(h`j'acd_pos) & !missing
 > (base_m3_assets_`y') & base_m3_assets_`y' != 0
- 41.         gen double share_m3_bond_`y' = h`j'abond_pos / base_m3_assets_`y' if !missing(h`j'abond_pos) & !m
+ 43.         gen double share_m3_bond_`y' = h`j'abond_pos / base_m3_assets_`y' if !missing(h`j'abond_pos) & !m
 > issing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 42.         gen double share_m3_other_`y' = h`j'aothr_pos / base_m3_assets_`y' if !missing(h`j'aothr_pos) & !
+ 44.         gen double share_m3_other_`y' = h`j'aothr_pos / base_m3_assets_`y' if !missing(h`j'aothr_pos) & !
 > missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 43. 
+ 45. 
 .         * Debt shares (gross assets base)
 .         gen double share_debt_long_`y' = ///
 >             (cond(missing(h`j'amort), 0, max(h`j'amort, 0)) + cond(missing(h`j'ahmln), 0, max(h`j'ahmln, 0))
 > ) ///
 >             / base_m3_assets_`y' if !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 44.         replace share_debt_long_`y' = . if missing(h`j'amort) & missing(h`j'ahmln)
- 45.         gen double share_debt_other_`y' = max(h`j'adebt, 0) / base_m3_assets_`y' if !missing(h`j'adebt) &
+ 46.         replace share_debt_long_`y' = . if missing(h`j'amort) & missing(h`j'ahmln)
+ 47.         gen double share_debt_other_`y' = max(h`j'adebt, 0) / base_m3_assets_`y' if !missing(h`j'adebt) &
 >  !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
- 46. 
+ 48. 
 .         * m2 shares (exclude residences; gross assets base)
 .         gen double share_m2_re_`y' = h`j'arles_pos / base_m2_assets_`y' if !missing(h`j'arles_pos) & !missin
 > g(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 47.         gen double share_m2_vehicles_`y' = h`j'atran_pos / base_m2_assets_`y' if !missing(h`j'atran_pos) 
+ 49.         gen double share_m2_vehicles_`y' = h`j'atran_pos / base_m2_assets_`y' if !missing(h`j'atran_pos) 
 > & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 48.         gen double share_m2_bus_`y' = h`j'absns_pos / base_m2_assets_`y' if !missing(h`j'absns_pos) & !mi
+ 50.         gen double share_m2_bus_`y' = h`j'absns_pos / base_m2_assets_`y' if !missing(h`j'absns_pos) & !mi
 > ssing(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 49.         gen double share_m2_ira_`y' = h`j'aira_pos / base_m2_assets_`y' if !missing(h`j'aira_pos) & !miss
+ 51.         gen double share_m2_ira_`y' = h`j'aira_pos / base_m2_assets_`y' if !missing(h`j'aira_pos) & !miss
 > ing(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 50.         gen double share_m2_stk_`y' = h`j'astck_pos / base_m2_assets_`y' if !missing(h`j'astck_pos) & !mi
+ 52.         gen double share_m2_stk_`y' = h`j'astck_pos / base_m2_assets_`y' if !missing(h`j'astck_pos) & !mi
 > ssing(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 51.         gen double share_m2_chck_`y' = h`j'achck_pos / base_m2_assets_`y' if !missing(h`j'achck_pos) & !m
+ 53.         gen double share_m2_chck_`y' = h`j'achck_pos / base_m2_assets_`y' if !missing(h`j'achck_pos) & !m
 > issing(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 52.         gen double share_m2_cd_`y' = h`j'acd_pos / base_m2_assets_`y' if !missing(h`j'acd_pos) & !missing
+ 54.         gen double share_m2_cd_`y' = h`j'acd_pos / base_m2_assets_`y' if !missing(h`j'acd_pos) & !missing
 > (base_m2_assets_`y') & base_m2_assets_`y' != 0
- 53.         gen double share_m2_bond_`y' = h`j'abond_pos / base_m2_assets_`y' if !missing(h`j'abond_pos) & !m
+ 55.         gen double share_m2_bond_`y' = h`j'abond_pos / base_m2_assets_`y' if !missing(h`j'abond_pos) & !m
 > issing(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 54.         gen double share_m2_other_`y' = h`j'aothr_pos / base_m2_assets_`y' if !missing(h`j'aothr_pos) & !
+ 56.         gen double share_m2_other_`y' = h`j'aothr_pos / base_m2_assets_`y' if !missing(h`j'aothr_pos) & !
 > missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
- 55. 
+ 57. 
 .         * m1 shares (exclude residences and IRA; gross assets base)
 .         gen double share_m1_re_`y' = h`j'arles_pos / base_m1_assets_`y' if !missing(h`j'arles_pos) & !missin
 > g(base_m1_assets_`y') & base_m1_assets_`y' != 0
- 56.         gen double share_m1_vehicles_`y' = h`j'atran_pos / base_m1_assets_`y' if !missing(h`j'atran_pos) 
+ 58.         gen double share_m1_vehicles_`y' = h`j'atran_pos / base_m1_assets_`y' if !missing(h`j'atran_pos) 
 > & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
- 57.         gen double share_m1_bus_`y' = h`j'absns_pos / base_m1_assets_`y' if !missing(h`j'absns_pos) & !mi
+ 59.         gen double share_m1_bus_`y' = h`j'absns_pos / base_m1_assets_`y' if !missing(h`j'absns_pos) & !mi
 > ssing(base_m1_assets_`y') & base_m1_assets_`y' != 0
- 58.         gen double share_m1_stk_`y' = h`j'astck_pos / base_m1_assets_`y' if !missing(h`j'astck_pos) & !mi
+ 60.         gen double share_m1_stk_`y' = h`j'astck_pos / base_m1_assets_`y' if !missing(h`j'astck_pos) & !mi
 > ssing(base_m1_assets_`y') & base_m1_assets_`y' != 0
- 59.         gen double share_m1_chck_`y' = h`j'achck_pos / base_m1_assets_`y' if !missing(h`j'achck_pos) & !m
+ 61.         gen double share_m1_chck_`y' = h`j'achck_pos / base_m1_assets_`y' if !missing(h`j'achck_pos) & !m
 > issing(base_m1_assets_`y') & base_m1_assets_`y' != 0
- 60.         gen double share_m1_cd_`y' = h`j'acd_pos / base_m1_assets_`y' if !missing(h`j'acd_pos) & !missing
+ 62.         gen double share_m1_cd_`y' = h`j'acd_pos / base_m1_assets_`y' if !missing(h`j'acd_pos) & !missing
 > (base_m1_assets_`y') & base_m1_assets_`y' != 0
- 61.         gen double share_m1_bond_`y' = h`j'abond_pos / base_m1_assets_`y' if !missing(h`j'abond_pos) & !m
+ 63.         gen double share_m1_bond_`y' = h`j'abond_pos / base_m1_assets_`y' if !missing(h`j'abond_pos) & !m
 > issing(base_m1_assets_`y') & base_m1_assets_`y' != 0
- 62.         gen double share_m1_other_`y' = h`j'aothr_pos / base_m1_assets_`y' if !missing(h`j'aothr_pos) & !
+ 64.         gen double share_m1_other_`y' = h`j'aothr_pos / base_m1_assets_`y' if !missing(h`j'aothr_pos) & !
 > missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
- 63. 
+ 65. 
 .         drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_
 > `y' ///
 >             h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_po
 > s h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
- 64.     }
- 65. }
+ 66.     }
+ 67. }
 (25,656 missing values generated)
 (25,656 missing values generated)
 (25,656 missing values generated)
@@ -981,6 +1063,7 @@
 (25,656 missing values generated)
 (25,656 missing values generated)
 (25,656 real changes made, 25,656 to missing)
+(25,656 missing values generated)
 (25,656 real changes made, 25,656 to missing)
 (25,656 real changes made, 25,656 to missing)
 (26,488 missing values generated)
@@ -1026,6 +1109,7 @@
 (27,069 missing values generated)
 (27,069 missing values generated)
 (27,069 real changes made, 27,069 to missing)
+(27,069 missing values generated)
 (27,069 real changes made, 27,069 to missing)
 (27,069 real changes made, 27,069 to missing)
 (27,824 missing values generated)
@@ -1071,6 +1155,7 @@
 (25,105 missing values generated)
 (25,105 missing values generated)
 (25,105 real changes made, 25,105 to missing)
+(25,105 missing values generated)
 (25,105 real changes made, 25,105 to missing)
 (25,105 real changes made, 25,105 to missing)
 (26,004 missing values generated)
@@ -1116,6 +1201,7 @@
 (26,765 missing values generated)
 (26,765 missing values generated)
 (26,765 real changes made, 26,765 to missing)
+(26,765 missing values generated)
 (26,765 real changes made, 26,765 to missing)
 (26,765 real changes made, 26,765 to missing)
 (27,555 missing values generated)
@@ -1161,6 +1247,7 @@
 (28,017 missing values generated)
 (28,017 missing values generated)
 (28,017 real changes made, 28,017 to missing)
+(28,017 missing values generated)
 (28,017 real changes made, 28,017 to missing)
 (28,017 real changes made, 28,017 to missing)
 (28,778 missing values generated)
@@ -1206,6 +1293,7 @@
 (23,200 missing values generated)
 (23,200 missing values generated)
 (23,200 real changes made, 23,200 to missing)
+(23,200 missing values generated)
 (23,200 real changes made, 23,200 to missing)
 (23,200 real changes made, 23,200 to missing)
 (24,722 missing values generated)
@@ -1251,6 +1339,7 @@
 (24,680 missing values generated)
 (24,680 missing values generated)
 (24,680 real changes made, 24,680 to missing)
+(24,680 missing values generated)
 (24,680 real changes made, 24,680 to missing)
 (24,680 real changes made, 24,680 to missing)
 (26,132 missing values generated)
@@ -1296,6 +1385,7 @@
 (26,487 missing values generated)
 (26,487 missing values generated)
 (26,487 real changes made, 26,487 to missing)
+(26,487 missing values generated)
 (26,487 real changes made, 26,487 to missing)
 (26,487 real changes made, 26,487 to missing)
 (27,791 missing values generated)
@@ -1341,6 +1431,7 @@
 (24,322 missing values generated)
 (24,322 missing values generated)
 (24,322 real changes made, 24,322 to missing)
+(24,322 missing values generated)
 (24,322 real changes made, 24,322 to missing)
 (24,322 real changes made, 24,322 to missing)
 (26,130 missing values generated)
@@ -1386,6 +1477,7 @@
 (28,088 missing values generated)
 (28,088 missing values generated)
 (28,088 real changes made, 28,088 to missing)
+(28,088 missing values generated)
 (28,088 real changes made, 28,088 to missing)
 (28,088 real changes made, 28,088 to missing)
 (29,598 missing values generated)
@@ -1431,6 +1523,7 @@
 (29,511 missing values generated)
 (29,511 missing values generated)
 (29,511 real changes made, 29,511 to missing)
+(29,511 missing values generated)
 (29,511 real changes made, 29,511 to missing)
 (29,511 real changes made, 29,511 to missing)
 (30,840 missing values generated)
@@ -1476,6 +1569,7 @@
 (29,378 missing values generated)
 (29,378 missing values generated)
 (29,378 real changes made, 29,378 to missing)
+(29,378 missing values generated)
 (29,378 real changes made, 29,378 to missing)
 (29,378 real changes made, 29,378 to missing)
 (30,767 missing values generated)
@@ -1515,19 +1609,21 @@
 . capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* debt_long_annual_* debt_other_annual_* r1_annual
 > _avg r2_annual_avg r3_annual_avg debt_long_annual_avg debt_other_annual_avg
 
-. capture unab _wealthvars : wealth_total_* wealth_decile_* wealth_d*_* wealth_m1_* wealth_m2_*
+. capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_m1_* wealth_m2_*
 
 . capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_debt_*
 
 . capture unab _incvars : labor_income_* total_income_*
 
-. capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* regional_trust_*
->  region_pop_group_*
+. capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* pop_trust_* regi
+> onal_trust_* region_pop_group_*
 
 . local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
 >     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
 >     trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///
 >     interest_2020 inflation_2020 risk_div_2020 par_citizen_2020 par_loyalty_2020 population_2020 ///
+>     depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 ///
+>     num_divorce_2020 num_widow_2020 ///
 >     `_ctrlvars' `_retvars' `_wealthvars' `_sharevars' `_incvars'
 
 . keep `keepvars'
@@ -1544,5 +1640,5 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_prep_controls.log
   log type:  text
- closed on:   4 Feb 2026, 19:05:00
+ closed on:   4 Feb 2026, 23:01:30
 --------------------------------------------------------------------------------------------------------------

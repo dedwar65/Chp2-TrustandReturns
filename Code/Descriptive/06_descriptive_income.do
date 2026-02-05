@@ -35,14 +35,17 @@ use "${PROCESSED}/analysis_ready_processed.dta", clear
 * Keep needed vars
 keep hhidpn educ_yrs age_* ///
     ln_lab_inc_final_* ln_tot_inc_final_* ///
-    wealth_m1_* wealth_m2_* wealth_total_*
+    labor_income_real_win_* total_income_real_win_* ///
+    wealth_m1_* wealth_m2_* wealth_total_* gross_wealth_*
 
 * Reshape to long for income descriptives
-reshape long ln_lab_inc_final_ ln_tot_inc_final_ age_ wealth_m1_ wealth_m2_ wealth_total_, i(hhidpn) j(year)
+reshape long ln_lab_inc_final_ ln_tot_inc_final_ labor_income_real_win_ total_income_real_win_ ///
+    age_ wealth_m1_ wealth_m2_ wealth_total_ gross_wealth_, i(hhidpn) j(year)
 rename age_ age
 rename wealth_m1_ wealth_m1
 rename wealth_m2_ wealth_m2
 rename wealth_total_ wealth_total
+rename gross_wealth_ gross_wealth
 
 display "=== Income descriptives (final log series) ==="
 tabstat ln_lab_inc_final_ ln_tot_inc_final_, statistics(n mean sd p1 p5 p50 p95 p99 min max)
@@ -61,24 +64,33 @@ use "`income_stats'", clear
 export delimited using "${BASE_PATH}/Descriptive/Tables/income_final_tabstat.csv", replace
 restore
 
-* Mean income by year
+* Mean income by year (deflated + winsorized levels)
 display "=== Mean income by year ==="
-tabstat ln_lab_inc_final_ ln_tot_inc_final_, by(year) statistics(n mean sd p50 p95)
+tabstat labor_income_real_win_ total_income_real_win_, by(year) statistics(n mean sd p50 p95)
 preserve
-collapse (mean) mean_ln_lab=ln_lab_inc_final_ mean_ln_tot=ln_tot_inc_final_ (count) n=ln_lab_inc_final_, by(year)
-export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_year.csv", replace
+collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_, by(year)
+export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_year_real_win.csv", replace
 restore
 
-* Income by age group
-display "=== Mean income by age group ==="
+* Income by age group (year-specific; deflated + winsorized levels)
+display "=== Mean income by age group (2002) ==="
 gen int age_group = floor(age/5)*5 if !missing(age)
-tabstat ln_lab_inc_final_ ln_tot_inc_final_, by(age_group) statistics(n mean sd p50 p95)
+tabstat labor_income_real_win_ total_income_real_win_ if year == 2002, by(age_group) statistics(n mean sd p50 p95)
 preserve
-collapse (mean) mean_ln_lab=ln_lab_inc_final_ mean_ln_tot=ln_tot_inc_final_ (count) n=ln_lab_inc_final_, by(age_group)
-export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_agegroup.csv", replace
+keep if year == 2002
+collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_, by(age_group)
+export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_agegroup_real_win_2002.csv", replace
 restore
 
-* Income by education group
+display "=== Mean income by age group (2022) ==="
+tabstat labor_income_real_win_ total_income_real_win_ if year == 2022, by(age_group) statistics(n mean sd p50 p95)
+preserve
+keep if year == 2022
+collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_, by(age_group)
+export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_agegroup_real_win_2022.csv", replace
+restore
+
+* Income by education group (deflated + winsorized levels)
 display "=== Mean income by education group ==="
 gen byte educ_group = .
 replace educ_group = 1 if educ_yrs < 12
@@ -88,10 +100,10 @@ replace educ_group = 4 if educ_yrs == 16
 replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
 label define educ_group 1 "lt12" 2 "hs" 3 "some_college" 4 "college" 5 "grad"
 label values educ_group educ_group
-tabstat ln_lab_inc_final_ ln_tot_inc_final_, by(educ_group) statistics(n mean sd p50 p95)
+tabstat labor_income_real_win_ total_income_real_win_, by(educ_group) statistics(n mean sd p50 p95)
 preserve
-collapse (mean) mean_ln_lab=ln_lab_inc_final_ mean_ln_tot=ln_tot_inc_final_ (count) n=ln_lab_inc_final_, by(educ_group)
-export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_educgroup.csv", replace
+collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_, by(educ_group)
+export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_educgroup_real_win.csv", replace
 restore
 
 * Income growth summary (all years together)
@@ -112,41 +124,65 @@ use "`growth_stats'", clear
 export delimited using "${BASE_PATH}/Descriptive/Tables/income_growth_tabstat.csv", replace
 restore
 
-* Scatterplots: income vs wealth measures (2002 and 2022)
+* Scatterplots: income vs wealth percentiles (2002 and 2022)
 capture mkdir "${BASE_PATH}/Descriptive"
 capture mkdir "${BASE_PATH}/Descriptive/Figures"
 capture mkdir "${BASE_PATH}/Descriptive/Tables"
 
+* Wealth percentiles by year (1-100)
+egen wealth_m1_pct = xtile(wealth_m1), by(year) nq(100)
+egen wealth_m2_pct = xtile(wealth_m2), by(year) nq(100)
+egen wealth_total_pct = xtile(wealth_total), by(year) nq(100)
+egen gross_wealth_pct = xtile(gross_wealth), by(year) nq(100)
+
 display "=== Scatter: income vs wealth (2002) ==="
-twoway scatter ln_tot_inc_final_ wealth_m1 if year == 2002 & !missing(ln_tot_inc_final_) & !missing(wealth_m1), ///
-    title("Final log total income vs wealth_m1 (2002)") ///
-    xtitle("Wealth_m1 (core assets)") ytitle("Log total income (final)")
-graph export "${BASE_PATH}/Descriptive/Figures/income_vs_wealth_m1_2002.png", replace
+foreach incvar in ln_lab_inc_final_ ln_tot_inc_final_ {
+    local incname = cond("`incvar'"=="ln_lab_inc_final_", "labor_income", "total_income")
 
-twoway scatter ln_tot_inc_final_ wealth_m2 if year == 2002 & !missing(ln_tot_inc_final_) & !missing(wealth_m2), ///
-    title("Final log total income vs wealth_m2 (2002)") ///
-    xtitle("Wealth_m2 (core + IRA)") ytitle("Log total income (final)")
-graph export "${BASE_PATH}/Descriptive/Figures/income_vs_wealth_m2_2002.png", replace
+    twoway scatter `incvar' wealth_m1_pct if year == 2002 & !missing(`incvar') & !missing(wealth_m1_pct), ///
+        title("Final log `incname' vs wealth_m1 percentile (2002)") ///
+        xtitle("Wealth_m1 percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_m1pct_2002.png", replace
 
-twoway scatter ln_tot_inc_final_ wealth_total if year == 2002 & !missing(ln_tot_inc_final_) & !missing(wealth_total), ///
-    title("Final log total income vs wealth_total (2002)") ///
-    xtitle("Wealth_total (core + IRA + housing)") ytitle("Log total income (final)")
-graph export "${BASE_PATH}/Descriptive/Figures/income_vs_wealth_total_2002.png", replace
+    twoway scatter `incvar' wealth_m2_pct if year == 2002 & !missing(`incvar') & !missing(wealth_m2_pct), ///
+        title("Final log `incname' vs wealth_m2 percentile (2002)") ///
+        xtitle("Wealth_m2 percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_m2pct_2002.png", replace
+
+    twoway scatter `incvar' wealth_total_pct if year == 2002 & !missing(`incvar') & !missing(wealth_total_pct), ///
+        title("Final log `incname' vs wealth_total percentile (2002)") ///
+        xtitle("Wealth_total percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_totalpct_2002.png", replace
+
+    twoway scatter `incvar' gross_wealth_pct if year == 2002 & !missing(`incvar') & !missing(gross_wealth_pct), ///
+        title("Final log `incname' vs gross wealth percentile (2002)") ///
+        xtitle("Gross wealth percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_gross_wealth_pct_2002.png", replace
+}
 
 display "=== Scatter: income vs wealth (2022) ==="
-twoway scatter ln_tot_inc_final_ wealth_m1 if year == 2022 & !missing(ln_tot_inc_final_) & !missing(wealth_m1), ///
-    title("Final log total income vs wealth_m1 (2022)") ///
-    xtitle("Wealth_m1 (core assets)") ytitle("Log total income (final)")
-graph export "${BASE_PATH}/Descriptive/Figures/income_vs_wealth_m1_2022.png", replace
+foreach incvar in ln_lab_inc_final_ ln_tot_inc_final_ {
+    local incname = cond("`incvar'"=="ln_lab_inc_final_", "labor_income", "total_income")
 
-twoway scatter ln_tot_inc_final_ wealth_m2 if year == 2022 & !missing(ln_tot_inc_final_) & !missing(wealth_m2), ///
-    title("Final log total income vs wealth_m2 (2022)") ///
-    xtitle("Wealth_m2 (core + IRA)") ytitle("Log total income (final)")
-graph export "${BASE_PATH}/Descriptive/Figures/income_vs_wealth_m2_2022.png", replace
+    twoway scatter `incvar' wealth_m1_pct if year == 2022 & !missing(`incvar') & !missing(wealth_m1_pct), ///
+        title("Final log `incname' vs wealth_m1 percentile (2022)") ///
+        xtitle("Wealth_m1 percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_m1pct_2022.png", replace
 
-twoway scatter ln_tot_inc_final_ wealth_total if year == 2022 & !missing(ln_tot_inc_final_) & !missing(wealth_total), ///
-    title("Final log total income vs wealth_total (2022)") ///
-    xtitle("Wealth_total (core + IRA + housing)") ytitle("Log total income (final)")
-graph export "${BASE_PATH}/Descriptive/Figures/income_vs_wealth_total_2022.png", replace
+    twoway scatter `incvar' wealth_m2_pct if year == 2022 & !missing(`incvar') & !missing(wealth_m2_pct), ///
+        title("Final log `incname' vs wealth_m2 percentile (2022)") ///
+        xtitle("Wealth_m2 percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_m2pct_2022.png", replace
+
+    twoway scatter `incvar' wealth_total_pct if year == 2022 & !missing(`incvar') & !missing(wealth_total_pct), ///
+        title("Final log `incname' vs wealth_total percentile (2022)") ///
+        xtitle("Wealth_total percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_totalpct_2022.png", replace
+
+    twoway scatter `incvar' gross_wealth_pct if year == 2022 & !missing(`incvar') & !missing(gross_wealth_pct), ///
+        title("Final log `incname' vs gross wealth percentile (2022)") ///
+        xtitle("Gross wealth percentile") ytitle("Log `incname' (final)")
+    graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_gross_wealth_pct_2022.png", replace
+}
 
 log close

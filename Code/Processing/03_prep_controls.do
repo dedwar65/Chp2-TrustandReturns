@@ -90,6 +90,48 @@ if !_rc {
     gen risk_div_2020 = rv567_2020
 }
 
+* Additional trust regression controls (2020 wave)
+capture confirm variable r15cesd
+if !_rc {
+    capture drop depression_2020
+    gen depression_2020 = r15cesd
+}
+capture confirm variable r15conde
+if !_rc {
+    capture drop health_cond_2020
+    gen health_cond_2020 = r15conde
+}
+capture confirm variable r15govmr
+if !_rc {
+    capture drop medicare_2020
+    gen medicare_2020 = r15govmr
+}
+capture confirm variable r15govmd
+if !_rc {
+    capture drop medicaid_2020
+    gen medicaid_2020 = r15govmd
+}
+capture confirm variable r15lifein
+if !_rc {
+    capture drop life_ins_2020
+    gen life_ins_2020 = r15lifein
+}
+capture confirm variable r15beqany
+if !_rc {
+    capture drop beq_any_2020
+    gen beq_any_2020 = r15beqany
+}
+capture confirm variable r15mdiv
+if !_rc {
+    capture drop num_divorce_2020
+    gen num_divorce_2020 = r15mdiv
+}
+capture confirm variable r15mwid
+if !_rc {
+    capture drop num_widow_2020
+    gen num_widow_2020 = r15mwid
+}
+
 * Trust variables (rename to descriptive names)
 capture confirm variable rv557_2020
 if !_rc {
@@ -182,6 +224,17 @@ if !_rc {
     }
 }
 
+* Contextual trust by population only (all waves)
+capture confirm variable population_2020
+capture confirm variable trust_others_2020
+if !_rc {
+    forvalues w = 5/16 {
+        local y = 1990 + (2*`w')
+        capture drop pop_trust_`y'
+        egen double pop_trust_`y' = mean(trust_others_2020), by(population_2020)
+    }
+}
+
 * Regional trust (group avg of trust by region, all waves)
 capture confirm variable trust_others_2020
 if !_rc {
@@ -262,6 +315,7 @@ forvalues j = 5/16 {
     capture drop share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y'
     capture drop share_debt_long_`y' share_debt_other_`y'
     capture drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_`y'
+    capture drop gross_wealth_`y'
     capture drop h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
     capture confirm variable h`j'atotb
     if !_rc {
@@ -282,6 +336,7 @@ forvalues j = 5/16 {
         egen double base_m3_assets_`y' = rowtotal(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
         egen byte base_m3_n_`y' = rownonmiss(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
         replace base_m3_assets_`y' = . if base_m3_n_`y' == 0
+        gen double gross_wealth_`y' = base_m3_assets_`y'
 
         egen double base_m2_assets_`y' = rowtotal(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
         egen byte base_m2_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
@@ -339,14 +394,16 @@ forvalues j = 5/16 {
 
 * Reduce dataset to relevant variables
 capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* debt_long_annual_* debt_other_annual_* r1_annual_avg r2_annual_avg r3_annual_avg debt_long_annual_avg debt_other_annual_avg
-capture unab _wealthvars : wealth_total_* wealth_decile_* wealth_d*_* wealth_m1_* wealth_m2_*
+capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_m1_* wealth_m2_*
 capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_debt_*
 capture unab _incvars : labor_income_* total_income_*
-capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* regional_trust_* region_pop_group_*
+capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_*
 local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
     trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///
     interest_2020 inflation_2020 risk_div_2020 par_citizen_2020 par_loyalty_2020 population_2020 ///
+    depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 ///
+    num_divorce_2020 num_widow_2020 ///
     `_ctrlvars' `_retvars' `_wealthvars' `_sharevars' `_incvars'
 keep `keepvars'
 
