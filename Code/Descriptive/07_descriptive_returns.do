@@ -1,0 +1,199 @@
+* 07_descriptive_returns.do
+* Descriptive statistics for returns and related components.
+* Inputs:
+*   - ${CLEANED}/all_data_merged.dta (components, flows, incomes, debt, wealth)
+*   - ${PROCESSED}/analysis_ready_processed.dta (returns + wealth measures)
+* Output: Descriptive/Figures and Descriptive/Tables
+
+clear
+set more off
+
+* Ensure paths
+capture confirm global BASE_PATH
+if _rc {
+    while regexm("`c(pwd)'", "[\/]Code[\/]") {
+        cd ..
+    }
+    if regexm("`c(pwd)'", "[\/]HRS$") {
+        cd ..
+    }
+    if regexm("`c(pwd)'", "[\/]Raw data$") {
+        cd ..
+        cd ..
+    }
+    if regexm("`c(pwd)'", "[\/]Code$") {
+        cd ..
+    }
+    global BASE_PATH "`c(pwd)'"
+    do "${BASE_PATH}/Code/Raw data/00_config.do"
+}
+
+capture log close
+log using "${LOG_DIR}/07_descriptive_returns.log", replace text
+
+capture mkdir "${BASE_PATH}/Descriptive"
+capture mkdir "${BASE_PATH}/Descriptive/Figures"
+capture mkdir "${BASE_PATH}/Descriptive/Tables"
+
+* ---------------------------------------------------------------------
+* Part A: Components, flows, incomes, wealth, debt (from all_data_merged)
+* ---------------------------------------------------------------------
+use "${CLEANED}/all_data_merged.dta", clear
+
+* Build wealth_total_YYYY and gross_wealth_YYYY
+local years "2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
+forvalues w = 5/16 {
+    local y = 1990 + (2*`w')
+    capture confirm variable h`w'atotb
+    if !_rc {
+        capture drop wealth_total_`y' gross_wealth_`y'
+        gen double wealth_total_`y' = h`w'atotb
+        gen double gross_wealth_`y' = ///
+            max(h`w'atoth,0) + max(h`w'anethb,0) + max(h`w'arles,0) + max(h`w'atran,0) + ///
+            max(h`w'absns,0) + max(h`w'aira,0) + max(h`w'astck,0) + max(h`w'achck,0) + ///
+            max(h`w'acd,0) + max(h`w'abond,0) + max(h`w'aothr,0)
+    }
+}
+
+* Capital gains components over time (selected series on one graph)
+preserve
+keep hhidpn cg_res_* cg_res2_* cg_re_* cg_bus_* cg_ira_* cg_stk_* cg_bnd_* cg_chk_* cg_cd_* cg_veh_* cg_oth_*
+reshape long cg_res_ cg_res2_ cg_re_ cg_bus_ cg_ira_ cg_stk_ cg_bnd_ cg_chk_ cg_cd_ cg_veh_ cg_oth_, i(hhidpn) j(year)
+collapse (mean) cg_res_=cg_res_ cg_res2_=cg_res2_ cg_re_=cg_re_ cg_bus_=cg_bus_ cg_ira_=cg_ira_ ///
+    cg_stk_=cg_stk_ cg_bnd_=cg_bnd_ cg_chk_=cg_chk_ cg_cd_=cg_cd_ cg_veh_=cg_veh_ cg_oth_=cg_oth_, by(year)
+twoway line cg_res_ year || line cg_res2_ year || line cg_re_ year || line cg_bus_ year || ///
+    line cg_stk_ year || line cg_bnd_ year, ///
+    title("Mean capital gains by year") ///
+    xtitle("Year") ytitle("Mean capital gain") ///
+    legend(order(1 "Primary residence" 2 "Secondary residence" 3 "Real estate" 4 "Business" 5 "Stocks" 6 "Bonds"))
+graph export "${BASE_PATH}/Descriptive/Figures/cg_components_mean_by_year.png", replace
+restore
+
+* Income components (interest/dividend measures) over time
+preserve
+keep hhidpn y1_inc_* y2_inc_* y3_inc_*
+reshape long y1_inc_ y2_inc_ y3_inc_, i(hhidpn) j(year)
+collapse (mean) y1_inc_=y1_inc_ y2_inc_=y2_inc_ y3_inc_=y3_inc_, by(year)
+twoway line y1_inc_ year || line y2_inc_ year || line y3_inc_ year, ///
+    title("Mean income components by year") ///
+    xtitle("Year") ytitle("Mean income component") ///
+    legend(order(1 "y1 (capital income)" 2 "y2 (cap+ret)" 3 "y3 (total)"))
+graph export "${BASE_PATH}/Descriptive/Figures/income_components_mean_by_year.png", replace
+restore
+
+* Flow measures over time
+preserve
+keep hhidpn flow_m1_* flow_m2_* flow_total_*
+reshape long flow_m1_ flow_m2_ flow_total_, i(hhidpn) j(year)
+collapse (mean) flow_m1_=flow_m1_ flow_m2_=flow_m2_ flow_total_=flow_total_, by(year)
+twoway line flow_m1_ year || line flow_m2_ year || line flow_total_ year, ///
+    title("Mean flow measures by year") ///
+    xtitle("Year") ytitle("Mean flow") ///
+    legend(order(1 "flow_m1" 2 "flow_m2" 3 "flow_total"))
+graph export "${BASE_PATH}/Descriptive/Figures/flow_measures_mean_by_year.png", replace
+restore
+
+* Wealth measures over time (total net vs gross)
+preserve
+keep hhidpn wealth_total_* gross_wealth_*
+reshape long wealth_total_ gross_wealth_, i(hhidpn) j(year)
+collapse (mean) wealth_total_=wealth_total_ gross_wealth_=gross_wealth_, by(year)
+twoway line wealth_total_ year || line gross_wealth_ year, ///
+    title("Mean wealth by year") ///
+    xtitle("Year") ytitle("Mean wealth") ///
+    legend(order(1 "Total net wealth" 2 "Gross wealth"))
+graph export "${BASE_PATH}/Descriptive/Figures/wealth_mean_by_year.png", replace
+restore
+
+* Debt measures over time (same graph)
+preserve
+keep hhidpn debt_long_* debt_other_*
+reshape long debt_long_ debt_other_, i(hhidpn) j(year)
+collapse (mean) debt_long_=debt_long_ debt_other_=debt_other_, by(year)
+twoway line debt_long_ year || line debt_other_ year, ///
+    title("Mean debt by year") ///
+    xtitle("Year") ytitle("Mean debt") ///
+    legend(order(1 "Long-term debt" 2 "Other debt"))
+graph export "${BASE_PATH}/Descriptive/Figures/debt_mean_by_year.png", replace
+restore
+
+* ---------------------------------------------------------------------
+* Part B: Returns (from analysis_ready_processed)
+* ---------------------------------------------------------------------
+use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+* Returns list (waves + averages)
+local years "2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
+local retvars ""
+foreach y of local years {
+    foreach v in r1_annual_`y' r2_annual_`y' r3_annual_`y' debt_long_annual_`y' debt_other_annual_`y' {
+        capture confirm variable `v'
+        if !_rc {
+            local retvars "`retvars' `v'"
+        }
+    }
+}
+foreach v in r1_annual_avg r2_annual_avg r3_annual_avg debt_long_annual_avg debt_other_annual_avg {
+    capture confirm variable `v'
+    if !_rc {
+        local retvars "`retvars' `v'"
+    }
+}
+
+* Tabstat for final return measures
+display "=== Return measures tabstat ==="
+tabstat `retvars', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+
+* Mean returns by year (single graph with 5 lines)
+preserve
+keep hhidpn r1_annual_* r2_annual_* r3_annual_* debt_long_annual_* debt_other_annual_*
+reshape long r1_annual_ r2_annual_ r3_annual_ debt_long_annual_ debt_other_annual_, i(hhidpn) j(year)
+collapse (mean) r1=r1_annual_ r2=r2_annual_ r3=r3_annual_ dlong=debt_long_annual_ doth=debt_other_annual_, by(year)
+twoway line r1 year || line r2 year || line r3 year || line dlong year || line doth year, ///
+    title("Mean returns by year") ///
+    xtitle("Year") ytitle("Mean return") ///
+    legend(order(1 "r1" 2 "r2" 3 "r3" 4 "debt_long" 5 "debt_other"))
+graph export "${BASE_PATH}/Descriptive/Figures/returns_mean_by_year.png", replace
+restore
+
+* Mean returns by age group and education group
+preserve
+keep hhidpn educ_yrs age_* r1_annual_* r2_annual_* r3_annual_* debt_long_annual_* debt_other_annual_*
+reshape long age_ r1_annual_ r2_annual_ r3_annual_ debt_long_annual_ debt_other_annual_, i(hhidpn) j(year)
+rename age_ age
+gen int age_group = floor(age/5)*5 if !missing(age)
+tabstat r1_annual_ r2_annual_ r3_annual_ debt_long_annual_ debt_other_annual_, by(age_group) statistics(n mean sd p50 p95)
+
+gen byte educ_group = .
+replace educ_group = 1 if educ_yrs < 12
+replace educ_group = 2 if educ_yrs == 12
+replace educ_group = 3 if inrange(educ_yrs,13,15)
+replace educ_group = 4 if educ_yrs == 16
+replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
+label define educ_group 1 "lt12" 2 "hs" 3 "some_college" 4 "college" 5 "grad"
+label values educ_group educ_group
+tabstat r1_annual_ r2_annual_ r3_annual_ debt_long_annual_ debt_other_annual_, by(educ_group) statistics(n mean sd p50 p95)
+restore
+
+* Scatterplots: returns vs wealth measures (2002 and 2022)
+capture confirm variable wealth_m1_2002
+if !_rc {
+    * Bring wealth measures into long format
+    keep hhidpn wealth_m1_* wealth_m2_* wealth_total_* r1_annual_* r2_annual_* r3_annual_* debt_long_annual_* debt_other_annual_*
+    reshape long wealth_m1_ wealth_m2_ wealth_total_ r1_annual_ r2_annual_ r3_annual_ debt_long_annual_ debt_other_annual_, i(hhidpn) j(year)
+    rename wealth_m1_ wealth_m1
+    rename wealth_m2_ wealth_m2
+    rename wealth_total_ wealth_total
+    foreach yr in 2002 2022 {
+        foreach ret in r1_annual_ r2_annual_ r3_annual_ debt_long_annual_ debt_other_annual_ {
+            foreach w in wealth_m1 wealth_m2 wealth_total {
+                twoway scatter `ret' `w' if year == `yr' & !missing(`ret') & !missing(`w'), ///
+                    title("`ret' vs `w' (`yr')") ///
+                    xtitle("`w'") ytitle("`ret'")
+                graph export "${BASE_PATH}/Descriptive/Figures/`ret'_vs_`w'_`yr'.png", replace
+            }
+        }
+    }
+}
+
+log close

@@ -1,0 +1,1548 @@
+--------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_prep_controls.log
+  log type:  text
+ opened on:   4 Feb 2026, 19:01:29
+
+. 
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. 
+. * ---------------------------------------------------------------------
+. * Demographics / controls (Notes §2: age, education, employment, marital, immigration)
+. * ---------------------------------------------------------------------
+. * Education (time-invariant in RAND)
+. capture confirm variable raedyrs
+
+. if !_rc {
+.     capture drop educ_yrs
+.     gen educ_yrs = raedyrs
+(649 missing values generated)
+. }
+
+. 
+. * Gender (time-invariant)
+. capture confirm variable ragender
+
+. if !_rc {
+.     capture drop gender
+.     gen byte gender = ragender
+. }
+
+. 
+. * Immigration (time-invariant; 1 = born in US)
+. capture confirm variable rabplace
+
+. if !_rc {
+.     capture drop immigrant
+.     gen byte immigrant = (rabplace ~= 1) if !missing(rabplace)
+(517 missing values generated)
+. }
+
+. * Born in US (rabplace codes 1-10,12)
+. capture confirm variable rabplace
+
+. if !_rc {
+.     capture drop born_us
+.     gen byte born_us = .
+(45,234 missing values generated)
+.     replace born_us = 1 if inrange(rabplace,1,10) | rabplace == 12
+(38,282 real changes made)
+.     replace born_us = 0 if inlist(rabplace,11,13)
+(6,435 real changes made)
+. }
+
+. 
+. * Race/ethnicity (raracem + rahispan) if available
+. capture confirm variable raracem
+
+. capture confirm variable rahispan
+
+. if !_rc {
+.     capture drop race_eth
+.     gen byte race_eth = .
+(45,234 missing values generated)
+.     replace race_eth = 3 if rahispan == 1
+(5,977 real changes made)
+.     replace race_eth = 1 if rahispan == 0 & raracem == 1
+(28,210 real changes made)
+.     replace race_eth = 2 if rahispan == 0 & raracem == 2
+(8,803 real changes made)
+.     replace race_eth = 4 if rahispan == 0 & raracem == 3
+(1,660 real changes made)
+. }
+
+. 
+. * Trust and IVs (rename to descriptive names)
+. capture confirm variable rv568_2020
+
+. if !_rc {
+.     capture drop par_citizen_2020
+.     gen par_citizen_2020 = rv568_2020
+(44,206 missing values generated)
+. }
+
+. capture confirm variable rv569_2020
+
+. if !_rc {
+.     capture drop par_loyalty_2020
+.     gen par_loyalty_2020 = rv569_2020
+(44,215 missing values generated)
+. }
+
+. capture confirm variable rv570_2020
+
+. if !_rc {
+.     capture drop population_2020
+.     gen population_2020 = rv570_2020
+(44,120 missing values generated)
+. }
+
+. 
+. * Financial literacy (rename)
+. capture confirm variable rv565_2020
+
+. if !_rc {
+.     capture drop interest_2020
+.     gen interest_2020 = rv565_2020
+(43,932 missing values generated)
+. }
+
+. capture confirm variable rv566_2020
+
+. if !_rc {
+.     capture drop inflation_2020
+.     gen inflation_2020 = rv566_2020
+(43,961 missing values generated)
+. }
+
+. capture confirm variable rv567_2020
+
+. if !_rc {
+.     capture drop risk_div_2020
+.     gen risk_div_2020 = rv567_2020
+(44,162 missing values generated)
+. }
+
+. 
+. * Trust variables (rename to descriptive names)
+. capture confirm variable rv557_2020
+
+. if !_rc {
+.     capture drop trust_others_2020
+.     gen trust_others_2020 = rv557_2020
+(44,334 missing values generated)
+. }
+
+. capture confirm variable rv558_2020
+
+. if !_rc {
+.     capture drop trust_social_security_2020
+.     gen trust_social_security_2020 = rv558_2020
+(44,221 missing values generated)
+. }
+
+. capture confirm variable rv559_2020
+
+. if !_rc {
+.     capture drop trust_medicare_2020
+.     gen trust_medicare_2020 = rv559_2020
+(44,205 missing values generated)
+. }
+
+. capture confirm variable rv560_2020
+
+. if !_rc {
+.     capture drop trust_banks_2020
+.     gen trust_banks_2020 = rv560_2020
+(44,244 missing values generated)
+. }
+
+. capture confirm variable rv561_2020
+
+. if !_rc {
+.     capture drop trust_advisors_2020
+.     gen trust_advisors_2020 = rv561_2020
+(44,154 missing values generated)
+. }
+
+. capture confirm variable rv562_2020
+
+. if !_rc {
+.     capture drop trust_mutual_funds_2020
+.     gen trust_mutual_funds_2020 = rv562_2020
+(44,162 missing values generated)
+. }
+
+. capture confirm variable rv563_2020
+
+. if !_rc {
+.     capture drop trust_insurance_2020
+.     gen trust_insurance_2020 = rv563_2020
+(44,087 missing values generated)
+. }
+
+. capture confirm variable rv564_2020
+
+. if !_rc {
+.     capture drop trust_media_2020
+.     gen trust_media_2020 = rv564_2020
+(43,999 missing values generated)
+. }
+
+. 
+. * Controls for all waves (one-wave-ahead for returns)
+. forvalues w = 5/16 {
+  2.     local y = 1990 + (2*`w')
+  3.     capture confirm variable r`w'agey_b
+  4.     if !_rc {
+  5.         capture drop age_`y'
+  6.         gen double age_`y' = r`w'agey_b
+  7.     }
+  8.     capture confirm variable r`w'inlbrf
+  9.     if !_rc {
+ 10.         capture drop inlbrf_`y'
+ 11.         gen byte inlbrf_`y' = r`w'inlbrf
+ 12.     }
+ 13.     capture confirm variable r`w'mstat
+ 14.     if !_rc {
+ 15.         capture drop married_`y'
+ 16.         gen byte married_`y' = (r`w'mstat == 1) if !missing(r`w'mstat)
+ 17.     }
+ 18. }
+(25,656 missing values generated)
+(26,142 missing values generated)
+(25,676 missing values generated)
+(27,069 missing values generated)
+(27,551 missing values generated)
+(27,084 missing values generated)
+(25,105 missing values generated)
+(25,581 missing values generated)
+(25,120 missing values generated)
+(26,765 missing values generated)
+(27,215 missing values generated)
+(26,767 missing values generated)
+(28,017 missing values generated)
+(28,478 missing values generated)
+(28,019 missing values generated)
+(23,200 missing values generated)
+(23,868 missing values generated)
+(23,206 missing values generated)
+(24,680 missing values generated)
+(25,213 missing values generated)
+(24,696 missing values generated)
+(26,487 missing values generated)
+(26,968 missing values generated)
+(26,506 missing values generated)
+(24,322 missing values generated)
+(24,737 missing values generated)
+(24,354 missing values generated)
+(28,088 missing values generated)
+(28,370 missing values generated)
+(28,114 missing values generated)
+(29,511 missing values generated)
+(29,755 missing values generated)
+(29,549 missing values generated)
+(29,378 missing values generated)
+(29,642 missing values generated)
+(29,418 missing values generated)
+
+. 
+. * Region for all waves and hometown_size from region x population
+. forvalues w = 5/16 {
+  2.     local y = 1990 + (2*`w')
+  3.     capture confirm variable r`w'cenreg
+  4.     if !_rc {
+  5.         capture drop region_`y'
+  6.         gen byte region_`y' = r`w'cenreg
+  7.     }
+  8.     capture confirm variable population_2020
+  9.     if !_rc {
+ 10.         capture drop hometown_size_`y'
+ 11.         gen int hometown_size_`y' = region_`y' * 100 + population_2020 if !missing(region_`y') & !missing
+> (population_2020)
+ 12.     }
+ 13. }
+(25,656 missing values generated)
+(44,924 missing values generated)
+(27,069 missing values generated)
+(44,914 missing values generated)
+(25,105 missing values generated)
+(44,751 missing values generated)
+(26,765 missing values generated)
+(44,745 missing values generated)
+(28,017 missing values generated)
+(44,741 missing values generated)
+(23,200 missing values generated)
+(44,405 missing values generated)
+(24,680 missing values generated)
+(44,392 missing values generated)
+(26,487 missing values generated)
+(44,396 missing values generated)
+(24,322 missing values generated)
+(44,157 missing values generated)
+(28,088 missing values generated)
+(44,220 missing values generated)
+(29,511 missing values generated)
+(44,120 missing values generated)
+(32,351 missing values generated)
+(44,345 missing values generated)
+
+. 
+. * Contextual trust (group avg of trust by region x town population, all waves)
+. capture confirm variable population_2020
+
+. capture confirm variable trust_others_2020
+
+. if !_rc {
+.     forvalues w = 5/16 {
+  2.         local y = 1990 + (2*`w')
+  3.         capture confirm variable region_`y'
+  4.         if !_rc {
+  5.             capture drop region_pop_group_`y' townsize_trust_`y'
+  6.             gen int region_pop_group_`y' = region_`y' * 100 + population_2020 if !missing(region_`y') & !
+> missing(population_2020)
+  7.             egen double townsize_trust_`y' = mean(trust_others_2020), by(region_pop_group_`y')
+  8.         }
+  9.     }
+(44,924 missing values generated)
+(44,914 missing values generated)
+(44,751 missing values generated)
+(44,745 missing values generated)
+(1 missing value generated)
+(44,741 missing values generated)
+(44,405 missing values generated)
+(44,392 missing values generated)
+(44,396 missing values generated)
+(44,157 missing values generated)
+(44,220 missing values generated)
+(1 missing value generated)
+(44,120 missing values generated)
+(1 missing value generated)
+(44,345 missing values generated)
+(1 missing value generated)
+. }
+
+. 
+. * Regional trust (group avg of trust by region, all waves)
+. capture confirm variable trust_others_2020
+
+. if !_rc {
+.     forvalues w = 5/16 {
+  2.         local y = 1990 + (2*`w')
+  3.         capture confirm variable region_`y'
+  4.         if !_rc {
+  5.             capture drop regional_trust_`y'
+  6.             egen double regional_trust_`y' = mean(trust_others_2020), by(region_`y')
+  7.         }
+  8.     }
+(29,511 missing values generated)
+. }
+
+. 
+. * ---------------------------------------------------------------------
+. * Wealth deciles by year (three concepts: m1, m2, total net wealth)
+. * RAND: h5atotb (2000), h6atotb (2002), ... h16atotb (2022). Lowercase.
+. * m1: non-residential, non-IRA (total - primary - secondary - IRA)
+. * m2: non-residential (total - primary - secondary), includes IRA
+. * total: h*atotb
+. * ---------------------------------------------------------------------
+. local wyears "2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
+
+. local watotb "h5atotb h6atotb h7atotb h8atotb h9atotb h10atotb h11atotb h12atotb h13atotb h14atotb h15atotb 
+> h16atotb"
+
+. local watoth "h5atoth h6atoth h7atoth h8atoth h9atoth h10atoth h11atoth h12atoth h13atoth h14atoth h15atoth 
+> h16atoth"
+
+. local wanethb "h5anethb h6anethb h7anethb h8anethb h9anethb h10anethb h11anethb h12anethb h13anethb h14aneth
+> b h15anethb h16anethb"
+
+. local waira "h5aira h6aira h7aira h8aira h9aira h10aira h11aira h12aira h13aira h14aira h15aira h16aira"
+
+. forvalues j = 1/12 {
+  2.     local y : word `j' of `wyears'
+  3.     local w : word `j' of `watotb'
+  4.     local wpri : word `j' of `watoth'
+  5.     local wsec : word `j' of `wanethb'
+  6.     local wira : word `j' of `waira'
+  7.     capture confirm variable `w'
+  8.     capture confirm variable `wpri'
+  9.     capture confirm variable `wsec'
+ 10.     capture confirm variable `wira'
+ 11.     if !_rc {
+ 12.         * Total net wealth (level) and deciles
+.         capture drop wealth_total_`y'
+ 13.         gen double wealth_total_`y' = `w'
+ 14.         capture drop wealth_decile_`y'
+ 15.         xtile wealth_decile_`y' = `w', nq(10)
+ 16.         replace wealth_decile_`y' = . if missing(`w')
+ 17.         forvalues d = 1/10 {
+ 18.             capture drop wealth_d`d'_`y'
+ 19.             gen byte wealth_d`d'_`y' = wealth_decile_`y' == `d' if !missing(wealth_decile_`y')
+ 20.         }
+ 21. 
+.         * m2 wealth (exclude residences, include IRA)
+.         capture drop wealth_m2_`y'
+ 22.         gen double wealth_m2_`y' = `w' - `wpri' - `wsec' if !missing(`w') & !missing(`wpri') & !missing(`
+> wsec')
+ 23.         capture drop wealth_m2_decile_`y'
+ 24.         xtile wealth_m2_decile_`y' = wealth_m2_`y', nq(10)
+ 25.         replace wealth_m2_decile_`y' = . if missing(wealth_m2_`y')
+ 26.         forvalues d = 1/10 {
+ 27.             capture drop wealth_m2_d`d'_`y'
+ 28.             gen byte wealth_m2_d`d'_`y' = wealth_m2_decile_`y' == `d' if !missing(wealth_m2_decile_`y')
+ 29.         }
+ 30. 
+.         * m1 wealth (exclude residences and IRA)
+.         capture drop wealth_m1_`y'
+ 31.         gen double wealth_m1_`y' = `w' - `wpri' - `wsec' - `wira' if !missing(`w') & !missing(`wpri') & !
+> missing(`wsec') & !missing(`wira')
+ 32.         capture drop wealth_m1_decile_`y'
+ 33.         xtile wealth_m1_decile_`y' = wealth_m1_`y', nq(10)
+ 34.         replace wealth_m1_decile_`y' = . if missing(wealth_m1_`y')
+ 35.         forvalues d = 1/10 {
+ 36.             capture drop wealth_m1_d`d'_`y'
+ 37.             gen byte wealth_m1_d`d'_`y' = wealth_m1_decile_`y' == `d' if !missing(wealth_m1_decile_`y')
+ 38.         }
+ 39.     }
+ 40. }
+(25,656 missing values generated)
+(0 real changes made)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(0 real changes made)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(0 real changes made)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(27,069 missing values generated)
+(0 real changes made)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(0 real changes made)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(0 real changes made)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(25,106 missing values generated)
+(0 real changes made)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(0 real changes made)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(0 real changes made)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(25,106 missing values generated)
+(26,765 missing values generated)
+(0 real changes made)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(0 real changes made)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(0 real changes made)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(28,017 missing values generated)
+(0 real changes made)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(0 real changes made)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(0 real changes made)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(23,200 missing values generated)
+(0 real changes made)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(0 real changes made)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,201 missing values generated)
+(0 real changes made)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(23,201 missing values generated)
+(24,680 missing values generated)
+(0 real changes made)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,681 missing values generated)
+(0 real changes made)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(0 real changes made)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(24,681 missing values generated)
+(26,487 missing values generated)
+(0 real changes made)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,488 missing values generated)
+(0 real changes made)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,489 missing values generated)
+(0 real changes made)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(26,489 missing values generated)
+(24,322 missing values generated)
+(0 real changes made)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(0 real changes made)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(0 real changes made)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(28,088 missing values generated)
+(0 real changes made)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(0 real changes made)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(0 real changes made)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(29,511 missing values generated)
+(0 real changes made)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(0 real changes made)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(0 real changes made)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,378 missing values generated)
+(0 real changes made)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(0 real changes made)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(0 real changes made)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+
+. 
+. * Asset shares by return-scope per wave (m1, m2, m3)
+. forvalues j = 5/16 {
+  2.     local y = 1990 + (2*`j')  // wave 5=2000, 16=2022
+  3.     capture drop share_pri_res_`y' share_sec_res_`y' share_re_`y' share_vehicles_`y' share_bus_`y' share_
+> ira_`y' share_stk_`y' share_chck_`y' share_cd_`y' share_bond_`y' share_other_`y'
+  4.     capture drop share_m1_re_`y' share_m1_vehicles_`y' share_m1_bus_`y' share_m1_stk_`y' share_m1_chck_`y
+> ' share_m1_cd_`y' share_m1_bond_`y' share_m1_other_`y'
+  5.     capture drop share_m2_re_`y' share_m2_vehicles_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y'
+>  share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y' share_m2_other_`y'
+  6.     capture drop share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3
+> _bus_`y' share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_othe
+> r_`y'
+  7.     capture drop share_debt_long_`y' share_debt_other_`y'
+  8.     capture drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' bas
+> e_m1_n_`y'
+  9.     capture drop h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'
+> astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
+ 10.     capture confirm variable h`j'atotb
+ 11.     if !_rc {
+ 12.         * Asset-base denominators (gross total assets, not net wealth)
+.         * Use nonnegative components for gross assets and shares
+.         gen double h`j'atoth_pos = cond(missing(h`j'atoth), ., max(h`j'atoth, 0))
+ 13.         gen double h`j'anethb_pos = cond(missing(h`j'anethb), ., max(h`j'anethb, 0))
+ 14.         gen double h`j'arles_pos = cond(missing(h`j'arles), ., max(h`j'arles, 0))
+ 15.         gen double h`j'atran_pos = cond(missing(h`j'atran), ., max(h`j'atran, 0))
+ 16.         gen double h`j'absns_pos = cond(missing(h`j'absns), ., max(h`j'absns, 0))
+ 17.         gen double h`j'aira_pos = cond(missing(h`j'aira), ., max(h`j'aira, 0))
+ 18.         gen double h`j'astck_pos = cond(missing(h`j'astck), ., max(h`j'astck, 0))
+ 19.         gen double h`j'achck_pos = cond(missing(h`j'achck), ., max(h`j'achck, 0))
+ 20.         gen double h`j'acd_pos = cond(missing(h`j'acd), ., max(h`j'acd, 0))
+ 21.         gen double h`j'abond_pos = cond(missing(h`j'abond), ., max(h`j'abond, 0))
+ 22.         gen double h`j'aothr_pos = cond(missing(h`j'aothr), ., max(h`j'aothr, 0))
+ 23. 
+.         egen double base_m3_assets_`y' = rowtotal(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h
+> `j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+ 24.         egen byte base_m3_n_`y' = rownonmiss(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j
+> 'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+ 25.         replace base_m3_assets_`y' = . if base_m3_n_`y' == 0
+ 26. 
+.         egen double base_m2_assets_`y' = rowtotal(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j
+> 'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+ 27.         egen byte base_m2_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'a
+> stck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+ 28.         replace base_m2_assets_`y' = . if base_m2_n_`y' == 0
+ 29. 
+.         egen double base_m1_assets_`y' = rowtotal(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'astck_pos h`
+> j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+ 30.         egen byte base_m1_n_`y' = rownonmiss(h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'astck_pos h`j'
+> achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+ 31.         replace base_m1_assets_`y' = . if base_m1_n_`y' == 0
+ 32. 
+.         * m3 shares (gross total assets base)
+.         gen double share_m3_pri_res_`y' = h`j'atoth_pos / base_m3_assets_`y' if !missing(h`j'atoth_pos) & !m
+> issing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 33.         gen double share_m3_sec_res_`y' = h`j'anethb_pos / base_m3_assets_`y' if !missing(h`j'anethb_pos)
+>  & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 34.         gen double share_m3_re_`y' = h`j'arles_pos / base_m3_assets_`y' if !missing(h`j'arles_pos) & !mis
+> sing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 35.         gen double share_m3_vehicles_`y' = h`j'atran_pos / base_m3_assets_`y' if !missing(h`j'atran_pos) 
+> & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 36.         gen double share_m3_bus_`y' = h`j'absns_pos / base_m3_assets_`y' if !missing(h`j'absns_pos) & !mi
+> ssing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 37.         gen double share_m3_ira_`y' = h`j'aira_pos / base_m3_assets_`y' if !missing(h`j'aira_pos) & !miss
+> ing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 38.         gen double share_m3_stk_`y' = h`j'astck_pos / base_m3_assets_`y' if !missing(h`j'astck_pos) & !mi
+> ssing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 39.         gen double share_m3_chck_`y' = h`j'achck_pos / base_m3_assets_`y' if !missing(h`j'achck_pos) & !m
+> issing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 40.         gen double share_m3_cd_`y' = h`j'acd_pos / base_m3_assets_`y' if !missing(h`j'acd_pos) & !missing
+> (base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 41.         gen double share_m3_bond_`y' = h`j'abond_pos / base_m3_assets_`y' if !missing(h`j'abond_pos) & !m
+> issing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 42.         gen double share_m3_other_`y' = h`j'aothr_pos / base_m3_assets_`y' if !missing(h`j'aothr_pos) & !
+> missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 43. 
+.         * Debt shares (gross assets base)
+.         gen double share_debt_long_`y' = ///
+>             (cond(missing(h`j'amort), 0, max(h`j'amort, 0)) + cond(missing(h`j'ahmln), 0, max(h`j'ahmln, 0))
+> ) ///
+>             / base_m3_assets_`y' if !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 44.         replace share_debt_long_`y' = . if missing(h`j'amort) & missing(h`j'ahmln)
+ 45.         gen double share_debt_other_`y' = max(h`j'adebt, 0) / base_m3_assets_`y' if !missing(h`j'adebt) &
+>  !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+ 46. 
+.         * m2 shares (exclude residences; gross assets base)
+.         gen double share_m2_re_`y' = h`j'arles_pos / base_m2_assets_`y' if !missing(h`j'arles_pos) & !missin
+> g(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 47.         gen double share_m2_vehicles_`y' = h`j'atran_pos / base_m2_assets_`y' if !missing(h`j'atran_pos) 
+> & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 48.         gen double share_m2_bus_`y' = h`j'absns_pos / base_m2_assets_`y' if !missing(h`j'absns_pos) & !mi
+> ssing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 49.         gen double share_m2_ira_`y' = h`j'aira_pos / base_m2_assets_`y' if !missing(h`j'aira_pos) & !miss
+> ing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 50.         gen double share_m2_stk_`y' = h`j'astck_pos / base_m2_assets_`y' if !missing(h`j'astck_pos) & !mi
+> ssing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 51.         gen double share_m2_chck_`y' = h`j'achck_pos / base_m2_assets_`y' if !missing(h`j'achck_pos) & !m
+> issing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 52.         gen double share_m2_cd_`y' = h`j'acd_pos / base_m2_assets_`y' if !missing(h`j'acd_pos) & !missing
+> (base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 53.         gen double share_m2_bond_`y' = h`j'abond_pos / base_m2_assets_`y' if !missing(h`j'abond_pos) & !m
+> issing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 54.         gen double share_m2_other_`y' = h`j'aothr_pos / base_m2_assets_`y' if !missing(h`j'aothr_pos) & !
+> missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
+ 55. 
+.         * m1 shares (exclude residences and IRA; gross assets base)
+.         gen double share_m1_re_`y' = h`j'arles_pos / base_m1_assets_`y' if !missing(h`j'arles_pos) & !missin
+> g(base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 56.         gen double share_m1_vehicles_`y' = h`j'atran_pos / base_m1_assets_`y' if !missing(h`j'atran_pos) 
+> & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 57.         gen double share_m1_bus_`y' = h`j'absns_pos / base_m1_assets_`y' if !missing(h`j'absns_pos) & !mi
+> ssing(base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 58.         gen double share_m1_stk_`y' = h`j'astck_pos / base_m1_assets_`y' if !missing(h`j'astck_pos) & !mi
+> ssing(base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 59.         gen double share_m1_chck_`y' = h`j'achck_pos / base_m1_assets_`y' if !missing(h`j'achck_pos) & !m
+> issing(base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 60.         gen double share_m1_cd_`y' = h`j'acd_pos / base_m1_assets_`y' if !missing(h`j'acd_pos) & !missing
+> (base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 61.         gen double share_m1_bond_`y' = h`j'abond_pos / base_m1_assets_`y' if !missing(h`j'abond_pos) & !m
+> issing(base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 62.         gen double share_m1_other_`y' = h`j'aothr_pos / base_m1_assets_`y' if !missing(h`j'aothr_pos) & !
+> missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
+ 63. 
+.         drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_
+> `y' ///
+>             h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_po
+> s h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
+ 64.     }
+ 65. }
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,657 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 missing values generated)
+(25,656 real changes made, 25,656 to missing)
+(25,656 real changes made, 25,656 to missing)
+(25,656 real changes made, 25,656 to missing)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,489 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(26,488 missing values generated)
+(0 real changes made)
+(26,488 missing values generated)
+(26,873 missing values generated)
+(26,873 missing values generated)
+(26,873 missing values generated)
+(26,873 missing values generated)
+(26,873 missing values generated)
+(26,874 missing values generated)
+(26,873 missing values generated)
+(26,873 missing values generated)
+(26,873 missing values generated)
+(26,891 missing values generated)
+(26,891 missing values generated)
+(26,891 missing values generated)
+(26,891 missing values generated)
+(26,892 missing values generated)
+(26,891 missing values generated)
+(26,891 missing values generated)
+(26,891 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 missing values generated)
+(27,069 real changes made, 27,069 to missing)
+(27,069 real changes made, 27,069 to missing)
+(27,069 real changes made, 27,069 to missing)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(27,824 missing values generated)
+(0 real changes made)
+(27,824 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,161 missing values generated)
+(28,175 missing values generated)
+(28,175 missing values generated)
+(28,175 missing values generated)
+(28,175 missing values generated)
+(28,175 missing values generated)
+(28,175 missing values generated)
+(28,175 missing values generated)
+(28,175 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,113 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,105 missing values generated)
+(25,105 real changes made, 25,105 to missing)
+(25,105 real changes made, 25,105 to missing)
+(25,105 real changes made, 25,105 to missing)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,010 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(26,004 missing values generated)
+(0 real changes made)
+(26,004 missing values generated)
+(26,355 missing values generated)
+(26,355 missing values generated)
+(26,355 missing values generated)
+(26,355 missing values generated)
+(26,355 missing values generated)
+(26,361 missing values generated)
+(26,355 missing values generated)
+(26,355 missing values generated)
+(26,355 missing values generated)
+(26,377 missing values generated)
+(26,377 missing values generated)
+(26,377 missing values generated)
+(26,377 missing values generated)
+(26,383 missing values generated)
+(26,377 missing values generated)
+(26,377 missing values generated)
+(26,377 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,769 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 missing values generated)
+(26,765 real changes made, 26,765 to missing)
+(26,765 real changes made, 26,765 to missing)
+(26,765 real changes made, 26,765 to missing)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,558 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(27,555 missing values generated)
+(0 real changes made)
+(27,555 missing values generated)
+(27,800 missing values generated)
+(27,800 missing values generated)
+(27,800 missing values generated)
+(27,800 missing values generated)
+(27,800 missing values generated)
+(27,803 missing values generated)
+(27,800 missing values generated)
+(27,800 missing values generated)
+(27,800 missing values generated)
+(27,815 missing values generated)
+(27,815 missing values generated)
+(27,815 missing values generated)
+(27,815 missing values generated)
+(27,818 missing values generated)
+(27,815 missing values generated)
+(27,815 missing values generated)
+(27,815 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 missing values generated)
+(28,017 real changes made, 28,017 to missing)
+(28,017 real changes made, 28,017 to missing)
+(28,017 real changes made, 28,017 to missing)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(28,778 missing values generated)
+(0 real changes made)
+(28,778 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,123 missing values generated)
+(29,144 missing values generated)
+(29,144 missing values generated)
+(29,144 missing values generated)
+(29,144 missing values generated)
+(29,144 missing values generated)
+(29,144 missing values generated)
+(29,144 missing values generated)
+(29,144 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,201 missing values generated)
+(23,200 missing values generated)
+(23,206 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 missing values generated)
+(23,200 real changes made, 23,200 to missing)
+(23,200 real changes made, 23,200 to missing)
+(23,200 real changes made, 23,200 to missing)
+(24,722 missing values generated)
+(24,722 missing values generated)
+(24,722 missing values generated)
+(24,722 missing values generated)
+(24,722 missing values generated)
+(24,723 missing values generated)
+(24,722 missing values generated)
+(24,727 missing values generated)
+(24,722 missing values generated)
+(24,722 missing values generated)
+(24,722 missing values generated)
+(24,722 missing values generated)
+(0 real changes made)
+(24,722 missing values generated)
+(25,395 missing values generated)
+(25,395 missing values generated)
+(25,395 missing values generated)
+(25,396 missing values generated)
+(25,395 missing values generated)
+(25,400 missing values generated)
+(25,395 missing values generated)
+(25,395 missing values generated)
+(25,395 missing values generated)
+(25,442 missing values generated)
+(25,442 missing values generated)
+(25,442 missing values generated)
+(25,442 missing values generated)
+(25,447 missing values generated)
+(25,442 missing values generated)
+(25,442 missing values generated)
+(25,442 missing values generated)
+(24,681 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,682 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 missing values generated)
+(24,680 real changes made, 24,680 to missing)
+(24,680 real changes made, 24,680 to missing)
+(24,680 real changes made, 24,680 to missing)
+(26,132 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(26,133 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(26,131 missing values generated)
+(0 real changes made)
+(26,131 missing values generated)
+(26,700 missing values generated)
+(26,700 missing values generated)
+(26,700 missing values generated)
+(26,700 missing values generated)
+(26,700 missing values generated)
+(26,702 missing values generated)
+(26,700 missing values generated)
+(26,700 missing values generated)
+(26,700 missing values generated)
+(26,734 missing values generated)
+(26,734 missing values generated)
+(26,734 missing values generated)
+(26,734 missing values generated)
+(26,736 missing values generated)
+(26,734 missing values generated)
+(26,734 missing values generated)
+(26,734 missing values generated)
+(26,487 missing values generated)
+(26,488 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,488 missing values generated)
+(26,487 missing values generated)
+(26,488 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 missing values generated)
+(26,487 real changes made, 26,487 to missing)
+(26,487 real changes made, 26,487 to missing)
+(26,487 real changes made, 26,487 to missing)
+(27,791 missing values generated)
+(27,792 missing values generated)
+(27,791 missing values generated)
+(27,791 missing values generated)
+(27,791 missing values generated)
+(27,792 missing values generated)
+(27,791 missing values generated)
+(27,792 missing values generated)
+(27,791 missing values generated)
+(27,791 missing values generated)
+(27,791 missing values generated)
+(27,791 missing values generated)
+(0 real changes made)
+(27,791 missing values generated)
+(28,364 missing values generated)
+(28,364 missing values generated)
+(28,364 missing values generated)
+(28,365 missing values generated)
+(28,364 missing values generated)
+(28,365 missing values generated)
+(28,364 missing values generated)
+(28,364 missing values generated)
+(28,364 missing values generated)
+(28,411 missing values generated)
+(28,411 missing values generated)
+(28,411 missing values generated)
+(28,411 missing values generated)
+(28,412 missing values generated)
+(28,411 missing values generated)
+(28,411 missing values generated)
+(28,411 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,326 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 missing values generated)
+(24,322 real changes made, 24,322 to missing)
+(24,322 real changes made, 24,322 to missing)
+(24,322 real changes made, 24,322 to missing)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,134 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(26,130 missing values generated)
+(0 real changes made)
+(26,132 missing values generated)
+(26,912 missing values generated)
+(26,912 missing values generated)
+(26,912 missing values generated)
+(26,912 missing values generated)
+(26,912 missing values generated)
+(26,914 missing values generated)
+(26,912 missing values generated)
+(26,912 missing values generated)
+(26,912 missing values generated)
+(26,968 missing values generated)
+(26,968 missing values generated)
+(26,968 missing values generated)
+(26,968 missing values generated)
+(26,970 missing values generated)
+(26,968 missing values generated)
+(26,968 missing values generated)
+(26,968 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,091 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 missing values generated)
+(28,088 real changes made, 28,088 to missing)
+(28,088 real changes made, 28,088 to missing)
+(28,088 real changes made, 28,088 to missing)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,601 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(29,598 missing values generated)
+(0 real changes made)
+(29,599 missing values generated)
+(30,299 missing values generated)
+(30,299 missing values generated)
+(30,299 missing values generated)
+(30,299 missing values generated)
+(30,299 missing values generated)
+(30,300 missing values generated)
+(30,299 missing values generated)
+(30,299 missing values generated)
+(30,299 missing values generated)
+(30,359 missing values generated)
+(30,359 missing values generated)
+(30,359 missing values generated)
+(30,359 missing values generated)
+(30,360 missing values generated)
+(30,359 missing values generated)
+(30,359 missing values generated)
+(30,359 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,512 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 real changes made, 29,511 to missing)
+(29,511 real changes made, 29,511 to missing)
+(29,511 real changes made, 29,511 to missing)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(30,840 missing values generated)
+(0 real changes made)
+(30,840 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,610 missing values generated)
+(31,670 missing values generated)
+(31,670 missing values generated)
+(31,670 missing values generated)
+(31,670 missing values generated)
+(31,670 missing values generated)
+(31,670 missing values generated)
+(31,670 missing values generated)
+(31,670 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,384 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 missing values generated)
+(29,378 real changes made, 29,378 to missing)
+(29,378 real changes made, 29,378 to missing)
+(29,378 real changes made, 29,378 to missing)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,771 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(30,767 missing values generated)
+(0 real changes made)
+(30,769 missing values generated)
+(31,457 missing values generated)
+(31,457 missing values generated)
+(31,457 missing values generated)
+(31,457 missing values generated)
+(31,457 missing values generated)
+(31,460 missing values generated)
+(31,457 missing values generated)
+(31,457 missing values generated)
+(31,457 missing values generated)
+(31,527 missing values generated)
+(31,527 missing values generated)
+(31,527 missing values generated)
+(31,527 missing values generated)
+(31,530 missing values generated)
+(31,527 missing values generated)
+(31,527 missing values generated)
+(31,527 missing values generated)
+
+. 
+. * Reduce dataset to relevant variables
+. capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* debt_long_annual_* debt_other_annual_* r1_annual
+> _avg r2_annual_avg r3_annual_avg debt_long_annual_avg debt_other_annual_avg
+
+. capture unab _wealthvars : wealth_total_* wealth_decile_* wealth_d*_* wealth_m1_* wealth_m2_*
+
+. capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_debt_*
+
+. capture unab _incvars : labor_income_* total_income_*
+
+. capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* regional_trust_*
+>  region_pop_group_*
+
+. local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
+>     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
+>     trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///
+>     interest_2020 inflation_2020 risk_div_2020 par_citizen_2020 par_loyalty_2020 population_2020 ///
+>     `_ctrlvars' `_retvars' `_wealthvars' `_sharevars' `_incvars'
+
+. keep `keepvars'
+
+. 
+. save "${PROCESSED}/analysis_ready.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_ready.dta saved
+
+. display "03_prep_controls: Saved ${PROCESSED}/analysis_ready.dta (N = " _N ")"
+03_prep_controls: Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_ready.dta 
+> (N = 45234)
+
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_prep_controls.log
+  log type:  text
+ closed on:   4 Feb 2026, 19:05:00
+--------------------------------------------------------------------------------------------------------------
