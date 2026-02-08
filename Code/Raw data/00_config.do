@@ -22,14 +22,18 @@ if regexm("`c(pwd)'", "[\/]Code$") {
 global RAW_DATA   "${BASE_PATH}/Code/Raw data"
 global HRS_DATA   "${RAW_DATA}/HRS"
 global FRED_DATA  "${RAW_DATA}/FRED"
-global CLEANED    "${BASE_PATH}/Code/Cleaned data"
-global PROCESSED  "${BASE_PATH}/Code/Processing"
-global LOG_DIR    "${BASE_PATH}/Notes/Logs"
+global CLEANED      "${BASE_PATH}/Code/Cleaned data"
+global PROCESSED    "${BASE_PATH}/Code/Processing"
+global DESCRIPTIVE  "${BASE_PATH}/Code/Descriptive"
+global LOG_DIR      "${BASE_PATH}/Notes/Logs"
 
-* Create log directory, Cleaned data, and Processing
+* Create log directory, Cleaned data, Processing, and Descriptive output dirs
 capture mkdir "${LOG_DIR}"
 capture mkdir "${CLEANED}"
 capture mkdir "${PROCESSED}"
+capture mkdir "${DESCRIPTIVE}"
+capture mkdir "${DESCRIPTIVE}/Figures"
+capture mkdir "${DESCRIPTIVE}/Tables"
 
 * Start log for the current do-file (caller should pass log name via -do 01_merge_all_data.do, log- or set log here)
 * This script only sets globals; the calling do-file opens its own log.

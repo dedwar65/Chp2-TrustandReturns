@@ -73,6 +73,16 @@ if !_rc {
     gen population_2020 = rv570_2020
 }
 
+* Collapsed population bins (2020): 1-2 small town, 3-4 small city, 5-6 large metro
+capture confirm variable population_2020
+if !_rc {
+    capture drop population_3bin_2020
+    gen byte population_3bin_2020 = .
+    replace population_3bin_2020 = 1 if inlist(population_2020, 1, 2)
+    replace population_3bin_2020 = 2 if inlist(population_2020, 3, 4)
+    replace population_3bin_2020 = 3 if inlist(population_2020, 5, 6)
+}
+
 * Financial literacy (rename)
 capture confirm variable rv565_2020
 if !_rc {
@@ -201,6 +211,7 @@ forvalues w = 5/16 {
     if !_rc {
         capture drop region_`y'
         gen byte region_`y' = r`w'cenreg
+        replace region_`y' = . if region_`y' == 5
     }
     capture confirm variable population_2020
     if !_rc {
@@ -224,6 +235,20 @@ if !_rc {
     }
 }
 
+capture confirm variable population_3bin_2020
+capture confirm variable trust_others_2020
+if !_rc {
+    forvalues w = 5/16 {
+        local y = 1990 + (2*`w')
+        capture confirm variable region_`y'
+        if !_rc {
+            capture drop region_pop3_group_`y' townsize3_trust_`y'
+            gen int region_pop3_group_`y' = region_`y' * 10 + population_3bin_2020 if !missing(region_`y') & !missing(population_3bin_2020)
+            egen double townsize3_trust_`y' = mean(trust_others_2020), by(region_pop3_group_`y')
+        }
+    }
+}
+
 * Contextual trust by population only (all waves)
 capture confirm variable population_2020
 capture confirm variable trust_others_2020
@@ -232,6 +257,16 @@ if !_rc {
         local y = 1990 + (2*`w')
         capture drop pop_trust_`y'
         egen double pop_trust_`y' = mean(trust_others_2020), by(population_2020)
+    }
+}
+
+capture confirm variable population_3bin_2020
+capture confirm variable trust_others_2020
+if !_rc {
+    forvalues w = 5/16 {
+        local y = 1990 + (2*`w')
+        capture drop pop3_trust_`y'
+        egen double pop3_trust_`y' = mean(trust_others_2020), by(population_3bin_2020)
     }
 }
 
@@ -290,12 +325,24 @@ forvalues j = 1/12 {
             if _rc local has_core 0
         }
         * Total net wealth (constructed from components, allow partial nonmissing)
-        capture drop wealth_total_`y' _gross_assets_`y' _gross_n_`y' _debt_total_`y' _debt_n_`y'
-        egen double _gross_assets_`y' = rowtotal(`wre' `wbus' `wstk' `wbond' `wchck' `wcd' `wpri' `wsec' `wira' `wtran' `woth'), missing
+        capture drop wealth_total_`y'
+        capture drop gross_wealth_`y'
+        capture drop _gross_n_`y'
+        capture drop _debt_total_`y'
+        capture drop _debt_n_`y'
+        capture drop wealth_decile_`y'
         egen byte _gross_n_`y' = rownonmiss(`wre' `wbus' `wstk' `wbond' `wchck' `wcd' `wpri' `wsec' `wira' `wtran' `woth')
         egen double _debt_total_`y' = rowtotal(h`j'amort h`j'ahmln h`j'adebt h`j'amrtb), missing
         egen byte _debt_n_`y' = rownonmiss(h`j'amort h`j'ahmln h`j'adebt h`j'amrtb)
-        gen double wealth_total_`y' = _gross_assets_`y' - _debt_total_`y'
+        gen double gross_wealth_`y' = ///
+            cond(missing(`wre'), 0, max(`wre', 0)) + cond(missing(`wbus'), 0, max(`wbus', 0)) + ///
+            cond(missing(`wstk'), 0, max(`wstk', 0)) + cond(missing(`wbond'), 0, max(`wbond', 0)) + ///
+            cond(missing(`wchck'), 0, max(`wchck', 0)) + cond(missing(`wcd'), 0, max(`wcd', 0)) + ///
+            cond(missing(`wpri'), 0, max(`wpri', 0)) + cond(missing(`wsec'), 0, max(`wsec', 0)) + ///
+            cond(missing(`wira'), 0, max(`wira', 0)) + cond(missing(`wtran'), 0, max(`wtran', 0)) + ///
+            cond(missing(`woth'), 0, max(`woth', 0))
+        replace gross_wealth_`y' = . if _gross_n_`y' == 0
+        gen double wealth_total_`y' = gross_wealth_`y' - _debt_total_`y'
         replace wealth_total_`y' = . if _gross_n_`y' == 0 & _debt_n_`y' == 0
         capture drop wealth_decile_`y'
         xtile wealth_decile_`y' = wealth_total_`y', nq(10)
@@ -308,6 +355,7 @@ forvalues j = 1/12 {
         * Core wealth (exclude residences and IRA)
         if `has_core' {
             capture drop wealth_core_`y'
+            capture drop wealth_core_decile_`y'
             gen double wealth_core_`y' = `wre' + `wbus' + `wstk' + `wbond' + `wchck' + `wcd' if !missing(`wre') & !missing(`wbus') & !missing(`wstk') & !missing(`wbond') & !missing(`wchck') & !missing(`wcd')
             capture drop wealth_core_decile_`y'
             xtile wealth_core_decile_`y' = wealth_core_`y', nq(10)
@@ -320,6 +368,7 @@ forvalues j = 1/12 {
 
         * IRA-only wealth
         capture drop wealth_ira_`y'
+        capture drop wealth_ira_decile_`y'
         gen double wealth_ira_`y' = `wira' if !missing(`wira')
         capture drop wealth_ira_decile_`y'
         xtile wealth_ira_decile_`y' = wealth_ira_`y', nq(10)
@@ -331,6 +380,7 @@ forvalues j = 1/12 {
 
         * Residential-only wealth (primary + secondary)
         capture drop wealth_res_`y'
+        capture drop wealth_res_decile_`y'
         gen double wealth_res_`y' = `wpri' + `wsec' if !missing(`wpri') & !missing(`wsec')
         capture drop wealth_res_decile_`y'
         xtile wealth_res_decile_`y' = wealth_res_`y', nq(10)
@@ -427,15 +477,16 @@ forvalues j = 5/16 {
 }
 
 * Reduce dataset to relevant variables
-capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* debt_long_annual_* debt_other_annual_* r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg debt_long_annual_avg debt_other_annual_avg
+capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg
 capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_res_*
 capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_debt_*
 capture unab _incvars : labor_income_* total_income_*
-capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_*
+capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_* ///
+    population_3bin_2020 pop3_trust_* townsize3_trust_* region_pop3_group_*
 local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
     trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///
-    interest_2020 inflation_2020 risk_div_2020 par_citizen_2020 par_loyalty_2020 population_2020 ///
+    interest_2020 inflation_2020 risk_div_2020 par_citizen_2020 par_loyalty_2020 population_2020 population_3bin_2020 ///
     depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 ///
     num_divorce_2020 num_widow_2020 ///
     `_ctrlvars' `_retvars' `_wealthvars' `_sharevars' `_incvars'

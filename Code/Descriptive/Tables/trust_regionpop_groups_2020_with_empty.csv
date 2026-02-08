@@ -1,0 +1,31 @@
+population_2020,region_,n,region_label,pop_label,region_pop_group
+"Less than 1,000",Northeast,3,Northeast,"Less than 1,000",101
+"1,000 to 10,000",Northeast,17,Northeast,"1,000 to 10,000",102
+"10,000 to 50,000",Northeast,37,Northeast,"10,000 to 50,000",103
+"50,000 to 100,000",Northeast,11,Northeast,"50,000 to 100,000",104
+"100,000 to 1 million",Northeast,20,Northeast,"100,000 to 1 million",105
+Greater than 1 million,Northeast,20,Northeast,Greater than 1 million,106
+"Less than 1,000",Midwest,13,Midwest,"Less than 1,000",201
+"1,000 to 10,000",Midwest,27,Midwest,"1,000 to 10,000",202
+"10,000 to 50,000",Midwest,49,Midwest,"10,000 to 50,000",203
+"50,000 to 100,000",Midwest,19,Midwest,"50,000 to 100,000",204
+"100,000 to 1 million",Midwest,26,Midwest,"100,000 to 1 million",205
+Greater than 1 million,Midwest,4,Midwest,Greater than 1 million,206
+"Less than 1,000",South,19,South,"Less than 1,000",301
+"1,000 to 10,000",South,58,South,"1,000 to 10,000",302
+"10,000 to 50,000",South,83,South,"10,000 to 50,000",303
+"50,000 to 100,000",South,55,South,"50,000 to 100,000",304
+"100,000 to 1 million",South,67,South,"100,000 to 1 million",305
+Greater than 1 million,South,34,South,Greater than 1 million,306
+"Less than 1,000",West,6,West,"Less than 1,000",401
+"1,000 to 10,000",West,20,West,"1,000 to 10,000",402
+"10,000 to 50,000",West,33,West,"10,000 to 50,000",403
+"50,000 to 100,000",West,22,West,"50,000 to 100,000",404
+"100,000 to 1 million",West,50,West,"100,000 to 1 million",405
+Greater than 1 million,West,29,West,Greater than 1 million,406
+"Less than 1,000",Other,0,Other,"Less than 1,000",501
+"1,000 to 10,000",Other,0,Other,"1,000 to 10,000",502
+"10,000 to 50,000",Other,0,Other,"10,000 to 50,000",503
+"50,000 to 100,000",Other,0,Other,"50,000 to 100,000",504
+"100,000 to 1 million",Other,0,Other,"100,000 to 1 million",505
+Greater than 1 million,Other,0,Other,Greater than 1 million,506

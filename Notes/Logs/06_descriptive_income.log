@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_descriptive_income.log
   log type:  text
- opened on:   5 Feb 2026, 11:46:48
+ opened on:   6 Feb 2026, 22:59:12
 
 . 
 . * Load processed data
@@ -10,11 +10,11 @@
 
 . 
 . * Ensure output dirs (needed before exports)
-. capture mkdir "${BASE_PATH}/Descriptive"
+. capture mkdir "${DESCRIPTIVE}"
 
-. capture mkdir "${BASE_PATH}/Descriptive/Figures"
+. capture mkdir "${DESCRIPTIVE}/Figures"
 
-. capture mkdir "${BASE_PATH}/Descriptive/Tables"
+. capture mkdir "${DESCRIPTIVE}/Tables"
 
 . 
 . * Respondent weight (optional)
@@ -96,7 +96,7 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . tempfile income_stats
 
 . postfile handle str32 varname double N mean sd p1 p5 p50 p95 p99 min max using "`income_stats'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.000003 not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.00000d not found)
 
 . foreach v in ln_lab_inc_final_ ln_tot_inc_final_ {
   2.     if "`wopt'" != "" {
@@ -127,8 +127,8 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 
 . use "`income_stats'", clear
 
-. export delimited using "${BASE_PATH}/Descriptive/Tables/income_final_tabstat.csv", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/income_final_tabstat.csv saved
+. export delimited using "${DESCRIPTIVE}/Tables/income_final_tabstat.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/income_final_tabstat.csv saved
 
 . restore
 
@@ -228,9 +228,9 @@ Group variable: year
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_
 > win_ `wopt', by(year)
 
-. export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_year_real_win.csv", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/income_mean_by_year_real_win.csv sa
-> ved
+. export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_year_real_win.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/income_mean_by_year_real_win.c
+> sv saved
 
 . restore
 
@@ -367,9 +367,9 @@ age_group |  labor_~_  total_~_
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_
 > win_ `wopt', by(age_group)
 
-. export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_agegroup_real_win_2002.csv", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/income_mean_by_agegroup_real_win_20
-> 02.csv saved
+. export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2002.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/income_mean_by_agegroup_real_w
+> in_2002.csv saved
 
 . restore
 
@@ -502,9 +502,9 @@ age_group |  labor_~_  total_~_
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_
 > win_ `wopt', by(age_group)
 
-. export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_agegroup_real_win_2022.csv", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/income_mean_by_agegroup_real_win_20
-> 22.csv saved
+. export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2022.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/income_mean_by_agegroup_real_w
+> in_2022.csv saved
 
 . restore
 
@@ -584,9 +584,9 @@ some_college |     47390     47390
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_
 > win_ `wopt', by(educ_group)
 
-. export delimited using "${BASE_PATH}/Descriptive/Tables/income_mean_by_educgroup_real_win.csv", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/income_mean_by_educgroup_real_win.c
-> sv saved
+. export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_educgroup_real_win.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/income_mean_by_educgroup_real_
+> win.csv saved
 
 . restore
 
@@ -604,7 +604,7 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/incom
 . tempfile growth_stats
 
 . postfile handle str32 varname double N mean sd p1 p5 p50 p95 p99 min max using "`growth_stats'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.000009 not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.00000j not found)
 
 . foreach v of varlist ln_lab_inc_final_growth_* ln_tot_inc_final_growth_* {
   2.     if "`wopt'" != "" {
@@ -635,14 +635,15 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/incom
 
 . use "`growth_stats'", clear
 
-. export delimited using "${BASE_PATH}/Descriptive/Tables/income_growth_tabstat.csv", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/income_growth_tabstat.csv saved
+. export delimited using "${DESCRIPTIVE}/Tables/income_growth_tabstat.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/income_growth_tabstat.csv save
+> d
 
 . restore
 
 . 
-. * Scatterplots: income vs wealth percentiles (2002 and 2022)
-. * Wealth percentiles by year (1-100) without xtile/by
+. * Log income vs wealth percentile: mean+IQR ribbon and binscatter (paper-ready)
+. * Wealth percentiles by year (1-100)
 . local pctvars "wealth_core wealth_ira wealth_res wealth_total gross_wealth"
 
 . foreach v of local pctvars {
@@ -660,144 +661,96 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Tables/incom
 (542,808 missing values generated)
 (224,528 real changes made)
 (542,808 missing values generated)
-(140,111 real changes made)
+(144,138 real changes made)
 (542,808 missing values generated)
 (224,530 real changes made)
 
 . 
-. display "=== Scatter: income vs wealth (2002) ==="
-=== Scatter: income vs wealth (2002) ===
+. capture which binscatter
 
-. foreach incvar in ln_lab_inc_final_ ln_tot_inc_final_ {
-  2.     local incname = cond("`incvar'"=="ln_lab_inc_final_", "labor_income", "total_income")
-  3. 
-.     twoway scatter `incvar' wealth_core_pct if year == 2002 & !missing(`incvar') & !missing(wealth_core_pct)
-> , ///
->         title("Final log `incname' vs wealth_core percentile (2002)") ///
->         xtitle("Wealth_core percentile") ytitle("Log `incname' (final)")
-  4.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_corepct_2002.png", replace
-  5. 
-.     twoway scatter `incvar' wealth_ira_pct if year == 2002 & !missing(`incvar') & !missing(wealth_ira_pct), 
-> ///
->         title("Final log `incname' vs wealth_ira percentile (2002)") ///
->         xtitle("Wealth_ira percentile") ytitle("Log `incname' (final)")
-  6.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_irapct_2002.png", replace
-  7. 
-.     twoway scatter `incvar' wealth_res_pct if year == 2002 & !missing(`incvar') & !missing(wealth_res_pct), 
-> ///
->         title("Final log `incname' vs wealth_res percentile (2002)") ///
->         xtitle("Wealth_res percentile") ytitle("Log `incname' (final)")
-  8.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_respct_2002.png", replace
-  9. 
-.     twoway scatter `incvar' wealth_total_pct if year == 2002 & !missing(`incvar') & !missing(wealth_total_pc
-> t), ///
->         title("Final log `incname' vs wealth_total percentile (2002)") ///
->         xtitle("Wealth_total percentile") ytitle("Log `incname' (final)")
- 10.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_totalpct_2002.png", replace
- 11. 
-.     twoway scatter `incvar' gross_wealth_pct if year == 2002 & !missing(`incvar') & !missing(gross_wealth_pc
-> t), ///
->         title("Final log `incname' vs gross wealth percentile (2002)") ///
->         xtitle("Gross wealth percentile") ytitle("Log `incname' (final)")
- 12.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_gross_wealth_pct_2002.png", replace
- 13. }
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_corepct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_irapct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_respct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_totalpct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_gross_wealth_pct_2002.png
-    saved as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_corepct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_irapct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_respct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_totalpct_2002.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_gross_wealth_pct_2002.png
-    saved as PNG format
+. if _rc capture ssc install binscatter, replace
 
 . 
-. display "=== Scatter: income vs wealth (2022) ==="
-=== Scatter: income vs wealth (2022) ===
+. display "=== Log income vs wealth percentile: mean+IQR and binscatter ==="
+=== Log income vs wealth percentile: mean+IQR and binscatter ===
 
-. foreach incvar in ln_lab_inc_final_ ln_tot_inc_final_ {
-  2.     local incname = cond("`incvar'"=="ln_lab_inc_final_", "labor_income", "total_income")
-  3. 
-.     twoway scatter `incvar' wealth_core_pct if year == 2022 & !missing(`incvar') & !missing(wealth_core_pct)
-> , ///
->         title("Final log `incname' vs wealth_core percentile (2022)") ///
->         xtitle("Wealth_core percentile") ytitle("Log `incname' (final)")
-  4.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_corepct_2022.png", replace
-  5. 
-.     twoway scatter `incvar' wealth_ira_pct if year == 2022 & !missing(`incvar') & !missing(wealth_ira_pct), 
-> ///
->         title("Final log `incname' vs wealth_ira percentile (2022)") ///
->         xtitle("Wealth_ira percentile") ytitle("Log `incname' (final)")
-  6.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_irapct_2022.png", replace
-  7. 
-.     twoway scatter `incvar' wealth_res_pct if year == 2022 & !missing(`incvar') & !missing(wealth_res_pct), 
-> ///
->         title("Final log `incname' vs wealth_res percentile (2022)") ///
->         xtitle("Wealth_res percentile") ytitle("Log `incname' (final)")
-  8.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_respct_2022.png", replace
-  9. 
-.     twoway scatter `incvar' wealth_total_pct if year == 2022 & !missing(`incvar') & !missing(wealth_total_pc
-> t), ///
->         title("Final log `incname' vs wealth_total percentile (2022)") ///
->         xtitle("Wealth_total percentile") ytitle("Log `incname' (final)")
- 10.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_wealth_totalpct_2022.png", replace
- 11. 
-.     twoway scatter `incvar' gross_wealth_pct if year == 2022 & !missing(`incvar') & !missing(gross_wealth_pc
-> t), ///
->         title("Final log `incname' vs gross wealth percentile (2022)") ///
->         xtitle("Gross wealth percentile") ytitle("Log `incname' (final)")
- 12.     graph export "${BASE_PATH}/Descriptive/Figures/`incname'_vs_gross_wealth_pct_2022.png", replace
- 13. }
+. local years "2002 2022"
+
+. foreach y of local years {
+  2.     quietly count if year == `y' & !missing(wealth_total_pct)
+  3.     if r(N) < 10 continue
+  4. 
+.     * --- Labor income: mean+IQR uses real winsorized (level); binscatter uses log ---
+.     quietly count if year == `y' & !missing(labor_income_real_win_) & !missing(wealth_total_pct)
+  5.     if r(N) >= 10 {
+  6.         preserve
+  7.         keep if year == `y'
+  8.         collapse (mean) mean_inc = labor_income_real_win_ (p25) p25_inc = labor_income_real_win_ (p75) p7
+> 5_inc = labor_income_real_win_, by(wealth_total_pct)
+  9.         twoway (rarea p75_inc p25_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_total_pct, lco
+> lor(navy) lwidth(medthick)), ///
+>             xtitle("Wealth percentile") ytitle("Labor income (real, winsorized)") ///
+>             title("Mean and IQR of labor income (real, win) by wealth percentile (`y')") legend(off)
+ 10.         graph export "${DESCRIPTIVE}/Figures/labor_income_real_win_iqr_by_wealthpct_`y'.png", replace
+ 11.         restore
+ 12.     }
+ 13.     quietly count if year == `y' & !missing(ln_lab_inc_final_) & !missing(wealth_total_pct)
+ 14.     if r(N) >= 10 {
+ 15.         capture binscatter ln_lab_inc_final_ wealth_total_pct if year == `y', nquantiles(50) ///
+>             ytitle("Log labor income") xtitle("Wealth percentile") ///
+>             title("Binscatter: log labor income vs wealth percentile (`y')")
+ 16.         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_labor_income_binscatter_`y'.png", replace
+ 17.     }
+ 18. 
+.     * --- Total income: mean+IQR uses real winsorized (level); binscatter uses log ---
+.     quietly count if year == `y' & !missing(total_income_real_win_) & !missing(wealth_total_pct)
+ 19.     if r(N) >= 10 {
+ 20.         preserve
+ 21.         keep if year == `y'
+ 22.         collapse (mean) mean_inc = total_income_real_win_ (p25) p25_inc = total_income_real_win_ (p75) p7
+> 5_inc = total_income_real_win_, by(wealth_total_pct)
+ 23.         twoway (rarea p75_inc p25_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_total_pct, lco
+> lor(maroon) lwidth(medthick)), ///
+>             xtitle("Wealth percentile") ytitle("Total income (real, winsorized)") ///
+>             title("Mean and IQR of total income (real, win) by wealth percentile (`y')") legend(off)
+ 24.         graph export "${DESCRIPTIVE}/Figures/total_income_real_win_iqr_by_wealthpct_`y'.png", replace
+ 25.         restore
+ 26.     }
+ 27.     quietly count if year == `y' & !missing(ln_tot_inc_final_) & !missing(wealth_total_pct)
+ 28.     if r(N) >= 10 {
+ 29.         capture binscatter ln_tot_inc_final_ wealth_total_pct if year == `y', nquantiles(50) ///
+>             ytitle("Log total income") xtitle("Wealth percentile") ///
+>             title("Binscatter: log total income vs wealth percentile (`y')")
+ 30.         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_total_income_binscatter_`y'.png", replace
+ 31.     }
+ 32. }
+(497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_corepct_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labor_income_real_win_iqr_by_wealthpct_20
+    > 02.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_irapct_2022.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_respct_2022.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_wealth_totalpct_2022.png saved
-    as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/labor_income_vs_gross_wealth_pct_2022.png
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_labor_income_binscatter_2002.png
     saved as PNG format
+(497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_corepct_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/total_income_real_win_iqr_by_wealthpct_20
+    > 02.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_irapct_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_total_income_binscatter_2002.png
+    saved as PNG format
+(497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_respct_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labor_income_real_win_iqr_by_wealthpct_20
+    > 22.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_wealth_totalpct_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_labor_income_binscatter_2022.png
+    saved as PNG format
+(497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Descriptive/Figures/total_income_vs_gross_wealth_pct_2022.png
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/total_income_real_win_iqr_by_wealthpct_20
+    > 22.png saved as PNG format
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_total_income_binscatter_2022.png
     saved as PNG format
 
 . 
@@ -805,5 +758,5 @@ file /Volumes/SSD
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_descriptive_income.log
   log type:  text
- closed on:   5 Feb 2026, 11:47:47
+ closed on:   6 Feb 2026, 23:00:07
 --------------------------------------------------------------------------------------------------------------

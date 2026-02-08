@@ -44,10 +44,7 @@ forvalues i = 1/11 {
     local wcur : word `i' of `curr_waves'
     local wprev : word `i' of `prev_waves'
 
-    * Resolve income variable names (some waves use r*iearn/ipena/etc.)
-    local earnvar ""
-    capture confirm variable r`wcur'iearn
-    if !_rc local earnvar "r`wcur'iearn"
+    * Resolve income variable names (some waves use r*ipena/etc.)
     local penavar ""
     capture confirm variable r`wcur'ipena
     if !_rc local penavar "r`wcur'ipena"
@@ -74,10 +71,9 @@ forvalues i = 1/11 {
         capture confirm variable `v'
         if _rc local missing_any 1
     }
-    if "`earnvar'" == "" local missing_any 1
     if "`penavar'" == "" & "`ssdivar'" == "" & "`isretvar'" == "" local missing_any 1
     local totvars ""
-    foreach v in `earnvar' `penavar' `ssdivar' `isretvar' r`wcur'iunwc r`wcur'igxfr h`wcur'icap h`wcur'iothr {
+    foreach v in `penavar' `ssdivar' `isretvar' h`wcur'icap h`wcur'iothr {
         capture confirm variable `v'
         if !_rc local totvars "`totvars' `v'"
     }
@@ -192,38 +188,43 @@ forvalues i = 1/11 {
         gen double cg_res_total_`y' = cg_res_`y' + cg_res2_`y'
         gen double cg_total_`y' = cg_core_`y' + cg_ira_only_`y' + cg_res_total_`y' + cg_veh_`y' + cg_oth_`y'
 
+        * Flow adjustments: treat missing flows as 0 for return construction
+        gen double flow_core_adj_`y' = cond(missing(flow_core_`y'), 0, flow_core_`y')
+        gen double flow_ira_adj_`y' = cond(missing(flow_ira_`y'), 0, flow_ira_`y')
+        gen double flow_res_adj_`y' = cond(missing(flow_res_`y'), 0, flow_res_`y')
+        gen double flow_total_adj_`y' = cond(missing(flow_total_`y'), 0, flow_total_`y')
+
         * Minimal overlap: require all components nonmissing per measure
         egen byte _ok_core_`y' = rownonmiss(h`wprev'arles h`wprev'absns h`wprev'astck h`wprev'abond h`wprev'achck h`wprev'acd ///
-            y_core_inc_`y' flow_core_`y' cg_re_`y' cg_bus_`y' cg_stk_`y' cg_bnd_`y' cg_chk_`y' cg_cd_`y')
-        replace _ok_core_`y' = (_ok_core_`y' == 14)
-        egen byte _ok_ira_`y' = rownonmiss(h`wprev'aira y_ira_inc_`y' flow_ira_`y' cg_ira_`y')
-        replace _ok_ira_`y' = (_ok_ira_`y' == 4)
-        egen byte _ok_res_`y' = rownonmiss(h`wprev'atoth h`wprev'anethb y_res_inc_`y' flow_res_`y' cg_res_`y' cg_res2_`y')
-        replace _ok_res_`y' = (_ok_res_`y' == 6)
-        local ok_total_vars "h`wprev'atoth h`wprev'anethb h`wprev'arles h`wprev'atran h`wprev'absns h`wprev'aira h`wprev'astck h`wprev'achck h`wprev'acd h`wprev'abond h`wprev'aothr h`wprev'amort h`wprev'ahmln h`wprev'adebt y_total_inc_`y' flow_total_`y'"
-        local ok_total_vars "`ok_total_vars' cg_re_`y' cg_bus_`y' cg_stk_`y' cg_bnd_`y' cg_chk_`y' cg_cd_`y' cg_veh_`y' cg_oth_`y' cg_ira_`y' cg_res_`y' cg_res2_`y'"
-        capture confirm variable h`wprev'amrtb
-        if !_rc local ok_total_vars "`ok_total_vars' h`wprev'amrtb"
-        egen byte _ok_total_`y' = rownonmiss(`ok_total_vars')
-        local ok_total_n = 25
-        capture confirm variable h`wprev'amrtb
-        if !_rc local ok_total_n = 26
-        replace _ok_total_`y' = (_ok_total_`y' == `ok_total_n')
+            y_core_inc_`y' cg_re_`y' cg_bus_`y' cg_stk_`y' cg_bnd_`y' cg_chk_`y' cg_cd_`y')
+        replace _ok_core_`y' = (_ok_core_`y' == 13)
+        egen byte _ok_ira_`y' = rownonmiss(h`wprev'aira y_ira_inc_`y' cg_ira_`y')
+        replace _ok_ira_`y' = (_ok_ira_`y' == 3)
+        egen byte _ok_res_`y' = rownonmiss(h`wprev'atoth h`wprev'anethb y_res_inc_`y' cg_res_`y' cg_res2_`y')
+        replace _ok_res_`y' = (_ok_res_`y' == 5)
+        * r4 rule: denom (base) nonmissing and y_total nonmissing only (like r1/r2/r3)
+        gen byte _ok_total_`y' = 0
 
         * Base and returns (scope-specific wealth)
         capture drop net_total_`y' base_core_`y' base_ira_`y' base_res_`y' base_total_`y'
+        * Net total: constructed wealth (treat missing components as 0 so base is defined whenever we have any data)
         local secmort_term ""
         capture confirm variable h`wprev'amrtb
-        if !_rc local secmort_term " - max(h`wprev'amrtb,0)"
-        gen double net_total_`y' = (max(h`wprev'atoth,0) + max(h`wprev'anethb,0) + max(h`wprev'arles,0) + max(h`wprev'atran,0) + ///
-            max(h`wprev'absns,0) + max(h`wprev'aira,0) + max(h`wprev'astck,0) + max(h`wprev'achck,0) + max(h`wprev'acd,0) + ///
-            max(h`wprev'abond,0) + max(h`wprev'aothr,0) - max(h`wprev'amort,0) - max(h`wprev'ahmln,0) - max(h`wprev'adebt,0) `secmort_term') if _ok_total_`y'
-        gen double base_core_`y' = (h`wprev'arles + h`wprev'absns + h`wprev'astck + h`wprev'abond + h`wprev'achck + h`wprev'acd) + 0.5 * flow_core_`y' if _ok_core_`y'
-        gen double base_ira_`y' = h`wprev'aira + 0.5 * flow_ira_`y' if _ok_ira_`y'
-        gen double base_res_`y' = (h`wprev'atoth + h`wprev'anethb) + 0.5 * flow_res_`y' if _ok_res_`y'
-        gen double base_total_`y' = net_total_`y' + 0.5 * flow_total_`y' if _ok_total_`y'
+        if !_rc local secmort_term " - cond(missing(h`wprev'amrtb), 0, max(h`wprev'amrtb,0))"
+        gen double net_total_`y' = cond(missing(h`wprev'atoth), 0, max(h`wprev'atoth,0)) + cond(missing(h`wprev'anethb), 0, max(h`wprev'anethb,0)) + ///
+            cond(missing(h`wprev'arles), 0, max(h`wprev'arles,0)) + cond(missing(h`wprev'atran), 0, max(h`wprev'atran,0)) + ///
+            cond(missing(h`wprev'absns), 0, max(h`wprev'absns,0)) + cond(missing(h`wprev'aira), 0, max(h`wprev'aira,0)) + ///
+            cond(missing(h`wprev'astck), 0, max(h`wprev'astck,0)) + cond(missing(h`wprev'achck), 0, max(h`wprev'achck,0)) + ///
+            cond(missing(h`wprev'acd), 0, max(h`wprev'acd,0)) + cond(missing(h`wprev'abond), 0, max(h`wprev'abond,0)) + ///
+            cond(missing(h`wprev'aothr), 0, max(h`wprev'aothr,0)) - cond(missing(h`wprev'amort), 0, max(h`wprev'amort,0)) - cond(missing(h`wprev'ahmln), 0, max(h`wprev'ahmln,0)) - cond(missing(h`wprev'adebt), 0, max(h`wprev'adebt,0)) `secmort_term'
+        gen double base_total_`y' = net_total_`y' + 0.5 * flow_total_adj_`y'
+        replace _ok_total_`y' = 1 if !missing(base_total_`y') & base_total_`y' > 0 & !missing(y_total_inc_`y')
 
-        * Base diagnostics (minimal overlap sample, before dropping base<=0)
+        gen double base_core_`y' = (h`wprev'arles + h`wprev'absns + h`wprev'astck + h`wprev'abond + h`wprev'achck + h`wprev'acd) + 0.5 * flow_core_adj_`y' if _ok_core_`y'
+        gen double base_ira_`y' = h`wprev'aira + 0.5 * flow_ira_adj_`y' if _ok_ira_`y'
+        gen double base_res_`y' = (h`wprev'atoth + h`wprev'anethb) + 0.5 * flow_res_adj_`y' if _ok_res_`y'
+
+        * Base diagnostics (minimal overlap sample, before dropping base thresholds)
         quietly count if _ok_core_`y' & base_core_`y' <= 0
         display "r1 base<=0 (`y'): " r(N)
         quietly count if _ok_core_`y' & base_core_`y' < 1000
@@ -260,11 +261,21 @@ forvalues i = 1/11 {
         quietly count if _ok_total_`y' & base_total_`y' < 5000
         display "r4 base<5k (`y'): " r(N)
 
+        * Apply minimum base thresholds by return type
+        local base_core_min = 500
+        local base_ira_min = 1000
+        local base_res_min = 1000
+        local base_total_min = 2500
+        replace base_core_`y' = . if base_core_`y' < `base_core_min'
+        replace base_ira_`y' = . if base_ira_`y' < `base_ira_min'
+        replace base_res_`y' = . if base_res_`y' < `base_res_min'
+        replace base_total_`y' = . if base_total_`y' < `base_total_min'
+
         capture drop num_core_`y' num_ira_`y' num_res_`y' num_total_`y'
-        gen double num_core_`y' = y_core_inc_`y' + cg_core_`y' - flow_core_`y' if _ok_core_`y'
-        gen double num_ira_`y' = y_ira_inc_`y' + cg_ira_only_`y' - flow_ira_`y' if _ok_ira_`y'
-        gen double num_res_`y' = y_res_inc_`y' + cg_res_total_`y' - flow_res_`y' if _ok_res_`y'
-        gen double num_total_`y' = y_total_inc_`y' + cg_total_`y' - flow_total_`y' if _ok_total_`y'
+        gen double num_core_`y' = y_core_inc_`y' + cg_core_`y' - flow_core_adj_`y' if _ok_core_`y'
+        gen double num_ira_`y' = y_ira_inc_`y' + cg_ira_only_`y' - flow_ira_adj_`y' if _ok_ira_`y'
+        gen double num_res_`y' = y_res_inc_`y' + cg_res_total_`y' - flow_res_adj_`y' if _ok_res_`y'
+        gen double num_total_`y' = y_total_inc_`y' + cg_total_`y' - flow_total_adj_`y' if _ok_total_`y'
 
         capture drop r1_period_`y' r2_period_`y' r3_period_`y' r4_period_`y'
         gen double r1_period_`y' = num_core_`y' / base_core_`y'
@@ -287,70 +298,10 @@ forvalues i = 1/11 {
         replace r3_annual_`y' = . if missing(r3_period_`y')
         replace r4_annual_`y' = . if missing(r4_period_`y')
 
-        * Debt return measures (mirror r1-r3 pipeline; numerator only uses debt term)
-        local has_debt_long 1
-        local has_debt_other 1
-        capture confirm variable h`wcur'amort h`wprev'amort h`wcur'ahmln h`wprev'ahmln
-        if _rc local has_debt_long 0
-        capture confirm variable h`wcur'adebt h`wprev'adebt
-        if _rc local has_debt_other 0
+        capture drop flow_core_adj_`y' flow_ira_adj_`y' flow_res_adj_`y' flow_total_adj_`y'
 
-        if `has_debt_long' {
-            capture drop debt_long_`y'
-            gen double debt_long_`y' = cond(missing(h`wcur'amort) & missing(h`wcur'ahmln), ., ///
-                cond(missing(h`wcur'amort), 0, h`wcur'amort) + cond(missing(h`wcur'ahmln), 0, h`wcur'ahmln))
-
-            capture drop _ok_debt_long_`y'
-            capture drop base_debt_long_`y'
-            egen byte _ok_debt_long_`y' = rownonmiss(net_total_`y' flow_total_`y' debt_long_`y')
-            replace _ok_debt_long_`y' = (_ok_debt_long_`y' == 3)
-            gen double base_debt_long_`y' = net_total_`y' + 0.5 * flow_total_`y' if _ok_debt_long_`y'
-
-            quietly count if _ok_debt_long_`y' & base_debt_long_`y' <= 0
-            display "debt_long base<=0 (`y'): " r(N)
-            quietly count if _ok_debt_long_`y' & base_debt_long_`y' < 1000
-            display "debt_long base<1k (`y'): " r(N)
-            quietly count if _ok_debt_long_`y' & base_debt_long_`y' < 2000
-            display "debt_long base<2k (`y'): " r(N)
-            quietly count if _ok_debt_long_`y' & base_debt_long_`y' < 5000
-            display "debt_long base<5k (`y'): " r(N)
-
-            capture drop num_debt_long_`y' debt_long_period_`y' debt_long_annual_`y'
-            gen double num_debt_long_`y' = debt_long_`y' if _ok_debt_long_`y'
-            gen double debt_long_period_`y' = num_debt_long_`y' / base_debt_long_`y'
-            replace debt_long_period_`y' = . if base_debt_long_`y' <= 0
-            gen double debt_long_annual_`y' = (1 + debt_long_period_`y')^(1/2) - 1
-            replace debt_long_annual_`y' = . if missing(debt_long_period_`y')
-        }
-
-        if `has_debt_other' {
-            capture drop debt_other_`y'
-            gen double debt_other_`y' = h`wcur'adebt
-
-            capture drop _ok_debt_other_`y'
-            capture drop base_debt_other_`y'
-            egen byte _ok_debt_other_`y' = rownonmiss(net_total_`y' flow_total_`y' debt_other_`y')
-            replace _ok_debt_other_`y' = (_ok_debt_other_`y' == 3)
-            gen double base_debt_other_`y' = net_total_`y' + 0.5 * flow_total_`y' if _ok_debt_other_`y'
-
-            quietly count if _ok_debt_other_`y' & base_debt_other_`y' <= 0
-            display "debt_other base<=0 (`y'): " r(N)
-            quietly count if _ok_debt_other_`y' & base_debt_other_`y' < 1000
-            display "debt_other base<1k (`y'): " r(N)
-            quietly count if _ok_debt_other_`y' & base_debt_other_`y' < 2000
-            display "debt_other base<2k (`y'): " r(N)
-            quietly count if _ok_debt_other_`y' & base_debt_other_`y' < 5000
-            display "debt_other base<5k (`y'): " r(N)
-
-            capture drop num_debt_other_`y' debt_other_period_`y' debt_other_annual_`y'
-            gen double num_debt_other_`y' = debt_other_`y' if _ok_debt_other_`y'
-            gen double debt_other_period_`y' = num_debt_other_`y' / base_debt_other_`y'
-            replace debt_other_period_`y' = . if base_debt_other_`y' <= 0
-            gen double debt_other_annual_`y' = (1 + debt_other_period_`y')^(1/2) - 1
-            replace debt_other_annual_`y' = . if missing(debt_other_period_`y')
-        }
     }
-    capture drop _ok_core_`y' _ok_ira_`y' _ok_res_`y' _ok_total_`y' _ok_debt_long_`y' _ok_debt_other_`y'
+    capture drop _ok_core_`y' _ok_ira_`y' _ok_res_`y' _ok_total_`y'
 }
 
 * Average returns across waves (row mean of nonmissing)
@@ -358,14 +309,10 @@ capture drop r1_annual_avg
 capture drop r2_annual_avg
 capture drop r3_annual_avg
 capture drop r4_annual_avg
-capture drop debt_long_annual_avg
-capture drop debt_other_annual_avg
 egen double r1_annual_avg = rowmean(r1_annual_2002 r1_annual_2004 r1_annual_2006 r1_annual_2008 r1_annual_2010 r1_annual_2012 r1_annual_2014 r1_annual_2016 r1_annual_2018 r1_annual_2020 r1_annual_2022)
 egen double r2_annual_avg = rowmean(r2_annual_2002 r2_annual_2004 r2_annual_2006 r2_annual_2008 r2_annual_2010 r2_annual_2012 r2_annual_2014 r2_annual_2016 r2_annual_2018 r2_annual_2020 r2_annual_2022)
 egen double r3_annual_avg = rowmean(r3_annual_2002 r3_annual_2004 r3_annual_2006 r3_annual_2008 r3_annual_2010 r3_annual_2012 r3_annual_2014 r3_annual_2016 r3_annual_2018 r3_annual_2020 r3_annual_2022)
 egen double r4_annual_avg = rowmean(r4_annual_2002 r4_annual_2004 r4_annual_2006 r4_annual_2008 r4_annual_2010 r4_annual_2012 r4_annual_2014 r4_annual_2016 r4_annual_2018 r4_annual_2020 r4_annual_2022)
-egen double debt_long_annual_avg = rowmean(debt_long_annual_2002 debt_long_annual_2004 debt_long_annual_2006 debt_long_annual_2008 debt_long_annual_2010 debt_long_annual_2012 debt_long_annual_2014 debt_long_annual_2016 debt_long_annual_2018 debt_long_annual_2020 debt_long_annual_2022)
-egen double debt_other_annual_avg = rowmean(debt_other_annual_2002 debt_other_annual_2004 debt_other_annual_2006 debt_other_annual_2008 debt_other_annual_2010 debt_other_annual_2012 debt_other_annual_2014 debt_other_annual_2016 debt_other_annual_2018 debt_other_annual_2020 debt_other_annual_2022)
 
 * Income measures per wave (labor + total) for downstream processing
 forvalues j = 6/16 {
@@ -407,17 +354,23 @@ egen double total_income_avg = rowmean(total_income_2002 total_income_2004 total
 * Wealth totals by wave (net and gross), for downstream tracking
 forvalues w = 5/16 {
     local y = 1990 + (2*`w')
-    capture drop wealth_total_`y' gross_wealth_`y' _gross_assets_`y' _gross_n_`y' _debt_total_`y' _debt_n_`y'
-    egen double _gross_assets_`y' = rowtotal(h`w'atoth h`w'anethb h`w'arles h`w'atran h`w'absns h`w'aira h`w'astck h`w'achck h`w'acd h`w'abond h`w'aothr), missing
+    capture drop wealth_total_`y' gross_wealth_`y' _gross_n_`y' _debt_total_`y' _debt_n_`y'
     egen byte _gross_n_`y' = rownonmiss(h`w'atoth h`w'anethb h`w'arles h`w'atran h`w'absns h`w'aira h`w'astck h`w'achck h`w'acd h`w'abond h`w'aothr)
     egen double _debt_total_`y' = rowtotal(h`w'amort h`w'ahmln h`w'adebt h`w'amrtb), missing
     egen byte _debt_n_`y' = rownonmiss(h`w'amort h`w'ahmln h`w'adebt h`w'amrtb)
-    gen double wealth_total_`y' = _gross_assets_`y' - _debt_total_`y'
+    gen double gross_wealth_`y' = ///
+        cond(missing(h`w'atoth), 0, max(h`w'atoth, 0)) + cond(missing(h`w'anethb), 0, max(h`w'anethb, 0)) + ///
+        cond(missing(h`w'arles), 0, max(h`w'arles, 0)) + cond(missing(h`w'atran), 0, max(h`w'atran, 0)) + ///
+        cond(missing(h`w'absns), 0, max(h`w'absns, 0)) + cond(missing(h`w'aira), 0, max(h`w'aira, 0)) + ///
+        cond(missing(h`w'astck), 0, max(h`w'astck, 0)) + cond(missing(h`w'achck), 0, max(h`w'achck, 0)) + ///
+        cond(missing(h`w'acd), 0, max(h`w'acd, 0)) + cond(missing(h`w'abond), 0, max(h`w'abond, 0)) + ///
+        cond(missing(h`w'aothr), 0, max(h`w'aothr, 0))
+    replace gross_wealth_`y' = . if _gross_n_`y' == 0
+    gen double wealth_total_`y' = gross_wealth_`y' - _debt_total_`y'
     replace wealth_total_`y' = . if _gross_n_`y' == 0 & _debt_n_`y' == 0
-    gen double gross_wealth_`y' = _gross_assets_`y'
-    drop _gross_assets_`y' _gross_n_`y' _debt_total_`y' _debt_n_`y'
+    drop _gross_n_`y' _debt_total_`y' _debt_n_`y'
 }
 
 * Save
 save "${CLEANED}/all_data_merged.dta", replace
-display "02: Saved ${CLEANED}/all_data_merged.dta with flow_*_YYYY, r1/r2/r3/r4_annual_YYYY, and debt_*_annual_YYYY (N = " _N ")"
+display "02: Saved ${CLEANED}/all_data_merged.dta with flow_*_YYYY and r1/r2/r3/r4_annual_YYYY (N = " _N ")"

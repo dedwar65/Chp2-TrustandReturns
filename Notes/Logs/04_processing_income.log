@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_processing_income.log
   log type:  text
- opened on:   5 Feb 2026, 11:42:47
+ opened on:   6 Feb 2026, 22:38:43
 
 . 
 . use "${PROCESSED}/analysis_ready.dta", clear
@@ -90,8 +90,8 @@
 . rename CPIAUCSL cpi
 
 . save "`cpi'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.000002 not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.000002 saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.00000c not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_06681.00000c saved as .dta format
 
 . 
 . quietly summarize cpi if year == 2021
@@ -1290,5 +1290,5 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_processing_income.log
   log type:  text
- closed on:   5 Feb 2026, 11:42:52
+ closed on:   6 Feb 2026, 22:38:50
 --------------------------------------------------------------------------------------------------------------

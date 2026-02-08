@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_merge_all_data.log
   log type:  text
- opened on:   5 Feb 2026, 11:58:43
+ opened on:   6 Feb 2026, 22:25:01
 
 . 
 . * ------------------------------------------------------------------------------
@@ -261,3 +261,369 @@ end of do-file
 . * 01_5_merge_flow_2006.do — merge 2006 flow vars from h06f4b (prefix K). Fat files use lowercase + hhidpn.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn kr050 kr055 kr063 kr064 kr072 kr073 kr030 kr035 kr045 kq171_1 kq171_2 kq171_3 kr007 kr013 kr024 /
+> //
+>     kr049 kr061 kr062 kr028 kr029 kq170_1 kq170_2 kq170_3 kr002 using "${HRS_DATA}/h06f4b.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        26,765
+        from master                    26,765  
+        from using                          0  
+
+    Matched                            18,469  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_5: Merged 2006 flows. N = " _N
+01_5: Merged 2006 flows. N = 45234
+
+. 
+end of do-file
+
+. do "${RAW_DATA}/01_6_merge_flow_2008.do"
+
+. * 01_6_merge_flow_2008.do — merge 2008 flow vars from h08f3b (prefix L). Fat files use lowercase + hhidpn.
+. local scratch "${RAW_DATA}/_merge_scratch.dta"
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn lr050 lr055 lr063 lr064 lr072 lr073 lr030 lr035 lr045 lq171_1 lq171_2 lq171_3 lr007 lr013 lr024 /
+> //
+>     lr049 lr061 lr062 lr028 lr029 lq170_1 lq170_2 lq170_3 lr002 using "${HRS_DATA}/h08f3b.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        28,017
+        from master                    28,017  
+        from using                          0  
+
+    Matched                            17,217  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_6: Merged 2008 flows. N = " _N
+01_6: Merged 2008 flows. N = 45234
+
+. 
+end of do-file
+
+. do "${RAW_DATA}/01_7_merge_flow_2010.do"
+
+. * 01_7_merge_flow_2010.do — merge 2010 flow vars from hd10f6b (prefix M). Fat files use lowercase + hhidpn.
+. local scratch "${RAW_DATA}/_merge_scratch.dta"
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn mr050 mr055 mr063 mr064 mr072 mr073 mr030 mr035 mr045 mq171_1 mq171_2 mq171_3 mr007 mr013 mr024 /
+> //
+>     mr049 mr061 mr062 mr028 mr029 mq170_1 mq170_2 mq170_3 mr002 using "${HRS_DATA}/hd10f6b.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        23,200
+        from master                    23,200  
+        from using                          0  
+
+    Matched                            22,034  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_7: Merged 2010 flows. N = " _N
+01_7: Merged 2010 flows. N = 45234
+
+. 
+end of do-file
+
+. do "${RAW_DATA}/01_8_merge_flow_2012.do"
+
+. * 01_8_merge_flow_2012.do — merge 2012 flow vars from h12f3a (prefix N). Fat files use lowercase + hhidpn.
+. local scratch "${RAW_DATA}/_merge_scratch.dta"
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn nr050 nr055 nr063 nr064 nr072 nr073 nr030 nr035 nr045 nq171_1 nq171_2 nq171_3 nr007 nr013 nr024 /
+> //
+>     nr049 nr061 nr062 nr028 nr029 nq170_1 nq170_2 nq170_3 nr002 using "${HRS_DATA}/h12f3a.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        24,680
+        from master                    24,680  
+        from using                          0  
+
+    Matched                            20,554  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_8: Merged 2012 flows. N = " _N
+01_8: Merged 2012 flows. N = 45234
+
+. 
+end of do-file
+
+. do "${RAW_DATA}/01_9_merge_flow_2014.do"
+
+. * 01_9_merge_flow_2014.do — merge 2014 flow vars from h14f2b (prefix O). Fat files use lowercase + hhidpn.
+. local scratch "${RAW_DATA}/_merge_scratch.dta"
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn or050 or055 or063 or064 or072 or073 or030 or035 or045 oq171_1 oq171_2 oq171_3 or007 or013 or024 /
+> //
+>     or049 or061 or062 or028 or029 oq170_1 oq170_2 oq170_3 or002 using "${HRS_DATA}/h14f2b.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        26,487
+        from master                    26,487  
+        from using                          0  
+
+    Matched                            18,747  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_9: Merged 2014 flows. N = " _N
+01_9: Merged 2014 flows. N = 45234
+
+. 
+end of do-file
+
+. do "${RAW_DATA}/01_10_merge_flow_2016.do"
+
+. * 01_10_merge_flow_2016.do — merge 2016 flow vars from h16f2c (prefix P). Fat files use lowercase + hhidpn.
+. local scratch "${RAW_DATA}/_merge_scratch.dta"
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn pr050 pr055 pr063 pr064 pr072 pr073 pr030 pr035 pr045 pq171_1 pq171_2 pq171_3 pr007 pr013 pr024 /
+> //
+>     pr049 pr061 pr062 pr028 pr029 pq170_1 pq170_2 pq170_3 pr002 using "${HRS_DATA}/h16f2c.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        24,322
+        from master                    24,322  
+        from using                          0  
+
+    Matched                            20,912  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_10: Merged 2016 flows. N = " _N
+01_10: Merged 2016 flows. N = 45234
+
+. 
+end of do-file
+
+. do "${RAW_DATA}/01_11_merge_flow_2018.do"
+
+. * 01_11_merge_flow_2018.do — merge 2018 flow vars from h18f2c (prefix Q). Fat files use lowercase + hhidpn.
+. local scratch "${RAW_DATA}/_merge_scratch.dta"
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn qr050 qr055 qr063 qr064 qr072 qr073 qr030 qr035 qr045 qq171_1 qq171_2 qq171_3 qr007 qr013 qr024 /
+> //
+>     qr049 qr061 qr062 qr028 qr029 qq170_1 qq170_2 qq170_3 qr002 using "${HRS_DATA}/h18f2c.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        28,088
+        from master                    28,088  
+        from using                          0  
+
+    Matched                            17,146  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_11: Merged 2018 flows. N = " _N
+01_11: Merged 2018 flows. N = 45234
+
+. 
+end of do-file
+
+. do "${RAW_DATA}/01_12_merge_flow_2020.do"
+
+. * 01_12_merge_flow_2020.do — merge 2020 flow vars from h20f1a (prefix R). Fat files use lowercase + hhidpn.
+. local scratch "${RAW_DATA}/_merge_scratch.dta"
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. preserve
+
+. use hhidpn rr050 rr055 rr063 rr064 rr072 rr073 rr030 rr035 rr045 rq171_1 rq171_2 rq171_3 rr007 rr013 rr024 /
+> //
+>     rr049 rr061 rr062 rr028 rr029 rq170_1 rq170_2 rq170_3 rr002 using "${HRS_DATA}/h20f1a.dta", clear
+
+. save "`scratch'", replace
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+
+. restore
+
+. merge 1:1 hhidpn using "`scratch'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        29,511
+        from master                    29,511  
+        from using                          0  
+
+    Matched                            15,723  
+    -----------------------------------------
+
+. capture erase "`scratch'"
+
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. 
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "01_12: Merged 2020 flows. N = " _N
+01_12: Merged 2020 flows. N = 45234
+
+. 
+end of do-file
+
+. 
+. * ------------------------------------------------------------------------------
+. * 5. Clean missing value codes for rv557-rv570: -9 and -8 only
+. * ------------------------------------------------------------------------------
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. capture unab allrv : rv*_*
+
+. if _rc == 0 {
+.     foreach v of local allrv {
+  2.         quietly replace `v' = . if inlist(`v', -9, -8)
+  3.     }
+. }
+
+. save "${CLEANED}/all_data_merged.dta", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+
+. display "Saved ${CLEANED}/all_data_merged.dta  (N = " _N ")"
+Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta  (N = 45234)
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_merge_all_data.log
+  log type:  text
+ closed on:   6 Feb 2026, 22:32:30
+--------------------------------------------------------------------------------------------------------------

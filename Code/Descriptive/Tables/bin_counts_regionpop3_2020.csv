@@ -1,0 +1,13 @@
+population_3bin_2020,region_2020,region_pop3_group,region_label,pop3_label,n
+Small town (<10k),Northeast,11,Northeast,Small town (<10k),20
+Small/med city (10k-100k),Northeast,12,Northeast,Small/med city (10k-100k),48
+Large metro (100k+),Northeast,13,Northeast,Large metro (100k+),40
+Small town (<10k),Midwest,21,Midwest,Small town (<10k),40
+Small/med city (10k-100k),Midwest,22,Midwest,Small/med city (10k-100k),68
+Large metro (100k+),Midwest,23,Midwest,Large metro (100k+),30
+Small town (<10k),South,31,South,Small town (<10k),77
+Small/med city (10k-100k),South,32,South,Small/med city (10k-100k),138
+Large metro (100k+),South,33,South,Large metro (100k+),101
+Small town (<10k),West,41,West,Small town (<10k),26
+Small/med city (10k-100k),West,42,West,Small/med city (10k-100k),55
+Large metro (100k+),West,43,West,Large metro (100k+),79

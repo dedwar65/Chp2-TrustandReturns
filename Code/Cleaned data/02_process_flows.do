@@ -58,12 +58,23 @@ foreach v of local fatvars {
     }
 }
 
+* Miscodes and extreme values: set to missing (HRS/RAND conventions + large e09 topcodes)
+local misscodes "-9 -8 8 9 98 99 9998 9999 99998 99999 999998 999999 9999998 9999999 99999998 99999999 999999998 999999999 9999999998 9999999999 -9999998 -9999999"
 foreach v of local fatvars {
     capture confirm variable `v'
     if !_rc {
         capture confirm numeric variable `v'
+        if _rc {
+            capture destring `v', replace force
+        }
+        capture confirm numeric variable `v'
         if !_rc {
-            replace `v' = . if inlist(`v', -9, -8, 8, 9, 98, 99, 9998, 9999, 999998, 999999, 9999998, 9999999, 99999998, 99999999)
+            foreach mc of local misscodes {
+                quietly replace `v' = . if `v' == `mc'
+            }
+            * Drop extreme topcodes: >= 1e9 or in topcode band (catches float-stored 999999999)
+            replace `v' = . if abs(`v') >= 1000000000
+            replace `v' = . if abs(`v') >= 999000000 & abs(`v') < 1000000000
         }
     }
 }
@@ -172,7 +183,16 @@ forvalues i = 1/11 {
         replace flow_re_`y' = cond(missing(`w'r035),0,`w'r035) - (cond(missing(`w'r030),0,`w'r030) + cond(missing(`w'r045),0,`w'r045)) if !missing(`w'r035) | !missing(`w'r030) | !missing(`w'r045)
     }
 
-    * flow_ira_YYYY
+    * flow_ira_YYYY (re-clean IRA inputs for this wave before rowtotal so miscodes/large values never enter)
+    foreach _v in `w'q171_1 `w'q171_2 `w'q171_3 {
+        capture confirm numeric variable `_v'
+        if !_rc {
+            foreach _mc of local misscodes {
+                quietly replace `_v' = . if `_v' == `_mc'
+            }
+            quietly replace `_v' = . if abs(`_v') >= 999000000
+        }
+    }
     capture drop flow_ira_`y'
     gen double flow_ira_`y' = .
     capture confirm variable `w'q171_1
@@ -183,7 +203,16 @@ forvalues i = 1/11 {
         drop _ira_`y'
     }
 
-    * flow_residences_YYYY
+    * flow_residences_YYYY (re-clean residence inputs for this wave before constructing flow)
+    foreach _v in `w'r013 `w'r007 `w'r024 {
+        capture confirm numeric variable `_v'
+        if !_rc {
+            foreach _mc of local misscodes {
+                quietly replace `_v' = . if `_v' == `_mc'
+            }
+            quietly replace `_v' = . if abs(`_v') >= 999000000
+        }
+    }
     capture drop flow_residences_`y'
     gen double flow_residences_`y' = .
     capture confirm variable `w'r013
@@ -194,10 +223,53 @@ forvalues i = 1/11 {
 
     * Flow aggregates by scope (all waves)
     capture drop flow_core_`y' flow_res_`y' flow_total_`y'
-    gen double flow_core_`y' = flow_bus_`y' + flow_re_`y' + flow_stk_`y'
+    gen double flow_core_`y' = cond(missing(flow_bus_`y'), 0, flow_bus_`y') + ///
+        cond(missing(flow_re_`y'), 0, flow_re_`y') + cond(missing(flow_stk_`y'), 0, flow_stk_`y') if ///
+        !missing(flow_bus_`y') | !missing(flow_re_`y') | !missing(flow_stk_`y')
+    replace flow_core_`y' = . if missing(flow_bus_`y') & missing(flow_re_`y') & missing(flow_stk_`y')
     * flow_ira_`y' is defined above from q171_* (use as IRA-only scope)
     gen double flow_res_`y' = flow_residences_`y'
-    gen double flow_total_`y' = flow_core_`y' + flow_ira_`y' + flow_res_`y'
+    gen double flow_total_`y' = cond(missing(flow_core_`y'), 0, flow_core_`y') + ///
+        cond(missing(flow_ira_`y'), 0, flow_ira_`y') + cond(missing(flow_res_`y'), 0, flow_res_`y') if ///
+        !missing(flow_core_`y') | !missing(flow_ira_`y') | !missing(flow_res_`y')
+    replace flow_total_`y' = . if missing(flow_core_`y') & missing(flow_ira_`y') & missing(flow_res_`y')
+
+    * Diagnostics: overlap by component (counts, not weighted)
+    quietly count if !missing(flow_total_`y')
+    display "flow_total nonmissing (`y'): " r(N)
+    quietly count if !missing(flow_core_`y')
+    display "flow_core nonmissing (`y'): " r(N)
+    quietly count if !missing(flow_ira_`y')
+    display "flow_ira nonmissing (`y'): " r(N)
+    quietly count if !missing(flow_res_`y')
+    display "flow_res nonmissing (`y'): " r(N)
+    quietly count if !missing(flow_bus_`y') & missing(flow_re_`y') & missing(flow_stk_`y') & missing(flow_ira_`y') & missing(flow_res_`y')
+    display "flow only bus (`y'): " r(N)
+    quietly count if missing(flow_bus_`y') & !missing(flow_re_`y') & missing(flow_stk_`y') & missing(flow_ira_`y') & missing(flow_res_`y')
+    display "flow only re (`y'): " r(N)
+    quietly count if missing(flow_bus_`y') & missing(flow_re_`y') & !missing(flow_stk_`y') & missing(flow_ira_`y') & missing(flow_res_`y')
+    display "flow only stk (`y'): " r(N)
+    quietly count if missing(flow_bus_`y') & missing(flow_re_`y') & missing(flow_stk_`y') & !missing(flow_ira_`y') & missing(flow_res_`y')
+    display "flow only ira (`y'): " r(N)
+    quietly count if missing(flow_bus_`y') & missing(flow_re_`y') & missing(flow_stk_`y') & missing(flow_ira_`y') & !missing(flow_res_`y')
+    display "flow only res (`y'): " r(N)
+}
+
+* (4) Clean constructed flow variables: miscodes and large e09 values set to missing
+local flow_clean_vars "flow_bus_ flow_stk_private_ flow_stk_public_ flow_stk_ flow_re_ flow_ira_ flow_residences_ flow_core_ flow_res_ flow_total_"
+foreach y of local years {
+    foreach stub of local flow_clean_vars {
+        capture confirm variable `stub'`y'
+        if !_rc {
+            capture confirm numeric variable `stub'`y'
+            if !_rc {
+                foreach mc of local misscodes {
+                    quietly replace `stub'`y' = . if `stub'`y' == `mc'
+                }
+                quietly replace `stub'`y' = . if abs(`stub'`y') >= 1000000000
+            }
+        }
+    }
 }
 
 save "${CLEANED}/all_data_merged.dta", replace

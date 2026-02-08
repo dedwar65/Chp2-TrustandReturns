@@ -1,0 +1,13 @@
+population_3bin_2020,region_2020,region_pop3_group,trust_mean,n
+Small town (<10k),Northeast,11,5,20
+Small/med city (10k-100k),Northeast,12,5.5416665,48
+Large metro (100k+),Northeast,13,5.4499998,40
+Small town (<10k),Midwest,21,5.875,40
+Small/med city (10k-100k),Midwest,22,5.7647057,68
+Large metro (100k+),Midwest,23,5.1999998,30
+Small town (<10k),South,31,5.4155846,77
+Small/med city (10k-100k),South,32,5.115942,138
+Large metro (100k+),South,33,5.3465347,101
+Small town (<10k),West,41,5.7692308,26
+Small/med city (10k-100k),West,42,5.5272727,55
+Large metro (100k+),West,43,5.2911391,79
