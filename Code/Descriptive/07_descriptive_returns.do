@@ -155,13 +155,13 @@ list year wealth_total_ gross_wealth_ wealth_ira_ wealth_res_, noobs
 twoway line wealth_total_ year || line gross_wealth_ year || line wealth_ira_ year || line wealth_res_ year, ///
     title("Mean wealth by year") ///
     xtitle("Year") ytitle("Mean wealth ($)") ylabel(, format(%9.0fc)) ///
-    legend(order(1 "Total net wealth" 2 "Gross wealth" 3 "Ret. wealth" 4 "Residential wealth"))
+    legend(order(1 "Total net wealth" 2 "Gross wealth" 3 "Retirement wealth" 4 "Residential wealth"))
 graph export "${DESCRIPTIVE}/Figures/wealth_mean_by_year.png", replace
 restore
 
 * ---------------------------------------------------------------------
 * Participation: share of respondents with non-missing value (0-1), 2002 and 2022
-* Interest income: 4 vars (capital income, pension, SSDI, ret. income). Holdings: capital income + asset holdings from note.
+* Interest income: 4 vars (capital income, pension, SSDI, retirement income). Holdings: capital income + asset holdings from note.
 * ---------------------------------------------------------------------
 preserve
 foreach yr in 2002 2022 {
@@ -178,34 +178,28 @@ foreach yr in 2002 2022 {
             bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(orange)) bar(4, color(green)) ///
             title("Participation: interest income (`yr')") ///
             ytitle("Share with non-missing") ylabel(0(0.2)1, format(%3.2f)) ///
-            legend(label(1 "Capital income") label(2 "Pension") label(3 "Social security") label(4 "Ret. income") ///
-                   cols(2) size(small) position(6) ring(0) region(lstyle(none))) ///
+            legend(label(1 "Capital income") label(2 "Pension") label(3 "Social security") label(4 "Retirement income") ///
+                   cols(2) size(small) position(3) ring(0) region(lstyle(none))) ///
             ysize(4) xsize(5.5)
         graph export "${DESCRIPTIVE}/Figures/participation_interest_income_`yr'.png", replace
         drop p_icap p_ipena p_issdi p_isret
     }
-    * Holdings: asset values only from note (Primary res, Secondary res, Real estate, Business, IRA, Stocks, Bonds, Checking) — wave-specific
-    capture confirm variable h`w'atoth h`w'anethb h`w'arles h`w'absns h`w'aira h`w'astck h`w'abond h`w'achck
+    * Holdings: 3 groups (Core = bonds+stocks+real estate+business, Residential = primary+secondary res, Retirement = IRA)
+    capture confirm variable h`w'atoth h`w'anethb h`w'arles h`w'absns h`w'aira h`w'astck h`w'abond
     if !_rc {
-        capture drop p_atoth p_anethb p_arles p_absns p_aira p_astck p_abond p_achck
-        gen byte p_atoth  = !missing(h`w'atoth)
-        gen byte p_anethb = !missing(h`w'anethb)
-        gen byte p_arles  = !missing(h`w'arles)
-        gen byte p_absns  = !missing(h`w'absns)
-        gen byte p_aira   = !missing(h`w'aira)
-        gen byte p_astck  = !missing(h`w'astck)
-        gen byte p_abond  = !missing(h`w'abond)
-        gen byte p_achck  = !missing(h`w'achck)
-        graph bar (mean) p_atoth p_anethb p_arles p_absns p_aira p_astck p_abond p_achck, ///
-            bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(orange)) bar(4, color(green)) bar(5, color(teal)) ///
-            bar(6, color(cyan)) bar(7, color(blue)) bar(8, color(lavender)) ///
+        capture drop p_core p_residential p_ira
+        gen byte p_core = (!missing(h`w'arles) | !missing(h`w'absns) | !missing(h`w'astck) | !missing(h`w'abond))
+        gen byte p_residential = (!missing(h`w'atoth) | !missing(h`w'anethb))
+        gen byte p_ira = !missing(h`w'aira)
+        graph bar (mean) p_core p_residential p_ira, ///
+            bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
             title("Participation: holdings (`yr')") ///
             ytitle("Share with non-missing") ylabel(0(0.2)1, format(%3.2f)) ///
-            legend(order(1 "Primary res" 2 "Secondary res" 3 "Real estate" 4 "Business" ///
-                5 "IRA" 6 "Stocks" 7 "Bonds" 8 "Checking") cols(2) size(small) position(6) ring(0) region(lstyle(none))) ///
-            ysize(4) xsize(7)
+            legend(label(1 "Core assets") label(2 "Residential") label(3 "Retirement") ///
+                cols(1) size(small) position(3) ring(0) region(lstyle(none))) ///
+            ysize(4) xsize(5.5)
         graph export "${DESCRIPTIVE}/Figures/participation_holdings_`yr'.png", replace
-        drop p_atoth p_anethb p_arles p_absns p_aira p_astck p_abond p_achck
+        drop p_core p_residential p_ira
     }
 }
 restore
@@ -270,7 +264,7 @@ replace educ_group = 2 if educ_yrs == 12
 replace educ_group = 3 if inrange(educ_yrs,13,15)
 replace educ_group = 4 if educ_yrs == 16
 replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
-label define educ_group 1 "lt12" 2 "hs" 3 "some_college" 4 "college" 5 "grad"
+label define educ_group 1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad"
 label values educ_group educ_group
 tabstat r1_annual_ r2_annual_ r3_annual_ r4_annual_ `wopt', by(educ_group) statistics(n mean sd p50 p95)
 restore
@@ -283,21 +277,23 @@ preserve
 keep hhidpn gross_wealth_* ///
     share_m3_pri_res_* share_m3_sec_res_* share_m3_re_* share_m3_bus_* share_m3_ira_* ///
     share_m3_stk_* share_m3_bond_* share_m3_chck_* share_m3_cd_* share_m3_vehicles_* share_m3_other_*
-
+capture confirm variable share_residential_2002
+if _rc {
+    foreach y in 2002 2022 {
+        capture confirm variable share_m3_pri_res_`y' share_m3_sec_res_`y'
+        if !_rc egen double share_residential_`y' = rowtotal(share_m3_pri_res_`y' share_m3_sec_res_`y'), missing
+    }
+}
 local years "2002 2022"
 foreach y of local years {
     capture confirm variable share_m3_bond_`y'
     if !_rc {
         egen double share_core_`y' = rowtotal(share_m3_bond_`y' share_m3_stk_`y' share_m3_re_`y' share_m3_bus_`y'), missing
     }
-    capture confirm variable share_m3_pri_res_`y' share_m3_sec_res_`y'
-    if !_rc {
-        egen double share_residential_`y' = rowtotal(share_m3_pri_res_`y' share_m3_sec_res_`y'), missing
-    }
 }
 
 tempfile share_conc
-postfile handle str10 asset int year int threshold double pct_of_asset using "`share_conc'", replace
+postfile handle str12 asset int year int threshold double pct_of_asset using "`share_conc'", replace
 
 foreach y of local years {
     foreach asset in pri_res sec_res re bus ira stk bond chck cd vehicles other core residential {
@@ -340,15 +336,16 @@ export delimited using "${DESCRIPTIVE}/Tables/share_concentration_by_asset.csv",
 display "=== Share concentration by asset (pct of asset held by households with share >= threshold) ==="
 list, noobs sep(0)
 
-* Share concentration: bar graph. Three groups: Core assets, Residential (primary + secondary), Ret.
+* Share concentration: bar graph. Three groups: Core assets, Residential (primary + secondary), Retirement.
 import delimited using "${DESCRIPTIVE}/Tables/share_concentration_by_asset.csv", clear varnames(1)
 destring year threshold pct_of_asset, replace
+replace asset = "residential" if asset == "residentia"
 keep if inlist(asset, "core", "residential", "ira")
 reshape wide pct_of_asset, i(year threshold) j(asset) string
 
 local ylab "Percent of total asset held"
 
-* 2002 panel. Bar order = Core assets, Residential, Ret.
+* 2002 panel. Bar order = Core assets, Residential, Retirement.
 graph bar pct_of_assetcore pct_of_assetresidential pct_of_assetira if year == 2002, ///
     over(threshold, relabel(25 "25%" 50 "50%" 75 "75%" 90 "90%" 95 "95%")) ///
     bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
@@ -377,52 +374,42 @@ graph export "${DESCRIPTIVE}/Figures/share_concentration_2022.png", replace
 restore
 
 * ---------------------------------------------------------------------
-* Mean portfolio share by year: Core assets, Primary res, Secondary res, Ret.
-* Share in core = (bonds + stocks + real estate + business) / gross assets; others = share_m3 of gross assets.
+* Mean portfolio share by year: Core assets, Residential (primary+secondary), Retirement.
+* Share in core = (bonds+stocks+real estate+business)/gross assets; residential = pri+sec res; ret = IRA.
 * ---------------------------------------------------------------------
 preserve
+capture confirm variable share_residential_2002
+if _rc {
+    foreach y in 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022 {
+        capture confirm variable share_m3_pri_res_`y' share_m3_sec_res_`y'
+        if !_rc egen double share_residential_`y' = rowtotal(share_m3_pri_res_`y' share_m3_sec_res_`y'), missing
+    }
+}
 tempfile mean_shares
-postfile mhandle int year double mean_core double mean_pri_res double mean_sec_res double mean_ira using "`mean_shares'", replace
+postfile mhandle int year double mean_core double mean_residential double mean_ira using "`mean_shares'", replace
 foreach y in 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022 {
-    capture confirm variable share_m3_pri_res_`y'
+    capture confirm variable share_residential_`y'
     if _rc continue
     egen double share_core_`y' = rowtotal(share_m3_bond_`y' share_m3_stk_`y' share_m3_re_`y' share_m3_bus_`y'), missing
     summarize share_core_`y' `wopt'
     local mc = r(mean)
-    summarize share_m3_pri_res_`y' `wopt'
-    local mp = r(mean)
-    summarize share_m3_sec_res_`y' `wopt'
-    local ms = r(mean)
+    summarize share_residential_`y' `wopt'
+    local mr = r(mean)
     summarize share_m3_ira_`y' `wopt'
     local mi = r(mean)
-    post mhandle (`y') (`mc') (`mp') (`ms') (`mi')
+    post mhandle (`y') (`mc') (`mr') (`mi')
     drop share_core_`y'
 }
 postclose mhandle
 use "`mean_shares'", clear
 export delimited using "${DESCRIPTIVE}/Tables/mean_share_by_asset_class_year.csv", replace
-graph bar mean_core mean_pri_res mean_sec_res mean_ira, over(year) ///
-    bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(orange)) bar(4, color(green)) ///
+graph bar mean_core mean_residential mean_ira, over(year) ///
+    bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
     title("Mean portfolio share by asset class") ///
-    ytitle("Mean share") ylabel(0(0.2)1, format(%3.2f)) ///
-    legend(label(1 "Core assets") label(2 "Primary res") label(3 "Secondary res") label(4 "Ret.") ///
-           cols(2) size(small) position(6) ring(0) region(lstyle(none)))
+    ytitle("Mean share") ylabel(0(0.1)0.6, format(%3.2f)) yscale(range(0 0.6)) ///
+    legend(label(1 "Core assets") label(2 "Residential") label(3 "Retirement") ///
+           cols(1) size(small) position(3) ring(0) region(lstyle(none)))
 graph export "${DESCRIPTIVE}/Figures/mean_share_by_asset_class_year.png", replace
-* 2002 and 2022 separately
-graph bar mean_core mean_pri_res mean_sec_res mean_ira if year == 2002, ///
-    bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(orange)) bar(4, color(green)) ///
-    title("Mean portfolio share by asset class (2002)") ///
-    ytitle("Mean share") ylabel(0(0.2)1, format(%3.2f)) ///
-    legend(label(1 "Core assets") label(2 "Primary res") label(3 "Secondary res") label(4 "Ret.") ///
-           cols(2) size(small) position(6) ring(0) region(lstyle(none)))
-graph export "${DESCRIPTIVE}/Figures/mean_share_by_asset_class_2002.png", replace
-graph bar mean_core mean_pri_res mean_sec_res mean_ira if year == 2022, ///
-    bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(orange)) bar(4, color(green)) ///
-    title("Mean portfolio share by asset class (2022)") ///
-    ytitle("Mean share") ylabel(0(0.2)1, format(%3.2f)) ///
-    legend(label(1 "Core assets") label(2 "Primary res") label(3 "Secondary res") label(4 "Ret.") ///
-           cols(2) size(small) position(6) ring(0) region(lstyle(none)))
-graph export "${DESCRIPTIVE}/Figures/mean_share_by_asset_class_2022.png", replace
 restore
 
 * Returns vs wealth percentile: mean+IQR ribbon and binscatter (2002 and 2022)
@@ -452,15 +439,15 @@ if !_rc {
     if _rc capture ssc install binscatter, replace
 
     foreach yr in 2002 2022 {
-        * Titles: "Mean/IQR: Returns to [X] by wealth (pct.)" and "Binscatter: Returns to [X] by wealth (pct.)" with [X] = core assets, ret. assets, res. assets, net wealth.
-        foreach pair in "r1_annual_ wealth_core_pct core Core" "r2_annual_ wealth_ira_pct ret Ret." "r3_annual_ wealth_res_pct res Res." "r4_annual_ wealth_total_pct netwealth Net wealth" {
+        * Titles: "Mean/IQR: Returns to [X] by wealth (pct.)" and "Binscatter: Returns to [X] by wealth (pct.)" with [X] = core assets, retirement assets, residential assets, net wealth.
+        foreach pair in "r1_annual_ wealth_core_pct core Core" "r2_annual_ wealth_ira_pct ret Retirement" "r3_annual_ wealth_res_pct res Residential" "r4_annual_ wealth_total_pct netwealth Net wealth" {
             tokenize `pair'
             local retvar "`1'"
             local wvar "`2'"
             local rlab_short "`3'"
             local rlab_abbrev "`4' `5'"
-            local rlab_portfolio = cond("`rlab_short'"=="core","core assets",cond("`rlab_short'"=="ret","ret. assets",cond("`rlab_short'"=="res","res. assets","net wealth")))
-            local wlab = cond("`wvar'"=="wealth_core_pct","core",cond("`wvar'"=="wealth_ira_pct","IRA",cond("`wvar'"=="wealth_res_pct","residential","total")))
+            local rlab_portfolio = cond("`rlab_short'"=="core","core assets",cond("`rlab_short'"=="ret","retirement assets",cond("`rlab_short'"=="res","residential assets","net wealth")))
+            local wlab = cond("`wvar'"=="wealth_core_pct","core",cond("`wvar'"=="wealth_ira_pct","retirement",cond("`wvar'"=="wealth_res_pct","residential","total")))
             quietly count if year == `yr' & !missing(`retvar') & !missing(`wvar')
             if r(N) < 10 continue
 
@@ -508,13 +495,13 @@ foreach yr in 2002 2022 {
         capture confirm variable `v'
         if _rc continue
         local ++k
-        local rname_full = cond(`r'==1,"Returns to core assets",cond(`r'==2,"Returns to retirement wealth",cond(`r'==3,"Returns to residential wealth","Returns to net wealth")))
+        local rname_sub = cond(`r'==1,"Core assets",cond(`r'==2,"Retirement wealth",cond(`r'==3,"Residential wealth","Net wealth")))
         local xtit = cond(`use_win', "Annual return (winsorized 1%)", "Annual return")
         histogram `v' if !missing(`v'), ///
             bin(80) fraction ///
             xtitle("`xtit'") ytitle("Fraction of households") ///
             xlabel(, format(%3.2f)) ///
-            title("`rname_full' (`yr')") ///
+            title("`rname_sub'") ///
             saving("`_tdir'_r`r'_hist_`yr'.gph", replace)
         if "`gphlist'" == "" local gphlist "`_tdir'_r`r'_hist_`yr'.gph"
         else local gphlist "`gphlist' `_tdir'_r`r'_hist_`yr'.gph"
@@ -646,7 +633,7 @@ twoway line cum_share cum_pop if year==2002 & measure=="wealth_core", lcolor(mar
        line cum_share cum_pop if year==2002 & measure=="wealth_total", lcolor(green) || ///
        line cum_share cum_pop if year==2002 & measure=="gross_wealth", lcolor(teal) ///
        , title("Lorenz curves: wealth (2002)") xtitle("Cumulative population share") ytitle("Cumulative share") ///
-       legend(order(1 "Wealth core" 2 "Wealth IRA" 3 "Wealth residential" 4 "Wealth total" 5 "Gross wealth"))
+       legend(order(1 "Wealth core" 2 "Wealth retirement" 3 "Wealth residential" 4 "Wealth total" 5 "Gross wealth"))
 graph export "${DESCRIPTIVE}/Figures/lorenz_wealth_2002.png", replace
 
 twoway line cum_share cum_pop if year==2022 & measure=="wealth_core", lcolor(maroon) || ///
@@ -655,5 +642,5 @@ twoway line cum_share cum_pop if year==2022 & measure=="wealth_core", lcolor(mar
        line cum_share cum_pop if year==2022 & measure=="wealth_total", lcolor(green) || ///
        line cum_share cum_pop if year==2022 & measure=="gross_wealth", lcolor(teal) ///
        , title("Lorenz curves: wealth (2022)") xtitle("Cumulative population share") ytitle("Cumulative share") ///
-       legend(order(1 "Wealth core" 2 "Wealth IRA" 3 "Wealth residential" 4 "Wealth total" 5 "Gross wealth"))
+       legend(order(1 "Wealth core" 2 "Wealth retirement" 3 "Wealth residential" 4 "Wealth total" 5 "Gross wealth"))
 graph export "${DESCRIPTIVE}/Figures/lorenz_wealth_2022.png", replace

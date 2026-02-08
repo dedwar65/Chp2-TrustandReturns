@@ -1,5 +1,5 @@
 * 06_descriptive_income.do
-* Descriptive statistics for income and returns (income focus).
+* Descriptive statistics for income.
 * Input: ${PROCESSED}/analysis_ready_processed.dta
 * Output: log + figures/tables in Code/Descriptive/Figures and Code/Descriptive/Tables
 
@@ -127,12 +127,74 @@ replace educ_group = 2 if educ_yrs == 12
 replace educ_group = 3 if inrange(educ_yrs,13,15)
 replace educ_group = 4 if educ_yrs == 16
 replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
-label define educ_group 1 "lt12" 2 "hs" 3 "some_college" 4 "college" 5 "grad"
+label define educ_group 1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad"
 label values educ_group educ_group
 tabstat labor_income_real_win_ total_income_real_win_ `wopt', by(educ_group) statistics(n mean sd p50 p95)
 preserve
 collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_ `wopt', by(educ_group)
 export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_educgroup_real_win.csv", replace
+restore
+
+* ---------------------------------------------------------------------
+* Figure 1A, 2A, 3: Income by age, income by age and education, income over time
+* ---------------------------------------------------------------------
+
+* Figure 1A — Mean labor and total income by age group (2 lines per graph, 2002 and 2022)
+foreach yr in 2002 2022 {
+    preserve
+    keep if year == `yr'
+    collapse (mean) mean_lab=labor_income_real_win_ (mean) mean_tot=total_income_real_win_ `wopt', by(age_group)
+    sort age_group
+    twoway (line mean_lab age_group, lwidth(medthick) lcolor(navy)) (line mean_tot age_group, lpattern(dash) lcolor(maroon)), ///
+        xtitle("Age group") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
+        title("Income by age group (`yr')") ///
+        legend(order(1 "Labor income" 2 "Total income") cols(1) size(small) position(3) ring(0) region(lstyle(none)))
+    graph export "${DESCRIPTIVE}/Figures/income_by_agegroup_`yr'.png", replace
+    restore
+}
+
+* Figure 2A — Income by age group with lines by education (labor and total separately, 2002 and 2022)
+foreach yr in 2002 2022 {
+    * Labor income by age and education (5 lines = 5 educ groups)
+    preserve
+    keep if year == `yr'
+    collapse (mean) mean_inc=labor_income_real_win_ `wopt', by(age_group educ_group)
+    sort age_group educ_group
+    twoway (line mean_inc age_group if educ_group==1, lcolor(navy)) ///
+           (line mean_inc age_group if educ_group==2, lcolor(maroon)) ///
+           (line mean_inc age_group if educ_group==3, lcolor(forest_green)) ///
+           (line mean_inc age_group if educ_group==4, lcolor(orange)) ///
+           (line mean_inc age_group if educ_group==5, lcolor(teal)), ///
+        xtitle("Age group") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
+        title("Labor income by age and education (`yr')") ///
+        legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad") cols(1) size(small) position(3) ring(0) region(lstyle(none)))
+    graph export "${DESCRIPTIVE}/Figures/labinc_by_age_educ_`yr'.png", replace
+    restore
+    * Total income by age and education (5 lines = 5 educ groups)
+    preserve
+    keep if year == `yr'
+    collapse (mean) mean_inc=total_income_real_win_ `wopt', by(age_group educ_group)
+    sort age_group educ_group
+    twoway (line mean_inc age_group if educ_group==1, lcolor(navy)) ///
+           (line mean_inc age_group if educ_group==2, lcolor(maroon)) ///
+           (line mean_inc age_group if educ_group==3, lcolor(forest_green)) ///
+           (line mean_inc age_group if educ_group==4, lcolor(orange)) ///
+           (line mean_inc age_group if educ_group==5, lcolor(teal)), ///
+        xtitle("Age group") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
+        title("Total income by age and education (`yr')") ///
+        legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad") cols(1) size(small) position(3) ring(0) region(lstyle(none)))
+    graph export "${DESCRIPTIVE}/Figures/totinc_by_age_educ_`yr'.png", replace
+    restore
+}
+
+* Figure 3 — Mean labor and total income over time (one graph, 2 lines)
+preserve
+collapse (mean) mean_lab=labor_income_real_win_ (mean) mean_tot=total_income_real_win_ `wopt', by(year)
+twoway (line mean_lab year, lwidth(medthick) lcolor(navy)) (line mean_tot year, lpattern(dash) lcolor(maroon)), ///
+    xtitle("Year") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
+    title("Income over time") ///
+    legend(order(1 "Labor income" 2 "Total income") cols(1) size(small) position(3) ring(0) region(lstyle(none)))
+graph export "${DESCRIPTIVE}/Figures/income_over_time.png", replace
 restore
 
 * Income growth summary (all years together)
@@ -170,7 +232,7 @@ use "`growth_stats'", clear
 export delimited using "${DESCRIPTIVE}/Tables/income_growth_tabstat.csv", replace
 restore
 
-* Log income vs wealth percentile: mean+IQR ribbon and binscatter (paper-ready)
+* Income vs wealth percentile: mean+IQR ribbon and binscatter (titles/labels aligned with 07 returns)
 * Wealth percentiles by year (1-100)
 local pctvars "wealth_core wealth_ira wealth_res wealth_total gross_wealth"
 foreach v of local pctvars {
@@ -198,16 +260,16 @@ foreach y of local years {
         keep if year == `y'
         collapse (mean) mean_inc = labor_income_real_win_ (p25) p25_inc = labor_income_real_win_ (p75) p75_inc = labor_income_real_win_, by(wealth_total_pct)
         twoway (rarea p75_inc p25_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_total_pct, lcolor(navy) lwidth(medthick)), ///
-            xtitle("Wealth percentile") ytitle("Labor income (real, winsorized, $)") ylabel(, format(%9.0fc)) ///
-            title("Mean and IQR of labor income (real, win) by wealth percentile (`y')") legend(off)
+            xtitle("Wealth total (pct.)") ytitle("Labor income (real, win, $)") ylabel(, format(%9.0fc)) ///
+            title("Mean/IQR: Labor income by wealth (pct.) (`y')") legend(off)
         graph export "${DESCRIPTIVE}/Figures/labor_income_real_win_iqr_by_wealthpct_`y'.png", replace
         restore
     }
     quietly count if year == `y' & !missing(ln_lab_inc_final_) & !missing(wealth_total_pct)
     if r(N) >= 10 {
         capture binscatter ln_lab_inc_final_ wealth_total_pct if year == `y', nquantiles(50) ///
-            ytitle("Log labor income") xtitle("Wealth percentile") ///
-            title("Binscatter: log labor income vs wealth percentile (`y')")
+            ytitle("Log labor income") xtitle("Wealth total (pct.)") ///
+            title("Binscatter: Labor income by wealth (pct.) (`y')")
         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_labor_income_binscatter_`y'.png", replace
     }
 
@@ -218,16 +280,16 @@ foreach y of local years {
         keep if year == `y'
         collapse (mean) mean_inc = total_income_real_win_ (p25) p25_inc = total_income_real_win_ (p75) p75_inc = total_income_real_win_, by(wealth_total_pct)
         twoway (rarea p75_inc p25_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_total_pct, lcolor(maroon) lwidth(medthick)), ///
-            xtitle("Wealth percentile") ytitle("Total income (real, winsorized, $)") ylabel(, format(%9.0fc)) ///
-            title("Mean and IQR of total income (real, win) by wealth percentile (`y')") legend(off)
+            xtitle("Wealth total (pct.)") ytitle("Total income (real, win, $)") ylabel(, format(%9.0fc)) ///
+            title("Mean/IQR: Total income by wealth (pct.) (`y')") legend(off)
         graph export "${DESCRIPTIVE}/Figures/total_income_real_win_iqr_by_wealthpct_`y'.png", replace
         restore
     }
     quietly count if year == `y' & !missing(ln_tot_inc_final_) & !missing(wealth_total_pct)
     if r(N) >= 10 {
         capture binscatter ln_tot_inc_final_ wealth_total_pct if year == `y', nquantiles(50) ///
-            ytitle("Log total income") xtitle("Wealth percentile") ///
-            title("Binscatter: log total income vs wealth percentile (`y')")
+            ytitle("Log total income") xtitle("Wealth total (pct.)") ///
+            title("Binscatter: Total income by wealth (pct.) (`y')")
         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_total_income_binscatter_`y'.png", replace
     }
 }
