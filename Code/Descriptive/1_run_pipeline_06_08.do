@@ -1,6 +1,6 @@
-* 01_run_pipeline_06_08.do
-* Run diagnostics/descriptives (06–08).
-* Order: income descriptives -> returns descriptives -> controls descriptives
+* 1_run_pipeline_06_08.do
+* Run all descriptive do-files (06, 07, 08) in order.
+* Order: 06 income descriptives -> 07 returns descriptives -> 08 controls descriptives
 
 clear
 set more off
@@ -35,4 +35,4 @@ do "${BASE_PATH}/Code/Descriptive/07_descriptive_returns.do"
 * 08: Descriptive controls
 do "${BASE_PATH}/Code/Descriptive/08_descriptive_controls.do"
 
-display "01_run_pipeline_06_08: Completed 06–08."
+display "1_run_pipeline_06_08: Completed 06, 07, 08."

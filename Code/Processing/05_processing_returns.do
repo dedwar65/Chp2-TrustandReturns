@@ -22,14 +22,14 @@ else {
 local years "2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
 local retvars ""
 foreach y of local years {
-    foreach v in r1_annual_`y' r2_annual_`y' r3_annual_`y' r4_annual_`y' {
+    foreach v in r1_annual_`y' r2_annual_`y' r3_annual_`y' r4_annual_`y' r5_annual_`y' {
         capture confirm variable `v'
         if !_rc {
             local retvars "`retvars' `v'"
         }
     }
 }
-foreach v in r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg {
+foreach v in r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg r5_annual_avg {
     capture confirm variable `v'
     if !_rc {
         local retvars "`retvars' `v'"

@@ -47,14 +47,15 @@ if !_rc local wopt "[aw=`wtvar']"
 keep hhidpn educ_yrs age_* ///
     ln_lab_inc_final_* ln_tot_inc_final_* ///
     labor_income_real_win_* total_income_real_win_* ///
-    wealth_core_* wealth_ira_* wealth_res_* wealth_total_* gross_wealth_*
+    wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_* wealth_total_* gross_wealth_*
 
 * Reshape to long for income descriptives
 reshape long ln_lab_inc_final_ ln_tot_inc_final_ labor_income_real_win_ total_income_real_win_ ///
-    age_ wealth_core_ wealth_ira_ wealth_res_ wealth_total_ gross_wealth_, i(hhidpn) j(year)
+    age_ wealth_core_ wealth_ira_ wealth_coreira_ wealth_res_ wealth_total_ gross_wealth_, i(hhidpn) j(year)
 rename age_ age
 rename wealth_core_ wealth_core
 rename wealth_ira_ wealth_ira
+rename wealth_coreira_ wealth_coreira
 rename wealth_res_ wealth_res
 rename wealth_total_ wealth_total
 rename gross_wealth_ gross_wealth
@@ -62,10 +63,11 @@ rename gross_wealth_ gross_wealth
 display "=== Income descriptives (final log series) ==="
 tabstat ln_lab_inc_final_ ln_tot_inc_final_ `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 
-* Export tabstat-like summary for final income variables
+* Export tabstat-like summary for final income variables (LaTeX)
 preserve
 tempfile income_stats
-postfile handle str32 varname double N mean sd p1 p5 p50 p95 p99 min max using "`income_stats'", replace
+postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max using "`income_stats'", replace
+
 foreach v in ln_lab_inc_final_ ln_tot_inc_final_ {
     if "`wopt'" != "" {
         quietly summarize `v' `wopt'
@@ -88,9 +90,36 @@ foreach v in ln_lab_inc_final_ ln_tot_inc_final_ {
     }
 }
 postclose handle
-clear
+
 use "`income_stats'", clear
-export delimited using "${DESCRIPTIVE}/Tables/income_final_tabstat.csv", replace
+
+file open fh using "${DESCRIPTIVE}/Tables/income_final_tabstat.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n ///
+    "\caption{Income final series: summary statistics}" _n ///
+    "\label{tab:income_final_tabstat}" _n ///
+    "\begin{tabular}{lrrrrrrrrrrr}\toprule" _n ///
+    "Variable & Obs & Mean & SD & P1 & P5 & P50 & P95 & P99 & Min & Max \\\\ \midrule" _n
+
+forvalues r = 1/`=_N' {
+    local vname = varname[`r']
+    if "`vname'" == "ln_lab_inc_final_" local vname "Log labor income"
+    if "`vname'" == "ln_tot_inc_final_" local vname "Log total income"
+    local obs_s = string(obs[`r'], "%9.0fc")
+    local mean_s = string(mean[`r'], "%9.4f")
+    local sd_s = string(sd[`r'], "%9.4f")
+    local p1_s = string(p1[`r'], "%9.4f")
+    local p5_s = string(p5[`r'], "%9.4f")
+    local p50_s = string(p50[`r'], "%9.4f")
+    local p95_s = string(p95[`r'], "%9.4f")
+    local p99_s = string(p99[`r'], "%9.4f")
+    local min_s = string(min[`r'], "%9.4f")
+    local max_s = string(max[`r'], "%9.4f")
+
+    file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p1_s' & `p5_s' & `p50_s' & `p95_s' & `p99_s' & `min_s' & `max_s' \\\\" _n
+}
+
+file write fh "\bottomrule" _n "\multicolumn{12}{l}{\footnotesize Log income series; summary over person-years.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+file close fh
 restore
 
 * Mean income by year (deflated + winsorized levels)
@@ -98,7 +127,18 @@ display "=== Mean income by year ==="
 tabstat labor_income_real_win_ total_income_real_win_ `wopt', by(year) statistics(n mean sd p50 p95)
 preserve
 collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_ `wopt', by(year)
-export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_year_real_win.csv", replace
+local dl = char(92) + char(36)
+file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_year_real_win.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by year (real, winsorized)}" _n "\label{tab:income_mean_by_year_real_win}" _n "\begin{tabular}{lrrr}\toprule" _n "Year & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
+forvalues r = 1/`=_N' {
+    local yr_s = string(year[`r'], "%9.0f")
+    local lab_s = string(mean_lab[`r'], "%9.0fc")
+    local tot_s = string(mean_tot[`r'], "%9.0fc")
+    local n_s = string(n[`r'], "%9.0fc")
+    file write fh "`yr_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Real USD; winsorized at 1st and 99th percentile.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+file close fh
 restore
 
 * Income by age group (year-specific; deflated + winsorized levels)
@@ -108,7 +148,18 @@ tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year == 2002, by
 preserve
 keep if year == 2002
 collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_ `wopt', by(age_group)
-export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2002.csv", replace
+local dl = char(92) + char(36)
+file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2002.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age group (2002)}" _n "\label{tab:income_mean_by_agegroup_2002}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
+forvalues r = 1/`=_N' {
+    local age_s = string(age_group[`r'], "%9.0f")
+    local lab_s = string(mean_lab[`r'], "%9.0fc")
+    local tot_s = string(mean_tot[`r'], "%9.0fc")
+    local n_s = string(n[`r'], "%9.0fc")
+    file write fh "`age_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age bins (e.g., 50 = 50--54). Real USD, winsorized.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+file close fh
 restore
 
 display "=== Mean income by age group (2022) ==="
@@ -116,7 +167,18 @@ tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year == 2022, by
 preserve
 keep if year == 2022
 collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_ `wopt', by(age_group)
-export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2022.csv", replace
+local dl = char(92) + char(36)
+file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2022.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age group (2022)}" _n "\label{tab:income_mean_by_agegroup_2022}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
+forvalues r = 1/`=_N' {
+    local age_s = string(age_group[`r'], "%9.0f")
+    local lab_s = string(mean_lab[`r'], "%9.0fc")
+    local tot_s = string(mean_tot[`r'], "%9.0fc")
+    local n_s = string(n[`r'], "%9.0fc")
+    file write fh "`age_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age bins (e.g., 50 = 50--54). Real USD, winsorized.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+file close fh
 restore
 
 * Income by education group (deflated + winsorized levels)
@@ -132,7 +194,19 @@ label values educ_group educ_group
 tabstat labor_income_real_win_ total_income_real_win_ `wopt', by(educ_group) statistics(n mean sd p50 p95)
 preserve
 collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real_win_ `wopt', by(educ_group)
-export delimited using "${DESCRIPTIVE}/Tables/income_mean_by_educgroup_real_win.csv", replace
+decode educ_group, gen(educ_label)
+local dl = char(92) + char(36)
+file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_educgroup_real_win.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by education group (real, winsorized)}" _n "\label{tab:income_mean_by_educgroup_real_win}" _n "\begin{tabular}{lrrr}\toprule" _n "Education & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
+forvalues r = 1/`=_N' {
+    local edlab = educ_label[`r']
+    local lab_s = string(mean_lab[`r'], "%9.0fc")
+    local tot_s = string(mean_tot[`r'], "%9.0fc")
+    local n_s = string(n[`r'], "%9.0fc")
+    file write fh "`edlab' & `lab_s' & `tot_s' & `n_s' \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Real USD, winsorized. no hs = $<$12y; hs = 12y; some college = 13--15y; 4yr = 16y; grad = 17+y.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+file close fh
 restore
 
 * ---------------------------------------------------------------------
@@ -204,7 +278,7 @@ keep ln_lab_inc_final_growth_* ln_tot_inc_final_growth_*
 
 * Export tabstat-like summary for income growth variables
 tempfile growth_stats
-postfile handle str32 varname double N mean sd p1 p5 p50 p95 p99 min max using "`growth_stats'", replace
+postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max using "`growth_stats'", replace
 foreach v of varlist ln_lab_inc_final_growth_* ln_tot_inc_final_growth_* {
     if "`wopt'" != "" {
         quietly summarize `v' `wopt'
@@ -227,9 +301,27 @@ foreach v of varlist ln_lab_inc_final_growth_* ln_tot_inc_final_growth_* {
     }
 }
 postclose handle
-clear
 use "`growth_stats'", clear
-export delimited using "${DESCRIPTIVE}/Tables/income_growth_tabstat.csv", replace
+file open fh using "${DESCRIPTIVE}/Tables/income_growth_tabstat.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Income growth: summary statistics}" _n "\label{tab:income_growth_tabstat}" _n "\begin{tabular}{lrrrrrrrrrrr}\toprule" _n "Variable & Obs & Mean & SD & P1 & P5 & P50 & P95 & P99 & Min & Max \\\\ \midrule" _n
+forvalues r = 1/`=_N' {
+    local vname = varname[`r']
+    if strpos("`vname'", "ln_lab_inc_final_growth") > 0 local vname "Log labor income growth"
+    if strpos("`vname'", "ln_tot_inc_final_growth") > 0 local vname "Log total income growth"
+    local obs_s = string(obs[`r'], "%9.0fc")
+    local mean_s = string(mean[`r'], "%9.4f")
+    local sd_s = string(sd[`r'], "%9.4f")
+    local p1_s = string(p1[`r'], "%9.4f")
+    local p5_s = string(p5[`r'], "%9.4f")
+    local p50_s = string(p50[`r'], "%9.4f")
+    local p95_s = string(p95[`r'], "%9.4f")
+    local p99_s = string(p99[`r'], "%9.4f")
+    local min_s = string(min[`r'], "%9.4f")
+    local max_s = string(max[`r'], "%9.4f")
+    file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p1_s' & `p5_s' & `p50_s' & `p95_s' & `p99_s' & `min_s' & `max_s' \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{12}{l}{\footnotesize Log income growth (two-year); summary over person-years.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+file close fh
 restore
 
 * Income vs wealth percentile: mean+IQR ribbon and binscatter (titles/labels aligned with 07 returns)

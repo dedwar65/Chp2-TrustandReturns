@@ -1,8 +1,8 @@
---------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_merge_all_data.log
   log type:  text
- opened on:   6 Feb 2026, 22:25:01
+ opened on:   8 Feb 2026, 08:52:14
 
 . 
 . * ------------------------------------------------------------------------------
@@ -32,8 +32,8 @@ Saved FRED CPIAUCSL to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 
 . * 01_1_merge_flow_2022.do
 . * Merge 2022 flow variables from h22e3a into RAND longitudinal.
-. * Variable names from old repo (Chp2-BeliefsandTrust_Old): h22e3a uses lowercase (hhidpn, sr050, sr073, etc.
-> ).
+. * Variable names from old repo (Chp2-BeliefsandTrust_Old): h22e3a uses lowercase (hhidpn, sr050, sr073, etc
+> .).
 . * Scratch file in RAW_DATA. Final output to CLEANED.
 . 
 . * Do not use -clear all-: it wipes globals (RAW_DATA, CLEANED) set by 00_config.
@@ -50,12 +50,12 @@ Saved FRED CPIAUCSL to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 . use "${HRS_DATA}/_randhrs1992_2022v1.dta", clear
 
 . 
-. * Load 2022 fat file: h22e3a uses lowercase. Flow vars + flag vars. Public stock: SR072 (flag), SR073 (amoun
-> t).
+. * Load 2022 fat file: h22e3a uses lowercase. Flow vars + flag vars. Public stock: SR072 (flag), SR073 (amou
+> nt).
 . preserve
 
-. use hhidpn sr050 sr055 sr063 sr064 sr072 sr073 sr030 sr035 sr045 sq171_1 sq171_2 sq171_3 sr007 sr013 sr024 /
-> //
+. use hhidpn sr050 sr055 sr063 sr064 sr072 sr073 sr030 sr035 sr045 sq171_1 sq171_2 sq171_3 sr007 sr013 sr024 
+> ///
 >     sr049 sr061 sr062 sr028 sr029 sq170_1 sq170_2 sq170_3 sr002 using "${HRS_DATA}/h22e3a.dta", clear
 
 . save "`scratch'", replace
@@ -114,8 +114,8 @@ end of do-file
 . 
 . preserve
 
-. use hhidpn rv557 rv558 rv559 rv560 rv561 rv562 rv563 rv564 rv565 rv566 rv567 rv568 rv569 rv570 using "${HRS_
-> DATA}/h20f1a.dta", clear
+. use hhidpn rv557 rv558 rv559 rv560 rv561 rv562 rv563 rv564 rv565 rv566 rv567 rv568 rv569 rv570 using "${HRS
+> _DATA}/h20f1a.dta", clear
 
 . rename (rv557 rv558 rv559 rv560 rv561 rv562 rv563 rv564 rv565 rv566 rv567 rv568 rv569 rv570) ///
 >        (rv557_2020 rv558_2020 rv559_2020 rv560_2020 rv561_2020 rv562_2020 rv563_2020 rv564_2020 ///
@@ -142,11 +142,11 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scr
 . capture erase "`scratch'"
 
 . 
-. * Recode HRS special values to missing for r557-r570 (trust). Per codebook RV570: -8 Web non-response, 8 DK/
-> NA, 9 RF.
+. * Recode HRS special values to missing for r557-r570 (trust). Per codebook RV570: -8 Web non-response, 8 DK
+> /NA, 9 RF.
 . * We remove -9 -8 8 9 98 99 (and 9998 ... 99999999) so 99 and all DK/NA/RF are missing for *r557-*r570.
-. local trustvars rv557_2020 rv558_2020 rv559_2020 rv560_2020 rv561_2020 rv562_2020 rv563_2020 rv564_2020 rv56
-> 5_2020 rv566_2020 rv567_2020 rv568_2020 rv569_2020 rv570_2020
+. local trustvars rv557_2020 rv558_2020 rv559_2020 rv560_2020 rv561_2020 rv562_2020 rv563_2020 rv564_2020 rv5
+> 65_2020 rv566_2020 rv567_2020 rv568_2020 rv569_2020 rv570_2020
 
 . local miss -9 -8 8 9 98 99 9998 9999 999998 999999 9999998 9999999 99999998 99999999
 
@@ -179,8 +179,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn hr050 hr055 hr063 hr064 hr072 hr073 hr030 hr035 hr045 hq171_1 hq171_2 hq171_3 hr007 hr013 hr024 /
-> //
+. use hhidpn hr050 hr055 hr063 hr064 hr072 hr073 hr030 hr035 hr045 hq171_1 hq171_2 hq171_3 hr007 hr013 hr024 
+> ///
 >     hr049 hr061 hr062 hr028 hr029 hq170_1 hq170_2 hq170_3 hr002 using "${HRS_DATA}/h02f2c.dta", clear
 
 . save "`scratch'", replace
@@ -222,8 +222,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn jr050 jr055 jr063 jr064 jr072 jr073 jr030 jr035 jr045 jq171_1 jq171_2 jq171_3 jr007 jr013 jr024 /
-> //
+. use hhidpn jr050 jr055 jr063 jr064 jr072 jr073 jr030 jr035 jr045 jq171_1 jq171_2 jq171_3 jr007 jr013 jr024 
+> ///
 >     jr049 jr061 jr062 jr028 jr029 jq170_1 jq170_2 jq170_3 jr002 using "${HRS_DATA}/h04f1c.dta", clear
 
 . save "`scratch'", replace
@@ -265,8 +265,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn kr050 kr055 kr063 kr064 kr072 kr073 kr030 kr035 kr045 kq171_1 kq171_2 kq171_3 kr007 kr013 kr024 /
-> //
+. use hhidpn kr050 kr055 kr063 kr064 kr072 kr073 kr030 kr035 kr045 kq171_1 kq171_2 kq171_3 kr007 kr013 kr024 
+> ///
 >     kr049 kr061 kr062 kr028 kr029 kq170_1 kq170_2 kq170_3 kr002 using "${HRS_DATA}/h06f4b.dta", clear
 
 . save "`scratch'", replace
@@ -308,8 +308,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn lr050 lr055 lr063 lr064 lr072 lr073 lr030 lr035 lr045 lq171_1 lq171_2 lq171_3 lr007 lr013 lr024 /
-> //
+. use hhidpn lr050 lr055 lr063 lr064 lr072 lr073 lr030 lr035 lr045 lq171_1 lq171_2 lq171_3 lr007 lr013 lr024 
+> ///
 >     lr049 lr061 lr062 lr028 lr029 lq170_1 lq170_2 lq170_3 lr002 using "${HRS_DATA}/h08f3b.dta", clear
 
 . save "`scratch'", replace
@@ -351,8 +351,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn mr050 mr055 mr063 mr064 mr072 mr073 mr030 mr035 mr045 mq171_1 mq171_2 mq171_3 mr007 mr013 mr024 /
-> //
+. use hhidpn mr050 mr055 mr063 mr064 mr072 mr073 mr030 mr035 mr045 mq171_1 mq171_2 mq171_3 mr007 mr013 mr024 
+> ///
 >     mr049 mr061 mr062 mr028 mr029 mq170_1 mq170_2 mq170_3 mr002 using "${HRS_DATA}/hd10f6b.dta", clear
 
 . save "`scratch'", replace
@@ -394,8 +394,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn nr050 nr055 nr063 nr064 nr072 nr073 nr030 nr035 nr045 nq171_1 nq171_2 nq171_3 nr007 nr013 nr024 /
-> //
+. use hhidpn nr050 nr055 nr063 nr064 nr072 nr073 nr030 nr035 nr045 nq171_1 nq171_2 nq171_3 nr007 nr013 nr024 
+> ///
 >     nr049 nr061 nr062 nr028 nr029 nq170_1 nq170_2 nq170_3 nr002 using "${HRS_DATA}/h12f3a.dta", clear
 
 . save "`scratch'", replace
@@ -437,8 +437,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn or050 or055 or063 or064 or072 or073 or030 or035 or045 oq171_1 oq171_2 oq171_3 or007 or013 or024 /
-> //
+. use hhidpn or050 or055 or063 or064 or072 or073 or030 or035 or045 oq171_1 oq171_2 oq171_3 or007 or013 or024 
+> ///
 >     or049 or061 or062 or028 or029 oq170_1 oq170_2 oq170_3 or002 using "${HRS_DATA}/h14f2b.dta", clear
 
 . save "`scratch'", replace
@@ -480,8 +480,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn pr050 pr055 pr063 pr064 pr072 pr073 pr030 pr035 pr045 pq171_1 pq171_2 pq171_3 pr007 pr013 pr024 /
-> //
+. use hhidpn pr050 pr055 pr063 pr064 pr072 pr073 pr030 pr035 pr045 pq171_1 pq171_2 pq171_3 pr007 pr013 pr024 
+> ///
 >     pr049 pr061 pr062 pr028 pr029 pq170_1 pq170_2 pq170_3 pr002 using "${HRS_DATA}/h16f2c.dta", clear
 
 . save "`scratch'", replace
@@ -523,8 +523,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn qr050 qr055 qr063 qr064 qr072 qr073 qr030 qr035 qr045 qq171_1 qq171_2 qq171_3 qr007 qr013 qr024 /
-> //
+. use hhidpn qr050 qr055 qr063 qr064 qr072 qr073 qr030 qr035 qr045 qq171_1 qq171_2 qq171_3 qr007 qr013 qr024 
+> ///
 >     qr049 qr061 qr062 qr028 qr029 qq170_1 qq170_2 qq170_3 qr002 using "${HRS_DATA}/h18f2c.dta", clear
 
 . save "`scratch'", replace
@@ -566,8 +566,8 @@ end of do-file
 
 . preserve
 
-. use hhidpn rr050 rr055 rr063 rr064 rr072 rr073 rr030 rr035 rr045 rq171_1 rq171_2 rq171_3 rr007 rr013 rr024 /
-> //
+. use hhidpn rr050 rr055 rr063 rr064 rr072 rr073 rr030 rr035 rr045 rq171_1 rq171_2 rq171_3 rr007 rr013 rr024 
+> ///
 >     rr049 rr061 rr062 rr028 rr029 rq170_1 rq170_2 rq170_3 rr002 using "${HRS_DATA}/h20f1a.dta", clear
 
 . save "`scratch'", replace
@@ -625,5 +625,5 @@ Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_d
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_merge_all_data.log
   log type:  text
- closed on:   6 Feb 2026, 22:32:30
---------------------------------------------------------------------------------------------------------------
+ closed on:   8 Feb 2026, 08:54:17
+-------------------------------------------------------------------------------------------------------------

@@ -211,7 +211,7 @@ forvalues w = 5/16 {
     if !_rc {
         capture drop region_`y'
         gen byte region_`y' = r`w'cenreg
-        replace region_`y' = . if region_`y' == 5
+        * Region 5 (Other) left as-is here; recoded to missing in 08 before saving analysis_ready_processed.dta
     }
     capture confirm variable population_2020
     if !_rc {
@@ -378,6 +378,20 @@ forvalues j = 1/12 {
             gen byte wealth_ira_d`d'_`y' = wealth_ira_decile_`y' == `d' if !missing(wealth_ira_decile_`y')
         }
 
+        * Core+ret. wealth (core + IRA; same scope as r4)
+        if `has_core' {
+            capture drop wealth_coreira_`y'
+            capture drop wealth_coreira_decile_`y'
+            gen double wealth_coreira_`y' = wealth_core_`y' + wealth_ira_`y' if !missing(wealth_core_`y') & !missing(wealth_ira_`y')
+            capture drop wealth_coreira_decile_`y'
+            xtile wealth_coreira_decile_`y' = wealth_coreira_`y', nq(10)
+            replace wealth_coreira_decile_`y' = . if missing(wealth_coreira_`y')
+            forvalues d = 1/10 {
+                capture drop wealth_coreira_d`d'_`y'
+                gen byte wealth_coreira_d`d'_`y' = wealth_coreira_decile_`y' == `d' if !missing(wealth_coreira_decile_`y')
+            }
+        }
+
         * Residential-only wealth (primary + secondary)
         capture drop wealth_res_`y'
         capture drop wealth_res_decile_`y'
@@ -398,7 +412,7 @@ forvalues j = 5/16 {
     capture drop share_pri_res_`y' share_sec_res_`y' share_re_`y' share_vehicles_`y' share_bus_`y' share_ira_`y' share_stk_`y' share_chck_`y' share_cd_`y' share_bond_`y' share_other_`y'
     capture drop share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y'
     capture drop share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y'
-    capture drop share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y' share_residential_`y'
+    capture drop share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y' share_residential_`y' share_core_`y'
     capture drop share_debt_long_`y' share_debt_other_`y'
     capture drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_`y'
     capture drop gross_wealth_`y'
@@ -437,6 +451,8 @@ forvalues j = 5/16 {
         gen double share_m3_sec_res_`y' = h`j'anethb_pos / base_m3_assets_`y' if !missing(h`j'anethb_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
         * Residential share = (primary + secondary res) / gross assets (same denominator as other m3 shares)
         gen double share_residential_`y' = (h`j'atoth_pos + h`j'anethb_pos) / base_m3_assets_`y' if !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+        * Core share = (bonds + stocks + real estate + business) / gross assets (same denominator)
+        gen double share_core_`y' = (h`j'abond_pos + h`j'astck_pos + h`j'arles_pos + h`j'absns_pos) / base_m3_assets_`y' if !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
         gen double share_m3_re_`y' = h`j'arles_pos / base_m3_assets_`y' if !missing(h`j'arles_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
         gen double share_m3_vehicles_`y' = h`j'atran_pos / base_m3_assets_`y' if !missing(h`j'atran_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
         gen double share_m3_bus_`y' = h`j'absns_pos / base_m3_assets_`y' if !missing(h`j'absns_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
@@ -479,9 +495,9 @@ forvalues j = 5/16 {
 }
 
 * Reduce dataset to relevant variables
-capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg
-capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_res_*
-capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_residential_* share_debt_*
+capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* r5_annual_* r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg r5_annual_avg
+capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_*
+capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_residential_* share_core_* share_debt_*
 capture unab _incvars : labor_income_* total_income_*
 capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_* ///
     population_3bin_2020 pop3_trust_* townsize3_trust_* region_pop3_group_*

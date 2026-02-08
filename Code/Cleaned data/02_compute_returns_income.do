@@ -1,7 +1,7 @@
 * 02_compute_returns_income.do
 * Load 01 output; build flow_* in 02_process_flows; then compute returns for all waves.
 * Expects: 01_merge_all_data run first. Input: ${CLEANED}/all_data_merged.dta.
-* Output: r1/r2/r3/r4_annual_YYYY + averages (flows are built in 02_process_flows).
+* Output: r1-r5_annual_YYYY + averages (r4 = core+IRA, r5 = net wealth; flows are built in 02_process_flows).
 
 clear
 set more off
@@ -252,15 +252,6 @@ forvalues i = 1/11 {
         quietly count if _ok_res_`y' & base_res_`y' < 5000
         display "r3 base<5k (`y'): " r(N)
 
-        quietly count if _ok_total_`y' & base_total_`y' <= 0
-        display "r4 base<=0 (`y'): " r(N)
-        quietly count if _ok_total_`y' & base_total_`y' < 1000
-        display "r4 base<1k (`y'): " r(N)
-        quietly count if _ok_total_`y' & base_total_`y' < 2000
-        display "r4 base<2k (`y'): " r(N)
-        quietly count if _ok_total_`y' & base_total_`y' < 5000
-        display "r4 base<5k (`y'): " r(N)
-
         * Apply minimum base thresholds by return type
         local base_core_min = 500
         local base_ira_min = 1000
@@ -271,37 +262,61 @@ forvalues i = 1/11 {
         replace base_res_`y' = . if base_res_`y' < `base_res_min'
         replace base_total_`y' = . if base_total_`y' < `base_total_min'
 
-        capture drop num_core_`y' num_ira_`y' num_res_`y' num_total_`y'
+        capture drop num_core_`y' num_ira_`y' num_res_`y' num_total_`y' num_coreira_`y'
         gen double num_core_`y' = y_core_inc_`y' + cg_core_`y' - flow_core_adj_`y' if _ok_core_`y'
         gen double num_ira_`y' = y_ira_inc_`y' + cg_ira_only_`y' - flow_ira_adj_`y' if _ok_ira_`y'
         gen double num_res_`y' = y_res_inc_`y' + cg_res_total_`y' - flow_res_adj_`y' if _ok_res_`y'
         gen double num_total_`y' = y_total_inc_`y' + cg_total_`y' - flow_total_adj_`y' if _ok_total_`y'
+        * r4 = core+IRA: return nonmissing when either core OR IRA has nonmissing (same rule as r1/r2/r3)
+        gen byte _ok_coreira_`y' = (_ok_core_`y' | _ok_ira_`y')
+        gen double num_coreira_`y' = .
+        gen double base_coreira_`y' = .
+        replace num_coreira_`y' = num_core_`y' + num_ira_`y' if _ok_core_`y' & _ok_ira_`y'
+        replace base_coreira_`y' = base_core_`y' + base_ira_`y' if _ok_core_`y' & _ok_ira_`y'
+        replace num_coreira_`y' = num_core_`y' if _ok_core_`y' & !_ok_ira_`y'
+        replace base_coreira_`y' = base_core_`y' if _ok_core_`y' & !_ok_ira_`y'
+        replace num_coreira_`y' = num_ira_`y' if !_ok_core_`y' & _ok_ira_`y'
+        replace base_coreira_`y' = base_ira_`y' if !_ok_core_`y' & _ok_ira_`y'
+        local base_coreira_min = 1500
+        replace base_coreira_`y' = . if base_coreira_`y' != . & base_coreira_`y' < `base_coreira_min'
+        quietly count if _ok_coreira_`y' & base_coreira_`y' != . & base_coreira_`y' <= 0
+        display "r4 base<=0 (`y'): " r(N)
+        quietly count if _ok_coreira_`y' & base_coreira_`y' != . & base_coreira_`y' < 1000
+        display "r4 base<1k (`y'): " r(N)
+        quietly count if _ok_coreira_`y' & base_coreira_`y' != . & base_coreira_`y' < 2000
+        display "r4 base<2k (`y'): " r(N)
+        quietly count if _ok_coreira_`y' & base_coreira_`y' != . & base_coreira_`y' < 5000
+        display "r4 base<5k (`y'): " r(N)
 
-        capture drop r1_period_`y' r2_period_`y' r3_period_`y' r4_period_`y'
+        capture drop r1_period_`y' r2_period_`y' r3_period_`y' r4_period_`y' r5_period_`y'
         gen double r1_period_`y' = num_core_`y' / base_core_`y'
         gen double r2_period_`y' = num_ira_`y' / base_ira_`y'
         gen double r3_period_`y' = num_res_`y' / base_res_`y'
-        gen double r4_period_`y' = num_total_`y' / base_total_`y'
+        gen double r4_period_`y' = num_coreira_`y' / base_coreira_`y'
+        gen double r5_period_`y' = num_total_`y' / base_total_`y'
 
         replace r1_period_`y' = . if base_core_`y' <= 0
         replace r2_period_`y' = . if base_ira_`y' <= 0
         replace r3_period_`y' = . if base_res_`y' <= 0
-        replace r4_period_`y' = . if base_total_`y' <= 0
+        replace r4_period_`y' = . if base_coreira_`y' <= 0
+        replace r5_period_`y' = . if base_total_`y' <= 0
 
-        capture drop r1_annual_`y' r2_annual_`y' r3_annual_`y' r4_annual_`y'
+        capture drop r1_annual_`y' r2_annual_`y' r3_annual_`y' r4_annual_`y' r5_annual_`y'
         gen double r1_annual_`y' = (1 + r1_period_`y')^(1/2) - 1
         gen double r2_annual_`y' = (1 + r2_period_`y')^(1/2) - 1
         gen double r3_annual_`y' = (1 + r3_period_`y')^(1/2) - 1
         gen double r4_annual_`y' = (1 + r4_period_`y')^(1/2) - 1
+        gen double r5_annual_`y' = (1 + r5_period_`y')^(1/2) - 1
         replace r1_annual_`y' = . if missing(r1_period_`y')
         replace r2_annual_`y' = . if missing(r2_period_`y')
         replace r3_annual_`y' = . if missing(r3_period_`y')
         replace r4_annual_`y' = . if missing(r4_period_`y')
+        replace r5_annual_`y' = . if missing(r5_period_`y')
 
         capture drop flow_core_adj_`y' flow_ira_adj_`y' flow_res_adj_`y' flow_total_adj_`y'
 
     }
-    capture drop _ok_core_`y' _ok_ira_`y' _ok_res_`y' _ok_total_`y'
+    capture drop _ok_core_`y' _ok_ira_`y' _ok_res_`y' _ok_total_`y' _ok_coreira_`y'
 }
 
 * Average returns across waves (row mean of nonmissing)
@@ -309,10 +324,12 @@ capture drop r1_annual_avg
 capture drop r2_annual_avg
 capture drop r3_annual_avg
 capture drop r4_annual_avg
+capture drop r5_annual_avg
 egen double r1_annual_avg = rowmean(r1_annual_2002 r1_annual_2004 r1_annual_2006 r1_annual_2008 r1_annual_2010 r1_annual_2012 r1_annual_2014 r1_annual_2016 r1_annual_2018 r1_annual_2020 r1_annual_2022)
 egen double r2_annual_avg = rowmean(r2_annual_2002 r2_annual_2004 r2_annual_2006 r2_annual_2008 r2_annual_2010 r2_annual_2012 r2_annual_2014 r2_annual_2016 r2_annual_2018 r2_annual_2020 r2_annual_2022)
 egen double r3_annual_avg = rowmean(r3_annual_2002 r3_annual_2004 r3_annual_2006 r3_annual_2008 r3_annual_2010 r3_annual_2012 r3_annual_2014 r3_annual_2016 r3_annual_2018 r3_annual_2020 r3_annual_2022)
 egen double r4_annual_avg = rowmean(r4_annual_2002 r4_annual_2004 r4_annual_2006 r4_annual_2008 r4_annual_2010 r4_annual_2012 r4_annual_2014 r4_annual_2016 r4_annual_2018 r4_annual_2020 r4_annual_2022)
+egen double r5_annual_avg = rowmean(r5_annual_2002 r5_annual_2004 r5_annual_2006 r5_annual_2008 r5_annual_2010 r5_annual_2012 r5_annual_2014 r5_annual_2016 r5_annual_2018 r5_annual_2020 r5_annual_2022)
 
 * Income measures per wave (labor + total) for downstream processing
 forvalues j = 6/16 {
@@ -373,4 +390,4 @@ forvalues w = 5/16 {
 
 * Save
 save "${CLEANED}/all_data_merged.dta", replace
-display "02: Saved ${CLEANED}/all_data_merged.dta with flow_*_YYYY and r1/r2/r3/r4_annual_YYYY (N = " _N ")"
+display "02: Saved ${CLEANED}/all_data_merged.dta with flow_*_YYYY and r1-r5_annual_YYYY (N = " _N ")"
