@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_descriptive_returns.log
   log type:  text
- opened on:   8 Feb 2026, 17:18:48
+ opened on:   9 Feb 2026, 09:15:58
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -428,70 +428,6 @@ file /Volumes/SSD
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/wealth_mean_by_year_agg.png saved as PNG
     format
-
-. restore
-
-. 
-. * ---------------------------------------------------------------------
-. * Participation: share of respondents with non-missing value (0-1), 2002 and 2022
-. * Interest income: 4 vars (capital income, pension, SSDI, retirement income). Holdings: capital income + as
-> set holdings from note.
-. * ---------------------------------------------------------------------
-. preserve
-
-. foreach yr in 2002 2022 {
-  2.     local w = cond(`yr' == 2002, 6, 16)
-  3.     * Interest income (4 vars): hicap, ipena, issdi, isret
-.     capture confirm variable h`w'icap r`w'ipena r`w'issdi r`w'isret
-  4.     if !_rc {
-  5.         capture drop p_icap p_ipena p_issdi p_isret
-  6.         gen byte p_icap   = !missing(h`w'icap)
-  7.         gen byte p_ipena  = !missing(r`w'ipena)
-  8.         gen byte p_issdi  = !missing(r`w'issdi)
-  9.         gen byte p_isret  = !missing(r`w'isret)
- 10.         graph bar (mean) p_icap p_ipena p_issdi p_isret, ///
->             bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(orange)) bar(4, color(green)) ///
->             title("Participation: interest income (`yr')") ///
->             ytitle("Share with non-missing") ylabel(0(0.2)1, format(%3.2f)) ///
->             legend(label(1 "Capital income") label(2 "Pension") label(3 "Social security") label(4 "Retirem
-> ent income") ///
->                    cols(2) size(small) position(3) ring(0) region(lstyle(none))) ///
->             ysize(4) xsize(5.5)
- 11.         graph export "${DESCRIPTIVE}/Figures/participation_interest_income_`yr'.png", replace
- 12.         drop p_icap p_ipena p_issdi p_isret
- 13.     }
- 14.     * Holdings: 3 groups (Core = bonds+stocks+real estate+business, Residential = primary+secondary res,
->  Retirement = IRA)
-.     capture confirm variable h`w'atoth h`w'anethb h`w'arles h`w'absns h`w'aira h`w'astck h`w'abond
- 15.     if !_rc {
- 16.         capture drop p_core p_residential p_ira
- 17.         gen byte p_core = (!missing(h`w'arles) | !missing(h`w'absns) | !missing(h`w'astck) | !missing(h`
-> w'abond))
- 18.         gen byte p_residential = (!missing(h`w'atoth) | !missing(h`w'anethb))
- 19.         gen byte p_ira = !missing(h`w'aira)
- 20.         graph bar (mean) p_core p_residential p_ira, ///
->             bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
->             title("Participation: holdings (`yr')") ///
->             ytitle("Share with non-missing") ylabel(0(0.2)1, format(%3.2f)) ///
->             legend(label(1 "Core assets") label(2 "Residential") label(3 "Retirement") ///
->                 cols(1) size(small) position(3) ring(0) region(lstyle(none))) ///
->             ysize(4) xsize(5.5)
- 21.         graph export "${DESCRIPTIVE}/Figures/participation_holdings_`yr'.png", replace
- 22.         drop p_core p_residential p_ira
- 23.     }
- 24. }
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/participation_interest_income_2002.png
-    saved as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/participation_holdings_2002.png saved as
-    PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/participation_interest_income_2022.png
-    saved as PNG format
-file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/participation_holdings_2022.png saved as
-    PNG format
 
 . restore
 
@@ -954,7 +890,7 @@ some college |     32457     16765     30301     15973     31310
 . tempfile share_conc
 
 . postfile handle str12 asset int year int threshold double pct_of_asset using "`share_conc'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000b not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000a not found)
 
 . 
 . foreach y of local years {
@@ -1027,9 +963,9 @@ some college |     32457     16765     30301     15973     31310
 
 . file open fh using "${DESCRIPTIVE}/Tables/share_concentration_by_asset.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Share concentration by asset class}" _n "\label{
-> tab:share_concentration_by_asset}" _n "\begin{tabular}{lrrr}\toprule" _n "Asset & Year & Threshold (\%) & P
-> ct.\ of asset \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{4pt}" _n "\caption{Share con
+> centration by asset class}" _n "\label{tab:share_concentration_by_asset}" _n "\begin{tabular}{@{}@{\extraco
+> lsep{0pt}}lrrr@{}}\toprule" _n "Asset & Year & Threshold (\%) & Pct.\ of asset \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local a = asset[`r']
@@ -1280,7 +1216,7 @@ file /Volumes/SSD
 
 . postfile mhandle int year double mean_core double mean_residential double mean_ira using "`mean_shares'", r
 > eplace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000d not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000c not found)
 
 . foreach y in 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022 {
   2.     capture confirm variable share_residential_`y'
@@ -1460,9 +1396,9 @@ s~3_ira_2022 |     14,467    .1060849    .2028841          0          1
 
 . file open fh using "${DESCRIPTIVE}/Tables/mean_share_by_asset_class_year.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean portfolio share by asset class and year}" _
-> n "\label{tab:mean_share_by_asset_class_year}" _n "\begin{tabular}{lrrr}\toprule" _n "Year & Core & Residen
-> tial & Retirement \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{4pt}" _n "\caption{Mean port
+> folio share by asset class and year}" _n "\label{tab:mean_share_by_asset_class_year}" _n "\begin{tabular}{@
+> {}@{\extracolsep{0pt}}lrrr@{}}\toprule" _n "Year & Core & Residential & Retirement \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
@@ -1780,5 +1716,5 @@ file /Volumes/SSD
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_descriptive_returns.log
   log type:  text
- closed on:   8 Feb 2026, 17:22:01
+ closed on:   9 Feb 2026, 09:18:31
 -------------------------------------------------------------------------------------------------------------

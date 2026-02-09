@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/05_processing_returns.log
   log type:  text
- opened on:   8 Feb 2026, 09:01:13
+ opened on:   9 Feb 2026, 07:15:41
 
 . 
 . * Prefer processed dataset (to keep income processing), fallback to analysis_ready
@@ -821,5 +821,5 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/05_processing_returns.log
   log type:  text
- closed on:   8 Feb 2026, 09:01:16
+ closed on:   9 Feb 2026, 07:15:44
 -------------------------------------------------------------------------------------------------------------

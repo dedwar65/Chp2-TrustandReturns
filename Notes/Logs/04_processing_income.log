@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_processing_income.log
   log type:  text
- opened on:   8 Feb 2026, 09:01:08
+ opened on:   9 Feb 2026, 07:15:36
 
 . 
 . use "${PROCESSED}/analysis_ready.dta", clear
@@ -1290,5 +1290,5 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_processing_income.log
   log type:  text
- closed on:   8 Feb 2026, 09:01:13
+ closed on:   9 Feb 2026, 07:15:41
 -------------------------------------------------------------------------------------------------------------

@@ -68,57 +68,25 @@ program define _vlabel, rclass
     if "`v'"=="trust_media_2020" return local vlabel "Media"
     if "`v'"=="depression_2020" return local vlabel "Depression"
     if "`v'"=="health_cond_2020" return local vlabel "Health conditions"
-    if "`v'"=="medicare_2020" return local vlabel "Medicare (program)"
+    if "`v'"=="medicare_2020" return local vlabel "Medicare"
     if "`v'"=="medicaid_2020" return local vlabel "Medicaid"
     if "`v'"=="life_ins_2020" return local vlabel "Life insurance"
     if "`v'"=="beq_any_2020" return local vlabel "Bequest"
-    if "`v'"=="num_divorce_2020" return local vlabel "Num. divorce"
-    if "`v'"=="num_widow_2020" return local vlabel "Num. widow"
-    if "`v'"=="interest_2020" return local vlabel "Interest (0--10)"
-    if "`v'"=="inflation_2020" return local vlabel "Inflation (0--10)"
-    if "`v'"=="risk_div_2020" return local vlabel "Risk diversification (0--10)"
+    if "`v'"=="num_divorce_2020" return local vlabel "Times divorced"
+    if "`v'"=="num_widow_2020" return local vlabel "Times widowed"
+    if "`v'"=="age_2020" return local vlabel "Age"
+    if "`v'"=="educ_yrs" return local vlabel "Years of education"
+    if "`v'"=="gender" return local vlabel "Female"
+    if "`v'"=="immigrant" return local vlabel "Immigrant"
+    if "`v'"=="born_us" return local vlabel "Born in U.S."
+    if "`v'"=="race_eth" return local vlabel "Race/ethnicity"
+    if "`v'"=="married_2020" return local vlabel "Married"
+    if "`v'"=="interest_2020" return local vlabel "Interest"
+    if "`v'"=="inflation_2020" return local vlabel "Inflation"
+    if "`v'"=="risk_div_2020" return local vlabel "Risk diversification"
     if "`v'"=="par_citizen_2020" return local vlabel "Parent citizenship"
     if "`v'"=="par_loyalty_2020" return local vlabel "Parent loyalty"
     if "`v'"=="population_2020" return local vlabel "Population size"
-end
-
-* Program: return display label for portfolio share variable (for share_tabstat .tex tables)
-program define _sharevlabel, rclass
-    args v
-    return local vlabel "`v'"
-    * Core, residential, IRA (pipeline)
-    if inlist("`v'", "share_core_2002", "share_core_2022") return local vlabel "Core share"
-    if inlist("`v'", "share_residential_2002", "share_residential_2022") return local vlabel "Residential share"
-    if inlist("`v'", "share_m3_ira_2002", "share_m3_ira_2022") return local vlabel "IRA share (M3)"
-    * M1
-    if inlist("`v'", "share_m1_re_2002", "share_m1_re_2022") return local vlabel "RE (M1)"
-    if inlist("`v'", "share_m1_bus_2002", "share_m1_bus_2022") return local vlabel "Bus. (M1)"
-    if inlist("`v'", "share_m1_stk_2002", "share_m1_stk_2022") return local vlabel "Stocks (M1)"
-    if inlist("`v'", "share_m1_chck_2002", "share_m1_chck_2022") return local vlabel "Checking (M1)"
-    if inlist("`v'", "share_m1_cd_2002", "share_m1_cd_2022") return local vlabel "CD (M1)"
-    if inlist("`v'", "share_m1_bond_2002", "share_m1_bond_2022") return local vlabel "Bonds (M1)"
-    * M2
-    if inlist("`v'", "share_m2_re_2002", "share_m2_re_2022") return local vlabel "RE (M2)"
-    if inlist("`v'", "share_m2_bus_2002", "share_m2_bus_2022") return local vlabel "Bus. (M2)"
-    if inlist("`v'", "share_m2_ira_2002", "share_m2_ira_2022") return local vlabel "IRA (M2)"
-    if inlist("`v'", "share_m2_stk_2002", "share_m2_stk_2022") return local vlabel "Stocks (M2)"
-    if inlist("`v'", "share_m2_chck_2002", "share_m2_chck_2022") return local vlabel "Checking (M2)"
-    if inlist("`v'", "share_m2_cd_2002", "share_m2_cd_2022") return local vlabel "CD (M2)"
-    if inlist("`v'", "share_m2_bond_2002", "share_m2_bond_2022") return local vlabel "Bonds (M2)"
-    * M3 components
-    if inlist("`v'", "share_m3_pri_res_2002", "share_m3_pri_res_2022") return local vlabel "Primary residence (M3)"
-    if inlist("`v'", "share_m3_sec_res_2002", "share_m3_sec_res_2022") return local vlabel "Secondary residence (M3)"
-    if inlist("`v'", "share_m3_re_2002", "share_m3_re_2022") return local vlabel "RE (M3)"
-    if inlist("`v'", "share_m3_vehicles_2002", "share_m3_vehicles_2022") return local vlabel "Vehicles (M3)"
-    if inlist("`v'", "share_m3_bus_2002", "share_m3_bus_2022") return local vlabel "Bus. (M3)"
-    if inlist("`v'", "share_m3_stk_2002", "share_m3_stk_2022") return local vlabel "Stocks (M3)"
-    if inlist("`v'", "share_m3_chck_2002", "share_m3_chck_2022") return local vlabel "Checking (M3)"
-    if inlist("`v'", "share_m3_cd_2002", "share_m3_cd_2022") return local vlabel "CD (M3)"
-    if inlist("`v'", "share_m3_bond_2002", "share_m3_bond_2022") return local vlabel "Bonds (M3)"
-    if inlist("`v'", "share_m3_other_2002", "share_m3_other_2022") return local vlabel "Other (M3)"
-    * Debt
-    if inlist("`v'", "share_debt_long_2002", "share_debt_long_2022") return local vlabel "Debt long-term"
-    if inlist("`v'", "share_debt_other_2002", "share_debt_other_2022") return local vlabel "Debt other"
 end
 
 * ---------------------------------------------------------------------
@@ -189,57 +157,76 @@ file write fh "\bottomrule\end{tabular}\end{table}" _n
 file close fh
 restore
 
-* Demographics summary (2020): age, race/ethnicity
+* Demographics summary (2020): age (continuous: N, Mean, SD); race/ethnicity (categorical: N, %)
 preserve
+
+* Define 2020 sample as respondents with a non-missing 2020 age
 capture confirm variable age_2020
 if !_rc {
+    keep if !missing(age_2020)
+
     quietly summarize age_2020 `wopt', detail
     file open fh using "${DESCRIPTIVE}/Tables/demographics_controls_summary.tex", write replace
-    file write fh "\begin{table}[htbp]\centering" _n "\caption{Demographics summary (2020)}" _n "\label{tab:demographics_controls_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\\ \midrule" _n
+    file write fh "\begin{table}[htbp]\centering" _n "\caption{Demographics summary (2020)}" _n "\label{tab:demographics_controls_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean/\% & SD \\\\ \midrule" _n
     local n_s = string(r(N), "%9.0f")
     local m_s = string(r(mean), "%9.2f")
     local s_s = string(r(sd), "%9.2f")
     file write fh "Age & `n_s' & `m_s' & `s_s' \\\\" _n
+
+    * Race/ethnicity distribution within the same 2020 sample
     capture confirm variable race_eth
     if !_rc {
-        tempfile maindata
-        save "`maindata'", replace
         contract race_eth, freq(n)
+        drop if missing(race_eth)
+        egen long total_n = total(n)
+        gen double pct = 100 * n / total_n
         label values race_eth race_eth_lbl
         decode race_eth, gen(race_label)
         forvalues r = 1/`=_N' {
             local rlab = race_label[`r']
             local n_r = string(n[`r'], "%9.0f")
-            file write fh "Race/ethnicity: `rlab' & `n_r' & -- & -- \\\\" _n
+            local pct_s = string(pct[`r'], "%9.1f")
+            file write fh "Race/ethnicity: `rlab' & `n_r' & `pct_s' & -- \\\\" _n
         }
-        use "`maindata'", clear
     }
-    file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020 sample.} \\\\" _n "\end{tabular}\end{table}" _n
+
+    file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020 sample. Continuous: Mean, SD; categorical: proportion (\%).} \\\\" _n "\end{tabular}\end{table}" _n
     file close fh
 }
 restore
 
-* Financial literacy summary (2020)
+* Financial literacy summary (2020): rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversification (HRS 2020)
 preserve
-capture confirm variable interest_2020
-if !_rc {
-    file open fh using "${DESCRIPTIVE}/Tables/finlit_summary.tex", write replace
-    file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy summary (2020)}" _n "\label{tab:finlit_summary}" _n "\begin{tabular}{lrrcc}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
-    foreach v in interest_2020 inflation_2020 risk_div_2020 {
-        capture confirm variable `v'
-        if _rc continue
-        quietly summarize `v' `wopt', detail
-        _vlabel `v'
-        local vlab `r(vlabel)'
-        local n_s = string(r(N), "%9.0f")
-        local m_s = string(r(mean), "%9.2f")
-        local s_s = string(r(sd), "%9.2f")
-        local p50_s = string(r(p50), "%9.2f")
-        file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
+capture confirm variable year
+if !_rc keep if year == 2020
+* Use renamed vars if present, else raw rv* (so table works whether 03 prep ran or not)
+foreach v in interest_2020 inflation_2020 risk_div_2020 {
+    capture confirm variable `v'
+    if _rc {
+        if "`v'"=="interest_2020"  capture gen interest_2020  = rv565_2020
+        if "`v'"=="inflation_2020" capture gen inflation_2020 = rv566_2020
+        if "`v'"=="risk_div_2020"  capture gen risk_div_2020  = rv567_2020
     }
-    file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize 2020 sample.} \\\\" _n "\end{tabular}\end{table}" _n
-    file close fh
 }
+file open fh using "${DESCRIPTIVE}/Tables/finlit_summary.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy summary (2020)}" _n "\label{tab:finlit_summary}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
+* Fixed mapping: rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversification (HRS 2020)
+foreach pair in "interest_2020 Interest" "inflation_2020 Inflation" "risk_div_2020 Risk diversification" {
+    tokenize `pair'
+    local v "`1'"
+    local vlab "`2'"
+    capture confirm variable `v'
+    if _rc continue
+    quietly summarize `v' `wopt', detail
+    if r(N) == 0 continue
+    local n_s = string(r(N), "%9.0f")
+    local m_s = string(r(mean), "%9.2f")
+    local s_s = string(r(sd), "%9.2f")
+    local p50_s = string(r(p50), "%9.2f")
+    file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize HRS 2020: rv565 (interest), rv566 (inflation), rv567 (risk diversification).} \\\\" _n "\end{tabular}\end{table}" _n
+file close fh
 restore
 
 * Population size summary (2020)
@@ -392,16 +379,14 @@ decode region_2020, gen(region_label)
 decode population_2020, gen(pop_label)
 contract region_2020 region_label population_2020 pop_label region_pop_group, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (2020)}" _n "\label{tab:bin_counts_regionpop_2020}" _n "\begin{tabular}{rllrrr}\toprule" _n "Region (code) & Region & Pop (code) & Population size & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (2020)}" _n "\label{tab:bin_counts_regionpop_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population size & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
-    local pop_s = string(population_2020[`r'], "%9.0f")
     local plab = pop_label[`r']
     local n_s = string(n[`r'], "%9.0f")
-    file write fh "`r_s' & `rlab' & `pop_s' & `plab' & `n_s' \\\\" _n
+    file write fh "`rlab' & `plab' & `n_s' \\\\" _n
 }
-file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize Sample: 2020, nonmissing general trust, region, and population.} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Sample: 2020, nonmissing general trust, region, and population.} \\\\" _n "\end{tabular}\end{table}" _n
 file close fh
 restore
 
@@ -414,14 +399,12 @@ decode region_2020, gen(region_label)
 decode population_3bin_2020, gen(pop3_label)
 contract region_2020 region_label population_3bin_2020 pop3_label region_pop3_group, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop3_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (3 bins, 2020)}" _n "\label{tab:bin_counts_regionpop3_2020}" _n "\begin{tabular}{rllrlr}\toprule" _n "Region (code) & Region & Pop3 (code) & Population & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (3 bins, 2020)}" _n "\label{tab:bin_counts_regionpop3_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
-    local p3_s = string(population_3bin_2020[`r'], "%9.0f")
     local p3lab = pop3_label[`r']
     local n_s = string(n[`r'], "%9.0f")
-    file write fh "`r_s' & `rlab' & `p3_s' & `p3lab' & `n_s' \\\\" _n
+    file write fh "`rlab' & `p3lab' & `n_s' \\\\" _n
 }
 file write fh "\bottomrule\end{tabular}\end{table}" _n
 file close fh
@@ -795,22 +778,6 @@ if "`sharevars_2002'" != "" {
         quietly count if `v' < 0 | `v' > 1
         if r(N) > 0 di "`v' outside [0,1]: " r(N)
     }
-    * Export share tabstat (2002) to .tex (display names, no underscores)
-    file open fh using "${DESCRIPTIVE}/Tables/share_tabstat_2002.tex", write replace
-    file write fh "\begin{table}[htbp]\centering" _n "\caption{Portfolio share summary (2002)}" _n "\label{tab:share_tabstat_2002}" _n "\begin{tabular}{lrccc}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
-    foreach v of local sharevars_2002 {
-        _sharevlabel `v'
-        local vlab `r(vlabel)'
-        if strpos("`vlab'", "_") > 0 local vlab : subinstr local vlab "_" " ", all
-        quietly summarize `v' `wopt', detail
-        local n_s = string(r(N), "%9.0fc")
-        local m_s = string(r(mean), "%9.4f")
-        local s_s = string(r(sd), "%9.4f")
-        local p50_s = string(r(p50), "%9.4f")
-        file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
-    }
-    file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize Portfolio shares (2002); sample with nonmissing.} \\\\" _n "\end{tabular}\end{table}" _n
-    file close fh
 }
 
 display "=== Shares summary (2022) ==="
@@ -830,22 +797,6 @@ if "`sharevars_2022'" != "" {
         quietly count if `v' < 0 | `v' > 1
         if r(N) > 0 di "`v' outside [0,1]: " r(N)
     }
-    * Export share tabstat (2022) to .tex (display names, no underscores)
-    file open fh using "${DESCRIPTIVE}/Tables/share_tabstat_2022.tex", write replace
-    file write fh "\begin{table}[htbp]\centering" _n "\caption{Portfolio share summary (2022)}" _n "\label{tab:share_tabstat_2022}" _n "\begin{tabular}{lrccc}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
-    foreach v of local sharevars_2022 {
-        _sharevlabel `v'
-        local vlab `r(vlabel)'
-        if strpos("`vlab'", "_") > 0 local vlab : subinstr local vlab "_" " ", all
-        quietly summarize `v' `wopt', detail
-        local n_s = string(r(N), "%9.0fc")
-        local m_s = string(r(mean), "%9.4f")
-        local s_s = string(r(sd), "%9.4f")
-        local p50_s = string(r(p50), "%9.4f")
-        file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
-    }
-    file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize Portfolio shares (2022); sample with nonmissing.} \\\\" _n "\end{tabular}\end{table}" _n
-    file close fh
 }
 
 * ---------------------------------------------------------------------
@@ -978,16 +929,20 @@ display "=== Trust correlations (pwcorr) ==="
 pwcorr `trustvars', sig obs
 
 display "=== Trust + added controls correlations ==="
-pwcorr `trustvars' depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 ///
-    beq_any_2020 num_divorce_2020 num_widow_2020, sig obs
+* Controls of interest for General trust correlations:
+* age, education, gender, immigration, marital, race, plus regression controls
+local ctrlvars age_2020 educ_yrs gender immigrant born_us race_eth married_2020 ///
+    depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 ///
+    beq_any_2020 num_divorce_2020 num_widow_2020
+
+pwcorr `trustvars' `ctrlvars', sig obs
 
 preserve
 tempfile trustctrlcorr
 postfile handle str32 var1 str32 var2 double corr using "`trustctrlcorr'", replace
-correlate `trustvars' depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 ///
-    beq_any_2020 num_divorce_2020 num_widow_2020
+correlate `trustvars' `ctrlvars'
 matrix C = r(C)
-local allvars "`trustvars' depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 num_divorce_2020 num_widow_2020"
+local allvars "`trustvars' `ctrlvars'"
 local n : word count `allvars'
 forvalues i = 1/`n' {
     local v1 : word `i' of `allvars'
@@ -998,8 +953,17 @@ forvalues i = 1/`n' {
 }
 postclose handle
 use "`trustctrlcorr'", clear
+* Keep only rows where var1 is General trust (trust_others_2020)
+keep if var1 == "trust_others_2020"
+* Drop rows where var2 is another trust item; keep only controls
+local trustvars "trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020"
+foreach t of local trustvars {
+    drop if var2 == "`t'"
+}
+
+* Combined table (all controls)
 file open fh using "${DESCRIPTIVE}/Tables/trust_controls_corr.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and controls correlation matrix}" _n "\label{tab:trust_controls_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlation \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Correlations of General trust with controls}" _n "\label{tab:trust_controls_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlation \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local v1 = var1[`r']
     local v2 = var2[`r']
@@ -1010,39 +974,41 @@ forvalues r = 1/`=_N' {
     local c_s = string(corr[`r'], "%9.4f")
     file write fh "`v1' & `v2' & `c_s' \\\\" _n
 }
-file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Pairwise correlations; trust and regression controls.} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize General trust (var1) with each control.} \\\\" _n "\end{tabular}\end{table}" _n
 file close fh
 restore
 
-* Export trust correlation matrix (long format)
+* Export trust correlation matrix as compact matrix (rows = vars, columns = vars)
 preserve
-tempfile trustcorr
-postfile handle str32 var1 str32 var2 double corr using "`trustcorr'", replace
 correlate `trustvars'
 matrix C = r(C)
 local n : word count `trustvars'
-forvalues i = 1/`n' {
-    local v1 : word `i' of `trustvars'
-    forvalues j = 1/`n' {
-        local v2 : word `j' of `trustvars'
-        post handle ("`v1'") ("`v2'") (C[`i',`j'])
-    }
-}
-postclose handle
-use "`trustcorr'", clear
+local nc = `n' + 1
 file open fh using "${DESCRIPTIVE}/Tables/trust_corr.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust variables correlation matrix}" _n "\label{tab:trust_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlation \\\\ \midrule" _n
-forvalues r = 1/`=_N' {
-    local v1 = var1[`r']
-    local v2 = var2[`r']
-    _vlabel `v1'
-    local v1 `r(vlabel)'
-    _vlabel `v2'
-    local v2 `r(vlabel)'
-    local c_s = string(corr[`r'], "%9.4f")
-    file write fh "`v1' & `v2' & `c_s' \\\\" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Trust variables correlation matrix}" _n "\label{tab:trust_corr}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{l"
+forvalues j = 1/`n' {
+    file write fh "r"
 }
-file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Pairwise correlations between trust items.} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "}\toprule" _n " & "
+forvalues j = 1/`n' {
+    local v : word `j' of `trustvars'
+    _vlabel `v'
+    local vlab `r(vlabel)'
+    if `j' < `n' file write fh "`vlab' & " _n
+    else file write fh "`vlab' \\\\ \midrule" _n
+}
+forvalues i = 1/`n' {
+    local v : word `i' of `trustvars'
+    _vlabel `v'
+    local vlab `r(vlabel)'
+    file write fh "`vlab'" _n
+    forvalues j = 1/`n' {
+        local c_s = string(C[`i',`j'], "%5.2f")
+        file write fh " & `c_s'" _n
+    }
+    file write fh " \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Pairwise correlations between trust items (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 file close fh
 restore
 
@@ -1065,7 +1031,7 @@ forvalues i = 1/`n' {
 postclose handle
 use "`pcload'", clear
 file open fh using "${DESCRIPTIVE}/Tables/trust_pca_loadings.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust PCA loadings (first two components)}" _n "\label{tab:trust_pca_loadings}" _n "\begin{tabular}{lrr}\toprule" _n "Trust item & PC1 & PC2 \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{6pt}" _n "\caption{Trust PCA loadings (first two components)}" _n "\label{tab:trust_pca_loadings}" _n "\begin{tabular}{lrr}\toprule" _n "Trust item & PC1 & PC2 \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local vn = varname[`r']
     _vlabel `vn'
@@ -1083,45 +1049,56 @@ screeplot, title("Trust PCA scree plot")
 graph export "${DESCRIPTIVE}/Figures/trust_pca_scree.png", replace
 
 * ---------------------------------------------------------------------
-* Fin lit correlations with trust
+* Fin lit correlations with trust (matrix layout)
 * ---------------------------------------------------------------------
 display "=== Fin lit + trust correlations ==="
 pwcorr interest_2020 inflation_2020 risk_div_2020 trust_others_2020, sig obs
 
 preserve
-tempfile finlitcorr
-postfile handle str32 var1 str32 var2 double corr using "`finlitcorr'", replace
 correlate interest_2020 inflation_2020 risk_div_2020 trust_others_2020
 matrix C = r(C)
 local finvars "interest_2020 inflation_2020 risk_div_2020 trust_others_2020"
 local n : word count `finvars'
-forvalues i = 1/`n' {
-    local v1 : word `i' of `finvars'
-    forvalues j = 1/`n' {
-        local v2 : word `j' of `finvars'
-        post handle ("`v1'") ("`v2'") (C[`i',`j'])
-    }
-}
-postclose handle
-use "`finlitcorr'", clear
+
 file open fh using "${DESCRIPTIVE}/Tables/finlit_trust_corr.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy and trust correlations}" _n "\label{tab:finlit_trust_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlation \\\\ \midrule" _n
-forvalues r = 1/`=_N' {
-    local v1 = var1[`r']
-    local v2 = var2[`r']
-    _vlabel `v1'
-    local v1 `r(vlabel)'
-    _vlabel `v2'
-    local v2 `r(vlabel)'
-    local c_s = string(corr[`r'], "%9.4f")
-    file write fh "`v1' & `v2' & `c_s' \\\\" _n
+file write fh "\begin{table}[htbp]\centering\small" _n ///
+    "\caption{Financial literacy and trust correlations}" _n ///
+    "\label{tab:finlit_trust_corr}" _n ///
+    "\resizebox{\textwidth}{!}{\begin{tabular}{l"
+forvalues j = 1/`n' {
+    file write fh "r"
 }
-file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Interest, inflation, risk diversification, and general trust (2020).} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "}\toprule" _n " & "
+
+* Column headers (variables)
+forvalues j = 1/`n' {
+    local v : word `j' of `finvars'
+    _vlabel `v'
+    local vlab `r(vlabel)'
+    if `j' < `n' file write fh "`vlab' & "
+    else file write fh "`vlab' \\\\ \midrule" _n
+}
+
+* Matrix body
+forvalues i = 1/`n' {
+    local v : word `i' of `finvars'
+    _vlabel `v'
+    local vlab `r(vlabel)'
+    file write fh "`vlab'"
+    forvalues j = 1/`n' {
+        local c_s = string(C[`i',`j'], "%5.2f")
+        file write fh " & `c_s'"
+    }
+    file write fh " \\\\" _n
+}
+
+local nc = `n' + 1
+file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Interest, inflation, risk diversification, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 file close fh
 restore
 
 * ---------------------------------------------------------------------
-* IV correlations with trust
+* IV correlations with trust (matrix layout)
 * ---------------------------------------------------------------------
 display "=== IV + trust correlations ==="
 pwcorr par_citizen_2020 par_loyalty_2020 population_2020 trust_others_2020, sig obs
@@ -1133,28 +1110,36 @@ correlate par_citizen_2020 par_loyalty_2020 population_2020 trust_others_2020
 matrix C = r(C)
 local ivvars "par_citizen_2020 par_loyalty_2020 population_2020 trust_others_2020"
 local n : word count `ivvars'
-forvalues i = 1/`n' {
-    local v1 : word `i' of `ivvars'
-    forvalues j = 1/`n' {
-        local v2 : word `j' of `ivvars'
-        post handle ("`v1'") ("`v2'") (C[`i',`j'])
-    }
-}
-postclose handle
-use "`ivcorr'", clear
+* Export as compact matrix
 file open fh using "${DESCRIPTIVE}/Tables/iv_trust_corr.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{IV and trust correlations}" _n "\label{tab:iv_trust_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlation \\\\ \midrule" _n
-forvalues r = 1/`=_N' {
-    local v1 = var1[`r']
-    local v2 = var2[`r']
-    _vlabel `v1'
-    local v1 `r(vlabel)'
-    _vlabel `v2'
-    local v2 `r(vlabel)'
-    local c_s = string(corr[`r'], "%9.4f")
-    file write fh "`v1' & `v2' & `c_s' \\\\" _n
+file write fh "\begin{table}[htbp]\centering\small" _n ///
+    "\caption{IV and trust correlations}" _n ///
+    "\label{tab:iv_trust_corr}" _n ///
+    "\resizebox{\textwidth}{!}{\begin{tabular}{l"
+forvalues j = 1/`n' {
+    file write fh "r"
 }
-file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Parent citizenship, loyalty, population size, and general trust (2020).} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "}\toprule" _n " & "
+forvalues j = 1/`n' {
+    local v : word `j' of `ivvars'
+    _vlabel `v'
+    local vlab `r(vlabel)'
+    if `j' < `n' file write fh "`vlab' & "
+    else file write fh "`vlab' \\\\ \midrule" _n
+}
+forvalues i = 1/`n' {
+    local v : word `i' of `ivvars'
+    _vlabel `v'
+    local vlab `r(vlabel)'
+    file write fh "`vlab'"
+    forvalues j = 1/`n' {
+        local c_s = string(C[`i',`j'], "%5.2f")
+        file write fh " & `c_s'"
+    }
+    file write fh " \\\\" _n
+}
+local nc = `n' + 1
+file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Parent citizenship, loyalty, population size, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 file close fh
 restore
 
@@ -1192,23 +1177,20 @@ reshape long region_, i(hhidpn) j(year)
 label values region_ region_lbl
 drop if missing(region_)
 contract year region_, freq(N)
-* Wide table: year x region with N (include Other; create N5 if no obs in region 5)
+* Wide table: year x region with N (drop Other)
 reshape wide N, i(year) j(region_)
-capture confirm variable N5
-if _rc gen N5 = 0
-rename (N1 N2 N3 N4 N5) (Northeast Midwest South West Other)
+rename (N1 N2 N3 N4) (Northeast Midwest South West)
 file open fh using "${DESCRIPTIVE}/Tables/region_group_counts_by_year.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region and year}" _n "\label{tab:region_group_counts_by_year}" _n "\begin{tabular}{lrrrrr}\toprule" _n "Year & Northeast & Midwest & South & West & Other \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region and year}" _n "\label{tab:region_group_counts_by_year}" _n "\begin{tabular}{lrrrr}\toprule" _n "Year & Northeast & Midwest & South & West \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local yr_s = string(year[`r'], "%9.0f")
     local ne_s = string(Northeast[`r'], "%9.0f")
     local mw_s = string(Midwest[`r'], "%9.0f")
     local so_s = string(South[`r'], "%9.0f")
     local we_s = string(West[`r'], "%9.0f")
-    local ot_s = string(Other[`r'], "%9.0f")
-    file write fh "`yr_s' & `ne_s' & `mw_s' & `so_s' & `we_s' & `ot_s' \\\\" _n
+    file write fh "`yr_s' & `ne_s' & `mw_s' & `so_s' & `we_s' \\\\" _n
 }
-file write fh "\bottomrule" _n "\multicolumn{6}{l}{\footnotesize Person-year observations by region. For analysis, region 5 (Other) is treated as missing in saved dataset.} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize Person-year observations by region (region 5 = Other omitted).} \\\\" _n "\end{tabular}\end{table}" _n
 file close fh
 restore
 

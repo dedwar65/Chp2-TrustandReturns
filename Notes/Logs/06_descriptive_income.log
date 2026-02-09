@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_descriptive_income.log
   log type:  text
- opened on:   8 Feb 2026, 17:18:01
+ opened on:   9 Feb 2026, 09:14:48
 
 . 
 . * Load processed data
@@ -74,27 +74,28 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . rename gross_wealth_ gross_wealth
 
 . 
-. display "=== Income descriptives (final log series) ==="
-=== Income descriptives (final log series) ===
+. display "=== Income descriptives (real, winsorized) ==="
+=== Income descriptives (real, winsorized) ===
 
-. tabstat ln_lab_inc_final_ ln_tot_inc_final_ `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+. tabstat labor_income_real_win_ total_income_real_win_ `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min ma
+> x)
 
-   Stats |  ln_lab~_  ln_tot~_
+   Stats |  labor_~_  total_~_
 ---------+--------------------
-       N |    187648    198533
-    Mean |  10.09618  10.31469
-      SD |  .9663644  1.141002
-      p1 |  7.236327  6.401249
-      p5 |  8.593344  8.598474
-     p50 |  10.07423   10.3233
-     p95 |  11.65052   12.1049
-     p99 |  12.22306  12.88498
-     Min |  6.542961   5.74174
-     Max |  12.39773  13.05797
+       N |    204952    204952
+    Mean |  34074.51   52002.7
+      SD |  37926.63  68034.26
+      p1 |         0         0
+      p5 |         0   1453.77
+     p50 |  21357.01  29102.81
+     p95 |  110943.1  177493.9
+     p99 |  196377.1  389510.5
+     Min |         0         0
+     Max |  231497.2  457538.5
 ------------------------------
 
 . 
-. * Export tabstat-like summary for final income variables (LaTeX)
+. * Export tabstat-like summary for real, winsorized income variables (LaTeX)
 . preserve
 
 . tempfile income_stats
@@ -103,7 +104,7 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 (file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000003 not found)
 
 . 
-. foreach v in ln_lab_inc_final_ ln_tot_inc_final_ {
+. foreach v in labor_income_real_win_ total_income_real_win_ {
   2.     if "`wopt'" != "" {
   3.         quietly summarize `v' `wopt'
   4.         local N = r(N)
@@ -134,35 +135,31 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . 
 . file open fh using "${DESCRIPTIVE}/Tables/income_final_tabstat.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n ///
->     "\caption{Income final series: summary statistics}" _n ///
+. file write fh "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Income (real, winsorized): summary statistics}" _n ///
 >     "\label{tab:income_final_tabstat}" _n ///
->     "\begin{tabular}{lrrrrrrrrrrr}\toprule" _n ///
->     "Variable & Obs & Mean & SD & P1 & P5 & P50 & P95 & P99 & Min & Max \\\\ \midrule" _n
+>     "\resizebox{\textwidth}{!}{\begin{tabular}{lrrrrrrr}\toprule" _n ///
+>     "Variable & Obs & Mean & SD & P50 & P95 & Min & Max \\\\ \midrule" _n
 
 . 
 . forvalues r = 1/`=_N' {
   2.     local vname = varname[`r']
-  3.     if "`vname'" == "ln_lab_inc_final_" local vname "Log labor income"
-  4.     if "`vname'" == "ln_tot_inc_final_" local vname "Log total income"
-  5.     local obs_s = string(obs[`r'], "%9.0f")
-  6.     local mean_s = string(mean[`r'], "%9.4f")
-  7.     local sd_s = string(sd[`r'], "%9.4f")
-  8.     local p1_s = string(p1[`r'], "%9.4f")
-  9.     local p5_s = string(p5[`r'], "%9.4f")
- 10.     local p50_s = string(p50[`r'], "%9.4f")
- 11.     local p95_s = string(p95[`r'], "%9.4f")
- 12.     local p99_s = string(p99[`r'], "%9.4f")
- 13.     local min_s = string(min[`r'], "%9.4f")
- 14.     local max_s = string(max[`r'], "%9.4f")
- 15. 
-.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p1_s' & `p5_s' & `p50_s' & `p95_s' & `p99_s' & 
-> `min_s' & `max_s' \\\\" _n
- 16. }
+  3.     if "`vname'" == "labor_income_real_win_"  local vname "Labor income (real, winsorized)"
+  4.     if "`vname'" == "total_income_real_win_"  local vname "Total income (real, winsorized)"
+  5.     local obs_s = string(obs[`r'], "%9.0fc")
+  6.     local mean_s = string(mean[`r'], "%9.0fc")
+  7.     local sd_s   = string(sd[`r'],   "%9.0fc")
+  8.     local p50_s  = string(p50[`r'],  "%9.0fc")
+  9.     local p95_s  = string(p95[`r'],  "%9.0fc")
+ 10.     local min_s  = string(min[`r'],  "%9.0fc")
+ 11.     local max_s  = string(max[`r'],  "%9.0fc")
+ 12. 
+.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s' & `min_s' & `max_s' \\\\" _n
+ 13. }
 
 . 
-. file write fh "\bottomrule" _n "\multicolumn{12}{l}{\footnotesize Log income series; summary over person-ye
-> ars.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Real USD, winsorized; summary over person-
+> years.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 
 . file close fh
 
@@ -173,18 +170,13 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . display "=== Mean income by year ==="
 === Mean income by year ===
 
-. tabstat labor_income_real_win_ total_income_real_win_ `wopt', by(year) statistics(n mean sd p50 p95)
+. tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year >= 2002, by(year) statistics(n mean sd
+>  p50 p95)
 
 Summary statistics: N, Mean, SD, p50, p95
 Group variable: year 
 
     year |  labor_~_  total_~_
----------+--------------------
-    2000 |         0         0
-         |         .         .
-         |         .         .
-         |         .         .
-         |         .         .
 ---------+--------------------
     2002 |     18165     18165
          |  32051.03   51878.5
@@ -261,20 +253,25 @@ Group variable: year
 
 . preserve
 
+. keep if year >= 2002
+(45,234 observations deleted)
+
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real
 > _win_ `wopt', by(year)
+
+. local dl = char(92) + char(36)
 
 . file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_year_real_win.tex", write replace
 
 . file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by year (real, winsorized)}" _n "\la
-> bel{tab:income_mean_by_year_real_win}" _n "\begin{tabular}{lrrr}\toprule" _n "Year & Labor income (mean \$)
->  & Total income (mean \$) & Obs \\\\ \midrule" _n
+> bel{tab:income_mean_by_year_real_win}" _n "\begin{tabular}{lrrr}\toprule" _n "Year & Labor income (mean `dl
+> ') & Total income (mean `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
-  3.     local lab_s = string(mean_lab[`r'], "%9.0f")
-  4.     local tot_s = string(mean_tot[`r'], "%9.0f")
-  5.     local n_s = string(n[`r'], "%9.0f")
+  3.     local lab_s = string(mean_lab[`r'], "%9.0fc")
+  4.     local tot_s = string(mean_tot[`r'], "%9.0fc")
+  5.     local n_s = string(n[`r'], "%9.0fc")
   6.     file write fh "`yr_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
@@ -418,17 +415,19 @@ age_group |  labor_~_  total_~_
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real
 > _win_ `wopt', by(age_group)
 
+. local dl = char(92) + char(36)
+
 . file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2002.tex", write replace
 
 . file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age group (2002)}" _n "\label{tab
 > :income_mean_by_agegroup_2002}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & Labor income (mean 
-> \$) & Total income (mean \$) & Obs \\\\ \midrule" _n
+> `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local age_s = string(age_group[`r'], "%9.0f")
-  3.     local lab_s = string(mean_lab[`r'], "%9.0f")
-  4.     local tot_s = string(mean_tot[`r'], "%9.0f")
-  5.     local n_s = string(n[`r'], "%9.0f")
+  3.     local lab_s = string(mean_lab[`r'], "%9.0fc")
+  4.     local tot_s = string(mean_tot[`r'], "%9.0fc")
+  5.     local n_s = string(n[`r'], "%9.0fc")
   6.     file write fh "`age_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
@@ -568,17 +567,19 @@ age_group |  labor_~_  total_~_
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real
 > _win_ `wopt', by(age_group)
 
+. local dl = char(92) + char(36)
+
 . file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2022.tex", write replace
 
 . file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age group (2022)}" _n "\label{tab
 > :income_mean_by_agegroup_2022}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & Labor income (mean 
-> \$) & Total income (mean \$) & Obs \\\\ \midrule" _n
+> `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local age_s = string(age_group[`r'], "%9.0f")
-  3.     local lab_s = string(mean_lab[`r'], "%9.0f")
-  4.     local tot_s = string(mean_tot[`r'], "%9.0f")
-  5.     local n_s = string(n[`r'], "%9.0f")
+  3.     local lab_s = string(mean_lab[`r'], "%9.0fc")
+  4.     local tot_s = string(mean_tot[`r'], "%9.0fc")
+  5.     local n_s = string(n[`r'], "%9.0fc")
   6.     file write fh "`age_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
@@ -665,19 +666,24 @@ some college |     47390     47390
 . collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor_income_real
 > _win_ `wopt', by(educ_group)
 
+. drop if missing(educ_group)
+(1 observation deleted)
+
 . decode educ_group, gen(educ_label)
+
+. local dl = char(92) + char(36)
 
 . file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_educgroup_real_win.tex", write replace
 
 . file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by education group (real, winsorized
 > )}" _n "\label{tab:income_mean_by_educgroup_real_win}" _n "\begin{tabular}{lrrr}\toprule" _n "Education & L
-> abor income (mean \$) & Total income (mean \$) & Obs \\\\ \midrule" _n
+> abor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local edlab = educ_label[`r']
-  3.     local lab_s = string(mean_lab[`r'], "%9.0f")
-  4.     local tot_s = string(mean_tot[`r'], "%9.0f")
-  5.     local n_s = string(n[`r'], "%9.0f")
+  3.     local lab_s = string(mean_lab[`r'], "%9.0fc")
+  4.     local tot_s = string(mean_tot[`r'], "%9.0fc")
+  5.     local n_s = string(n[`r'], "%9.0fc")
   6.     file write fh "`edlab' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
@@ -702,7 +708,9 @@ some college |     47390     47390
   5.     sort age_group
   6.     twoway (line mean_lab age_group, lwidth(medthick) lcolor(navy)) (line mean_tot age_group, lpattern(d
 > ash) lcolor(maroon)), ///
->         xtitle("Age group") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
+>         xtitle("Age group (5-year bins)") ///
+>         xlabel(20(10)90) ///
+>         ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
 >         title("Income by age group (`yr')") ///
 >         legend(order(1 "Labor income" 2 "Total income") cols(1) size(small) position(3) ring(0) region(lsty
 > le(none)))
@@ -731,7 +739,9 @@ file /Volumes/SSD
 >            (line mean_inc age_group if educ_group==3, lcolor(forest_green)) ///
 >            (line mean_inc age_group if educ_group==4, lcolor(orange)) ///
 >            (line mean_inc age_group if educ_group==5, lcolor(teal)), ///
->         xtitle("Age group") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
+>         xtitle("Age group (5-year bins)") ///
+>         xlabel(20(10)90) ///
+>         ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
 >         title("Labor income by age and education (`yr')") ///
 >         legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad") cols(1) size(small) positio
 > n(3) ring(0) region(lstyle(none)))
@@ -747,7 +757,9 @@ file /Volumes/SSD
 >            (line mean_inc age_group if educ_group==3, lcolor(forest_green)) ///
 >            (line mean_inc age_group if educ_group==4, lcolor(orange)) ///
 >            (line mean_inc age_group if educ_group==5, lcolor(teal)), ///
->         xtitle("Age group") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
+>         xtitle("Age group (5-year bins)") ///
+>         xlabel(20(10)90) ///
+>         ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
 >         title("Total income by age and education (`yr')") ///
 >         legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad") cols(1) size(small) positio
 > n(3) ring(0) region(lstyle(none)))
@@ -791,43 +803,112 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures
 . restore
 
 . 
-. * Income growth summary (all years together)
-. display "=== Income growth summary (all years) ==="
-=== Income growth summary (all years) ===
+. * Figure 4 — Mean income growth over time (labor and total, percent)
+. preserve
+
+. keep year ln_lab_inc_final_growth_* ln_tot_inc_final_growth_*
+
+. 
+. * Build end-year-specific means for each growth series
+. tempfile growth_means
+
+. postfile handle double year double g_lab g_tot using "`growth_means'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000g not found)
+
+. 
+. foreach v of varlist ln_lab_inc_final_growth_* {
+  2.     local base "ln_lab_inc_final_growth_"
+  3.     local yr = substr("`v'", `=length("`base'")'+1, .)
+  4.     quietly summarize `v' if year == `yr' & !missing(`v') `wopt'
+  5.     if r(N) == 0 continue
+  6.     local g_lab = r(mean) * 100
+  7.     * Find matching total-income growth variable for same end year
+.     local vtot = "ln_tot_inc_final_growth_`yr'"
+  8.     capture confirm variable `vtot'
+  9.     if _rc {
+ 10.         post handle (`yr') (`g_lab') (.)
+ 11.     }
+ 12.     else {
+ 13.         quietly summarize `vtot' if year == `yr' & !missing(`vtot') `wopt'
+ 14.         local g_tot = r(mean) * 100
+ 15.         post handle (`yr') (`g_lab') (`g_tot')
+ 16.     }
+ 17. }
+
+. postclose handle
+
+. 
+. use "`growth_means'", clear
+
+. sort year
+
+. twoway (line g_lab year, lwidth(medthick) lcolor(navy)) ///
+>        (line g_tot year, lpattern(dash) lcolor(maroon)), ///
+>     xtitle("Year (end of two-year growth period)") ///
+>     ytitle("Average income growth (\%)") ///
+>     ylabel(, format(%9.1f)) ///
+>     title("Income growth over time") ///
+>     legend(order(1 "Labor income growth" 2 "Total income growth") cols(1) size(small) position(3) ring(0) r
+> egion(lstyle(none)))
+
+. graph export "${DESCRIPTIVE}/Figures/income_growth_over_time.png", replace
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_growth_over_time.png saved as PNG
+    format
+
+. restore
+
+. 
+. * Income growth summary by wave (growth attached to end year)
+. display "=== Income growth summary (by end year) ==="
+=== Income growth summary (by end year) ===
 
 . preserve
 
-. keep ln_lab_inc_final_growth_* ln_tot_inc_final_growth_*
+. keep year ln_lab_inc_final_growth_* ln_tot_inc_final_growth_*
 
 . 
 . * Export tabstat-like summary for income growth variables
 . tempfile growth_stats
 
 . postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max using "`growth_stats'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000g not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000i not found)
 
 . foreach v of varlist ln_lab_inc_final_growth_* ln_tot_inc_final_growth_* {
-  2.     if "`wopt'" != "" {
-  3.         quietly summarize `v' `wopt'
-  4.         local N = r(N)
-  5.         local mean = r(mean)
-  6.         local sd = r(sd)
-  7.         local min = r(min)
-  8.         local max = r(max)
-  9.         quietly centile `v' `wopt', centile(1 5 50 95 99)
- 10.         local p1 = r(c_1)
- 11.         local p5 = r(c_2)
- 12.         local p50 = r(c_3)
- 13.         local p95 = r(c_4)
- 14.         local p99 = r(c_5)
- 15.         post handle ("`v'") (`N') (`mean') (`sd') (`p1') (`p5') (`p50') (`p95') (`p99') (`min') (`max')
- 16.     }
- 17.     else {
- 18.         quietly summarize `v', detail
- 19.         post handle ("`v'") (r(N)) (r(mean)) (r(sd)) (r(p1)) (r(p5)) (r(p50)) (r(p95)) (r(p99)) (r(min))
+  2.     * Restrict to the wave corresponding to the end year encoded in the variable name
+.     local ifcond ""
+  3.     if strpos("`v'", "ln_lab_inc_final_growth_") > 0 {
+  4.         local base "ln_lab_inc_final_growth_"
+  5.         local yr = substr("`v'", `=length("`base'")'+1, .)
+  6.         local ifcond "if year == `yr' & !missing(`v')"
+  7.     }
+  8.     else if strpos("`v'", "ln_tot_inc_final_growth_") > 0 {
+  9.         local base2 "ln_tot_inc_final_growth_"
+ 10.         local yr2 = substr("`v'", `=length("`base2'")'+1, .)
+ 11.         local ifcond "if year == `yr2' & !missing(`v')"
+ 12.     }
+ 13. 
+.     if "`wopt'" != "" {
+ 14.         quietly summarize `v' `wopt' `ifcond'
+ 15.         local N = r(N)
+ 16.         local mean = r(mean)
+ 17.         local sd = r(sd)
+ 18.         local min = r(min)
+ 19.         local max = r(max)
+ 20.         quietly centile `v' `wopt' `ifcond', centile(1 5 50 95 99)
+ 21.         local p1 = r(c_1)
+ 22.         local p5 = r(c_2)
+ 23.         local p50 = r(c_3)
+ 24.         local p95 = r(c_4)
+ 25.         local p99 = r(c_5)
+ 26.         post handle ("`v'") (`N') (`mean') (`sd') (`p1') (`p5') (`p50') (`p95') (`p99') (`min') (`max')
+ 27.     }
+ 28.     else {
+ 29.         quietly summarize `v' `ifcond', detail
+ 30.         post handle ("`v'") (r(N)) (r(mean)) (r(sd)) (r(p1)) (r(p5)) (r(p50)) (r(p95)) (r(p99)) (r(min))
 >  (r(max))
- 20.     }
- 21. }
+ 31.     }
+ 32. }
 
 . postclose handle
 
@@ -835,30 +916,42 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures
 
 . file open fh using "${DESCRIPTIVE}/Tables/income_growth_tabstat.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Income growth: summary statistics}" _n "\label{t
-> ab:income_growth_tabstat}" _n "\begin{tabular}{lrrrrrrrrrrr}\toprule" _n "Variable & Obs & Mean & SD & P1 &
->  P5 & P50 & P95 & P99 & Min & Max \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Income growth: summary statistics}" _n "\l
+> abel{tab:income_growth_tabstat}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{lrrrrrrr}\toprule" _n "Varia
+> ble & Obs & Mean & SD & P50 & P95 & Min & Max \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
-  2.     local vname = varname[`r']
-  3.     if strpos("`vname'", "ln_lab_inc_final_growth") > 0 local vname "Log labor income growth"
-  4.     if strpos("`vname'", "ln_tot_inc_final_growth") > 0 local vname "Log total income growth"
-  5.     local obs_s = string(obs[`r'], "%9.0f")
-  6.     local mean_s = string(mean[`r'], "%9.4f")
-  7.     local sd_s = string(sd[`r'], "%9.4f")
-  8.     local p1_s = string(p1[`r'], "%9.4f")
-  9.     local p5_s = string(p5[`r'], "%9.4f")
- 10.     local p50_s = string(p50[`r'], "%9.4f")
- 11.     local p95_s = string(p95[`r'], "%9.4f")
- 12.     local p99_s = string(p99[`r'], "%9.4f")
- 13.     local min_s = string(min[`r'], "%9.4f")
- 14.     local max_s = string(max[`r'], "%9.4f")
- 15.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p1_s' & `p5_s' & `p50_s' & `p95_s' & `p99_s'
->  & `min_s' & `max_s' \\\\" _n
- 16. }
+  2.     * Skip variables with zero observations (e.g. earliest growth year)
+.     if obs[`r'] == 0 continue
+  3. 
+.     local vraw = varname[`r']
+  4.     local vname "`vraw'"
+  5. 
+.     * Make labels more interpretable by attaching the end year of the growth period
+.     if strpos("`vraw'", "ln_lab_inc_final_growth_") > 0 {
+  6.         local base "ln_lab_inc_final_growth_"
+  7.         local yr = substr("`vraw'", `=length("`base'")'+1, .)
+  8.         local vname "Log labor income growth (`yr')"
+  9.     }
+ 10.     else if strpos("`vraw'", "ln_tot_inc_final_growth_") > 0 {
+ 11.         local base2 "ln_tot_inc_final_growth_"
+ 12.         local yr2 = substr("`vraw'", `=length("`base2'")'+1, .)
+ 13.         local vname "Log total income growth (`yr2')"
+ 14.     }
+ 15. 
+.     local obs_s = string(obs[`r'], "%9.0fc")
+ 16.     local mean_s = string(mean[`r'], "%9.4f")
+ 17.     local sd_s = string(sd[`r'], "%9.4f")
+ 18.     local p50_s = string(p50[`r'], "%9.4f")
+ 19.     local p95_s = string(p95[`r'], "%9.4f")
+ 20.     local min_s = string(min[`r'], "%9.4f")
+ 21.     local max_s = string(max[`r'], "%9.4f")
+ 22.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s' & `min_s' & `max_s' \\\\" _
+> n
+ 23. }
 
-. file write fh "\bottomrule" _n "\multicolumn{12}{l}{\footnotesize Log income growth (two-year); summary ove
-> r person-years.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Log income growth (two-year); summary over
+>  person-years.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 
 . file close fh
 
@@ -983,5 +1076,5 @@ file /Volumes/SSD
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_descriptive_income.log
   log type:  text
- closed on:   8 Feb 2026, 17:18:47
+ closed on:   9 Feb 2026, 09:15:58
 -------------------------------------------------------------------------------------------------------------

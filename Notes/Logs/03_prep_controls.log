@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_prep_controls.log
   log type:  text
- opened on:   8 Feb 2026, 08:54:56
+ opened on:   9 Feb 2026, 07:12:10
 
 . 
 . use "${CLEANED}/all_data_merged.dta", clear
@@ -337,51 +337,40 @@
   4.     if !_rc {
   5.         capture drop region_`y'
   6.         gen byte region_`y' = r`w'cenreg
-  7.         replace region_`y' = . if region_`y' == 5
-  8.     }
-  9.     capture confirm variable population_2020
- 10.     if !_rc {
- 11.         capture drop hometown_size_`y'
- 12.         gen int hometown_size_`y' = region_`y' * 100 + population_2020 if !missing(region_`y') & !missin
+  7.         * Region 5 (Other) left as-is here; recoded to missing in 08 before saving analysis_ready_proces
+> sed.dta
+.     }
+  8.     capture confirm variable population_2020
+  9.     if !_rc {
+ 10.         capture drop hometown_size_`y'
+ 11.         gen int hometown_size_`y' = region_`y' * 100 + population_2020 if !missing(region_`y') & !missin
 > g(population_2020)
- 13.     }
- 14. }
+ 12.     }
+ 13. }
 (25,656 missing values generated)
-(40 real changes made, 40 to missing)
-(44,925 missing values generated)
+(44,924 missing values generated)
 (27,069 missing values generated)
-(43 real changes made, 43 to missing)
-(44,915 missing values generated)
+(44,914 missing values generated)
 (25,105 missing values generated)
-(55 real changes made, 55 to missing)
-(44,752 missing values generated)
+(44,751 missing values generated)
 (26,765 missing values generated)
-(69 real changes made, 69 to missing)
-(44,747 missing values generated)
+(44,745 missing values generated)
 (28,017 missing values generated)
-(70 real changes made, 70 to missing)
-(44,742 missing values generated)
+(44,741 missing values generated)
 (23,200 missing values generated)
-(70 real changes made, 70 to missing)
-(44,406 missing values generated)
+(44,405 missing values generated)
 (24,680 missing values generated)
-(76 real changes made, 76 to missing)
-(44,394 missing values generated)
+(44,392 missing values generated)
 (26,487 missing values generated)
-(87 real changes made, 87 to missing)
-(44,398 missing values generated)
+(44,396 missing values generated)
 (24,322 missing values generated)
-(81 real changes made, 81 to missing)
-(44,160 missing values generated)
+(44,157 missing values generated)
 (28,088 missing values generated)
-(79 real changes made, 79 to missing)
-(44,222 missing values generated)
+(44,220 missing values generated)
 (29,511 missing values generated)
-(61 real changes made, 61 to missing)
-(44,122 missing values generated)
+(44,120 missing values generated)
 (32,351 missing values generated)
-(60 real changes made, 60 to missing)
-(44,348 missing values generated)
+(44,345 missing values generated)
 
 . 
 . * Contextual trust (group avg of trust by region x town population, all waves)
@@ -400,18 +389,22 @@
   7.             egen double townsize_trust_`y' = mean(trust_others_2020), by(region_pop_group_`y')
   8.         }
   9.     }
-(44,925 missing values generated)
-(44,915 missing values generated)
-(44,752 missing values generated)
-(44,747 missing values generated)
-(44,742 missing values generated)
-(44,406 missing values generated)
-(44,394 missing values generated)
-(44,398 missing values generated)
-(44,160 missing values generated)
-(44,222 missing values generated)
-(44,122 missing values generated)
-(44,348 missing values generated)
+(44,924 missing values generated)
+(44,914 missing values generated)
+(44,751 missing values generated)
+(44,745 missing values generated)
+(1 missing value generated)
+(44,741 missing values generated)
+(44,405 missing values generated)
+(44,392 missing values generated)
+(44,396 missing values generated)
+(44,157 missing values generated)
+(44,220 missing values generated)
+(1 missing value generated)
+(44,120 missing values generated)
+(1 missing value generated)
+(44,345 missing values generated)
+(1 missing value generated)
 . }
 
 . 
@@ -430,18 +423,19 @@
   7.             egen double townsize3_trust_`y' = mean(trust_others_2020), by(region_pop3_group_`y')
   8.         }
   9.     }
-(44,925 missing values generated)
-(44,915 missing values generated)
-(44,752 missing values generated)
-(44,747 missing values generated)
-(44,742 missing values generated)
-(44,406 missing values generated)
-(44,394 missing values generated)
-(44,398 missing values generated)
-(44,160 missing values generated)
-(44,222 missing values generated)
-(44,122 missing values generated)
-(44,348 missing values generated)
+(44,924 missing values generated)
+(44,914 missing values generated)
+(44,751 missing values generated)
+(44,745 missing values generated)
+(1 missing value generated)
+(44,741 missing values generated)
+(44,405 missing values generated)
+(44,392 missing values generated)
+(44,396 missing values generated)
+(44,157 missing values generated)
+(44,220 missing values generated)
+(44,120 missing values generated)
+(44,345 missing values generated)
 . }
 
 . 
@@ -484,6 +478,7 @@
   6.             egen double regional_trust_`y' = mean(trust_others_2020), by(region_`y')
   7.         }
   8.     }
+(29,511 missing values generated)
 . }
 
 . 
@@ -2096,5 +2091,5 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_prep_controls.log
   log type:  text
- closed on:   8 Feb 2026, 09:01:08
+ closed on:   9 Feb 2026, 07:15:36
 -------------------------------------------------------------------------------------------------------------

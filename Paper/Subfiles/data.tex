@@ -4,6 +4,7 @@
 % -----------------------------------------------------------------------------
 % 1. Income
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Income}
 \input{../../Code/Descriptive/Tables/income_final_tabstat.tex}
 \input{../../Code/Descriptive/Tables/income_growth_tabstat.tex}
@@ -15,6 +16,12 @@
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/income_over_time.png}
+\caption{Income over time}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/income_growth_over_time.png}
 \caption{Income over time}
 \end{figure}
 \begin{figure}[htbp]
@@ -46,6 +53,7 @@
 % -----------------------------------------------------------------------------
 % 2. Wealth / portfolios
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Wealth and portfolios}
 Capital gains by year for each asset class:
 \begin{figure}[htbp]
@@ -78,12 +86,6 @@ Capital gains by year for each asset class:
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/interest_income_mean_by_year.png}
 \caption{Interest income mean by year}
 \end{figure}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/participation_interest_income_2002.png}
-\caption{Participation / interest income (2002)}
-\end{figure}
-
 Wealth: Lorenz curves (2022) and wealth mean by year.
 \begin{figure}[htbp]
 \centering
@@ -148,24 +150,11 @@ Shares: table and graphs (core, core+IRA, core+IRA+residential by income and wea
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_concentration_2022.png}
 \caption{Share concentration (2022)}
 \end{figure}
-Share statistics (08):
-\input{../../Code/Descriptive/Tables/share_tabstat_2002.tex}
-\input{../../Code/Descriptive/Tables/share_tabstat_2022.tex}
-
 % -----------------------------------------------------------------------------
 % 3. Returns
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Returns}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_mean_by_wealthpct_agg_2022.png}
-\caption{Returns mean by wealth percentile, aggregated (2022)}
-\end{figure}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_mean_by_wealthpct_components_2022.png}
-\caption{Returns mean by wealth percentile, components (2022)}
-\end{figure}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_mean_by_year_agg.png}
@@ -190,6 +179,7 @@ Share statistics (08):
 % -----------------------------------------------------------------------------
 % 4. Income and wealth
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Income and wealth}
 \begin{figure}[htbp]
 \centering
@@ -215,6 +205,7 @@ Share statistics (08):
 % -----------------------------------------------------------------------------
 % 5. Returns and wealth (binscatters then mean/IQR: core, ret, res, coreira, netwealth)
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Returns and wealth by portfolio}
 Binscatters (2022):
 \begin{figure}[htbp]
@@ -272,6 +263,7 @@ Mean/IQR by wealth percentile:
 % -----------------------------------------------------------------------------
 % 6. Trust
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Trust}
 \input{../../Code/Descriptive/Tables/trust_corr.tex}
 \input{../../Code/Descriptive/Tables/trust_pca_loadings.tex}
@@ -350,6 +342,7 @@ Non-winsorized: r1, r4, r5 vs.\ trust (2022).
 % -----------------------------------------------------------------------------
 % 7. Demographics (controls summary, depression and trust at end)
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Demographics}
 \input{../../Code/Descriptive/Tables/demographics_controls_summary.tex}
 \input{../../Code/Descriptive/Tables/trust_controls_corr.tex}
@@ -363,6 +356,7 @@ Non-winsorized: r1, r4, r5 vs.\ trust (2022).
 % -----------------------------------------------------------------------------
 % 8. Other controls: financial literacy, then IVs and region/population
 % -----------------------------------------------------------------------------
+\FloatBarrier
 \subsection{Other controls}
 \subsubsection{Financial literacy}
 \input{../../Code/Descriptive/Tables/finlit_summary.tex}
@@ -370,11 +364,10 @@ Non-winsorized: r1, r4, r5 vs.\ trust (2022).
 
 \subsubsection{Instrumental variables}
 \input{../../Code/Descriptive/Tables/iv_trust_corr.tex}
-Region counts by year (4 regions, no Other):
-\input{../../Code/Descriptive/Tables/region_counts_4col_2020.tex}
 \input{../../Code/Descriptive/Tables/region_group_counts_by_year.tex}
-\input{../../Code/Descriptive/Tables/population_summary.tex}
 \input{../../Code/Descriptive/Tables/bin_counts_regionpop_2020.tex}
 \input{../../Code/Descriptive/Tables/bin_counts_regionpop3_2020.tex}
 \input{../../Code/Descriptive/Tables/trust_mean_by_region_2020.tex}
+\input{../../Code/Descriptive/Tables/trust_mean_by_population_2020.tex}
+\input{../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex}
 \input{../../Code/Descriptive/Tables/trust_mean_by_regionpop3_2020.tex}

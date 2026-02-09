@@ -175,51 +175,6 @@ graph export "${DESCRIPTIVE}/Figures/wealth_mean_by_year_agg.png", replace
 restore
 
 * ---------------------------------------------------------------------
-* Participation: share of respondents with non-missing value (0-1), 2002 and 2022
-* Interest income: 4 vars (capital income, pension, SSDI, retirement income). Holdings: capital income + asset holdings from note.
-* ---------------------------------------------------------------------
-preserve
-foreach yr in 2002 2022 {
-    local w = cond(`yr' == 2002, 6, 16)
-    * Interest income (4 vars): hicap, ipena, issdi, isret
-    capture confirm variable h`w'icap r`w'ipena r`w'issdi r`w'isret
-    if !_rc {
-        capture drop p_icap p_ipena p_issdi p_isret
-        gen byte p_icap   = !missing(h`w'icap)
-        gen byte p_ipena  = !missing(r`w'ipena)
-        gen byte p_issdi  = !missing(r`w'issdi)
-        gen byte p_isret  = !missing(r`w'isret)
-        graph bar (mean) p_icap p_ipena p_issdi p_isret, ///
-            bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(orange)) bar(4, color(green)) ///
-            title("Participation: interest income (`yr')") ///
-            ytitle("Share with non-missing") ylabel(0(0.2)1, format(%3.2f)) ///
-            legend(label(1 "Capital income") label(2 "Pension") label(3 "Social security") label(4 "Retirement income") ///
-                   cols(2) size(small) position(3) ring(0) region(lstyle(none))) ///
-            ysize(4) xsize(5.5)
-        graph export "${DESCRIPTIVE}/Figures/participation_interest_income_`yr'.png", replace
-        drop p_icap p_ipena p_issdi p_isret
-    }
-    * Holdings: 3 groups (Core = bonds+stocks+real estate+business, Residential = primary+secondary res, Retirement = IRA)
-    capture confirm variable h`w'atoth h`w'anethb h`w'arles h`w'absns h`w'aira h`w'astck h`w'abond
-    if !_rc {
-        capture drop p_core p_residential p_ira
-        gen byte p_core = (!missing(h`w'arles) | !missing(h`w'absns) | !missing(h`w'astck) | !missing(h`w'abond))
-        gen byte p_residential = (!missing(h`w'atoth) | !missing(h`w'anethb))
-        gen byte p_ira = !missing(h`w'aira)
-        graph bar (mean) p_core p_residential p_ira, ///
-            bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
-            title("Participation: holdings (`yr')") ///
-            ytitle("Share with non-missing") ylabel(0(0.2)1, format(%3.2f)) ///
-            legend(label(1 "Core assets") label(2 "Residential") label(3 "Retirement") ///
-                cols(1) size(small) position(3) ring(0) region(lstyle(none))) ///
-            ysize(4) xsize(5.5)
-        graph export "${DESCRIPTIVE}/Figures/participation_holdings_`yr'.png", replace
-        drop p_core p_residential p_ira
-    }
-}
-restore
-
-* ---------------------------------------------------------------------
 * Part B: Returns (from analysis_ready_processed)
 * ---------------------------------------------------------------------
 use "${PROCESSED}/analysis_ready_processed.dta", clear
@@ -355,7 +310,7 @@ foreach y of local years {
 postclose handle
 use "`share_conc'", clear
 file open fh using "${DESCRIPTIVE}/Tables/share_concentration_by_asset.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Share concentration by asset class}" _n "\label{tab:share_concentration_by_asset}" _n "\begin{tabular}{lrrr}\toprule" _n "Asset & Year & Threshold (\%) & Pct.\ of asset \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{4pt}" _n "\caption{Share concentration by asset class}" _n "\label{tab:share_concentration_by_asset}" _n "\begin{tabular}{@{}@{\extracolsep{0pt}}lrrr@{}}\toprule" _n "Asset & Year & Threshold (\%) & Pct.\ of asset \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local a = asset[`r']
     if "`a'" == "pri_res" local a "Primary residence"
@@ -447,7 +402,7 @@ foreach y in 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022 {
 postclose mhandle
 use "`mean_shares'", clear
 file open fh using "${DESCRIPTIVE}/Tables/mean_share_by_asset_class_year.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean portfolio share by asset class and year}" _n "\label{tab:mean_share_by_asset_class_year}" _n "\begin{tabular}{lrrr}\toprule" _n "Year & Core & Residential & Retirement \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{4pt}" _n "\caption{Mean portfolio share by asset class and year}" _n "\label{tab:mean_share_by_asset_class_year}" _n "\begin{tabular}{@{}@{\extracolsep{0pt}}lrrr@{}}\toprule" _n "Year & Core & Residential & Retirement \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local yr_s = string(year[`r'], "%9.0f")
     local mc_s = string(mean_core[`r'], "%5.3f")
