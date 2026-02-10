@@ -1,0 +1,500 @@
+-----------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/10_build_panel.log
+  log type:  text
+ opened on:  10 Feb 2026, 18:35:30
+
+. 
+. * ----------------------------------------------------------------------
+. * Load processed wide dataset
+. * ----------------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. 
+. capture confirm variable hhidpn
+
+. if _rc {
+.     display as error "10_build_panel: hhidpn (panel id) not found in analysis_ready_processed.dta."
+.     log close
+.     exit 0
+. }
+
+. 
+. * Weight (optional)
+. local wtvar "RwWTRESP"
+
+. capture confirm variable `wtvar'
+
+. local has_wt = (_rc == 0)
+
+. local wopt ""
+
+. if `has_wt' local wopt "[aw=`wtvar']"
+
+. 
+. * Year list for returns/income panel (even years where returns exist)
+. local years "2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
+
+. 
+. display "=== 10_build_panel: Defining panel variable groups from analysis_ready_processed.dta ==="
+=== 10_build_panel: Defining panel variable groups from analysis_ready_processed.dta ===
+
+. 
+. * ----------------------------------------------------------------------
+. * Time-varying groups: stubs for reshape + explicit varlists for keep
+. * ----------------------------------------------------------------------
+. 
+. * Returns (r1, r4, r5) and winsorized versions
+. local ret_stubs ""
+
+. local ret_vars  ""
+
+. foreach s in r1_annual r1_annual_win r4_annual r4_annual_win r5_annual r5_annual_win {
+  2.     capture unab tmp : `s'_*
+  3.     if !_rc {
+  4.         local ret_stubs "`ret_stubs' `s'_"
+  5.         local ret_vars  "`ret_vars' `tmp'"
+  6.     }
+  7. }
+
+. 
+. * Deflated + winsorized income (levels and any final specs)
+. local inc_stubs ""
+
+. local inc_vars  ""
+
+. foreach s in labor_income_real_win total_income_real_win {
+  2.     capture unab tmp : `s'_*
+  3.     if !_rc {
+  4.         local inc_stubs "`inc_stubs' `s'_"
+  5.         local inc_vars  "`inc_vars' `tmp'"
+  6.     }
+  7. }
+
+. * Include any final log/residualized income series if present
+. foreach s in ln_lab_inc_final ln_tot_inc_final ln_lab_inc_final_resid ln_tot_inc_final_resid {
+  2.     capture unab tmp : `s'_*
+  3.     if !_rc {
+  4.         local inc_stubs "`inc_stubs' `s'_"
+  5.         local inc_vars  "`inc_vars' `tmp'"
+  6.     }
+  7. }
+
+. 
+. * Wealth (levels)
+. local wealth_stubs ""
+
+. local wealth_vars  ""
+
+. foreach s in wealth_core wealth_ira wealth_coreira wealth_total {
+  2.     capture unab tmp : `s'_*
+  3.     if !_rc {
+  4.         local wealth_stubs "`wealth_stubs' `s'_"
+  5.         local wealth_vars  "`wealth_vars' `tmp'"
+  6.     }
+  7. }
+
+. 
+. * Shares: gross-assets/core+IRA pipeline shares only
+. *   - share_core_: core / gross assets
+. *   - share_m3_ira_: IRA / gross assets
+. *   - share_residential_: residential / gross assets
+. local share_stubs ""
+
+. local share_vars  ""
+
+. foreach s in share_core share_m3_ira share_residential {
+  2.     capture unab tmp : `s'_*
+  3.     if !_rc {
+  4.         local share_stubs "`share_stubs' `s'_"
+  5.         local share_vars  "`share_vars' `tmp'"
+  6.     }
+  7. }
+
+. 
+. * Core wave-specific controls
+. local ctrl_stubs ""
+
+. local ctrl_vars  ""
+
+. foreach s in age married inlbrf region hometown_size region_pop_group region_pop3_group ///
+>                townsize_trust pop_trust regional_trust {
+  2.     capture unab tmp : `s'_*
+  3.     if !_rc {
+  4.         local ctrl_stubs "`ctrl_stubs' `s'_"
+  5.         local ctrl_vars  "`ctrl_vars' `tmp'"
+  6.     }
+  7. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Time-invariant (or single-wave) controls: trust, finlit, demographics, 2020-only controls
+. * ----------------------------------------------------------------------
+. local tinv_vars ""
+
+. foreach v in trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
+>              trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///
+>              interest_2020 inflation_2020 risk_div_2020 ///
+>              educ_yrs gender immigrant born_us race_eth ///
+>              depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 ///
+>              num_divorce_2020 num_widow_2020 population_2020 population_3bin_2020 {
+  2.     capture confirm variable `v'
+  3.     if !_rc local tinv_vars "`tinv_vars' `v'"
+  4. }
+
+. 
+. display "Returns stubs: `ret_stubs'"
+Returns stubs:  r1_annual_ r1_annual_win_ r4_annual_ r4_annual_win_ r5_annual_ r5_annual_win_
+
+. display "Income stubs:  `inc_stubs'"
+Income stubs:   labor_income_real_win_ total_income_real_win_ ln_lab_inc_final_ ln_tot_inc_final_
+
+. display "Wealth stubs:  `wealth_stubs'"
+Wealth stubs:   wealth_core_ wealth_ira_ wealth_coreira_ wealth_total_
+
+. display "Share stubs:   `share_stubs'"
+Share stubs:    share_core_ share_m3_ira_ share_residential_
+
+. display "Control stubs: `ctrl_stubs'"
+Control stubs:  age_ married_ inlbrf_ region_ hometown_size_ region_pop_group_ region_pop3_group_ townsize_
+> trust_ pop_trust_ regional_trust_
+
+. display "Time-invariant vars: `tinv_vars'"
+Time-invariant vars:  trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 tru
+> st_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 interest_2020 inflation_20
+> 20 risk_div_2020 educ_yrs gender immigrant born_us race_eth depression_2020 health_cond_2020 medicare_202
+> 0 medicaid_2020 life_ins_2020 beq_any_2020 num_divorce_2020 num_widow_2020 population_2020 population_3bi
+> n_2020
+
+. 
+. * ----------------------------------------------------------------------
+. * Keep only variables needed for the panel reshape
+. * ----------------------------------------------------------------------
+. local base_keep "hhidpn"
+
+. if `has_wt' local base_keep "`base_keep' `wtvar'"
+
+. 
+. keep `base_keep' `tinv_vars' `ret_vars' `inc_vars' `wealth_vars' `share_vars' `ctrl_vars'
+
+. 
+. * ----------------------------------------------------------------------
+. * Reshape to long: person–year panel
+. * ----------------------------------------------------------------------
+. local long_stubs "`ret_stubs' `inc_stubs' `wealth_stubs' `share_stubs' `ctrl_stubs'"
+
+. 
+. * If there are no stubs, abort gracefully
+. if "`long_stubs'" == "" {
+.     display as error "10_build_panel: No time-varying stubs found to reshape."
+.     log close
+.     exit 0
+. }
+
+. 
+. display "=== 10_build_panel: Reshaping to long person–year panel ==="
+=== 10_build_panel: Reshaping to long person–year panel ===
+
+. reshape long `long_stubs', i(hhidpn) j(year)
+(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
+(variable r1_annual_2000 not found)
+(variable r1_annual_win_2000 not found)
+(variable r4_annual_2000 not found)
+(variable r4_annual_win_2000 not found)
+(variable r5_annual_2000 not found)
+(variable r5_annual_win_2000 not found)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations           45,234   ->   542,808     
+Number of variables                 805   ->   515         
+j variable (12 values)                    ->   year
+xij variables:
+r1_annual_2000 r1_annual_2002 ... r1_annual_2022->r1_annual_
+r1_annual_win_2000 r1_annual_win_2002 ... r1_annual_win_2022->r1_annual_win_
+r4_annual_2000 r4_annual_2002 ... r4_annual_2022->r4_annual_
+r4_annual_win_2000 r4_annual_win_2002 ... r4_annual_win_2022->r4_annual_win_
+r5_annual_2000 r5_annual_2002 ... r5_annual_2022->r5_annual_
+r5_annual_win_2000 r5_annual_win_2002 ... r5_annual_win_2022->r5_annual_win_
+labor_income_real_win_2000 labor_income_real_win_2002 ... labor_income_real_win_2022->labor_income_real_win
+> _
+total_income_real_win_2000 total_income_real_win_2002 ... total_income_real_win_2022->total_income_real_win
+> _
+ln_lab_inc_final_2000 ln_lab_inc_final_2002 ... ln_lab_inc_final_2022->ln_lab_inc_final_
+ln_tot_inc_final_2000 ln_tot_inc_final_2002 ... ln_tot_inc_final_2022->ln_tot_inc_final_
+wealth_core_2000 wealth_core_2002 ... wealth_core_2022->wealth_core_
+wealth_ira_2000 wealth_ira_2002 ... wealth_ira_2022->wealth_ira_
+wealth_coreira_2000 wealth_coreira_2002 ... wealth_coreira_2022->wealth_coreira_
+wealth_total_2000 wealth_total_2002 ... wealth_total_2022->wealth_total_
+share_core_2000 share_core_2002 ... share_core_2022->share_core_
+share_m3_ira_2000 share_m3_ira_2002 ... share_m3_ira_2022->share_m3_ira_
+share_residential_2000 share_residential_2002 ... share_residential_2022->share_residential_
+         age_2000 age_2002 ... age_2022   ->   age_
+married_2000 married_2002 ... married_2022->   married_
+inlbrf_2000 inlbrf_2002 ... inlbrf_2022   ->   inlbrf_
+region_2000 region_2002 ... region_2022   ->   region_
+hometown_size_2000 hometown_size_2002 ... hometown_size_2022->hometown_size_
+region_pop_group_2000 region_pop_group_2002 ... region_pop_group_2022->region_pop_group_
+region_pop3_group_2000 region_pop3_group_2002 ... region_pop3_group_2022->region_pop3_group_
+townsize_trust_2000 townsize_trust_2002 ... townsize_trust_2022->townsize_trust_
+pop_trust_2000 pop_trust_2002 ... pop_trust_2022->pop_trust_
+regional_trust_2000 regional_trust_2002 ... regional_trust_2022->regional_trust_
+-----------------------------------------------------------------------------
+
+. 
+. * Avoid Stata ambiguous abbreviation (r1_annual vs r1_annual_win): temp-rename _win, then rename _annual 
+> -> _annual_nw using varlist so we never type the ambiguous name.
+. local r1var "r1_annual_nw"
+
+. local r4var "r4_annual_nw"
+
+. local r5var "r5_annual_nw"
+
+. capture confirm variable r1_annual_win
+
+. if !_rc {
+.     rename r1_annual_win __r1win
+.     rename r4_annual_win __r4win
+.     rename r5_annual_win __r5win
+.     foreach v of varlist _all {
+  2.         if "`v'" == "r1_annual" {
+  3.             rename `v' r1_annual_nw
+  4.             continue, break
+  5.         }
+  6.     }
+.     foreach v of varlist _all {
+  2.         if "`v'" == "r4_annual" {
+  3.             rename `v' r4_annual_nw
+  4.             continue, break
+  5.         }
+  6.     }
+.     foreach v of varlist _all {
+  2.         if "`v'" == "r5_annual" {
+  3.             rename `v' r5_annual_nw
+  4.             continue, break
+  5.         }
+  6.     }
+.     rename __r1win r1_annual_win
+.     rename __r4win r4_annual_win
+.     rename __r5win r5_annual_win
+. }
+
+. else {
+.     foreach v of varlist _all {
+  2.         if "`v'" == "r1_annual" {
+  3.             rename `v' r1_annual_nw
+  4.             continue, break
+  5.         }
+  6.     }
+.     foreach v of varlist _all {
+  2.         if "`v'" == "r4_annual" {
+  3.             rename `v' r4_annual_nw
+  4.             continue, break
+  5.         }
+  6.     }
+.     foreach v of varlist _all {
+  2.         if "`v'" == "r5_annual" {
+  3.             rename `v' r5_annual_nw
+  4.             continue, break
+  5.         }
+  6.     }
+. }
+
+. 
+. * Point to the return variable that exists (_nw if we renamed it, else _win when only winsorized is in da
+> ta)
+. capture confirm variable r1_annual_nw
+
+. if _rc {
+.     capture confirm variable r1_annual_win
+.     if !_rc local r1var "r1_annual_win"
+. }
+
+. capture confirm variable r4_annual_nw
+
+. if _rc {
+.     capture confirm variable r4_annual_win
+.     if !_rc local r4var "r4_annual_win"
+. }
+
+. capture confirm variable r5_annual_nw
+
+. if _rc {
+.     capture confirm variable r5_annual_win
+.     if !_rc local r5var "r5_annual_win"
+. }
+
+. 
+. * Weight and time-invariant vars are already attached to each row (they were kept pre-reshape).
+. 
+. * ----------------------------------------------------------------------
+. * Core+IRA composition shares: core/(core+IRA) and IRA/(core+IRA)
+. * Using wealth variables: wealth_core and wealth_ira (per person–year).
+. * ----------------------------------------------------------------------
+. capture confirm variable wealth_core
+
+. local has_wcore = (_rc == 0)
+
+. capture confirm variable wealth_ira
+
+. local has_wira = (_rc == 0)
+
+. if `has_wcore' & `has_wira' {
+.     display "=== 10_build_panel: Creating core/(core+IRA) and IRA/(core+IRA) from wealth_core and wealth_
+> ira ==="
+.     gen double coreira = wealth_core + wealth_ira
+.     gen double share_core_coreira = .
+.     gen double share_ira_coreira  = .
+.     replace share_core_coreira = wealth_core / coreira if coreira > 0 & !missing(wealth_core) & !missing(
+> wealth_ira)
+.     replace share_ira_coreira  = wealth_ira  / coreira if coreira > 0 & !missing(wealth_core) & !missing(
+> wealth_ira)
+. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Overlap diagnostics: Ns by year and for key variable sets
+. * ----------------------------------------------------------------------
+. display "=== Panel structure: observations by year (unbalanced) ==="
+=== Panel structure: observations by year (unbalanced) ===
+
+. tab year
+
+       year |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2000 |     45,234        8.33        8.33
+       2002 |     45,234        8.33       16.67
+       2004 |     45,234        8.33       25.00
+       2006 |     45,234        8.33       33.33
+       2008 |     45,234        8.33       41.67
+       2010 |     45,234        8.33       50.00
+       2012 |     45,234        8.33       58.33
+       2014 |     45,234        8.33       66.67
+       2016 |     45,234        8.33       75.00
+       2018 |     45,234        8.33       83.33
+       2020 |     45,234        8.33       91.67
+       2022 |     45,234        8.33      100.00
+------------+-----------------------------------
+      Total |    542,808      100.00
+
+. 
+. display "=== Overlap: r1/r4/r5 and basic controls by year ==="
+=== Overlap: r1/r4/r5 and basic controls by year ===
+
+. foreach y of local years {
+  2.     quietly count if year == `y' & !missing(`r1var') & !missing(`r4var') & !missing(`r5var')
+  3.     display "Year `y': r1 & r4 & r5 nonmissing = " %9.0f r(N)
+  4. 
+.     quietly count if year == `y' & !missing(`r1var') & !missing(`r4var') & !missing(`r5var') ///
+>         & !missing(labor_income_real_win) & !missing(total_income_real_win) ///
+>         & !missing(age) & !missing(married) & !missing(inlbrf)
+  5.     display "Year `y': r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing = " %9.0f r(N)
+  6. }
+Year 2002: r1 & r4 & r5 nonmissing =      6423
+Year 2002: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      6389
+Year 2004: r1 & r4 & r5 nonmissing =      5955
+Year 2004: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      5915
+Year 2006: r1 & r4 & r5 nonmissing =      6587
+Year 2006: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      6553
+Year 2008: r1 & r4 & r5 nonmissing =      6148
+Year 2008: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      6089
+Year 2010: r1 & r4 & r5 nonmissing =      5548
+Year 2010: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      5479
+Year 2012: r1 & r4 & r5 nonmissing =      6154
+Year 2012: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      6063
+Year 2014: r1 & r4 & r5 nonmissing =      5505
+Year 2014: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      5416
+Year 2016: r1 & r4 & r5 nonmissing =      5060
+Year 2016: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      4993
+Year 2018: r1 & r4 & r5 nonmissing =      4888
+Year 2018: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      4839
+Year 2020: r1 & r4 & r5 nonmissing =      4374
+Year 2020: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      4344
+Year 2022: r1 & r4 & r5 nonmissing =      3989
+Year 2022: r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing =      3948
+
+. 
+. display "=== Overlap: trust (2020) + r1/r4/r5 by year ==="
+=== Overlap: trust (2020) + r1/r4/r5 by year ===
+
+. capture confirm variable trust_others_2020
+
+. if !_rc {
+.     foreach y of local years {
+  2.         quietly count if year == `y' & !missing(`r1var') & !missing(`r4var') & !missing(`r5var') ///
+>             & !missing(trust_others_2020)
+  3.         display "Year `y': r1/r4/r5 + General trust nonmissing = " %9.0f r(N)
+  4.     }
+Year 2002: r1/r4/r5 + General trust nonmissing =        96
+Year 2004: r1/r4/r5 + General trust nonmissing =       105
+Year 2006: r1/r4/r5 + General trust nonmissing =       145
+Year 2008: r1/r4/r5 + General trust nonmissing =       136
+Year 2010: r1/r4/r5 + General trust nonmissing =       141
+Year 2012: r1/r4/r5 + General trust nonmissing =       188
+Year 2014: r1/r4/r5 + General trust nonmissing =       189
+Year 2016: r1/r4/r5 + General trust nonmissing =       191
+Year 2018: r1/r4/r5 + General trust nonmissing =       220
+Year 2020: r1/r4/r5 + General trust nonmissing =       227
+Year 2022: r1/r4/r5 + General trust nonmissing =       200
+. }
+
+. else {
+.     display "General trust (trust_others_2020) not found; skipping trust overlap diagnostics."
+. }
+
+. 
+. * Optional: overall waves-per-person counts for returns
+. display "=== Overlap: number of waves with nonmissing r1 & r4 & r5 per person ==="
+=== Overlap: number of waves with nonmissing r1 & r4 & r5 per person ===
+
+. preserve
+
+.     gen byte has_r = (!missing(`r1var') & !missing(`r4var') & !missing(`r5var'))
+
+.     bysort hhidpn: egen byte n_waves_r = total(has_r)
+
+.     bysort hhidpn: keep if _n == 1
+(497,574 observations deleted)
+
+.     tab n_waves_r
+
+  n_waves_r |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |     31,463       69.56       69.56
+          1 |      2,988        6.61       76.16
+          2 |      2,083        4.60       80.77
+          3 |      1,736        3.84       84.60
+          4 |      1,193        2.64       87.24
+          5 |      1,117        2.47       89.71
+          6 |      1,174        2.60       92.31
+          7 |        810        1.79       94.10
+          8 |        731        1.62       95.71
+          9 |        728        1.61       97.32
+         10 |        523        1.16       98.48
+         11 |        688        1.52      100.00
+------------+-----------------------------------
+      Total |     45,234      100.00
+
+. restore
+
+. 
+. * ----------------------------------------------------------------------
+. * Save long, unbalanced panel dataset for regressions
+. * ----------------------------------------------------------------------
+. save "${PROCESSED}/analysis_final_long_unbalanced.dta", replace
+(file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_final_long_unbalanced.dta not found)
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_final_long_unbalanced.dta saved
+
+. display "10_build_panel: Saved ${PROCESSED}/analysis_final_long_unbalanced.dta"
+10_build_panel: Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_final_lon
+> g_unbalanced.dta
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/10_build_panel.log
+  log type:  text
+ closed on:  10 Feb 2026, 18:35:56
+-----------------------------------------------------------------------------------------------------------

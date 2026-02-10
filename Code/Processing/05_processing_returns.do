@@ -74,6 +74,7 @@ display "=== 1% winsorization on returns ==="
 display "Tabstat returns before winsorization"
 tabstat `retvars', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 
+* Winsorized names: stub_win_YYYY so 10_build_panel reshape long finds r1_annual_win_*, r4_annual_win_*, r5_annual_win_*
 local retwin ""
 foreach v of local retvars {
     capture confirm numeric variable `v'
@@ -81,11 +82,22 @@ foreach v of local retvars {
         quietly summarize `v', detail
         local p1 = r(p1)
         local p99 = r(p99)
-        capture drop `v'_win
-        gen double `v'_win = `v'
-        replace `v'_win = `p1' if `v'_win < `p1' & !missing(`v'_win)
-        replace `v'_win = `p99' if `v'_win > `p99' & !missing(`v'_win)
-        local retwin "`retwin' `v'_win"
+        if regexm("`v'", "_([0-9]{4})$") {
+            local vyear = regexs(1)
+            local vstub = regexr("`v'", "_[0-9]{4}$", "")
+            capture drop `vstub'_win_`vyear'
+            gen double `vstub'_win_`vyear' = `v'
+            replace `vstub'_win_`vyear' = `p1' if `vstub'_win_`vyear' < `p1' & !missing(`vstub'_win_`vyear')
+            replace `vstub'_win_`vyear' = `p99' if `vstub'_win_`vyear' > `p99' & !missing(`vstub'_win_`vyear')
+            local retwin "`retwin' `vstub'_win_`vyear'"
+        }
+        else {
+            capture drop `v'_win
+            gen double `v'_win = `v'
+            replace `v'_win = `p1' if `v'_win < `p1' & !missing(`v'_win)
+            replace `v'_win = `p99' if `v'_win > `p99' & !missing(`v'_win)
+            local retwin "`retwin' `v'_win"
+        }
     }
 }
 

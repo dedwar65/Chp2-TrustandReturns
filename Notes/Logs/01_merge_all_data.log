@@ -1,8 +1,8 @@
--------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_merge_all_data.log
   log type:  text
- opened on:   9 Feb 2026, 07:09:32
+ opened on:  10 Feb 2026, 18:11:16
 
 . 
 . * ------------------------------------------------------------------------------
@@ -32,8 +32,8 @@ Saved FRED CPIAUCSL to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 
 . * 01_1_merge_flow_2022.do
 . * Merge 2022 flow variables from h22e3a into RAND longitudinal.
-. * Variable names from old repo (Chp2-BeliefsandTrust_Old): h22e3a uses lowercase (hhidpn, sr050, sr073, etc
-> .).
+. * Variable names from old repo (Chp2-BeliefsandTrust_Old): h22e3a uses lowercase (hhidpn, sr050, sr073, e
+> tc.).
 . * Scratch file in RAW_DATA. Final output to CLEANED.
 . 
 . * Do not use -clear all-: it wipes globals (RAW_DATA, CLEANED) set by 00_config.
@@ -50,12 +50,12 @@ Saved FRED CPIAUCSL to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 . use "${HRS_DATA}/_randhrs1992_2022v1.dta", clear
 
 . 
-. * Load 2022 fat file: h22e3a uses lowercase. Flow vars + flag vars. Public stock: SR072 (flag), SR073 (amou
-> nt).
+. * Load 2022 fat file: h22e3a uses lowercase. Flow vars + flag vars. Public stock: SR072 (flag), SR073 (am
+> ount).
 . preserve
 
-. use hhidpn sr050 sr055 sr063 sr064 sr072 sr073 sr030 sr035 sr045 sq171_1 sq171_2 sq171_3 sr007 sr013 sr024 
-> ///
+. use hhidpn sr050 sr055 sr063 sr064 sr072 sr073 sr030 sr035 sr045 sq171_1 sq171_2 sq171_3 sr007 sr013 sr02
+> 4 ///
 >     sr049 sr061 sr062 sr028 sr029 sq170_1 sq170_2 sq170_3 sr002 using "${HRS_DATA}/h22e3a.dta", clear
 
 . save "`scratch'", replace
@@ -78,14 +78,17 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scr
 
 . capture erase "`scratch'"
 
-. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.d
+> o (processing step).
 . 
 . capture mkdir "${CLEANED}"
 
 . save "${CLEANED}/all_data_merged.dta", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned
+    data/all_data_merged.dta saved
 
-. display "01_1: Merged 2022 flows. Saved " _N " obs to all_data_merged.dta"
+. display "01_1: Merged 2022 flows. Saved " _N " obs to all_data_merged.d
+> ta"
 01_1: Merged 2022 flows. Saved 45234 obs to all_data_merged.dta
 
 . 
@@ -98,10 +101,13 @@ end of do-file
 . do "${RAW_DATA}/01_2_merge_trust_2020.do"
 
 . * 01_2_merge_trust_2020.do
-. * Merge 2020 trust (rv557-rv570) from h20f1a. Uses project scratch file.
-. * Merge key: hhidpn (per long_merge_in_trust_2020.do in old repo). Input: ${CLEANED}/all_data_merged.dta
+. * Merge 2020 trust (rv557-rv570) from h20f1a. Uses project scratch file
+> .
+. * Merge key: hhidpn (per long_merge_in_trust_2020.do in old repo). Inpu
+> t: ${CLEANED}/all_data_merged.dta
 . 
-. * Do not use -clear all-: it wipes globals (RAW_DATA, CLEANED) set by 00_config.
+. * Do not use -clear all-: it wipes globals (RAW_DATA, CLEANED) set by 0
+> 0_config.
 . clear
 
 . set more off
@@ -114,16 +120,21 @@ end of do-file
 . 
 . preserve
 
-. use hhidpn rv557 rv558 rv559 rv560 rv561 rv562 rv563 rv564 rv565 rv566 rv567 rv568 rv569 rv570 using "${HRS
-> _DATA}/h20f1a.dta", clear
+. use hhidpn rv557 rv558 rv559 rv560 rv561 rv562 rv563 rv564 rv565 rv566 
+> rv567 rv568 rv569 rv570 using "${HRS_DATA}/h20f1a.dta", clear
 
-. rename (rv557 rv558 rv559 rv560 rv561 rv562 rv563 rv564 rv565 rv566 rv567 rv568 rv569 rv570) ///
->        (rv557_2020 rv558_2020 rv559_2020 rv560_2020 rv561_2020 rv562_2020 rv563_2020 rv564_2020 ///
->         rv565_2020 rv566_2020 rv567_2020 rv568_2020 rv569_2020 rv570_2020)
+. rename (rv557 rv558 rv559 rv560 rv561 rv562 rv563 rv564 rv565 rv566 rv5
+> 67 rv568 rv569 rv570) ///
+>        (rv557_2020 rv558_2020 rv559_2020 rv560_2020 rv561_2020 rv562_20
+> 20 rv563_2020 rv564_2020 ///
+>         rv565_2020 rv566_2020 rv567_2020 rv568_2020 rv569_2020 rv570_20
+> 20)
 
 . save "`scratch'", replace
-(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta saved
 
 . restore
 
@@ -142,13 +153,16 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scr
 . capture erase "`scratch'"
 
 . 
-. * Recode HRS special values to missing for r557-r570 (trust). Per codebook RV570: -8 Web non-response, 8 DK
-> /NA, 9 RF.
-. * We remove -9 -8 8 9 98 99 (and 9998 ... 99999999) so 99 and all DK/NA/RF are missing for *r557-*r570.
-. local trustvars rv557_2020 rv558_2020 rv559_2020 rv560_2020 rv561_2020 rv562_2020 rv563_2020 rv564_2020 rv5
-> 65_2020 rv566_2020 rv567_2020 rv568_2020 rv569_2020 rv570_2020
+. * Recode HRS special values to missing for r557-r570 (trust). Per codeb
+> ook RV570: -8 Web non-response, 8 DK/NA, 9 RF.
+. * We remove -9 -8 8 9 98 99 (and 9998 ... 99999999) so 99 and all DK/NA
+> /RF are missing for *r557-*r570.
+. local trustvars rv557_2020 rv558_2020 rv559_2020 rv560_2020 rv561_2020 
+> rv562_2020 rv563_2020 rv564_2020 rv565_2020 rv566_2020 rv567_2020 rv568
+> _2020 rv569_2020 rv570_2020
 
-. local miss -9 -8 8 9 98 99 9998 9999 999998 999999 9999998 9999999 99999998 99999999
+. local miss -9 -8 8 9 98 99 9998 9999 999998 999999 9999998 9999999 9999
+> 9998 99999999
 
 . foreach v of local trustvars {
   2.     foreach m of local miss {
@@ -158,7 +172,8 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scr
 
 . 
 . save "${CLEANED}/all_data_merged.dta", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned
+    data/all_data_merged.dta saved
 
 . display "01_2: Merged 2020 trust (rv557-rv570). Saved " _N " obs"
 01_2: Merged 2020 trust (rv557-rv570). Saved 45234 obs
@@ -172,20 +187,24 @@ end of do-file
 
 . do "${RAW_DATA}/01_3_merge_flow_2002.do"
 
-. * 01_3_merge_flow_2002.do — merge 2002 flow vars from h02f2c (prefix H). Fat files use lowercase + hhidpn.
+. * 01_3_merge_flow_2002.do — merge 2002 flow vars from h02f2c (prefix H)
+> . Fat files use lowercase + hhidpn.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn hr050 hr055 hr063 hr064 hr072 hr073 hr030 hr035 hr045 hq171_1 hq171_2 hq171_3 hr007 hr013 hr024 
-> ///
->     hr049 hr061 hr062 hr028 hr029 hq170_1 hq170_2 hq170_3 hr002 using "${HRS_DATA}/h02f2c.dta", clear
+. use hhidpn hr050 hr055 hr063 hr064 hr072 hr073 hr030 hr035 hr045 hq171_
+> 1 hq171_2 hq171_3 hr007 hr013 hr024 ///
+>     hr049 hr061 hr062 hr028 hr029 hq170_1 hq170_2 hq170_3 hr002 using "
+> ${HRS_DATA}/h02f2c.dta", clear
 
 . save "`scratch'", replace
-(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta saved
 
 . restore
 
@@ -202,10 +221,12 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scr
 
 . capture erase "`scratch'"
 
-. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.d
+> o (processing step).
 . 
 . save "${CLEANED}/all_data_merged.dta", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned
+    data/all_data_merged.dta saved
 
 . display "01_3: Merged 2002 flows. N = " _N
 01_3: Merged 2002 flows. N = 45234
@@ -215,20 +236,24 @@ end of do-file
 
 . do "${RAW_DATA}/01_4_merge_flow_2004.do"
 
-. * 01_4_merge_flow_2004.do — merge 2004 flow vars from h04f1c (prefix J). Fat files use lowercase + hhidpn.
+. * 01_4_merge_flow_2004.do — merge 2004 flow vars from h04f1c (prefix J)
+> . Fat files use lowercase + hhidpn.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn jr050 jr055 jr063 jr064 jr072 jr073 jr030 jr035 jr045 jq171_1 jq171_2 jq171_3 jr007 jr013 jr024 
-> ///
->     jr049 jr061 jr062 jr028 jr029 jq170_1 jq170_2 jq170_3 jr002 using "${HRS_DATA}/h04f1c.dta", clear
+. use hhidpn jr050 jr055 jr063 jr064 jr072 jr073 jr030 jr035 jr045 jq171_
+> 1 jq171_2 jq171_3 jr007 jr013 jr024 ///
+>     jr049 jr061 jr062 jr028 jr029 jq170_1 jq170_2 jq170_3 jr002 using "
+> ${HRS_DATA}/h04f1c.dta", clear
 
 . save "`scratch'", replace
-(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta saved
 
 . restore
 
@@ -245,10 +270,12 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scr
 
 . capture erase "`scratch'"
 
-. * Special-value recode and flag-based 0 fill done in 02_process_flows.do (processing step).
+. * Special-value recode and flag-based 0 fill done in 02_process_flows.d
+> o (processing step).
 . 
 . save "${CLEANED}/all_data_merged.dta", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_data_merged.dta saved
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned
+    data/all_data_merged.dta saved
 
 . display "01_4: Merged 2004 flows. N = " _N
 01_4: Merged 2004 flows. N = 45234
@@ -258,20 +285,24 @@ end of do-file
 
 . do "${RAW_DATA}/01_5_merge_flow_2006.do"
 
-. * 01_5_merge_flow_2006.do — merge 2006 flow vars from h06f4b (prefix K). Fat files use lowercase + hhidpn.
+. * 01_5_merge_flow_2006.do — merge 2006 flow vars from h06f4b (prefix K)
+> . Fat files use lowercase + hhidpn.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn kr050 kr055 kr063 kr064 kr072 kr073 kr030 kr035 kr045 kq171_1 kq171_2 kq171_3 kr007 kr013 kr024 
-> ///
->     kr049 kr061 kr062 kr028 kr029 kq170_1 kq170_2 kq170_3 kr002 using "${HRS_DATA}/h06f4b.dta", clear
+. use hhidpn kr050 kr055 kr063 kr064 kr072 kr073 kr030 kr035 kr045 kq171_
+> 1 kq171_2 kq171_3 kr007 kr013 kr024 ///
+>     kr049 kr061 kr062 kr028 kr029 kq170_1 kq170_2 kq170_3 kr002 using "
+> ${HRS_DATA}/h06f4b.dta", clear
 
 . save "`scratch'", replace
-(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta not found)
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw data/_merge_scratch.dta saved
+(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta not found)
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
+    data/_merge_scratch.dta saved
 
 . restore
 
@@ -301,15 +332,16 @@ end of do-file
 
 . do "${RAW_DATA}/01_6_merge_flow_2008.do"
 
-. * 01_6_merge_flow_2008.do — merge 2008 flow vars from h08f3b (prefix L). Fat files use lowercase + hhidpn.
+. * 01_6_merge_flow_2008.do — merge 2008 flow vars from h08f3b (prefix L). Fat files use lowercase + hhidpn
+> .
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn lr050 lr055 lr063 lr064 lr072 lr073 lr030 lr035 lr045 lq171_1 lq171_2 lq171_3 lr007 lr013 lr024 
-> ///
+. use hhidpn lr050 lr055 lr063 lr064 lr072 lr073 lr030 lr035 lr045 lq171_1 lq171_2 lq171_3 lr007 lr013 lr02
+> 4 ///
 >     lr049 lr061 lr062 lr028 lr029 lq170_1 lq170_2 lq170_3 lr002 using "${HRS_DATA}/h08f3b.dta", clear
 
 . save "`scratch'", replace
@@ -344,15 +376,16 @@ end of do-file
 
 . do "${RAW_DATA}/01_7_merge_flow_2010.do"
 
-. * 01_7_merge_flow_2010.do — merge 2010 flow vars from hd10f6b (prefix M). Fat files use lowercase + hhidpn.
+. * 01_7_merge_flow_2010.do — merge 2010 flow vars from hd10f6b (prefix M). Fat files use lowercase + hhidp
+> n.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn mr050 mr055 mr063 mr064 mr072 mr073 mr030 mr035 mr045 mq171_1 mq171_2 mq171_3 mr007 mr013 mr024 
-> ///
+. use hhidpn mr050 mr055 mr063 mr064 mr072 mr073 mr030 mr035 mr045 mq171_1 mq171_2 mq171_3 mr007 mr013 mr02
+> 4 ///
 >     mr049 mr061 mr062 mr028 mr029 mq170_1 mq170_2 mq170_3 mr002 using "${HRS_DATA}/hd10f6b.dta", clear
 
 . save "`scratch'", replace
@@ -387,15 +420,16 @@ end of do-file
 
 . do "${RAW_DATA}/01_8_merge_flow_2012.do"
 
-. * 01_8_merge_flow_2012.do — merge 2012 flow vars from h12f3a (prefix N). Fat files use lowercase + hhidpn.
+. * 01_8_merge_flow_2012.do — merge 2012 flow vars from h12f3a (prefix N). Fat files use lowercase + hhidpn
+> .
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn nr050 nr055 nr063 nr064 nr072 nr073 nr030 nr035 nr045 nq171_1 nq171_2 nq171_3 nr007 nr013 nr024 
-> ///
+. use hhidpn nr050 nr055 nr063 nr064 nr072 nr073 nr030 nr035 nr045 nq171_1 nq171_2 nq171_3 nr007 nr013 nr02
+> 4 ///
 >     nr049 nr061 nr062 nr028 nr029 nq170_1 nq170_2 nq170_3 nr002 using "${HRS_DATA}/h12f3a.dta", clear
 
 . save "`scratch'", replace
@@ -430,15 +464,16 @@ end of do-file
 
 . do "${RAW_DATA}/01_9_merge_flow_2014.do"
 
-. * 01_9_merge_flow_2014.do — merge 2014 flow vars from h14f2b (prefix O). Fat files use lowercase + hhidpn.
+. * 01_9_merge_flow_2014.do — merge 2014 flow vars from h14f2b (prefix O). Fat files use lowercase + hhidpn
+> .
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn or050 or055 or063 or064 or072 or073 or030 or035 or045 oq171_1 oq171_2 oq171_3 or007 or013 or024 
-> ///
+. use hhidpn or050 or055 or063 or064 or072 or073 or030 or035 or045 oq171_1 oq171_2 oq171_3 or007 or013 or02
+> 4 ///
 >     or049 or061 or062 or028 or029 oq170_1 oq170_2 oq170_3 or002 using "${HRS_DATA}/h14f2b.dta", clear
 
 . save "`scratch'", replace
@@ -473,15 +508,16 @@ end of do-file
 
 . do "${RAW_DATA}/01_10_merge_flow_2016.do"
 
-. * 01_10_merge_flow_2016.do — merge 2016 flow vars from h16f2c (prefix P). Fat files use lowercase + hhidpn.
+. * 01_10_merge_flow_2016.do — merge 2016 flow vars from h16f2c (prefix P). Fat files use lowercase + hhidp
+> n.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn pr050 pr055 pr063 pr064 pr072 pr073 pr030 pr035 pr045 pq171_1 pq171_2 pq171_3 pr007 pr013 pr024 
-> ///
+. use hhidpn pr050 pr055 pr063 pr064 pr072 pr073 pr030 pr035 pr045 pq171_1 pq171_2 pq171_3 pr007 pr013 pr02
+> 4 ///
 >     pr049 pr061 pr062 pr028 pr029 pq170_1 pq170_2 pq170_3 pr002 using "${HRS_DATA}/h16f2c.dta", clear
 
 . save "`scratch'", replace
@@ -516,15 +552,16 @@ end of do-file
 
 . do "${RAW_DATA}/01_11_merge_flow_2018.do"
 
-. * 01_11_merge_flow_2018.do — merge 2018 flow vars from h18f2c (prefix Q). Fat files use lowercase + hhidpn.
+. * 01_11_merge_flow_2018.do — merge 2018 flow vars from h18f2c (prefix Q). Fat files use lowercase + hhidp
+> n.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn qr050 qr055 qr063 qr064 qr072 qr073 qr030 qr035 qr045 qq171_1 qq171_2 qq171_3 qr007 qr013 qr024 
-> ///
+. use hhidpn qr050 qr055 qr063 qr064 qr072 qr073 qr030 qr035 qr045 qq171_1 qq171_2 qq171_3 qr007 qr013 qr02
+> 4 ///
 >     qr049 qr061 qr062 qr028 qr029 qq170_1 qq170_2 qq170_3 qr002 using "${HRS_DATA}/h18f2c.dta", clear
 
 . save "`scratch'", replace
@@ -559,15 +596,16 @@ end of do-file
 
 . do "${RAW_DATA}/01_12_merge_flow_2020.do"
 
-. * 01_12_merge_flow_2020.do — merge 2020 flow vars from h20f1a (prefix R). Fat files use lowercase + hhidpn.
+. * 01_12_merge_flow_2020.do — merge 2020 flow vars from h20f1a (prefix R). Fat files use lowercase + hhidp
+> n.
 . local scratch "${RAW_DATA}/_merge_scratch.dta"
 
 . use "${CLEANED}/all_data_merged.dta", clear
 
 . preserve
 
-. use hhidpn rr050 rr055 rr063 rr064 rr072 rr073 rr030 rr035 rr045 rq171_1 rq171_2 rq171_3 rr007 rr013 rr024 
-> ///
+. use hhidpn rr050 rr055 rr063 rr064 rr072 rr073 rr030 rr035 rr045 rq171_1 rq171_2 rq171_3 rr007 rr013 rr02
+> 4 ///
 >     rr049 rr061 rr062 rr028 rr029 rq170_1 rq170_2 rq170_3 rr002 using "${HRS_DATA}/h20f1a.dta", clear
 
 . save "`scratch'", replace
@@ -625,5 +663,5 @@ Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_d
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_merge_all_data.log
   log type:  text
- closed on:   9 Feb 2026, 07:11:33
--------------------------------------------------------------------------------------------------------------
+ closed on:  10 Feb 2026, 18:14:42
+-----------------------------------------------------------------------------------------------------------

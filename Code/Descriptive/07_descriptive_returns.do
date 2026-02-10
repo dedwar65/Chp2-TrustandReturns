@@ -505,9 +505,9 @@ foreach yr in 2002 2022 {
     foreach r in 1 2 3 4 5 {
         local v "r`r'_annual_`yr'"
         local use_win 0
-        capture confirm variable r`r'_annual_`yr'_win
+        capture confirm variable r`r'_annual_win_`yr'
         if !_rc {
-            local v "r`r'_annual_`yr'_win"
+            local v "r`r'_annual_win_`yr'"
             local use_win 1
         }
         capture confirm variable `v'

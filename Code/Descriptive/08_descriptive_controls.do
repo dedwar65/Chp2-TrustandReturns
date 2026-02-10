@@ -81,6 +81,7 @@ program define _vlabel, rclass
     if "`v'"=="born_us" return local vlabel "Born in U.S."
     if "`v'"=="race_eth" return local vlabel "Race/ethnicity"
     if "`v'"=="married_2020" return local vlabel "Married"
+    if "`v'"=="inlbrf_2020" return local vlabel "Labor force status"
     if "`v'"=="interest_2020" return local vlabel "Interest"
     if "`v'"=="inflation_2020" return local vlabel "Inflation"
     if "`v'"=="risk_div_2020" return local vlabel "Risk diversification"
@@ -88,6 +89,78 @@ program define _vlabel, rclass
     if "`v'"=="par_loyalty_2020" return local vlabel "Parent loyalty"
     if "`v'"=="population_2020" return local vlabel "Population size"
 end
+
+* ---------------------------------------------------------------------
+* Demographics: general controls + race + employment (2020) -> demographics_general.tex
+* Uses wide analysis_ready_processed.dta: one row per respondent.
+* ---------------------------------------------------------------------
+preserve
+    keep if !missing(age_2020)
+    gen byte female = (gender == 2) if !missing(gender)
+
+    file open fh using "${DESCRIPTIVE}/Tables/demographics_general.tex", write replace
+    file write fh "\begin{table}[htbp]\centering\small" _n ///
+        "\caption{Demographics: general controls (2020)}" _n ///
+        "\label{tab:demographics_general}" _n ///
+        "\begin{tabular}{lrrr}\toprule" _n ///
+        "Variable & N & Mean & SD \\\\ \midrule" _n
+
+    * General controls (2020 sample)
+    foreach v in age_2020 female educ_yrs married_2020 immigrant born_us {
+        capture confirm variable `v'
+        if _rc continue
+        quietly summarize `v'
+        if r(N) == 0 continue
+        local vlab "`v'"
+        if "`v'"=="age_2020" local vlab "Age"
+        if "`v'"=="female" local vlab "Female"
+        if "`v'"=="educ_yrs" local vlab "Years of education"
+        if "`v'"=="married_2020" local vlab "Married"
+        if "`v'"=="immigrant" local vlab "Immigrant"
+        if "`v'"=="born_us" local vlab "Born in U.S."
+        local n_s = string(r(N), "%9.0f")
+        local m_s = string(r(mean), "%9.3f")
+        local s_s = string(r(sd), "%9.3f")
+        file write fh "`vlab' & `n_s' & `m_s' & `s_s' \\\\" _n
+    }
+
+    * Race: one row per category (2020 sample)
+    capture confirm variable race_eth
+    if !_rc {
+        tempfile demog_work
+        save "`demog_work'", replace
+        contract race_eth, freq(n)
+        drop if missing(race_eth)
+        egen long total_n = total(n)
+        gen double pct = n / total_n
+        gen double sd_p = sqrt(pct * (1 - pct))
+        label values race_eth race_eth_lbl
+        decode race_eth, gen(race_lab)
+        forvalues r = 1/`=_N' {
+            local rlab = race_lab[`r']
+            local n_r = string(n[`r'], "%9.0f")
+            local pct_s = string(pct[`r'], "%9.3f")
+            local sd_s = string(sd_p[`r'], "%9.3f")
+            file write fh "Race: `rlab' & `n_r' & `pct_s' & `sd_s' \\\\" _n
+        }
+        use "`demog_work'", clear
+    }
+
+    * Employment: Working (proportion); verify inlbrf_2020 is dummy (1=working)
+    capture confirm variable inlbrf_2020
+    if !_rc {
+        quietly summarize inlbrf_2020
+        local n_s = string(r(N), "%9.0f")
+        local m_s = string(r(mean), "%9.3f")
+        local s_s = string(r(sd), "%9.3f")
+        file write fh "Working (in labor force) & `n_s' & `m_s' & `s_s' \\\\" _n
+    }
+
+    file write fh "\bottomrule" _n ///
+        "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categories mean = proportion (pct).} \\\\" _n ///
+        "\end{tabular}\end{table}" _n
+    file close fh
+restore
 
 * ---------------------------------------------------------------------
 * Summaries: trust, fin lit, IVs
@@ -157,43 +230,103 @@ file write fh "\bottomrule\end{tabular}\end{table}" _n
 file close fh
 restore
 
-* Demographics summary (2020): age (continuous: N, Mean, SD); race/ethnicity (categorical: N, %)
+* Demographics: demographics.tex = general (age, gender, educ, marital, immigrant, born US) + race + employment.
+* demographics_other.tex = other controls – same style as finlit.
 preserve
 
-* Define 2020 sample as respondents with a non-missing 2020 age
-capture confirm variable age_2020
-if !_rc {
-    keep if !missing(age_2020)
+* -----------------------------------------------------------------------
+* demographics.tex: general vars + race + employment, all restricted to 2020 sample
+* 2020 sample defined by nonmissing age_2020.
+* -----------------------------------------------------------------------
+keep if !missing(age_2020)
 
-    quietly summarize age_2020 `wopt', detail
-    file open fh using "${DESCRIPTIVE}/Tables/demographics_controls_summary.tex", write replace
-    file write fh "\begin{table}[htbp]\centering" _n "\caption{Demographics summary (2020)}" _n "\label{tab:demographics_controls_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean/\% & SD \\\\ \midrule" _n
+file open fh using "${DESCRIPTIVE}/Tables/demographics.tex", write replace
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics (2020)}" _n "\label{tab:demographics}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\\ \midrule" _n
+
+foreach v in age_2020 gender educ_yrs married_2020 immigrant born_us {
+    capture confirm variable `v'
+    if _rc continue
+    quietly summarize `v'
+    if r(N) == 0 continue
+    _vlabel `v'
+    local vlab `r(vlabel)'
+    local n_s = string(r(N), "%9.0f")
+    local m_s = string(r(mean), "%9.3f")
+    local s_s = string(r(sd), "%9.3f")
+    file write fh "`vlab' & `n_s' & `m_s' & `s_s' \\\\" _n
+}
+
+* Race: one row per category (2020 sample)
+capture confirm variable race_eth
+if !_rc {
+    tempfile demog_work
+    save "`demog_work'", replace
+    contract race_eth, freq(n)
+    drop if missing(race_eth)
+    egen long total_n = total(n)
+    gen double pct = 100 * n / total_n
+    gen double sd_p = 100 * sqrt((pct/100) * (1 - pct/100))
+    label values race_eth race_eth_lbl
+    decode race_eth, gen(race_lab)
+    forvalues r = 1/`=_N' {
+        local rlab = race_lab[`r']
+        local n_r = string(n[`r'], "%9.0f")
+        local pct_s = string(pct[`r'], "%9.1f")
+        local sd_s = string(sd_p[`r'], "%9.2f")
+        file write fh "Race: `rlab' & `n_r' & `pct_s' & `sd_s' \\\\" _n
+    }
+    use "`demog_work'", clear
+}
+
+* Employment: one row only — Working (proportion); no code labels (2020 sample)
+capture confirm variable inlbrf_2020
+if !_rc {
+    tempfile demog_work
+    save "`demog_work'", replace
+    contract inlbrf_2020, freq(n)
+    drop if missing(inlbrf_2020)
+    egen long total_n = total(n)
+    gen double pct = 100 * n / total_n
+    gen double sd_p = 100 * sqrt((pct/100) * (1 - pct/100))
+    forvalues r = 1/`=_N' {
+        if inlbrf_2020[`r'] != 1 continue
+        local n_r = string(n[`r'], "%9.0f")
+        local pct_s = string(pct[`r'], "%9.1f")
+        local sd_s = string(sd_p[`r'], "%9.2f")
+        file write fh "Working & `n_r' & `pct_s' & `sd_s' \\\\" _n
+        break
+    }
+    use "`demog_work'", clear
+}
+
+file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categories mean = proportion (pct).} \\\\" _n "\end{tabular}\end{table}" _n
+file close fh
+restore
+
+* -----------------------------------------------------------------------
+* demographics_other.tex: other controls – same style as finlit (Variable, N, Mean, SD, p50)
+* -----------------------------------------------------------------------
+file open fh using "${DESCRIPTIVE}/Tables/demographics_other.tex", write replace
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics: other controls (2020)}" _n "\label{tab:demographics_other}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
+
+foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions" "medicare_2020 Medicare" "medicaid_2020 Medicaid" "life_ins_2020 Life insurance" "beq_any_2020 Bequest" "num_divorce_2020 Times divorced" "num_widow_2020 Times widowed" {
+    tokenize `pair'
+    local v "`1'"
+    local vlab "`2'"
+    if "`3'" != "" local vlab "`vlab' `3'"
+    capture confirm variable `v'
+    if _rc continue
+    quietly summarize `v', detail
+    if r(N) == 0 continue
     local n_s = string(r(N), "%9.0f")
     local m_s = string(r(mean), "%9.2f")
     local s_s = string(r(sd), "%9.2f")
-    file write fh "Age & `n_s' & `m_s' & `s_s' \\\\" _n
-
-    * Race/ethnicity distribution within the same 2020 sample
-    capture confirm variable race_eth
-    if !_rc {
-        contract race_eth, freq(n)
-        drop if missing(race_eth)
-        egen long total_n = total(n)
-        gen double pct = 100 * n / total_n
-        label values race_eth race_eth_lbl
-        decode race_eth, gen(race_label)
-        forvalues r = 1/`=_N' {
-            local rlab = race_label[`r']
-            local n_r = string(n[`r'], "%9.0f")
-            local pct_s = string(pct[`r'], "%9.1f")
-            file write fh "Race/ethnicity: `rlab' & `n_r' & `pct_s' & -- \\\\" _n
-        }
-    }
-
-    file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020 sample. Continuous: Mean, SD; categorical: proportion (\%).} \\\\" _n "\end{tabular}\end{table}" _n
-    file close fh
+    local p50_s = string(r(p50), "%9.2f")
+    file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
 }
-restore
+
+file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize 2020. Mean, SD, and median.} \\\\" _n "\end{tabular}\end{table}" _n
+file close fh
 
 * Financial literacy summary (2020): rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversification (HRS 2020)
 preserve
@@ -1265,7 +1398,8 @@ if !_rc {
 display "=== Scatter: trust vs income/returns (2022) ==="
 capture mkdir "${DESCRIPTIVE}/Figures"
 
-* Income measures (final log series)
+* Income vs trust scatter: uses final log series from 04 (deflate -> ln(1+x) -> winsorize p1/p99 on log)
+* Variables: ln_lab_inc_final_2022, ln_tot_inc_final_2022 (see 04_processing_income.do "Final toggle" block)
 foreach v in ln_lab_inc_final_2022 ln_tot_inc_final_2022 {
     capture confirm variable `v'
     if !_rc {
@@ -1279,16 +1413,16 @@ foreach v in ln_lab_inc_final_2022 ln_tot_inc_final_2022 {
 
 * Return measures (regression focus: r1 core, r4 Core+ret., r5 net wealth only)
 foreach v in r1_annual_2022 r4_annual_2022 r5_annual_2022 ///
-            r1_annual_2022_win r4_annual_2022_win r5_annual_2022_win {
+            r1_annual_win_2022 r4_annual_win_2022 r5_annual_win_2022 {
     capture confirm variable `v'
     if !_rc {
         local vlabel "`v'"
         if "`v'"=="r1_annual_2022" local vlabel "Core (2022)"
         if "`v'"=="r4_annual_2022" local vlabel "Core+ret. (2022)"
         if "`v'"=="r5_annual_2022" local vlabel "Net wealth (2022)"
-        if "`v'"=="r1_annual_2022_win" local vlabel "Core (2022, winsorized)"
-        if "`v'"=="r4_annual_2022_win" local vlabel "Core+ret. (2022, winsorized)"
-        if "`v'"=="r5_annual_2022_win" local vlabel "Net wealth (2022, winsorized)"
+        if "`v'"=="r1_annual_win_2022" local vlabel "Core (2022, winsorized)"
+        if "`v'"=="r4_annual_win_2022" local vlabel "Core+ret. (2022, winsorized)"
+        if "`v'"=="r5_annual_win_2022" local vlabel "Net wealth (2022, winsorized)"
         twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_others_2020), ///
             title("`vlabel' vs general trust") ///
             xtitle("General trust (2020)") ytitle("`vlabel'")

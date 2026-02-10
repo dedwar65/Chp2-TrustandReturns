@@ -46,6 +46,20 @@ capture mkdir "${DESCRIPTIVE}/Figures/Robustness"
 capture mkdir "${DESCRIPTIVE}/Tables"
 capture mkdir "${DESCRIPTIVE}/Tables/Robustness"
 
+* ---------------------------------------------------------------------
+* Trust vs age (5-year bins): mean general trust by age bin
+* ---------------------------------------------------------------------
+display "=== Robustness: mean general trust by 5-year age bins ==="
+preserve
+keep hhidpn age_2020 trust_others_2020
+drop if missing(age_2020) | missing(trust_others_2020)
+gen int age_bin = floor(age_2020/5)*5
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(age_bin)
+twoway connected trust_mean age_bin, mcolor(navy) lcolor(navy) msymbol(o) ///
+    title("Mean trust by age (5-year bins)") xtitle("Age bin") ytitle("Mean general trust") ylabel(, angle(0))
+graph export "${DESCRIPTIVE}/Figures/Robustness/trust_mean_by_age_bin.png", replace
+restore
+
 display "=== Robustness: trust vs returns (r1, r4, r5; 5% winsor, 1%/5% trims) ==="
 
 * List of base returns (2022) to analyze

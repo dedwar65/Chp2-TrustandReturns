@@ -33,7 +33,9 @@ if !_rc {
 capture confirm variable rabplace
 if !_rc {
     capture drop immigrant
-    gen byte immigrant = (rabplace ~= 1) if !missing(rabplace)
+    gen byte immigrant = .
+    replace immigrant = 1 if inlist(rabplace,11,13)
+    replace immigrant = 0 if inrange(rabplace,1,10) | rabplace == 12
 }
 * Born in US (rabplace codes 1-10,12)
 capture confirm variable rabplace

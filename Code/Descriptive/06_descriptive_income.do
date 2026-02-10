@@ -390,7 +390,7 @@ forvalues r = 1/`=_N' {
     local max_s = string(max[`r'], "%9.4f")
     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s' & `min_s' & `max_s' \\\\" _n
 }
-file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Log income growth (two-year); summary over person-years.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Two-year log difference by end year; ln(1+income) so zeros included. Labor = earnings+unemployment; total = all components.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 file close fh
 restore
 
@@ -415,16 +415,16 @@ foreach y of local years {
     quietly count if year == `y' & !missing(wealth_total_pct)
     if r(N) < 10 continue
 
-    * --- Labor income: mean+IQR uses real winsorized (level); binscatter uses log ---
+    * --- Labor income: mean + P10-P90 range; binscatter uses log ---
     quietly count if year == `y' & !missing(labor_income_real_win_) & !missing(wealth_total_pct)
     if r(N) >= 10 {
         preserve
         keep if year == `y'
-        collapse (mean) mean_inc = labor_income_real_win_ (p25) p25_inc = labor_income_real_win_ (p75) p75_inc = labor_income_real_win_, by(wealth_total_pct)
-        twoway (rarea p75_inc p25_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_total_pct, lcolor(navy) lwidth(medthick)), ///
+        collapse (mean) mean_inc = labor_income_real_win_ (p10) p10_inc = labor_income_real_win_ (p90) p90_inc = labor_income_real_win_, by(wealth_total_pct)
+        twoway (rarea p90_inc p10_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_total_pct, lcolor(navy) lwidth(medthick)), ///
             xtitle("Wealth total (pct.)") ytitle("Labor income (real, win, $)") ylabel(, format(%9.0fc)) ///
-            title("Mean/IQR: Labor income by wealth (pct.) (`y')") legend(off)
-        graph export "${DESCRIPTIVE}/Figures/labor_income_real_win_iqr_by_wealthpct_`y'.png", replace
+            title("Mean/P10-P90: Labor income by wealth (pct.) (`y')") legend(off)
+        graph export "${DESCRIPTIVE}/Figures/labor_income_real_win_p10p90_by_wealthpct_`y'.png", replace
         restore
     }
     quietly count if year == `y' & !missing(ln_lab_inc_final_) & !missing(wealth_total_pct)

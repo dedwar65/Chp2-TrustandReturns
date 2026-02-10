@@ -1,8 +1,8 @@
--------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/09_robustness_returns_trust.log
   log type:  text
- opened on:   9 Feb 2026, 08:00:42
+ opened on:  10 Feb 2026, 18:31:55
 
 . 
 . use "${PROCESSED}/analysis_ready_processed.dta", clear
@@ -27,6 +27,35 @@
 . capture mkdir "${DESCRIPTIVE}/Tables"
 
 . capture mkdir "${DESCRIPTIVE}/Tables/Robustness"
+
+. 
+. * ---------------------------------------------------------------------
+. * Trust vs age (5-year bins): mean general trust by age bin
+. * ---------------------------------------------------------------------
+. display "=== Robustness: mean general trust by 5-year age bins ==="
+=== Robustness: mean general trust by 5-year age bins ===
+
+. preserve
+
+. keep hhidpn age_2020 trust_others_2020
+
+. drop if missing(age_2020) | missing(trust_others_2020)
+(44,334 observations deleted)
+
+. gen int age_bin = floor(age_2020/5)*5
+
+. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(age_bin)
+
+. twoway connected trust_mean age_bin, mcolor(navy) lcolor(navy) msymbol(o) ///
+>     title("Mean trust by age (5-year bins)") xtitle("Age bin") ytitle("Mean general trust") ylabel(, angl
+> e(0))
+
+. graph export "${DESCRIPTIVE}/Figures/Robustness/trust_mean_by_age_bin.png", replace
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/trust_mean_by_age_bin.png
+    saved as PNG format
+
+. restore
 
 . 
 . display "=== Robustness: trust vs returns (r1, r4, r5; 5% winsor, 1%/5% trims) ==="
@@ -119,12 +148,12 @@
  60.         local p99_s = string(r(p99), "%9.3f")
  61.         local min_s = string(r(min), "%9.3f")
  62.         local max_s = string(r(max), "%9.3f")
- 63.         file write fh "`slabel' & `n_s' & `m_s' & `sd_s' & `p1_s' & `p5_s' & `p50_s' & `p95_s' & `p99_s'
->  & `min_s' & `max_s' \\\\" _n
+ 63.         file write fh "`slabel' & `n_s' & `m_s' & `sd_s' & `p1_s' & `p5_s' & `p50_s' & `p95_s' & `p99_
+> s' & `min_s' & `max_s' \\\\" _n
  64.     }
  65. 
-.     file write fh "\bottomrule" _n "\multicolumn{11}{l}{\footnotesize Based on 2022 observations with nonmi
-> ssing trust and returns.} \\\\" _n "\end{tabular}\end{table}" _n
+.     file write fh "\bottomrule" _n "\multicolumn{11}{l}{\footnotesize Based on 2022 observations with non
+> missing trust and returns.} \\\\" _n "\end{tabular}\end{table}" _n
  66.     file close fh
  67. 
 .     * 5% winsorized scatter
@@ -186,105 +215,96 @@
 (23 real changes made)
 (4 real changes made, 4 to missing)
 (23 real changes made, 23 to missing)
-(file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/Robustness/robust_tabstat_r1_annual_2022.
-    > tex not found)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_w5_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_w5_vs_trust_
+    > 2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t1_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t1_vs_trust_
+    > 2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t5_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t5_vs_trust_
+    > 2022.png saved as PNG format
 (bin=21, start=-1, width=1.1328931)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_hist_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_hist_2022.pn
+    > g saved as PNG format
 (bin=21, start=-1, width=.19440395)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_w5_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_w5_hist_2022
+    > .png saved as PNG format
 (bin=20, start=-1, width=.64565858)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t1_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t1_hist_2022
+    > .png saved as PNG format
 (bin=20, start=-1, width=.20001795)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t5_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t5_hist_2022
+    > .png saved as PNG format
 (45,024 observations deleted)
 (11 real changes made)
 (10 real changes made)
 (4 real changes made, 4 to missing)
 (21 real changes made, 21 to missing)
-(file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/Robustness/robust_tabstat_r4_annual_2022.
-    > tex not found)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_w5_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_w5_vs_trust_
+    > 2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t1_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t1_vs_trust_
+    > 2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t5_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t5_vs_trust_
+    > 2022.png saved as PNG format
 (bin=14, start=-1, width=.25741328)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_hist_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_hist_2022.pn
+    > g saved as PNG format
 (bin=14, start=-.47023289, width=.11710733)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_w5_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_w5_hist_2022
+    > .png saved as PNG format
 (bin=14, start=-.87918703, width=.20807903)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t1_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t1_hist_2022
+    > .png saved as PNG format
 (bin=13, start=-.44938133, width=.12451162)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t5_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t5_hist_2022
+    > .png saved as PNG format
 (44,738 observations deleted)
 (25 real changes made)
 (25 real changes made)
 (8 real changes made, 8 to missing)
 (50 real changes made, 50 to missing)
-(file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Tables/Robustness/robust_tabstat_r5_annual_2022.
-    > tex not found)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_w5_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_w5_vs_trust_
+    > 2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t1_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t1_vs_trust_
+    > 2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t5_vs_trust_20
-    > 22.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t5_vs_trust_
+    > 2022.png saved as PNG format
 (bin=22, start=-.89325416, width=.30754679)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_hist_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_hist_2022.pn
+    > g saved as PNG format
 (bin=22, start=-.40530803, width=.10591143)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_w5_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_w5_hist_2022
+    > .png saved as PNG format
 (bin=22, start=-.70420482, width=.20682917)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t1_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t1_hist_2022
+    > .png saved as PNG format
 (bin=21, start=-.36754447, width=.10886641)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t5_hist_2022.p
-    > ng saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t5_hist_2022
+    > .png saved as PNG format
 
 . 
 . log close
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/09_robustness_returns_trust.log
   log type:  text
- closed on:   9 Feb 2026, 08:00:52
--------------------------------------------------------------------------------------------------------------
+ closed on:  10 Feb 2026, 18:32:06
+-----------------------------------------------------------------------------------------------------------

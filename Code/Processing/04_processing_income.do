@@ -236,10 +236,10 @@ foreach y of local years {
         gen double total_income_real_`y' = total_income_`y' * (`cpi_2021' / `cpi_`y'')
     }
 
-    * Log (positive only)
+    * Log: use ln(1+x) so zeros stay in sample (same overlap as RAND; otherwise labor drops 0-earners)
     capture drop ln_lab_inc_final_`y' ln_tot_inc_final_`y'
-    gen double ln_lab_inc_final_`y' = ln(labor_income_real_`y') if labor_income_real_`y' > 0
-    gen double ln_tot_inc_final_`y' = ln(total_income_real_`y') if total_income_real_`y' > 0
+    gen double ln_lab_inc_final_`y' = ln(1 + labor_income_real_`y') if !missing(labor_income_real_`y')
+    gen double ln_tot_inc_final_`y' = ln(1 + total_income_real_`y') if !missing(total_income_real_`y')
 
     * Winsorize on log values (p1/p99)
     quietly summarize ln_lab_inc_final_`y', detail

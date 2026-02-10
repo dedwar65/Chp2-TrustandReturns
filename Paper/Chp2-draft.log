@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.16)  9 FEB 2026 09:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.16)  10 FEB 2026 09:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -960,70 +960,25 @@ Package hyperref Warning: Ignoring empty anchor on input line 38.
 al/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/local
 /texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
 (./Subfiles/data.tex
-(./Subfiles/../../Code/Descriptive/Tables/income_final_tabstat.tex)
-(./Subfiles/../../Code/Descriptive/Tables/income_growth_tabstat.tex)
-(./Subfiles/../../Code/Descriptive/Tables/income_mean_by_year_real_win.tex)
-(./Subfiles/../../Code/Descriptive/Tables/income_mean_by_agegroup_real_win_2002
-.tex)
-(./Subfiles/../../Code/Descriptive/Tables/income_mean_by_agegroup_real_win_2022
-.tex)
-(./Subfiles/../../Code/Descriptive/Tables/income_mean_by_educgroup_real_win.tex
-)
-<Subfiles/../../Code/Descriptive/Figures/income_over_time.png, id=71, 813.0375p
+<Subfiles/../../Code/Descriptive/Figures/income_over_time.png, id=91, 813.0375p
 t x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/income_over_time.png Graphic file
  (type png)
 <use Subfiles/../../Code/Descriptive/Figures/income_over_time.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/income_over_ti
-me.png  used on input line 18.
+me.png  used on input line 13.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png, id=72, 81
+
+(./Subfiles/../../Code/Descriptive/Tables/income_mean_by_year_real_win.tex)
+(./Subfiles/../../Code/Descriptive/Tables/income_final_tabstat.tex)
+(./Subfiles/../../Code/Descriptive/Tables/income_growth_tabstat.tex)
+<Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png, id=92, 81
 3.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png Graph
 ic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/income_growth_
-over_time.png  used on input line 24.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2002.png, id=73, 81
-3.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2002.png Graph
-ic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2002.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/income_by_ageg
-roup_2002.png  used on input line 29.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png, id=74, 81
-3.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png Graph
-ic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/income_by_ageg
-roup_2022.png  used on input line 34.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2002.png, id=75, 81
-3.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2002.png Graph
-ic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2002.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/labinc_by_age_
-educ_2002.png  used on input line 39.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png, id=76, 81
-3.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png Graph
-ic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/labinc_by_age_
-educ_2022.png  used on input line 44.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png, id=77, 81
-3.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png Graph
-ic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/totinc_by_age_
-educ_2022.png  used on input line 49.
+over_time.png  used on input line 31.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
 
@@ -1031,588 +986,538 @@ educ_2022.png  used on input line 49.
 
 [3]
 
-[4 <./Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png> <./S
-ubfiles/../../Code/Descriptive/Figures/income_by_agegroup_2002.png>]
-
-[5 <./Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png> <./S
-ubfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2002.png>]
-
-[6 <./Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png> <./S
-ubfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png>]
-
-[7]
-
-[8]
-
-[9]
-
-[10]
-<Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png, id=133
-, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png Gr
-aphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_me
-dian_by_year.png  used on input line 61.
+[4]
+(./Subfiles/../../Code/Descriptive/Tables/income_mean_by_agegroup_real_win_2022
+.tex)
+<Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png, id=113, 8
+13.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png Graph
+ic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/income_by_ageg
+roup_2022.png  used on input line 43.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png, id=134
+
+
+[5 <./Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png> <./S
+ubfiles/../../Code/Descriptive/Figures/income_by_agegroup_2022.png>]
+
+[6]
+(./Subfiles/../../Code/Descriptive/Tables/income_mean_by_educgroup_real_win.tex
+)
+<Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png, id=126, 8
+13.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png Graph
+ic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/labinc_by_age_
+educ_2022.png  used on input line 54.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png, id=127, 8
+13.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png Graph
+ic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/totinc_by_age_
+educ_2022.png  used on input line 61.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[7 <./Subfiles/../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png, id=138
 , 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png Gr
 aphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_me
-dian_by_year.png  used on input line 66.
+dian_by_year.png  used on input line 78.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png, id=13
+
+
+[8 <./Subfiles/../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png, id=145
+, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png Gr
+aphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_me
+dian_by_year.png  used on input line 87.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[9 <./Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png> <
+./Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png>]
+<Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png, id=153
+, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png Gr
+aphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_res_mean_me
+dian_by_year.png  used on input line 96.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png, id=154,
+ 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png Gra
+phic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_re_mean_med
+ian_by_year.png  used on input line 106.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png, id=15
 5, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png G
 raphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_m
-edian_by_year.png  used on input line 71.
+edian_by_year.png  used on input line 113.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png, id=136
+
+
+[10 <./Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png> 
+<./Subfiles/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png>]
+<Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png, id=162
 , 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png Gr
 aphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_me
-dian_by_year.png  used on input line 76.
+dian_by_year.png  used on input line 120.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png, id=13
-7, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png G
-raphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/flows_by_asset
-_mean_by_year.png  used on input line 81.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[11 <./Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png>
+ <./Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png>]
 <Subfiles/../../Code/Descriptive/Figures/interest_income_mean_by_year.png, id=1
-38, 813.0375pt x 487.8225pt>
+70, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/interest_income_mean_by_year.png 
 Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/interest_income_mean_by_year.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/interest_incom
-e_mean_by_year.png  used on input line 86.
+e_mean_by_year.png  used on input line 134.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png, id=
-139, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png
- Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png>
 
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_
-components_2022.png  used on input line 92.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png, id=140, 81
-3.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png Graphi
-c file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_
-agg_2022.png  used on input line 97.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png, id=141, 813.03
-75pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png Graphic fi
-le (type png)
-<use Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_income_
-2022.png  used on input line 102.
+
+[12 <./Subfiles/../../Code/Descriptive/Figures/interest_income_mean_by_year.png
+>]
+<Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png, id=17
+9, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png G
+raphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/flows_by_asset
+_mean_by_year.png  used on input line 147.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 <Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.png, id
-=142, 813.0375pt x 487.8225pt>
+=180, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.pn
 g Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.png
 >
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/wealth_mean_by
-_year_components.png  used on input line 107.
+_year_components.png  used on input line 158.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png, id=143, 8
+
+
+[13 <./Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png>
+]
+<Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png, id=188, 8
 13.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png Graph
 ic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/wealth_mean_by
-_year_agg.png  used on input line 112.
+_year_agg.png  used on input line 167.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[14 <./Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.p
+ng> <./Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png>]
+<Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png, id=195, 813.03
+75pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png Graphic fi
+le (type png)
+<use Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_income_
+2022.png  used on input line 176.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png, id=
+196, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png
+ Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png>
+
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_
+components_2022.png  used on input line 185.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[15 <./Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png> <./Subfi
+les/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png, id=203, 81
+3.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png Graphi
+c file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_
+agg_2022.png  used on input line 194.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
 (./Subfiles/../../Code/Descriptive/Tables/mean_share_by_asset_class_year.tex)
-<Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png, id=
-144, 766.865pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png
- Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png>
+<Subfiles/../../Code/Descriptive/Figures/mean_share_by_asset_class_year.png, id
+=204, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/mean_share_by_asset_class_year.pn
+g Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/mean_share_by_asset_class_year.png
+>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/mean_share_by_
+asset_class_year.png  used on input line 208.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_by_
-wealth_pct_2022.png  used on input line 120.
-(pdftex.def)             Requested size: 344.005pt x 218.83328pt.
+
+[16 <./Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png>]
+
+[17]
+
+[18 <./Subfiles/../../Code/Descriptive/Figures/mean_share_by_asset_class_year.p
+ng>]
 <Subfiles/../../Code/Descriptive/Figures/share_core_by_income_pct_2022.png, id=
-145, 766.865pt x 487.8225pt>
+220, 766.865pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_core_by_income_pct_2022.png
  Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_core_by_income_pct_2022.png>
 
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_by_
-income_pct_2022.png  used on input line 125.
+income_pct_2022.png  used on input line 216.
 (pdftex.def)             Requested size: 344.005pt x 218.83328pt.
-<Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022.png,
- id=146, 766.865pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022
-.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022.
-png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_ira
-_by_wealth_pct_2022.png  used on input line 130.
+<Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png, id=
+221, 766.865pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png
+ Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png>
+
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_by_
+wealth_pct_2022.png  used on input line 225.
 (pdftex.def)             Requested size: 344.005pt x 218.83328pt.
+
+
+[19
+
+ <./Subfiles/../../Code/Descriptive/Figures/share_core_by_income_pct_2022.png>]
 <Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_income_pct_2022.png,
- id=147, 766.865pt x 487.8225pt>
+ id=228, 766.865pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_income_pct_2022
 .png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_income_pct_2022.
 png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_ira
-_by_income_pct_2022.png  used on input line 135.
+_by_income_pct_2022.png  used on input line 234.
 (pdftex.def)             Requested size: 344.005pt x 218.83328pt.
-<Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2022.
-png, id=148, 766.865pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_
-2022.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2
-022.png>
+
+
+[20 <./Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.pn
+g>]
+<Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022.png,
+ id=234, 766.865pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022
+.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022.
+png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_ira
-_res_by_wealth_pct_2022.png  used on input line 140.
+_by_wealth_pct_2022.png  used on input line 241.
 (pdftex.def)             Requested size: 344.005pt x 218.83328pt.
 <Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_income_pct_2022.
-png, id=149, 766.865pt x 487.8225pt>
+png, id=235, 766.865pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_income_pct_
 2022.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_income_pct_2
 022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_ira
-_res_by_income_pct_2022.png  used on input line 145.
+_res_by_income_pct_2022.png  used on input line 250.
 (pdftex.def)             Requested size: 344.005pt x 218.83328pt.
-<Subfiles/../../Code/Descriptive/Figures/share_concentration_2022.png, id=150, 
+
+
+[21 <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_income_pct_202
+2.png> <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_
+2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2022.
+png, id=242, 766.865pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_
+2022.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2
+022.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_core_ira
+_res_by_wealth_pct_2022.png  used on input line 257.
+(pdftex.def)             Requested size: 344.005pt x 218.83328pt.
+
+
+[22 <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_income_pct
+_2022.png> <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wea
+lth_pct_2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/share_concentration_2022.png, id=249, 
 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_concentration_2022.png Grap
 hic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_concentration_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_concentr
-ation_2022.png  used on input line 150.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-
-
-[11
-
- <./Subfiles/../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png> <./
-Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png>]
-
-[12 <./Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png>
- <./Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png>]
-
-[13 <./Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png>
- <./Subfiles/../../Code/Descriptive/Figures/interest_income_mean_by_year.png>]
-
-[14 <./Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.pn
-g> <./Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png>]
-
-[15 <./Subfiles/../../Code/Descriptive/Figures/lorenz_income_2022.png> <./Subfi
-les/../../Code/Descriptive/Figures/wealth_mean_by_year_components.png>]
-
-[16 <./Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png> <./
-Subfiles/../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png>]
-
-[17 <./Subfiles/../../Code/Descriptive/Figures/share_core_by_income_pct_2022.pn
-g> <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022
-.png>]
-
-[18 <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_by_income_pct_202
-2.png> <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_
-pct_2022.png>]
-
-[19 <./Subfiles/../../Code/Descriptive/Figures/share_core_ira_res_by_income_pct
-_2022.png> <./Subfiles/../../Code/Descriptive/Figures/share_concentration_2022.
-png>]
-<Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png, id=208, 
-813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png Grap
-hic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/returns_mean_b
-y_year_agg.png  used on input line 160.
+ation_2022.png  used on input line 268.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 <Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_components.png, i
-d=209, 813.0375pt x 487.8225pt>
+d=250, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_components.p
 ng Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_components.pn
 g>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/returns_mean_b
-y_year_components.png  used on input line 165.
+y_year_components.png  used on input line 291.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/returns_histogram_agg_2022.png, id=210
+
+
+[23 <./Subfiles/../../Code/Descriptive/Figures/share_concentration_2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png, id=256, 
+813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png Grap
+hic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/returns_mean_b
+y_year_agg.png  used on input line 298.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/returns_histogram_agg_2022.png, id=257
 , 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/returns_histogram_agg_2022.png Gr
 aphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/returns_histogram_agg_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/returns_histog
-ram_agg_2022.png  used on input line 170.
+ram_agg_2022.png  used on input line 308.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[24 <./Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_components.
+png> <./Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png>]
 <Subfiles/../../Code/Descriptive/Figures/returns_histogram_components_2022.png,
- id=211, 813.0375pt x 487.8225pt>
+ id=264, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/returns_histogram_components_2022
 .png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/returns_histogram_components_2022.
 png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/returns_histog
-ram_components_2022.png  used on input line 175.
+ram_components_2022.png  used on input line 317.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
 
-[20]
-
-[21 <./Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_agg.png> <.
-/Subfiles/../../Code/Descriptive/Figures/returns_mean_by_year_components.png>]
-
-[22 <./Subfiles/../../Code/Descriptive/Figures/returns_histogram_agg_2022.png> 
+[25 <./Subfiles/../../Code/Descriptive/Figures/returns_histogram_agg_2022.png> 
 <./Subfiles/../../Code/Descriptive/Figures/returns_histogram_components_2022.pn
 g>]
-<Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_iqr_by_wealthpct
-_2022.png, id=229, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_iqr_by_weal
-thpct_2022.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_iqr_by_wealt
-hpct_2022.png>
+<Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_p10p90_by_wealth
+pct_2022.png, id=272, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_p10p90_by_w
+ealthpct_2022.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_p10p90_by_we
+althpct_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/labor_income_r
-eal_win_iqr_by_wealthpct_2022.png  used on input line 186.
+eal_win_p10p90_by_wealthpct_2022.png  used on input line 328.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 <Subfiles/../../Code/Descriptive/Figures/log_labor_income_binscatter_2022.png, 
-id=230, 813.0375pt x 487.8225pt>
+id=273, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/log_labor_income_binscatter_2022.
 png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/log_labor_income_binscatter_2022.p
 ng>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/log_labor_inco
-me_binscatter_2022.png  used on input line 191.
+me_binscatter_2022.png  used on input line 337.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[26 <./Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_p10p90_by_
+wealthpct_2022.png>]
 <Subfiles/../../Code/Descriptive/Figures/total_income_real_win_iqr_by_wealthpct
-_2002.png, id=231, 813.0375pt x 487.8225pt>
+_2022.png, id=279, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/total_income_real_win_iqr_by_weal
-thpct_2002.png Graphic file (type png)
+thpct_2022.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/total_income_real_win_iqr_by_wealt
-hpct_2002.png>
+hpct_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/total_income_r
-eal_win_iqr_by_wealthpct_2002.png  used on input line 196.
+eal_win_iqr_by_wealthpct_2022.png  used on input line 346.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/log_total_income_binscatter_2002.png, 
-id=232, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/log_total_income_binscatter_2002.
+<Subfiles/../../Code/Descriptive/Figures/log_total_income_binscatter_2022.png, 
+id=280, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/log_total_income_binscatter_2022.
 png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/log_total_income_binscatter_2002.p
+<use Subfiles/../../Code/Descriptive/Figures/log_total_income_binscatter_2022.p
 ng>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/log_total_inco
-me_binscatter_2002.png  used on input line 201.
+me_binscatter_2022.png  used on input line 353.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
 
-[23 <./Subfiles/../../Code/Descriptive/Figures/labor_income_real_win_iqr_by_wea
-lthpct_2022.png> <./Subfiles/../../Code/Descriptive/Figures/log_labor_income_bi
-nscatter_2022.png>]
-
-[24 <./Subfiles/../../Code/Descriptive/Figures/total_income_real_win_iqr_by_wea
-lthpct_2002.png> <./Subfiles/../../Code/Descriptive/Figures/log_total_income_bi
-nscatter_2002.png>]
-<Subfiles/../../Code/Descriptive/Figures/core_return_binscatter_2022.png, id=24
-5, 813.0375pt x 487.8225pt>
+[27 <./Subfiles/../../Code/Descriptive/Figures/log_labor_income_binscatter_2022
+.png> <./Subfiles/../../Code/Descriptive/Figures/total_income_real_win_iqr_by_w
+ealthpct_2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/core_return_binscatter_2022.png, id=28
+7, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/core_return_binscatter_2022.png G
 raphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/core_return_binscatter_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/core_return_bi
-nscatter_2022.png  used on input line 213.
+nscatter_2022.png  used on input line 365.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/ret_return_binscatter_2022.png, id=246
+<Subfiles/../../Code/Descriptive/Figures/ret_return_binscatter_2022.png, id=288
 , 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/ret_return_binscatter_2022.png Gr
 aphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/ret_return_binscatter_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/ret_return_bin
-scatter_2022.png  used on input line 218.
+scatter_2022.png  used on input line 372.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/res_return_binscatter_2022.png, id=247
+
+
+[28 <./Subfiles/../../Code/Descriptive/Figures/log_total_income_binscatter_2022
+.png> <./Subfiles/../../Code/Descriptive/Figures/core_return_binscatter_2022.pn
+g>]
+<Subfiles/../../Code/Descriptive/Figures/res_return_binscatter_2022.png, id=296
 , 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/res_return_binscatter_2022.png Gr
 aphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/res_return_binscatter_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/res_return_bin
-scatter_2022.png  used on input line 223.
+scatter_2022.png  used on input line 379.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 <Subfiles/../../Code/Descriptive/Figures/coreira_return_binscatter_2022.png, id
-=248, 813.0375pt x 487.8225pt>
+=297, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/coreira_return_binscatter_2022.pn
 g Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/coreira_return_binscatter_2022.png
 >
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/coreira_return
-_binscatter_2022.png  used on input line 228.
+_binscatter_2022.png  used on input line 388.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[29 <./Subfiles/../../Code/Descriptive/Figures/ret_return_binscatter_2022.png> 
+<./Subfiles/../../Code/Descriptive/Figures/res_return_binscatter_2022.png>]
 <Subfiles/../../Code/Descriptive/Figures/netwealth_return_binscatter_2022.png, 
-id=249, 813.0375pt x 487.8225pt>
+id=304, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/netwealth_return_binscatter_2022.
 png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/netwealth_return_binscatter_2022.p
 ng>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/netwealth_retu
-rn_binscatter_2022.png  used on input line 233.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/core_return_iqr_by_wealthpct_2022.png,
- id=250, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/core_return_iqr_by_wealthpct_2022
-.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/core_return_iqr_by_wealthpct_2022.
-png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/core_return_iq
-r_by_wealthpct_2022.png  used on input line 239.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/ret_return_iqr_by_wealthpct_2022.png, 
-id=251, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/ret_return_iqr_by_wealthpct_2022.
-png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/ret_return_iqr_by_wealthpct_2022.p
-ng>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/ret_return_iqr
-_by_wealthpct_2022.png  used on input line 244.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/res_return_iqr_by_wealthpct_2022.png, 
-id=252, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/res_return_iqr_by_wealthpct_2022.
-png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/res_return_iqr_by_wealthpct_2022.p
-ng>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/res_return_iqr
-_by_wealthpct_2022.png  used on input line 249.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/coreira_return_iqr_by_wealthpct_2022.p
-ng, id=253, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/coreira_return_iqr_by_wealthpct_2
-022.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/coreira_return_iqr_by_wealthpct_20
-22.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/coreira_return
-_iqr_by_wealthpct_2022.png  used on input line 254.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/netwealth_return_iqr_by_wealthpct_2022
-.png, id=254, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/netwealth_return_iqr_by_wealthpct
-_2022.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/netwealth_return_iqr_by_wealthpct_
-2022.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/netwealth_retu
-rn_iqr_by_wealthpct_2022.png  used on input line 259.
+rn_binscatter_2022.png  used on input line 397.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
 
-[25 <./Subfiles/../../Code/Descriptive/Figures/core_return_binscatter_2022.png>
- <./Subfiles/../../Code/Descriptive/Figures/ret_return_binscatter_2022.png>]
-
-[26 <./Subfiles/../../Code/Descriptive/Figures/res_return_binscatter_2022.png> 
-<./Subfiles/../../Code/Descriptive/Figures/coreira_return_binscatter_2022.png>]
-
-
-[27 <./Subfiles/../../Code/Descriptive/Figures/netwealth_return_binscatter_2022
-.png> <./Subfiles/../../Code/Descriptive/Figures/core_return_iqr_by_wealthpct_2
-022.png>]
-
-[28 <./Subfiles/../../Code/Descriptive/Figures/ret_return_iqr_by_wealthpct_2022
-.png> <./Subfiles/../../Code/Descriptive/Figures/res_return_iqr_by_wealthpct_20
-22.png>]
-
-[29 <./Subfiles/../../Code/Descriptive/Figures/coreira_return_iqr_by_wealthpct_
-2022.png> <./Subfiles/../../Code/Descriptive/Figures/netwealth_return_iqr_by_we
-althpct_2022.png>] (./Subfiles/../../Code/Descriptive/Tables/trust_corr.tex)
+[30 <./Subfiles/../../Code/Descriptive/Figures/coreira_return_binscatter_2022.p
+ng> <./Subfiles/../../Code/Descriptive/Figures/netwealth_return_binscatter_2022
+.png>] (./Subfiles/../../Code/Descriptive/Tables/trust_corr.tex)
 (./Subfiles/../../Code/Descriptive/Tables/trust_pca_loadings.tex)
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_others_2020.png
-, id=286, 813.0375pt x 487.8225pt>
+, id=312, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_others_202
 0.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_others_2020
 .png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_others_2020.png  used on input line 273.
+race_eth_others_2020.png  used on input line 420.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_security
-_2020.png, id=287, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_sec
-urity_2020.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_secu
-rity_2020.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_social_security_2020.png  used on input line 278.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2020.p
-ng, id=288, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2
-020.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_20
-20.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_medicare_2020.png  used on input line 283.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.png,
- id=289, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020
-.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.
-png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_banks_2020.png  used on input line 288.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2020.p
-ng, id=290, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2
-020.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_20
-20.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_advisors_2020.png  used on input line 293.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_funds_20
-20.png, id=291, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fun
-ds_2020.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fund
-s_2020.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_mutual_funds_2020.png  used on input line 298.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2020.
-png, id=292, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_
-2020.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2
-020.png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_insurance_2020.png  used on input line 303.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.png,
- id=293, 813.0375pt x 487.8225pt>
-File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020
-.png Graphic file (type png)
-<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.
-png>
-Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
-race_eth_media_2020.png  used on input line 308.
-(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[31]
+
+[32 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_others_20
+20.png>]
 <Subfiles/../../Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_2022.pn
-g, id=294, 813.0375pt x 487.8225pt>
+g, id=327, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_20
 22.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_202
 2.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/ln_lab_inc_fin
-al_2022_vs_trust_2022.png  used on input line 315.
+al_2022_vs_trust_2022.png  used on input line 431.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 <Subfiles/../../Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_trust_2022.pn
-g, id=295, 813.0375pt x 487.8225pt>
+g, id=328, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_trust_20
 22.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_trust_202
 2.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/ln_tot_inc_fin
-al_2022_vs_trust_2022.png  used on input line 320.
+al_2022_vs_trust_2022.png  used on input line 438.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/r1_annual_2022_vs_trust_2022.png, id=2
-96, 813.0375pt x 487.8225pt>
+
+
+[33 <./Subfiles/../../Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_2
+022.png> <./Subfiles/../../Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_tr
+ust_2022.png>]
+<Subfiles/../../Code/Descriptive/Figures/r1_annual_2022_vs_trust_2022.png, id=3
+35, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/r1_annual_2022_vs_trust_2022.png 
 Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/r1_annual_2022_vs_trust_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/r1_annual_2022
-_vs_trust_2022.png  used on input line 328.
+_vs_trust_2022.png  used on input line 449.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
-<Subfiles/../../Code/Descriptive/Figures/r4_annual_2022_vs_trust_2022.png, id=2
-97, 813.0375pt x 487.8225pt>
+<Subfiles/../../Code/Descriptive/Figures/r4_annual_2022_vs_trust_2022.png, id=3
+36, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/r4_annual_2022_vs_trust_2022.png 
 Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/r4_annual_2022_vs_trust_2022.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/r4_annual_2022
-_vs_trust_2022.png  used on input line 333.
+_vs_trust_2022.png  used on input line 456.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 <Subfiles/../../Code/Descriptive/Figures/r5_annual_2022_win_vs_trust_2022.png, 
-id=298, 813.0375pt x 487.8225pt>
+id=337, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/r5_annual_2022_win_vs_trust_2022.
 png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/r5_annual_2022_win_vs_trust_2022.p
 ng>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/r5_annual_2022
-_win_vs_trust_2022.png  used on input line 338.
+_win_vs_trust_2022.png  used on input line 463.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
 
-[30]
-
-[31 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_others_20
-20.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_socia
-l_security_2020.png>]
-
-[32 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_
-2020.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_ban
-ks_2020.png>]
-
-[33 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_
-2020.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mut
-ual_funds_2020.png>]
-
-[34 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance
-_2020.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_me
-dia_2020.png>]
-
-[35 <./Subfiles/../../Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_2
-022.png> <./Subfiles/../../Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_tr
-ust_2022.png>]
-
-[36 <./Subfiles/../../Code/Descriptive/Figures/r1_annual_2022_vs_trust_2022.png
+[34 <./Subfiles/../../Code/Descriptive/Figures/r1_annual_2022_vs_trust_2022.png
 > <./Subfiles/../../Code/Descriptive/Figures/r4_annual_2022_vs_trust_2022.png>]
-(./Subfiles/../../Code/Descriptive/Tables/demographics_controls_summary.tex)
-(./Subfiles/../../Code/Descriptive/Tables/trust_controls_corr.tex)
+(./Subfiles/../../Code/Descriptive/Tables/demographics_general.tex)
+(./Subfiles/../../Code/Descriptive/Tables/demographics_other.tex)
+
+[35 <./Subfiles/../../Code/Descriptive/Figures/r5_annual_2022_win_vs_trust_2022
+.png>]
+
+[36]
+
+[37] (./Subfiles/../../Code/Descriptive/Tables/trust_controls_corr.tex)
 <Subfiles/../../Code/Descriptive/Figures/depression_vs_trust_binscatter.png, id
-=344, 813.0375pt x 487.8225pt>
+=360, 813.0375pt x 487.8225pt>
 File: Subfiles/../../Code/Descriptive/Figures/depression_vs_trust_binscatter.pn
 g Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/depression_vs_trust_binscatter.png
 >
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/depression_vs_
-trust_binscatter.png  used on input line 352.
+trust_binscatter.png  used on input line 485.
 (pdftex.def)             Requested size: 344.005pt x 206.40253pt.
 
 
-[37 <./Subfiles/../../Code/Descriptive/Figures/r5_annual_2022_win_vs_trust_2022
-.png>]
+[38
 
-[38]
+] (./Subfiles/../../Code/Descriptive/Tables/finlit_summary.tex)
 
 [39 <./Subfiles/../../Code/Descriptive/Figures/depression_vs_trust_binscatter.p
-ng>] (./Subfiles/../../Code/Descriptive/Tables/finlit_summary.tex)
-(./Subfiles/../../Code/Descriptive/Tables/finlit_trust_corr.tex)
+ng>] (./Subfiles/../../Code/Descriptive/Tables/finlit_trust_corr.tex)
 (./Subfiles/../../Code/Descriptive/Tables/iv_trust_corr.tex)
-(./Subfiles/../../Code/Descriptive/Tables/region_group_counts_by_year.tex)
+
+[40] (./Subfiles/../../Code/Descriptive/Tables/region_group_counts_by_year.tex)
 (./Subfiles/../../Code/Descriptive/Tables/bin_counts_regionpop_2020.tex
 
 LaTeX Warning: Float too large for page by 100.66501pt on input line 32.
 
-) (./Subfiles/../../Code/Descriptive/Tables/bin_counts_regionpop3_2020.tex)
+)
+
+[41]
+
+[42] (./Subfiles/../../Code/Descriptive/Tables/bin_counts_regionpop3_2020.tex)
 (./Subfiles/../../Code/Descriptive/Tables/trust_mean_by_region_2020.tex)
 (./Subfiles/../../Code/Descriptive/Tables/trust_mean_by_population_2020.tex)
 (./Subfiles/../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex)
 (./Subfiles/../../Code/Descriptive/Tables/trust_mean_by_regionpop3_2020.tex))
-(./Subfiles/results.tex
-
-[40
-
-]
-
-[41]
-
-[42]
 
 [43]
 
@@ -1620,52 +1525,134 @@ LaTeX Warning: Float too large for page by 100.66501pt on input line 32.
 
 [45]
 
-[46])
-
-[47
-
-]
-
 LaTeX Warning: Empty bibliography on input line 59.
 
+(./Subfiles/appendix.tex
+<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_security
+_2020.png, id=407, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_sec
+urity_2020.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_secu
+rity_2020.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
+race_eth_social_security_2020.png  used on input line 6.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2020.p
+ng, id=408, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2
+020.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_20
+20.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
+race_eth_medicare_2020.png  used on input line 14.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.png,
+ id=409, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020
+.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.
+png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
+race_eth_banks_2020.png  used on input line 21.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[46
+
+
+ <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_secur
+ity_2020.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth
+_medicare_2020.png>]
+<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2020.p
+ng, id=416, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2
+020.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_20
+20.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
+race_eth_advisors_2020.png  used on input line 28.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_funds_20
+20.png, id=417, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fun
+ds_2020.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fund
+s_2020.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
+race_eth_mutual_funds_2020.png  used on input line 35.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[47 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_202
+0.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_adviso
+rs_2020.png>]
+<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2020.
+png, id=424, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_
+2020.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2
+020.png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
+race_eth_insurance_2020.png  used on input line 42.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+<Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.png,
+ id=425, 813.0375pt x 487.8225pt>
+File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020
+.png Graphic file (type png)
+<use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.
+png>
+Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
+race_eth_media_2020.png  used on input line 49.
+(pdftex.def)             Requested size: 344.005pt x 206.40253pt.
+
+
+[48 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fu
+nds_2020.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth
+_insurance_2020.png>])
 
 Package caption Warning: Unused \captionsetup[sub] on input line 47.
 See the caption package documentation for explanation.
 
-(./Chp2-draft.aux)
+
+
+[49 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_202
+0.png>] (./Chp2-draft.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-07-11>
  ***********
 Package rerunfilecheck Info: File `Chp2-draft.out' has not changed.
-(rerunfilecheck)             Checksum: 9C2E9CFCFE7B9EF15E9270924A95C45C;1845.
+(rerunfilecheck)             Checksum: 65C57CDA3AE04591AAD52925374E4014;2810.
 Package logreq Info: Writing requests to 'Chp2-draft.run.xml'.
 \openout1 = `Chp2-draft.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 25945 strings out of 467816
- 506761 string characters out of 5432252
- 1360651 words of memory out of 5000000
- 53947 multiletter control sequences out of 15000+600000
- 643852 words of font info for 85 fonts, out of 8000000 for 9000
+ 25919 strings out of 467816
+ 503670 string characters out of 5432252
+ 1347669 words of memory out of 5000000
+ 53918 multiletter control sequences out of 15000+600000
+ 645306 words of font info for 87 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  80i,11n,82p,1907b,854s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb>
-</usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></
-usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx0900.pfb></us
-r/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/
-local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/lo
-cal/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/loca
-l/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0600.pfb></usr/local/
-texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/te
-xlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb></usr/local/texl
-ive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texliv
-e/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb>
-Output written on Chp2-draft.pdf (47 pages, 4544277 bytes).
+</usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
+usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></us
+r/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx0900.pfb></usr/
+local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/lo
+cal/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/loca
+l/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/
+texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0600.pfb></usr/local/te
+xlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texl
+ive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texliv
+e/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb></usr/local/texlive/
+2024/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/20
+24/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2024
+/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb>
+Output written on Chp2-draft.pdf (49 pages, 3869903 bytes).
 PDF statistics:
- 493 PDF objects out of 1000 (max. 8388607)
- 359 compressed objects within 4 object streams
- 140 named destinations out of 1000 (max. 500000)
- 398 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 540 PDF objects out of 1000 (max. 8388607)
+ 401 compressed objects within 5 object streams
+ 147 named destinations out of 1000 (max. 500000)
+ 418 words of extra memory for PDF output out of 10000 (max. 10000000)
 

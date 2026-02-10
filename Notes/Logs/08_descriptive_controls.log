@@ -1,8 +1,8 @@
--------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_descriptive_controls.log
   log type:  text
- opened on:   9 Feb 2026, 09:19:51
+ opened on:  10 Feb 2026, 18:25:21
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -32,8 +32,8 @@
 >     4 "50,000 to 100,000" 5 "100,000 to 1 million" 6 "Greater than 1 million" ///
 >     8 "DK/NA" 9 "Refused", replace
 
-. capture label define pop3_lbl 1 "Small town (<10k)" 2 "Small/med city (10k-100k)" 3 "Large metro (100k+)", 
-> replace
+. capture label define pop3_lbl 1 "Small town (<10k)" 2 "Small/med city (10k-100k)" 3 "Large metro (100k+)"
+> , replace
 
 . capture label define race_eth_lbl 1 "White (NH)" 2 "Black (NH)" 3 "Hispanic" 4 "Other (NH)", replace
 
@@ -73,13 +73,104 @@
  23.     if "`v'"=="born_us" return local vlabel "Born in U.S."
  24.     if "`v'"=="race_eth" return local vlabel "Race/ethnicity"
  25.     if "`v'"=="married_2020" return local vlabel "Married"
- 26.     if "`v'"=="interest_2020" return local vlabel "Interest"
- 27.     if "`v'"=="inflation_2020" return local vlabel "Inflation"
- 28.     if "`v'"=="risk_div_2020" return local vlabel "Risk diversification"
- 29.     if "`v'"=="par_citizen_2020" return local vlabel "Parent citizenship"
- 30.     if "`v'"=="par_loyalty_2020" return local vlabel "Parent loyalty"
- 31.     if "`v'"=="population_2020" return local vlabel "Population size"
- 32. end
+ 26.     if "`v'"=="inlbrf_2020" return local vlabel "Labor force status"
+ 27.     if "`v'"=="interest_2020" return local vlabel "Interest"
+ 28.     if "`v'"=="inflation_2020" return local vlabel "Inflation"
+ 29.     if "`v'"=="risk_div_2020" return local vlabel "Risk diversification"
+ 30.     if "`v'"=="par_citizen_2020" return local vlabel "Parent citizenship"
+ 31.     if "`v'"=="par_loyalty_2020" return local vlabel "Parent loyalty"
+ 32.     if "`v'"=="population_2020" return local vlabel "Population size"
+ 33. end
+
+. 
+. * ---------------------------------------------------------------------
+. * Demographics: general controls + race + employment (2020) -> demographics_general.tex
+. * Uses wide analysis_ready_processed.dta: one row per respondent.
+. * ---------------------------------------------------------------------
+. preserve
+
+.     keep if !missing(age_2020)
+(29,511 observations deleted)
+
+.     gen byte female = (gender == 2) if !missing(gender)
+
+. 
+.     file open fh using "${DESCRIPTIVE}/Tables/demographics_general.tex", write replace
+
+.     file write fh "\begin{table}[htbp]\centering\small" _n ///
+>         "\caption{Demographics: general controls (2020)}" _n ///
+>         "\label{tab:demographics_general}" _n ///
+>         "\begin{tabular}{lrrr}\toprule" _n ///
+>         "Variable & N & Mean & SD \\\\ \midrule" _n
+
+. 
+.     * General controls (2020 sample)
+.     foreach v in age_2020 female educ_yrs married_2020 immigrant born_us {
+  2.         capture confirm variable `v'
+  3.         if _rc continue
+  4.         quietly summarize `v'
+  5.         if r(N) == 0 continue
+  6.         local vlab "`v'"
+  7.         if "`v'"=="age_2020" local vlab "Age"
+  8.         if "`v'"=="female" local vlab "Female"
+  9.         if "`v'"=="educ_yrs" local vlab "Years of education"
+ 10.         if "`v'"=="married_2020" local vlab "Married"
+ 11.         if "`v'"=="immigrant" local vlab "Immigrant"
+ 12.         if "`v'"=="born_us" local vlab "Born in U.S."
+ 13.         local n_s = string(r(N), "%9.0f")
+ 14.         local m_s = string(r(mean), "%9.3f")
+ 15.         local s_s = string(r(sd), "%9.3f")
+ 16.         file write fh "`vlab' & `n_s' & `m_s' & `s_s' \\\\" _n
+ 17.     }
+
+. 
+.     * Race: one row per category (2020 sample)
+.     capture confirm variable race_eth
+
+.     if !_rc {
+.         tempfile demog_work
+.         save "`demog_work'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000003 not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000003 saved as .dta format
+.         contract race_eth, freq(n)
+.         drop if missing(race_eth)
+(1 observation deleted)
+.         egen long total_n = total(n)
+.         gen double pct = n / total_n
+.         gen double sd_p = sqrt(pct * (1 - pct))
+.         label values race_eth race_eth_lbl
+.         decode race_eth, gen(race_lab)
+.         forvalues r = 1/`=_N' {
+  2.             local rlab = race_lab[`r']
+  3.             local n_r = string(n[`r'], "%9.0f")
+  4.             local pct_s = string(pct[`r'], "%9.3f")
+  5.             local sd_s = string(sd_p[`r'], "%9.3f")
+  6.             file write fh "Race: `rlab' & `n_r' & `pct_s' & `sd_s' \\\\" _n
+  7.         }
+.         use "`demog_work'", clear
+.     }
+
+. 
+.     * Employment: Working (proportion); verify inlbrf_2020 is dummy (1=working)
+.     capture confirm variable inlbrf_2020
+
+.     if !_rc {
+.         quietly summarize inlbrf_2020
+.         local n_s = string(r(N), "%9.0f")
+.         local m_s = string(r(mean), "%9.3f")
+.         local s_s = string(r(sd), "%9.3f")
+.         file write fh "Working (in labor force) & `n_s' & `m_s' & `s_s' \\\\" _n
+.     }
+
+. 
+.     file write fh "\bottomrule" _n ///
+>         "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categories mean = proportion (pc
+> t).} \\\\" _n ///
+>         "\end{tabular}\end{table}" _n
+
+.     file close fh
+
+. restore
 
 . 
 . * ---------------------------------------------------------------------
@@ -205,20 +296,20 @@ popu~on_2020 |      1,114    3.685817    1.400178          1          6
 
     Variable |        Obs        Mean    Std. dev.       Min        Max
 -------------+---------------------------------------------------------
- region_2000 |     19,538    2.587675    .9615719          1          4
- region_2002 |     18,122    2.598113    .9586695          1          4
- region_2004 |     20,074    2.617864    .9697162          1          4
- region_2006 |     18,400       2.625    .9609049          1          4
- region_2008 |     17,147    2.631539    .9576372          1          4
+ region_2000 |     19,578    2.592604    .9667457          1          5
+ region_2002 |     18,165    2.603799    .9646225          1          5
+ region_2004 |     20,129    2.624373    .9763418          1          5
+ region_2006 |     18,469    2.633873    .9699918          1          5
+ region_2008 |     17,217    2.641169    .9674999          1          5
 -------------+---------------------------------------------------------
- region_2010 |     21,964    2.675879    .9703894          1          4
- region_2012 |     20,478    2.682049      .96864          1          4
- region_2014 |     18,660    2.685906    .9676722          1          4
- region_2016 |     20,831    2.721953    .9573615          1          4
- region_2018 |     17,067     2.73106    .9528177          1          4
+ region_2010 |     22,034    2.683262    .9776351          1          5
+ region_2012 |     20,554     2.69062    .9770303          1          5
+ region_2014 |     18,747    2.696645    .9781519          1          5
+ region_2016 |     20,912    2.730777    .9659269          1          5
+ region_2018 |     17,146    2.741514    .9629591          1          5
 -------------+---------------------------------------------------------
- region_2020 |     15,662    2.743966    .9554038          1          4
- region_2022 |     12,823    2.757545    .9556214          1          4
+ region_2020 |     15,723    2.752719     .963808          1          5
+ region_2022 |     12,883    2.767989     .965542          1          5
 region_pop.. |        310    267.5903    93.22491        101        505
 region_pop.. |        320    268.4438    93.72967        101        505
 region_pop.. |        483    270.9752     99.0455        101        505
@@ -305,8 +396,8 @@ hometow~2022 |        889    275.5973    98.70103        101        506
 
 . file open fh using "${DESCRIPTIVE}/Tables/region_labels.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region code labels}" _n "\label{tab:region_label
-> s}" _n "\begin{tabular}{rl}\toprule" _n "Code & Region \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region code labels}" _n "\label{tab:region_lab
+> els}" _n "\begin{tabular}{rl}\toprule" _n "Code & Region \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local c = string(code[`r'], "%9.0f")
@@ -340,8 +431,9 @@ hometow~2022 |        889    275.5973    98.70103        101        506
 
 . file open fh using "${DESCRIPTIVE}/Tables/population_labels.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Population size (hometown) code labels}" _n "\la
-> bel{tab:population_labels}" _n "\begin{tabular}{rl}\toprule" _n "Code & Population size \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Population size (hometown) code labels}" _n "\
+> label{tab:population_labels}" _n "\begin{tabular}{rl}\toprule" _n "Code & Population size \\\\ \midrule" 
+> _n
 
 . forvalues r = 1/`=_N' {
   2.     local c = string(code[`r'], "%9.0f")
@@ -356,55 +448,138 @@ hometow~2022 |        889    275.5973    98.70103        101        506
 . restore
 
 . 
-. * Demographics summary (2020): age (continuous: N, Mean, SD); race/ethnicity (categorical: N, %)
+. * Demographics: demographics.tex = general (age, gender, educ, marital, immigrant, born US) + race + empl
+> oyment.
+. * demographics_other.tex = other controls – same style as finlit.
 . preserve
 
 . 
-. * Define 2020 sample as respondents with a non-missing 2020 age
-. capture confirm variable age_2020
+. * -----------------------------------------------------------------------
+. * demographics.tex: general vars + race + employment, all restricted to 2020 sample
+. * 2020 sample defined by nonmissing age_2020.
+. * -----------------------------------------------------------------------
+. keep if !missing(age_2020)
+(29,511 observations deleted)
+
+. 
+. file open fh using "${DESCRIPTIVE}/Tables/demographics.tex", write replace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics (2020)}" _n "\label{tab:dem
+> ographics}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\\ \midrule" _n
+
+. 
+. foreach v in age_2020 gender educ_yrs married_2020 immigrant born_us {
+  2.     capture confirm variable `v'
+  3.     if _rc continue
+  4.     quietly summarize `v'
+  5.     if r(N) == 0 continue
+  6.     _vlabel `v'
+  7.     local vlab `r(vlabel)'
+  8.     local n_s = string(r(N), "%9.0f")
+  9.     local m_s = string(r(mean), "%9.3f")
+ 10.     local s_s = string(r(sd), "%9.3f")
+ 11.     file write fh "`vlab' & `n_s' & `m_s' & `s_s' \\\\" _n
+ 12. }
+
+. 
+. * Race: one row per category (2020 sample)
+. capture confirm variable race_eth
 
 . if !_rc {
-.     keep if !missing(age_2020)
-(29,511 observations deleted)
-. 
-.     quietly summarize age_2020 `wopt', detail
-.     file open fh using "${DESCRIPTIVE}/Tables/demographics_controls_summary.tex", write replace
-.     file write fh "\begin{table}[htbp]\centering" _n "\caption{Demographics summary (2020)}" _n "\label{tab
-> :demographics_controls_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean/\% & SD \\\\ \m
-> idrule" _n
-.     local n_s = string(r(N), "%9.0f")
-.     local m_s = string(r(mean), "%9.2f")
-.     local s_s = string(r(sd), "%9.2f")
-.     file write fh "Age & `n_s' & `m_s' & `s_s' \\\\" _n
-. 
-.     * Race/ethnicity distribution within the same 2020 sample
-.     capture confirm variable race_eth
-.     if !_rc {
-.         contract race_eth, freq(n)
-.         drop if missing(race_eth)
+.     tempfile demog_work
+.     save "`demog_work'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000007 not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000007 saved as .dta format
+.     contract race_eth, freq(n)
+.     drop if missing(race_eth)
 (1 observation deleted)
-.         egen long total_n = total(n)
-.         gen double pct = 100 * n / total_n
-.         label values race_eth race_eth_lbl
-.         decode race_eth, gen(race_label)
-.         forvalues r = 1/`=_N' {
-  2.             local rlab = race_label[`r']
-  3.             local n_r = string(n[`r'], "%9.0f")
-  4.             local pct_s = string(pct[`r'], "%9.1f")
-  5.             file write fh "Race/ethnicity: `rlab' & `n_r' & `pct_s' & -- \\\\" _n
-  6.         }
-.     }
-. 
-.     file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020 sample. Continuous: Mean, SD; cat
-> egorical: proportion (\%).} \\\\" _n "\end{tabular}\end{table}" _n
-.     file close fh
+.     egen long total_n = total(n)
+.     gen double pct = 100 * n / total_n
+.     gen double sd_p = 100 * sqrt((pct/100) * (1 - pct/100))
+.     label values race_eth race_eth_lbl
+.     decode race_eth, gen(race_lab)
+.     forvalues r = 1/`=_N' {
+  2.         local rlab = race_lab[`r']
+  3.         local n_r = string(n[`r'], "%9.0f")
+  4.         local pct_s = string(pct[`r'], "%9.1f")
+  5.         local sd_s = string(sd_p[`r'], "%9.2f")
+  6.         file write fh "Race: `rlab' & `n_r' & `pct_s' & `sd_s' \\\\" _n
+  7.     }
+.     use "`demog_work'", clear
 . }
+
+. 
+. * Employment: one row only — Working (proportion); no code labels (2020 sample)
+. capture confirm variable inlbrf_2020
+
+. if !_rc {
+.     tempfile demog_work
+.     save "`demog_work'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000008 not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000008 saved as .dta format
+.     contract inlbrf_2020, freq(n)
+.     drop if missing(inlbrf_2020)
+(5 observations deleted)
+.     egen long total_n = total(n)
+.     gen double pct = 100 * n / total_n
+.     gen double sd_p = 100 * sqrt((pct/100) * (1 - pct/100))
+.     forvalues r = 1/`=_N' {
+  2.         if inlbrf_2020[`r'] != 1 continue
+  3.         local n_r = string(n[`r'], "%9.0f")
+  4.         local pct_s = string(pct[`r'], "%9.1f")
+  5.         local sd_s = string(sd_p[`r'], "%9.2f")
+  6.         file write fh "Working & `n_r' & `pct_s' & `sd_s' \\\\" _n
+  7.         break
+  8.     }
+.     use "`demog_work'", clear
+. }
+
+. 
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categorie
+> s mean = proportion (pct).} \\\\" _n "\end{tabular}\end{table}" _n
+
+. file close fh
 
 . restore
 
 . 
-. * Financial literacy summary (2020): rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversifica
-> tion (HRS 2020)
+. * -----------------------------------------------------------------------
+. * demographics_other.tex: other controls – same style as finlit (Variable, N, Mean, SD, p50)
+. * -----------------------------------------------------------------------
+. file open fh using "${DESCRIPTIVE}/Tables/demographics_other.tex", write replace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics: other controls (2020)}" _n
+>  "\label{tab:demographics_other}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 
+> \\\\ \midrule" _n
+
+. 
+. foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions" "medicare_2020 Medicare
+> " "medicaid_2020 Medicaid" "life_ins_2020 Life insurance" "beq_any_2020 Bequest" "num_divorce_2020 Times 
+> divorced" "num_widow_2020 Times widowed" {
+  2.     tokenize `pair'
+  3.     local v "`1'"
+  4.     local vlab "`2'"
+  5.     if "`3'" != "" local vlab "`vlab' `3'"
+  6.     capture confirm variable `v'
+  7.     if _rc continue
+  8.     quietly summarize `v', detail
+  9.     if r(N) == 0 continue
+ 10.     local n_s = string(r(N), "%9.0f")
+ 11.     local m_s = string(r(mean), "%9.2f")
+ 12.     local s_s = string(r(sd), "%9.2f")
+ 13.     local p50_s = string(r(p50), "%9.2f")
+ 14.     file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
+ 15. }
+
+. 
+. file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize 2020. Mean, SD, and median.} \\\\" _n "\
+> end{tabular}\end{table}" _n
+
+. file close fh
+
+. 
+. * Financial literacy summary (2020): rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversifi
+> cation (HRS 2020)
 . preserve
 
 . capture confirm variable year
@@ -423,12 +598,13 @@ hometow~2022 |        889    275.5973    98.70103        101        506
 
 . file open fh using "${DESCRIPTIVE}/Tables/finlit_summary.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy summary (2020)}" _n "\label{t
-> ab:finlit_summary}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _
-> n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy summary (2020)}" _n "\label
+> {tab:finlit_summary}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrul
+> e" _n
 
 . * Fixed mapping: rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversification (HRS 2020)
-. foreach pair in "interest_2020 Interest" "inflation_2020 Inflation" "risk_div_2020 Risk diversification" {
+. foreach pair in "interest_2020 Interest" "inflation_2020 Inflation" "risk_div_2020 Risk diversification" 
+> {
   2.     tokenize `pair'
   3.     local v "`1'"
   4.     local vlab "`2'"
@@ -443,8 +619,8 @@ hometow~2022 |        889    275.5973    98.70103        101        506
  13.     file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
  14. }
 
-. file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize HRS 2020: rv565 (interest), rv566 (inflati
-> on), rv567 (risk diversification).} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize HRS 2020: rv565 (interest), rv566 (infla
+> tion), rv567 (risk diversification).} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -459,15 +635,15 @@ hometow~2022 |        889    275.5973    98.70103        101        506
 . if !_rc {
 .     quietly summarize population_2020 `wopt', detail
 .     file open fh using "${DESCRIPTIVE}/Tables/population_summary.tex", write replace
-.     file write fh "\begin{table}[htbp]\centering" _n "\caption{Population size (hometown) summary (2020)}" 
-> _n "\label{tab:population_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\\ \m
-> idrule" _n
+.     file write fh "\begin{table}[htbp]\centering" _n "\caption{Population size (hometown) summary (2020)}
+> " _n "\label{tab:population_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\
+> \ \midrule" _n
 .     local n_s = string(r(N), "%9.0f")
 .     local m_s = string(r(mean), "%9.2f")
 .     local s_s = string(r(sd), "%9.2f")
 .     file write fh "Population size (code) & `n_s' & `m_s' & `s_s' \\\\" _n
-.     file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020 sample.} \\\\" _n "\end{tabular}\
-> end{table}" _n
+.     file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020 sample.} \\\\" _n "\end{tabular
+> }\end{table}" _n
 .     file close fh
 . }
 
@@ -498,7 +674,7 @@ region_2000 region_2002 ... region_2022   ->   region_
 (497,574 observations deleted)
 
 . keep if !missing(trust_others_2020) & !missing(region_)
-(44,335 observations deleted)
+(44,334 observations deleted)
 
 . decode region_, gen(region_label)
 
@@ -506,9 +682,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_region_groups_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region overlap (2020): observations by
->  region}" _n "\label{tab:trust_region_groups_2020}" _n "\begin{tabular}{rrlr}\toprule" _n "Year & Region (c
-> ode) & Region & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region overlap (2020): observations 
+> by region}" _n "\label{tab:trust_region_groups_2020}" _n "\begin{tabular}{rrlr}\toprule" _n "Year & Regio
+> n (code) & Region & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
@@ -518,8 +694,8 @@ region_2000 region_2002 ... region_2022   ->   region_
   6.     file write fh "`yr_s' & `reg_s' & `rlab' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Sample: 2020 wave, nonmissing general trus
-> t.} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Sample: 2020 wave, nonmissing general tr
+> ust.} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -549,7 +725,7 @@ region_2000 region_2002 ... region_2022   ->   region_
 (497,574 observations deleted)
 
 . keep if !missing(trust_others_2020) & !missing(region_) & !missing(population_2020)
-(44,512 observations deleted)
+(44,511 observations deleted)
 
 . decode region_, gen(region_label)
 
@@ -561,9 +737,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop_groups_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--population overlap (2020)}" _n
->  "\label{tab:trust_regionpop_groups_2020}" _n "\begin{tabular}{rrllrr}\toprule" _n "Year & Region (code) & 
-> Region & Pop (code) & Population size & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--population overlap (2020)}" 
+> _n "\label{tab:trust_regionpop_groups_2020}" _n "\begin{tabular}{rrllrr}\toprule" _n "Year & Region (code
+> ) & Region & Pop (code) & Population size & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
@@ -590,7 +766,7 @@ region_2000 region_2002 ... region_2022   ->   region_
 . keep hhidpn trust_others_2020 region_2020 population_3bin_2020
 
 . keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-(44,512 observations deleted)
+(44,511 observations deleted)
 
 . label values region_2020 region_lbl
 
@@ -606,9 +782,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop3_groups_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--population (3 bins) overlap (2
-> 020)}" _n "\label{tab:trust_regionpop3_groups_2020}" _n "\begin{tabular}{rllrr}\toprule" _n "Region (code) 
-> & Region & Pop3 (code) & Population & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--population (3 bins) overlap 
+> (2020)}" _n "\label{tab:trust_regionpop3_groups_2020}" _n "\begin{tabular}{rllrr}\toprule" _n "Region (co
+> de) & Region & Pop3 (code) & Population & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local r_s = string(region_2020[`r'], "%9.0f")
@@ -646,8 +822,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/bin_counts_region_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region (2020)}" _n "\label{tab:bin
-> _counts_region_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region (2020)}" _n "\label{tab:b
+> in_counts_region_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule"
+>  _n
 
 . forvalues r = 1/`=_N' {
   2.     local r_s = string(region_2020[`r'], "%9.0f")
@@ -676,9 +853,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/bin_counts_population_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by population size (2020)}" _n "\labe
-> l{tab:bin_counts_population_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Population (code) & Population siz
-> e & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by population size (2020)}" _n "\la
+> bel{tab:bin_counts_population_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Population (code) & Population
+>  size & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local p_s = string(population_2020[`r'], "%9.0f")
@@ -707,9 +884,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/bin_counts_population3_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by population (3 bins, 2020)}" _n "\l
-> abel{tab:bin_counts_population3_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Pop3 (code) & Population & Obs
->  \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by population (3 bins, 2020)}" _n "
+> \label{tab:bin_counts_population3_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Pop3 (code) & Population &
+>  Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
@@ -728,7 +905,7 @@ region_2000 region_2002 ... region_2022   ->   region_
 . preserve
 
 . keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_2020)
-(44,512 observations deleted)
+(44,511 observations deleted)
 
 . label values region_2020 region_lbl
 
@@ -744,9 +921,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (2020)}" _n "\l
-> abel{tab:bin_counts_regionpop_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population size & Obs \
-> \\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (2020)}" _n "
+> \label{tab:bin_counts_regionpop_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population size & O
+> bs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local rlab = region_label[`r']
@@ -755,8 +932,8 @@ region_2000 region_2002 ... region_2022   ->   region_
   5.     file write fh "`rlab' & `plab' & `n_s' \\\\" _n
   6. }
 
-. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Sample: 2020, nonmissing general trust, re
-> gion, and population.} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Sample: 2020, nonmissing general trust, 
+> region, and population.} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -766,7 +943,7 @@ region_2000 region_2002 ... region_2022   ->   region_
 . preserve
 
 . keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-(44,512 observations deleted)
+(44,511 observations deleted)
 
 . label values region_2020 region_lbl
 
@@ -782,9 +959,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop3_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (3 bins, 2020)}
-> " _n "\label{tab:bin_counts_regionpop3_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population & O
-> bs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (3 bins, 2020
+> )}" _n "\label{tab:bin_counts_regionpop3_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population
+>  & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local rlab = region_label[`r']
@@ -801,9 +978,9 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . 
 . * ---------------------------------------------------------------------
-. * Mean trust by race/ethnicity (2020): one table + one bar chart per trust variable (trust module: rv557=ge
-> neral, rv558=Social Security, rv559=Medicare, rv560=banks, rv561=advisors, rv562=mutual funds, rv563=insura
-> nce, rv564=media)
+. * Mean trust by race/ethnicity (2020): one table + one bar chart per trust variable (trust module: rv557=
+> general, rv558=Social Security, rv559=Medicare, rv560=banks, rv561=advisors, rv562=mutual funds, rv563=in
+> surance, rv564=media)
 . * ---------------------------------------------------------------------
 . display "=== Mean trust by race/ethnicity (2020), each trust variable ==="
 === Mean trust by race/ethnicity (2020), each trust variable ===
@@ -812,8 +989,8 @@ region_2000 region_2002 ... region_2022   ->   region_
 
 . if !_rc {
 .     local ntrust 8
-.     local tvars "trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 trust_ad
-> visors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020"
+.     local tvars "trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 trust_
+> advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020"
 .     * Display names for titles/captions (match trust module)
 .     local tname1 "General trust"
 .     local tname2 "Social Security"
@@ -848,12 +1025,12 @@ region_2000 region_2002 ... region_2022   ->   region_
  18.             local n_s = string(n[`r'], "%9.0f")
  19.             file write fh "`rlab' & `t_s' & `n_s' \\\\" _n
  20.         }
- 21.         file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Trust: `tname' (2020); NH = non
-> -Hispanic.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+ 21.         file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Trust: `tname' (2020); NH = n
+> on-Hispanic.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
  22.         file close fh
  23.         * Bar chart
-.         graph bar trust_mean, over(race_eth, relabel(1 "White (NH)" 2 "Black (NH)" 3 "Hispanic" 4 "Other (N
-> H)")) ///
+.         graph bar trust_mean, over(race_eth, relabel(1 "White (NH)" 2 "Black (NH)" 3 "Hispanic" 4 "Other 
+> (NH)")) ///
 >             title("Mean `tname' by race/ethnicity (2020)") ///
 >             ytitle("Mean trust") b1title("Race/ethnicity") ///
 >             bar(1, color(navy)) ylabel(, format(%3.2f))
@@ -866,28 +1043,28 @@ file /Volumes/SSD
     saved as PNG format
 (44,222 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_social_security_2
-    > 020.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_social_security
+    > _2020.png saved as PNG format
 (44,206 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2020.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2020.p
+    > ng saved as PNG format
 (44,245 observations deleted)
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.png
     saved as PNG format
 (44,155 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2020.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2020.p
+    > ng saved as PNG format
 (44,163 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_funds_2020
-    > .png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_funds_20
+    > 20.png saved as PNG format
 (44,088 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2020.pn
-    > g saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2020.
+    > png saved as PNG format
 (44,000 observations deleted)
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.png
@@ -901,7 +1078,7 @@ file /Volumes/SSD
 . preserve
 
 . keep if !missing(trust_others_2020) & !missing(region_2020)
-(44,335 observations deleted)
+(44,334 observations deleted)
 
 . label values region_2020 region_lbl
 
@@ -911,9 +1088,9 @@ file /Volumes/SSD
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_region_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region (2020)}" _n "\label{tab:tru
-> st_mean_by_region_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Region (code) & Region & Mean trust & Obs \
-> \\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region (2020)}" _n "\label{tab:t
+> rust_mean_by_region_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Region (code) & Region & Mean trust & O
+> bs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local r_s = string(region_2020[`r'], "%9.0f")
@@ -923,8 +1100,8 @@ file /Volumes/SSD
   6.     file write fh "`r_s' & `rlab' & `tm_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize General trust (2020), nonmissing region.} 
-> \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize General trust (2020), nonmissing region.
+> } \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -961,14 +1138,14 @@ file /Volumes/SSD
 
 . file open fh using "${DESCRIPTIVE}/Tables/region_counts_4col_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region counts (2020, 4 regions, no Other)}" _n "
-> \label{tab:region_counts_4col_2020}" _n "\begin{tabular}{cccc}\toprule" _n "Northeast & Midwest & South & W
-> est \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region counts (2020, 4 regions, no Other)}" _n
+>  "\label{tab:region_counts_4col_2020}" _n "\begin{tabular}{cccc}\toprule" _n "Northeast & Midwest & South
+>  & West \\\\ \midrule" _n
 
 . file write fh "`n1' & `n2' & `n3' & `n4' \\\\" _n
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Sample: 2020, nonmissing general trust; re
-> gion codes 1--4 only.} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Sample: 2020, nonmissing general trust; 
+> region codes 1--4 only.} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -988,9 +1165,9 @@ file /Volumes/SSD
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_population_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population size (2020)}" _n "\labe
-> l{tab:trust_mean_by_population_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Population (code) & Population
->  size & Mean trust & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population size (2020)}" _n "\la
+> bel{tab:trust_mean_by_population_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Population (code) & Popula
+> tion size & Mean trust & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local p_s = string(population_2020[`r'], "%9.0f")
@@ -1000,8 +1177,8 @@ file /Volumes/SSD
   6.     file write fh "`p_s' & `plab' & `tm_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize General trust (2020), nonmissing populatio
-> n size.} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize General trust (2020), nonmissing populat
+> ion size.} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -1021,9 +1198,9 @@ file /Volumes/SSD
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_population3_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population (3 bins, 2020)}" _n "\l
-> abel{tab:trust_mean_by_population3_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Pop3 (code) & Population &
->  Mean trust & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population (3 bins, 2020)}" _n "
+> \label{tab:trust_mean_by_population3_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Pop3 (code) & Populati
+> on & Mean trust & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
@@ -1033,8 +1210,8 @@ file /Volumes/SSD
   6.     file write fh "`p3_s' & `p3lab' & `tm_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Small/med/large; general trust (2020).} \\
-> \\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Small/med/large; general trust (2020).} 
+> \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -1047,7 +1224,7 @@ file /Volumes/SSD
 . preserve
 
 . keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-(44,512 observations deleted)
+(44,511 observations deleted)
 
 . label values region_2020 region_lbl
 
@@ -1055,8 +1232,8 @@ file /Volumes/SSD
 
 . gen int region_pop3_group = region_2020 * 10 + population_3bin_2020
 
-. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(region_2020 population_3bin_20
-> 20 region_pop3_group)
+. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(region_2020 population_3bin_
+> 2020 region_pop3_group)
 
 . decode region_2020, gen(region_label)
 
@@ -1064,9 +1241,9 @@ file /Volumes/SSD
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_regionpop3_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region--population (3 bins, 2020)}
-> " _n "\label{tab:trust_mean_by_regionpop3_2020}" _n "\begin{tabular}{rlllrr}\toprule" _n "Region (code) & R
-> egion & Pop3 (code) & Population & Mean trust & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region--population (3 bins, 2020
+> )}" _n "\label{tab:trust_mean_by_regionpop3_2020}" _n "\begin{tabular}{rlllrr}\toprule" _n "Region (code)
+>  & Region & Pop3 (code) & Population & Mean trust & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local r_s = string(region_2020[`r'], "%9.0f")
@@ -1078,8 +1255,8 @@ file /Volumes/SSD
   8.     file write fh "`r_s' & `rlab' & `p3_s' & `p3lab' & `tm_s' & `n_s' \\\\" _n
   9. }
 
-. file write fh "\bottomrule" _n "\multicolumn{6}{l}{\footnotesize General trust (2020) by region $\times$ po
-> pulation (3 bins).} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{6}{l}{\footnotesize General trust (2020) by region $\times$ 
+> population (3 bins).} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -1115,9 +1292,9 @@ hometown_size_2000 hometown_size_2002 ... hometown_size_2022->hometown_size_
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_hometownsize_groups_2020.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and hometown size overlap (2020)}" _n "\la
-> bel{tab:trust_hometownsize_groups_2020}" _n "\begin{tabular}{rrr}\toprule" _n "Year & Hometown size (code) 
-> & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and hometown size overlap (2020)}" _n "\
+> label{tab:trust_hometownsize_groups_2020}" _n "\begin{tabular}{rrr}\toprule" _n "Year & Hometown size (co
+> de) & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
@@ -1158,8 +1335,8 @@ hometown_size_2000 hometown_size_2002 ... hometown_size_2022->hometown_size_
 . tempfile region_all
 
 . save "`region_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000u not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000u saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000010 not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000010 saved as .dta format
 
 . restore
 
@@ -1181,7 +1358,7 @@ region_2000 region_2002 ... region_2022   ->   region_
 -----------------------------------------------------------------------------
 
 . keep if year == 2020 & !missing(trust_others_2020) & !missing(region_)
-(541,909 observations deleted)
+(541,908 observations deleted)
 
 . contract region_, freq(n)
 
@@ -1189,21 +1366,18 @@ region_2000 region_2002 ... region_2022   ->   region_
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                             1
-        from master                         0  
-        from using                          1  
-
-    Matched                                 4  
+    Not matched                             0
+    Matched                                 5  
     -----------------------------------------
 
 . replace n = 0 if missing(n)
-(1 real change made)
+(0 real changes made)
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_region_groups_2020_with_empty.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region groups with empty cells (2020)}" _n "\lab
-> el{tab:trust_region_groups_2020_with_empty}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region &
->  Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region groups with empty cells (2020)}" _n "\l
+> abel{tab:trust_region_groups_2020_with_empty}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Regi
+> on & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local r_s = string(region_[`r'], "%9.0f")
@@ -1237,8 +1411,8 @@ region_2000 region_2002 ... region_2022   ->   region_
 . tempfile region_vals
 
 . save "`region_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000x not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000x saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000013 not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000013 saved as .dta format
 
 . restore
 
@@ -1261,8 +1435,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00000x saved as .
 . tempfile pop_vals
 
 . save "`pop_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000011 not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000011 saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000015 not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000015 saved as .dta format
 
 . restore
 
@@ -1278,8 +1452,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000011 saved as .
 . tempfile regionpop_all
 
 . save "`regionpop_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000013 not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000013 saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000017 not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000017 saved as .dta format
 
 . restore
 
@@ -1301,7 +1475,7 @@ region_2000 region_2002 ... region_2022   ->   region_
 -----------------------------------------------------------------------------
 
 . keep if year == 2020 & !missing(trust_others_2020) & !missing(region_) & !missing(population_2020)
-(542,086 observations deleted)
+(542,085 observations deleted)
 
 . contract region_ population_2020, freq(n)
 
@@ -1309,21 +1483,21 @@ region_2000 region_2002 ... region_2022   ->   region_
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                             6
+    Not matched                             5
         from master                         0  
-        from using                          6  
+        from using                          5  
 
-    Matched                                24  
+    Matched                                25  
     -----------------------------------------
 
 . replace n = 0 if missing(n)
-(6 real changes made)
+(5 real changes made)
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop_groups_2020_with_empty.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population groups with empty cells (2020
-> )}" _n "\label{tab:trust_regionpop_groups_2020_with_empty}" _n "\begin{tabular}{rllrlr}\toprule" _n "Region
->  (code) & Region & Pop (code) & Population size & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population groups with empty cells (20
+> 20)}" _n "\label{tab:trust_regionpop_groups_2020_with_empty}" _n "\begin{tabular}{rllrlr}\toprule" _n "Re
+> gion (code) & Region & Pop (code) & Population size & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local r_s = string(region_[`r'], "%9.0f")
@@ -1358,8 +1532,8 @@ region_2000 region_2002 ... region_2022   ->   region_
 . tempfile region_vals3
 
 . save "`region_vals3'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000016 not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000016 saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001a not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001a saved as .dta format
 
 . restore
 
@@ -1379,8 +1553,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000016 saved as .
 . tempfile pop3_vals
 
 . save "`pop3_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000018 not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000018 saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001c not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001c saved as .dta format
 
 . restore
 
@@ -1396,8 +1570,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000018 saved as .
 . tempfile regionpop3_all
 
 . save "`regionpop3_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001a not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001a saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001e not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001e saved as .dta format
 
 . restore
 
@@ -1407,7 +1581,7 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001a saved as .
 . keep hhidpn trust_others_2020 region_2020 population_3bin_2020
 
 . keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-(44,512 observations deleted)
+(44,511 observations deleted)
 
 . gen byte region_ = region_2020
 
@@ -1417,7 +1591,10 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001a saved as .
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                             0
+    Not matched                             1
+        from master                         1  
+        from using                          0  
+
     Matched                                12  
     -----------------------------------------
 
@@ -1426,9 +1603,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001a saved as .
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop3_groups_2020_with_empty.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population (3 bins) groups with empty ce
-> lls (2020)}" _n "\label{tab:trust_regionpop3_groups_2020_with_empty}" _n "\begin{tabular}{rllrr}\toprule" _
-> n "Region (code) & Region & Pop3 (code) & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population (3 bins) groups with empty 
+> cells (2020)}" _n "\label{tab:trust_regionpop3_groups_2020_with_empty}" _n "\begin{tabular}{rllrr}\toprul
+> e" _n "Region (code) & Region & Pop3 (code) & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local r_s = string(region_[`r'], "%9.0f")
@@ -1453,8 +1630,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001a saved as .
 . tempfile pop_all
 
 . save "`pop_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001d not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001d saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001h not found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001h saved as .dta format
 
 . restore
 
@@ -1481,9 +1658,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001d saved as .
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_population_groups_2020_with_empty.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Population groups with empty cells (2020)}" _n "
-> \label{tab:trust_population_groups_2020_with_empty}" _n "\begin{tabular}{rlr}\toprule" _n "Population (code
-> ) & Population size & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Population groups with empty cells (2020)}" _n
+>  "\label{tab:trust_population_groups_2020_with_empty}" _n "\begin{tabular}{rlr}\toprule" _n "Population (
+> code) & Population size & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local p_s = string(population_2020[`r'], "%9.0f")
@@ -1500,8 +1677,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001d saved as .
 
 . 
 . * ---------------------------------------------------------------------
-. * Shares summary (2002 and 2022) — pipeline vars only: share_core, share_ira (m3), share_residential (same 
-> as 07)
+. * Shares summary (2002 and 2022) — pipeline vars only: share_core, share_ira (m3), share_residential (sam
+> e as 07)
 . * ---------------------------------------------------------------------
 . display "=== Shares summary (2002) ==="
 === Shares summary (2002) ===
@@ -1509,13 +1686,13 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001d saved as .
 . local sharevars_2002 ""
 
 . foreach v in share_core_2002 share_residential_2002 share_m3_ira_2002 ///
->             share_m1_re_2002 share_m1_bus_2002 share_m1_stk_2002 share_m1_chck_2002 share_m1_cd_2002 share_
-> m1_bond_2002 ///
->             share_m2_re_2002 share_m2_bus_2002 share_m2_ira_2002 share_m2_stk_2002 share_m2_chck_2002 share
-> _m2_cd_2002 share_m2_bond_2002 ///
->             share_m3_pri_res_2002 share_m3_sec_res_2002 share_m3_re_2002 share_m3_vehicles_2002 share_m3_bu
-> s_2002 share_m3_ira_2002 share_m3_stk_2002 share_m3_chck_2002 share_m3_cd_2002 share_m3_bond_2002 share_m3_
-> other_2002 ///
+>             share_m1_re_2002 share_m1_bus_2002 share_m1_stk_2002 share_m1_chck_2002 share_m1_cd_2002 shar
+> e_m1_bond_2002 ///
+>             share_m2_re_2002 share_m2_bus_2002 share_m2_ira_2002 share_m2_stk_2002 share_m2_chck_2002 sha
+> re_m2_cd_2002 share_m2_bond_2002 ///
+>             share_m3_pri_res_2002 share_m3_sec_res_2002 share_m3_re_2002 share_m3_vehicles_2002 share_m3_
+> bus_2002 share_m3_ira_2002 share_m3_stk_2002 share_m3_chck_2002 share_m3_cd_2002 share_m3_bond_2002 share
+> _m3_other_2002 ///
 >             share_debt_long_2002 share_debt_other_2002 {
   2.     capture confirm variable `v'
   3.     if !_rc local sharevars_2002 "`sharevars_2002' `v'"
@@ -1623,13 +1800,13 @@ share_debt_other_2002 outside [0,1]: 28196
 . local sharevars_2022 ""
 
 . foreach v in share_core_2022 share_residential_2022 share_m3_ira_2022 ///
->             share_m1_re_2022 share_m1_bus_2022 share_m1_stk_2022 share_m1_chck_2022 share_m1_cd_2022 share_
-> m1_bond_2022 ///
->             share_m2_re_2022 share_m2_bus_2022 share_m2_ira_2022 share_m2_stk_2022 share_m2_chck_2022 share
-> _m2_cd_2022 share_m2_bond_2022 ///
->             share_m3_pri_res_2022 share_m3_sec_res_2022 share_m3_re_2022 share_m3_vehicles_2022 share_m3_bu
-> s_2022 share_m3_ira_2022 share_m3_stk_2022 share_m3_chck_2022 share_m3_cd_2022 share_m3_bond_2022 share_m3_
-> other_2022 ///
+>             share_m1_re_2022 share_m1_bus_2022 share_m1_stk_2022 share_m1_chck_2022 share_m1_cd_2022 shar
+> e_m1_bond_2022 ///
+>             share_m2_re_2022 share_m2_bus_2022 share_m2_ira_2022 share_m2_stk_2022 share_m2_chck_2022 sha
+> re_m2_cd_2022 share_m2_bond_2022 ///
+>             share_m3_pri_res_2022 share_m3_sec_res_2022 share_m3_re_2022 share_m3_vehicles_2022 share_m3_
+> bus_2022 share_m3_ira_2022 share_m3_stk_2022 share_m3_chck_2022 share_m3_cd_2022 share_m3_bond_2022 share
+> _m3_other_2022 ///
 >             share_debt_long_2022 share_debt_other_2022 {
   2.     capture confirm variable `v'
   3.     if !_rc local sharevars_2022 "`sharevars_2022' `v'"
@@ -1740,8 +1917,8 @@ share_debt_other_2022 outside [0,1]: 31564
 === Portfolio composition by wealth/income percentiles (2002 & 2022) ===
 
 . * Keep wealth, income, and m3 share components (pipeline); wealth_coreira_* from 03 when present
-. local _wkeep "wealth_core_2002 wealth_ira_2002 wealth_total_2002 wealth_core_2022 wealth_ira_2022 wealth_to
-> tal_2022"
+. local _wkeep "wealth_core_2002 wealth_ira_2002 wealth_total_2002 wealth_core_2022 wealth_ira_2022 wealth_
+> total_2022"
 
 . capture confirm variable wealth_coreira_2002
 
@@ -1749,21 +1926,22 @@ share_debt_other_2022 outside [0,1]: 31564
 
 . keep hhidpn `_wkeep' ///
 >     total_income_real_win_2002 total_income_real_win_2022 ///
->     share_m3_bond_2002 share_m3_stk_2002 share_m3_re_2002 share_m3_bus_2002 share_m3_pri_res_2002 share_m3_
-> sec_res_2002 share_m3_ira_2002 ///
->     share_m3_bond_2022 share_m3_stk_2022 share_m3_re_2022 share_m3_bus_2022 share_m3_pri_res_2022 share_m3_
-> sec_res_2022 share_m3_ira_2022
+>     share_m3_bond_2002 share_m3_stk_2002 share_m3_re_2002 share_m3_bus_2002 share_m3_pri_res_2002 share_m
+> 3_sec_res_2002 share_m3_ira_2002 ///
+>     share_m3_bond_2022 share_m3_stk_2022 share_m3_re_2022 share_m3_bus_2022 share_m3_pri_res_2022 share_m
+> 3_sec_res_2022 share_m3_ira_2022
 
 . * Fallback: share_core = bond+stk+re+bus; share_residential = pri_res+sec_res (if not in pipeline)
 . foreach y in 2002 2022 {
   2.     capture confirm variable share_core_`y'
   3.     if _rc {
-  4.         egen double share_core_`y' = rowtotal(share_m3_bond_`y' share_m3_stk_`y' share_m3_re_`y' share_m
-> 3_bus_`y'), missing
+  4.         egen double share_core_`y' = rowtotal(share_m3_bond_`y' share_m3_stk_`y' share_m3_re_`y' share
+> _m3_bus_`y'), missing
   5.     }
   6.     capture confirm variable share_residential_`y'
   7.     if _rc {
-  8.         egen double share_residential_`y' = rowtotal(share_m3_pri_res_`y' share_m3_sec_res_`y'), missing
+  8.         egen double share_residential_`y' = rowtotal(share_m3_pri_res_`y' share_m3_sec_res_`y'), missi
+> ng
   9.     }
  10. }
 (27,824 missing values generated)
@@ -1772,16 +1950,16 @@ share_debt_other_2022 outside [0,1]: 31564
 (30,767 missing values generated)
 
 . * Keep only vars needed for graphs (wealth_coreira when present)
-. local _wkeep2 "wealth_core_2002 wealth_ira_2002 wealth_total_2002 wealth_core_2022 wealth_ira_2022 wealth_t
-> otal_2022"
+. local _wkeep2 "wealth_core_2002 wealth_ira_2002 wealth_total_2002 wealth_core_2022 wealth_ira_2022 wealth
+> _total_2022"
 
 . capture confirm variable wealth_coreira_2002
 
 . if !_rc local _wkeep2 "`_wkeep2' wealth_coreira_2002 wealth_coreira_2022"
 
 . keep hhidpn `_wkeep2' total_income_real_win_2002 total_income_real_win_2022 ///
->      share_core_2002 share_residential_2002 share_m3_ira_2002 share_core_2022 share_residential_2022 share_
-> m3_ira_2022
+>      share_core_2002 share_residential_2002 share_m3_ira_2002 share_core_2022 share_residential_2022 shar
+> e_m3_ira_2022
 
 . 
 . local share_leg "legend(cols(3) size(small) region(lstyle(none)) position(6) ring(0))"
@@ -1808,25 +1986,25 @@ share_debt_other_2022 outside [0,1]: 31564
   7.     graph export "${DESCRIPTIVE}/Figures/share_core_by_wealth_pct_`y'.png", replace
   8.     restore
   9. 
-.     * Core + IRA: share_core and share_m3_ira by wealth (core+IRA) percentile; use wealth_coreira_`y' from 
-> pipeline when present
+.     * Core + IRA: share_core and share_m3_ira by wealth (core+IRA) percentile; use wealth_coreira_`y' fro
+> m pipeline when present
 .     preserve
  10.     local _k "hhidpn wealth_core_`y' wealth_ira_`y' share_core_`y' share_m3_ira_`y' `_wght'"
  11.     capture confirm variable wealth_coreira_`y'
  12.     if !_rc local _k "`_k' wealth_coreira_`y'"
  13.     keep `_k'
  14.     capture confirm variable wealth_coreira_`y'
- 15.     if _rc gen double wealth_coreira = wealth_core_`y' + wealth_ira_`y' if !missing(wealth_core_`y') & !
-> missing(wealth_ira_`y')
+ 15.     if _rc gen double wealth_coreira = wealth_core_`y' + wealth_ira_`y' if !missing(wealth_core_`y') &
+>  !missing(wealth_ira_`y')
  16.     if _rc xtile wbin = wealth_coreira, nq(5)
  17.     else xtile wbin = wealth_coreira_`y', nq(5)
  18.     collapse (mean) share_core_`y' share_m3_ira_`y' `wopt', by(wbin)
- 19.     graph bar (mean) share_core_`y' share_m3_ira_`y', over(wbin, relabel(1 "20" 2 "40" 3 "60" 4 "80" 5 "
-> 100")) stack ///
+ 19.     graph bar (mean) share_core_`y' share_m3_ira_`y', over(wbin, relabel(1 "20" 2 "40" 3 "60" 4 "80" 5
+>  "100")) stack ///
 >         title("Core & IRA shares by wealth percentile (`y')") ///
 >         ytitle("Mean share") b1title("Wealth core+ret. (pct.)") ///
->         legend(order(1 "Core" 2 "IRA") cols(2) size(small) region(lstyle(none)) position(6) ring(0)) `share
-> _region' ysize(4.2) xsize(6.6)
+>         legend(order(1 "Core" 2 "IRA") cols(2) size(small) region(lstyle(none)) position(6) ring(0)) `sha
+> re_region' ysize(4.2) xsize(6.6)
  20.     graph export "${DESCRIPTIVE}/Figures/share_core_ira_by_wealth_pct_`y'.png", replace
  21.     restore
  22. 
@@ -1835,12 +2013,12 @@ share_debt_other_2022 outside [0,1]: 31564
  23.     keep hhidpn wealth_total_`y' share_core_`y' share_m3_ira_`y' share_residential_`y' `_wght'
  24.     xtile wbin = wealth_total_`y', nq(5)
  25.     collapse (mean) share_core_`y' share_m3_ira_`y' share_residential_`y' `wopt', by(wbin)
- 26.     graph bar (mean) share_core_`y' share_m3_ira_`y' share_residential_`y', over(wbin, relabel(1 "20" 2 
-> "40" 3 "60" 4 "80" 5 "100")) stack ///
+ 26.     graph bar (mean) share_core_`y' share_m3_ira_`y' share_residential_`y', over(wbin, relabel(1 "20" 
+> 2 "40" 3 "60" 4 "80" 5 "100")) stack ///
 >         title("Core, IRA & residential by wealth percentile (`y')") ///
 >         ytitle("Mean share") b1title("Wealth total (pct.)") ///
->         legend(order(1 "Core" 2 "IRA" 3 "Residential") cols(3) size(small) region(lstyle(none)) position(6)
->  ring(0)) `share_region' ysize(4.2) xsize(6.6)
+>         legend(order(1 "Core" 2 "IRA" 3 "Residential") cols(3) size(small) region(lstyle(none)) position(
+> 6) ring(0)) `share_region' ysize(4.2) xsize(6.6)
  27.     graph export "${DESCRIPTIVE}/Figures/share_core_ira_res_by_wealth_pct_`y'.png", replace
  28.     restore
  29. 
@@ -1861,65 +2039,66 @@ share_debt_other_2022 outside [0,1]: 31564
  37.     keep hhidpn total_income_real_win_`y' share_core_`y' share_m3_ira_`y' `_wght'
  38.     xtile ibin = total_income_real_win_`y', nq(5)
  39.     collapse (mean) share_core_`y' share_m3_ira_`y' `wopt', by(ibin)
- 40.     graph bar (mean) share_core_`y' share_m3_ira_`y', over(ibin, relabel(1 "20" 2 "40" 3 "60" 4 "80" 5 "
-> 100")) stack ///
+ 40.     graph bar (mean) share_core_`y' share_m3_ira_`y', over(ibin, relabel(1 "20" 2 "40" 3 "60" 4 "80" 5
+>  "100")) stack ///
 >         title("Core & IRA shares by income percentile (`y')") ///
 >         ytitle("Mean share") b1title("Income (pct.)") ///
->         legend(order(1 "Core" 2 "IRA") cols(2) size(small) region(lstyle(none)) position(6) ring(0)) `share
-> _region' ysize(4.2) xsize(6.6)
+>         legend(order(1 "Core" 2 "IRA") cols(2) size(small) region(lstyle(none)) position(6) ring(0)) `sha
+> re_region' ysize(4.2) xsize(6.6)
  41.     graph export "${DESCRIPTIVE}/Figures/share_core_ira_by_income_pct_`y'.png", replace
  42.     restore
  43. 
 .     * Total: core, IRA, residential by income percentile
 .     preserve
- 44.     keep hhidpn total_income_real_win_`y' share_core_`y' share_m3_ira_`y' share_residential_`y' `_wght'
+ 44.     keep hhidpn total_income_real_win_`y' share_core_`y' share_m3_ira_`y' share_residential_`y' `_wght
+> '
  45.     xtile ibin = total_income_real_win_`y', nq(5)
  46.     collapse (mean) share_core_`y' share_m3_ira_`y' share_residential_`y' `wopt', by(ibin)
- 47.     graph bar (mean) share_core_`y' share_m3_ira_`y' share_residential_`y', over(ibin, relabel(1 "20" 2 
-> "40" 3 "60" 4 "80" 5 "100")) stack ///
+ 47.     graph bar (mean) share_core_`y' share_m3_ira_`y' share_residential_`y', over(ibin, relabel(1 "20" 
+> 2 "40" 3 "60" 4 "80" 5 "100")) stack ///
 >         title("Core, IRA & residential by income percentile (`y')") ///
 >         ytitle("Mean share") b1title("Income (pct.)") ///
->         legend(order(1 "Core" 2 "IRA" 3 "Residential") cols(3) size(small) region(lstyle(none)) position(6)
->  ring(0)) `share_region' ysize(4.2) xsize(6.6)
+>         legend(order(1 "Core" 2 "IRA" 3 "Residential") cols(3) size(small) region(lstyle(none)) position(
+> 6) ring(0)) `share_region' ysize(4.2) xsize(6.6)
  48.     graph export "${DESCRIPTIVE}/Figures/share_core_ira_res_by_income_pct_`y'.png", replace
  49.     restore
  50. }
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_wealth_pct_2002.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_wealth_pct_2002.png
+    saved as PNG format
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2002.png
     saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2002.pn
-    > g saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2002.
+    > png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_income_pct_2002.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_income_pct_2002.png
+    saved as PNG format
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_by_income_pct_2002.png
     saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_income_pct_2002.pn
-    > g saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_income_pct_2002.
+    > png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png
+    saved as PNG format
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022.png
     saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2022.pn
-    > g saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2022.
+    > png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_income_pct_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_by_income_pct_2022.png
+    saved as PNG format
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_by_income_pct_2022.png
     saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_income_pct_2022.pn
-    > g saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/share_core_ira_res_by_income_pct_2022.
+    > png saved as PNG format
 
 . 
 . * Reload full dataset for Trust section (portfolio section reduced it with keep)
@@ -1929,8 +2108,8 @@ file /Volumes/SSD
 . * ---------------------------------------------------------------------
 . * Trust correlations and PCA
 . * ---------------------------------------------------------------------
-. local trustvars "trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 trust_ad
-> visors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020"
+. local trustvars "trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 trust_
+> advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020"
 
 . 
 . display "=== Trust correlations (pwcorr) ==="
@@ -2039,8 +2218,8 @@ trust~a_2020 |   0.1413   0.3040   0.2710   0.2397   0.2532   0.2301   0.3252
              |   0.6472   0.0703   0.2241   0.2272   0.3755   0.3994   0.0202
              |      900     1013     1029      990     1080     1072     1147
              |
-   immigrant |  -0.0179   0.0251   0.0385   0.0151   0.0152  -0.0090   0.0003 
-             |   0.5909   0.4258   0.2172   0.6346   0.6170   0.7678   0.9907
+   immigrant |  -0.1099   0.0351   0.0610  -0.0860  -0.0311  -0.0047  -0.0135 
+             |   0.0010   0.2653   0.0507   0.0068   0.3066   0.8787   0.6491
              |      900     1012     1028      990     1080     1072     1147
              |
      born_us |   0.1099  -0.0351  -0.0610   0.0860   0.0311   0.0047   0.0135 
@@ -2106,52 +2285,52 @@ trust~a_2020 |   1.0000
              |   0.3386   0.4733   0.0352
              |     1235    15723    44585    45234
              |
-   immigrant |  -0.0174  -0.0360  -0.0506   0.0028   1.0000 
-             |   0.5404   0.0000   0.0000   0.5572
+   immigrant |   0.1217  -0.1210  -0.2001   0.0072   1.0000 
+             |   0.0000   0.0000   0.0000   0.1284
              |     1234    15718    44560    44717    44717
              |
-     born_us |  -0.1217   0.1210   0.2001  -0.0072  -0.0832   1.0000 
-             |   0.0000   0.0000   0.0000   0.1284   0.0000
+     born_us |  -0.1217   0.1210   0.2001  -0.0072  -1.0000   1.0000 
+             |   0.0000   0.0000   0.0000   0.1284   1.0000
              |     1234    15718    44560    44717    44717    44717
              |
-    race_eth |   0.1309  -0.2426  -0.2157   0.0147   0.1045  -0.4802   1.0000 
+    race_eth |   0.1309  -0.2426  -0.2157   0.0147   0.4802  -0.4802   1.0000 
              |   0.0000   0.0000   0.0000   0.0019   0.0000   0.0000
              |     1234    15689    44496    44650    44626    44626    44650
              |
-married_2020 |  -0.0130  -0.1278   0.0759  -0.1947  -0.0064  -0.0875  -0.0119 
-             |   0.6475   0.0000   0.0000   0.0000   0.4209   0.0000   0.1378
+married_2020 |  -0.0130  -0.1278   0.0759  -0.1947   0.0875  -0.0875  -0.0119 
+             |   0.6475   0.0000   0.0000   0.0000   0.0000   0.0000   0.1378
              |     1234    15685    15613    15685    15680    15680    15651
              |
-depress~2020 |  -0.0303  -0.0523  -0.1391   0.1038   0.0076  -0.0126   0.0817 
-             |   0.2869   0.0000   0.0000   0.0000   0.3502   0.1217   0.0000
+depress~2020 |  -0.0303  -0.0523  -0.1391   0.1038   0.0126  -0.0126   0.0817 
+             |   0.2869   0.0000   0.0000   0.0000   0.1217   0.1217   0.0000
              |     1235    14998    14927    14998    14994    14994    14965
              |
-health_~2020 |  -0.0316   0.3006  -0.1172   0.0412  -0.0014   0.1198  -0.0504 
-             |   0.2673   0.0000   0.0000   0.0000   0.8583   0.0000   0.0000
+health_~2020 |  -0.0316   0.3006  -0.1172   0.0412  -0.1198   0.1198  -0.0504 
+             |   0.2673   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
              |     1235    15723    15651    15723    15718    15718    15689
              |
-medicar~2020 |  -0.0262   0.6777  -0.0342   0.0033  -0.0193   0.1431  -0.1867 
-             |   0.3584   0.0000   0.0000   0.6850   0.0161   0.0000   0.0000
+medicar~2020 |  -0.0262   0.6777  -0.0342   0.0033  -0.1431   0.1431  -0.1867 
+             |   0.3584   0.0000   0.0000   0.6850   0.0000   0.0000   0.0000
              |     1233    15498    15429    15498    15493    15493    15467
              |
-medicai~2020 |   0.0748  -0.0770  -0.2269   0.0585   0.0224  -0.0945   0.1879 
-             |   0.0089   0.0000   0.0000   0.0000   0.0054   0.0000   0.0000
+medicai~2020 |   0.0748  -0.0770  -0.2269   0.0585   0.0945  -0.0945   0.1879 
+             |   0.0089   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
              |     1221    15383    15315    15383    15379    15379    15355
              |
-life_in~2020 |  -0.0498  -0.0332   0.1889  -0.0362  -0.0187   0.2207  -0.1349 
-             |   0.0816   0.0000   0.0000   0.0000   0.0207   0.0000   0.0000
+life_in~2020 |  -0.0498  -0.0332   0.1889  -0.0362  -0.2207   0.2207  -0.1349 
+             |   0.0816   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
              |     1222    15340    15273    15340    15335    15335    15309
              |
-beq_any_2020 |   0.0303   0.0799   0.3934  -0.1203  -0.0333   0.1666  -0.2732 
-             |   0.4561   0.0000   0.0000   0.0000   0.0040   0.0000   0.0000
+beq_any_2020 |   0.0303   0.0799   0.3934  -0.1203  -0.1666   0.1666  -0.2732 
+             |   0.4561   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
              |      607     7488     7456     7488     7486     7486     7474
              |
-num_div~2020 |  -0.0880  -0.0648   0.0370   0.0110   0.0022   0.0837  -0.0330 
-             |   0.0020   0.0000   0.0000   0.1685   0.7842   0.0000   0.0000
+num_div~2020 |  -0.0880  -0.0648   0.0370   0.0110  -0.0837   0.0837  -0.0330 
+             |   0.0020   0.0000   0.0000   0.1685   0.0000   0.0000   0.0000
              |     1235    15723    15651    15723    15718    15718    15689
              |
-num_wid~2020 |  -0.0103   0.3825  -0.0839   0.1709   0.0047   0.0651  -0.0911 
-             |   0.7189   0.0000   0.0000   0.0000   0.5545   0.0000   0.0000
+num_wid~2020 |  -0.0103   0.3825  -0.0839   0.1709  -0.0651   0.0651  -0.0911 
+             |   0.7189   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000
              |     1235    15723    15651    15723    15718    15718    15689
              |
 
@@ -2211,7 +2390,7 @@ num_wid~2020 |  -0.1293   1.0000
 . tempfile trustctrlcorr
 
 . postfile handle str32 var1 str32 var2 double corr using "`trustctrlcorr'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001s not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.00001w not found)
 
 . correlate `trustvars' `ctrlvars'
 (obs=257)
@@ -2229,7 +2408,7 @@ trust~a_2020 |   0.2373   0.2731   0.2792   0.2583   0.2394   0.2424   0.2836   
     age_2020 |   0.2858   0.3091   0.2657   0.2030   0.0937   0.0822   0.1788   0.0815   1.0000
     educ_yrs |   0.1251  -0.1795  -0.2186   0.0056   0.0890   0.1241   0.0164  -0.1501  -0.1082   1.0000
       gender |  -0.0741  -0.0587  -0.0788   0.0272   0.1041  -0.0156   0.0642  -0.0223  -0.0674  -0.0375
-   immigrant |  -0.0416  -0.0015   0.0137   0.0655   0.0083   0.0098   0.0178   0.0103  -0.0352  -0.1044
+   immigrant |  -0.1609  -0.0889  -0.0739  -0.1660  -0.0222  -0.0294  -0.1658   0.0451  -0.1723  -0.2263
      born_us |   0.1609   0.0889   0.0739   0.1660   0.0222   0.0294   0.1658  -0.0451   0.1723   0.2263
     race_eth |  -0.1622  -0.0483  -0.0508  -0.1542  -0.0976  -0.0923  -0.0179   0.1170  -0.2556  -0.2226
 married_2020 |   0.1171  -0.1757  -0.1780  -0.0448   0.0928   0.1484  -0.0393   0.0027  -0.0286   0.1488
@@ -2245,18 +2424,18 @@ num_wid~2020 |   0.0545   0.1009   0.0630   0.1016   0.1093  -0.0318   0.1308   
              |   gender immigr~t  born_us race_eth mar~2020 dep~2020 hea~2020 m~e_2020 m~id_2~0 lif~2020
 -------------+------------------------------------------------------------------------------------------
       gender |   1.0000
-   immigrant |  -0.0368   1.0000
-     born_us |   0.0109  -0.0792   1.0000
-    race_eth |   0.0006   0.0742  -0.5265   1.0000
-married_2020 |  -0.2149   0.0207  -0.1199  -0.0438   1.0000
-depress~2020 |   0.0744  -0.0285  -0.0289   0.0621  -0.1818   1.0000
-health_~2020 |   0.1059   0.0058   0.1019  -0.0747  -0.1135   0.2956   1.0000
-medicar~2020 |  -0.0484  -0.0506   0.1932  -0.1936  -0.0956  -0.0464   0.3086   1.0000
-medicai~2020 |   0.0285   0.0248  -0.1877   0.0983  -0.2227   0.2416   0.1845   0.0520   1.0000
-life_in~2020 |   0.0270   0.0724   0.2334  -0.0809   0.0896  -0.0526  -0.0596  -0.1378  -0.2150   1.0000
-beq_any_2020 |  -0.1425  -0.0339   0.1543  -0.1695   0.1808  -0.2639  -0.2263  -0.1131  -0.3234   0.3849
-num_div~2020 |  -0.0169   0.0375   0.1077  -0.1326  -0.2391  -0.0209   0.1147   0.0392   0.0660  -0.0225
-num_wid~2020 |   0.2090  -0.1746   0.0821   0.0414  -0.4009   0.1122   0.1022   0.2316   0.0430  -0.0438
+   immigrant |  -0.0109   1.0000
+     born_us |   0.0109  -1.0000   1.0000
+    race_eth |   0.0006   0.5265  -0.5265   1.0000
+married_2020 |  -0.2149   0.1199  -0.1199  -0.0438   1.0000
+depress~2020 |   0.0744   0.0289  -0.0289   0.0621  -0.1818   1.0000
+health_~2020 |   0.1059  -0.1019   0.1019  -0.0747  -0.1135   0.2956   1.0000
+medicar~2020 |  -0.0484  -0.1932   0.1932  -0.1936  -0.0956  -0.0464   0.3086   1.0000
+medicai~2020 |   0.0285   0.1877  -0.1877   0.0983  -0.2227   0.2416   0.1845   0.0520   1.0000
+life_in~2020 |   0.0270  -0.2334   0.2334  -0.0809   0.0896  -0.0526  -0.0596  -0.1378  -0.2150   1.0000
+beq_any_2020 |  -0.1425  -0.1543   0.1543  -0.1695   0.1808  -0.2639  -0.2263  -0.1131  -0.3234   0.3849
+num_div~2020 |  -0.0169  -0.1077   0.1077  -0.1326  -0.2391  -0.0209   0.1147   0.0392   0.0660  -0.0225
+num_wid~2020 |   0.2090  -0.0821   0.0821   0.0414  -0.4009   0.1122   0.1022   0.2316   0.0430  -0.0438
 
              | beq~2020 num_di~0 num_wi~0
 -------------+---------------------------
@@ -2288,8 +2467,8 @@ num_wid~2020 |  -0.0508  -0.0296   1.0000
 (506 observations deleted)
 
 . * Drop rows where var2 is another trust item; keep only controls
-. local trustvars "trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 trust_ad
-> visors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020"
+. local trustvars "trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 trust_
+> advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020"
 
 . foreach t of local trustvars {
   2.     drop if var2 == "`t'"
@@ -2307,9 +2486,9 @@ num_wid~2020 |  -0.0508  -0.0296   1.0000
 . * Combined table (all controls)
 . file open fh using "${DESCRIPTIVE}/Tables/trust_controls_corr.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Correlations of General trust with controls}" _n
->  "\label{tab:trust_controls_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlat
-> ion \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Correlations of General trust with controls}" 
+> _n "\label{tab:trust_controls_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Corr
+> elation \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local v1 = var1[`r']
@@ -2322,8 +2501,8 @@ num_wid~2020 |  -0.0508  -0.0296   1.0000
   9.     file write fh "`v1' & `v2' & `c_s' \\\\" _n
  10. }
 
-. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize General trust (var1) with each control.} \
-> \\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize General trust (var1) with each control.}
+>  \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -2356,8 +2535,8 @@ trust~a_2020 |   0.2051   0.2887   0.2694   0.2726   0.2589   0.2570   0.3239   
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_corr.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Trust variables correlation matrix}" _n "\
-> label{tab:trust_corr}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{l"
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Trust variables correlation matrix}" _n 
+> "\label{tab:trust_corr}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{l"
 
 . forvalues j = 1/`n' {
   2.     file write fh "r"
@@ -2385,8 +2564,8 @@ trust~a_2020 |   0.2051   0.2887   0.2694   0.2726   0.2589   0.2570   0.3239   
  10.     file write fh " \\\\" _n
  11. }
 
-. file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Pairwise correlations between trust ite
-> ms (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Pairwise correlations between trust i
+> tems (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 
 . file close fh
 
@@ -2474,7 +2653,7 @@ Scoring coefficients
 . tempfile pcload
 
 . postfile handle str32 varname double pc1 pc2 using "`pcload'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.00001v not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000021 not found)
 
 . matrix L = e(L)
 
@@ -2491,9 +2670,9 @@ Scoring coefficients
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_pca_loadings.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{6pt}" _n "\caption{Trust PCA
->  loadings (first two components)}" _n "\label{tab:trust_pca_loadings}" _n "\begin{tabular}{lrr}\toprule" _n
->  "Trust item & PC1 & PC2 \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{6pt}" _n "\caption{Trust P
+> CA loadings (first two components)}" _n "\label{tab:trust_pca_loadings}" _n "\begin{tabular}{lrr}\toprule
+> " _n "Trust item & PC1 & PC2 \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local vn = varname[`r']
@@ -2504,8 +2683,8 @@ Scoring coefficients
   7.     file write fh "`vn' & `p1_s' & `p2_s' \\\\" _n
   8. }
 
-. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Principal components on trust variables (2
-> 020).} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Principal components on trust variables 
+> (2020).} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -2516,8 +2695,8 @@ Scoring coefficients
 . screeplot, title("Trust PCA scree plot")
 
 . graph export "${DESCRIPTIVE}/Figures/trust_pca_scree.png", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_pca_scree.png saved
-    as PNG format
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/trust_pca_scree.png
+    saved as PNG format
 
 . 
 . * ---------------------------------------------------------------------
@@ -2608,8 +2787,8 @@ trust_o~2020 |   0.0061  -0.0349   0.0352   1.0000
 . 
 . local nc = `n' + 1
 
-. file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Interest, inflation, risk diversificati
-> on, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Interest, inflation, risk diversifica
+> tion, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 
 . file close fh
 
@@ -2649,7 +2828,7 @@ trust_o~2020 |   0.0682   0.0606  -0.0346   1.0000
 . tempfile ivcorr
 
 . postfile handle str32 var1 str32 var2 double corr using "`ivcorr'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_02213.000020 not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_70631.000024 not found)
 
 . correlate par_citizen_2020 par_loyalty_2020 population_2020 trust_others_2020
 (obs=467)
@@ -2704,8 +2883,8 @@ trust_o~2020 |   0.1096   0.0794  -0.0982   1.0000
 
 . local nc = `n' + 1
 
-. file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Parent citizenship, loyalty, population
->  size, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Parent citizenship, loyalty, populati
+> on size, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 
 . file close fh
 
@@ -2867,14 +3046,14 @@ age_group |  dep~2020  hea~2020
           |         6         5
 -------------------------------
 
-. collapse (mean) mean_depression=depression_2020 mean_health=health_cond_2020 (count) n=depression_2020 `wop
-> t', by(age_group)
+. collapse (mean) mean_depression=depression_2020 mean_health=health_cond_2020 (count) n=depression_2020 `w
+> opt', by(age_group)
 
 . file open fh using "${DESCRIPTIVE}/Tables/depression_health_by_agegroup.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Depression and health conditions by age group}" 
-> _n "\label{tab:depression_health_by_agegroup}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & Depr
-> ession (mean) & Health conditions (mean) & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Depression and health conditions by age group}
+> " _n "\label{tab:depression_health_by_agegroup}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & 
+> Depression (mean) & Health conditions (mean) & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local ag_s = string(age_group[`r'], "%9.0f")
@@ -2884,8 +3063,8 @@ age_group |  dep~2020  hea~2020
   6.     file write fh "`ag_s' & `md_s' & `mh_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age bins; 2020 outcomes.} \\\\" 
-> _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age bins; 2020 outcomes.} \\\\
+> " _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -2917,30 +3096,30 @@ region_2000 region_2002 ... region_2022   ->   region_
 . label values region_ region_lbl
 
 . drop if missing(region_)
-(322,042 observations deleted)
+(321,251 observations deleted)
 
 . contract year region_, freq(N)
 
 . * Wide table: year x region with N (drop Other)
 . reshape wide N, i(year) j(region_)
-(j = 1 2 3 4)
+(j = 1 2 3 4 5)
 
 Data                               Long   ->   Wide
 -----------------------------------------------------------------------------
-Number of observations               48   ->   12          
-Number of variables                   3   ->   5           
-j variable (4 values)           region_   ->   (dropped)
+Number of observations               60   ->   12          
+Number of variables                   3   ->   6           
+j variable (5 values)           region_   ->   (dropped)
 xij variables:
-                                      N   ->   N1 N2 ... N4
+                                      N   ->   N1 N2 ... N5
 -----------------------------------------------------------------------------
 
 . rename (N1 N2 N3 N4) (Northeast Midwest South West)
 
 . file open fh using "${DESCRIPTIVE}/Tables/region_group_counts_by_year.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region and year}" _n "\label{tab
-> :region_group_counts_by_year}" _n "\begin{tabular}{lrrrr}\toprule" _n "Year & Northeast & Midwest & South &
->  West \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region and year}" _n "\label{t
+> ab:region_group_counts_by_year}" _n "\begin{tabular}{lrrrr}\toprule" _n "Year & Northeast & Midwest & Sou
+> th & West \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
@@ -2951,8 +3130,8 @@ xij variables:
   7.     file write fh "`yr_s' & `ne_s' & `mw_s' & `so_s' & `we_s' \\\\" _n
   8. }
 
-. file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize Person-year observations by region (region
->  5 = Other omitted).} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize Person-year observations by region (regi
+> on 5 = Other omitted).} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -2988,9 +3167,9 @@ region_pop_group_2000 region_pop_group_2002 ... region_pop_group_2022->region_po
 
 . file open fh using "${DESCRIPTIVE}/Tables/regionpop_group_counts_by_year.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region--population group and yea
-> r}" _n "\label{tab:regionpop_group_counts_by_year}" _n "\begin{tabular}{lrr}\toprule" _n "Year & Group (cod
-> e) & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region--population group and y
+> ear}" _n "\label{tab:regionpop_group_counts_by_year}" _n "\begin{tabular}{lrr}\toprule" _n "Year & Group 
+> (code) & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
@@ -2999,8 +3178,8 @@ region_pop_group_2000 region_pop_group_2002 ... region_pop_group_2022->region_po
   5.     file write fh "`yr_s' & `rpg_s' & `ob_s' \\\\" _n
   6. }
 
-. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Region $\times$ population size (6 bins); 
-> person-year counts.} \\\\" _n "\end{tabular}\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Region $\times$ population size (6 bins)
+> ; person-year counts.} \\\\" _n "\end{tabular}\end{table}" _n
 
 . file close fh
 
@@ -3012,18 +3191,18 @@ region_pop_group_2000 region_pop_group_2002 ... region_pop_group_2022->region_po
   2.     capture confirm variable `v'
   3.     if !_rc replace `v' = . if `v' == 5
   4. }
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
+(40 real changes made, 40 to missing)
+(43 real changes made, 43 to missing)
+(55 real changes made, 55 to missing)
+(69 real changes made, 69 to missing)
+(70 real changes made, 70 to missing)
+(70 real changes made, 70 to missing)
+(76 real changes made, 76 to missing)
+(87 real changes made, 87 to missing)
+(81 real changes made, 81 to missing)
+(79 real changes made, 79 to missing)
+(61 real changes made, 61 to missing)
+(60 real changes made, 60 to missing)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
@@ -3052,12 +3231,13 @@ region_pop_group_2000 region_pop_group_2002 ... region_pop_group_2022->region_po
 . 
 . * Save dataset with PCA components (region 5 = missing in saved data)
 . save "${PROCESSED}/analysis_ready_processed.dta", replace
-file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_ready_processed.dta saved
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_ready_processed.dta
+    saved
 
-. display "08_descriptive_controls: Saved ${PROCESSED}/analysis_ready_processed.dta with trust_pc1/pc2 (regio
-> n 5 Other set to missing)"
-08_descriptive_controls: Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_re
-> ady_processed.dta with trust_pc1/pc2 (region 5 Other set to missing)
+. display "08_descriptive_controls: Saved ${PROCESSED}/analysis_ready_processed.dta with trust_pc1/pc2 (reg
+> ion 5 Other set to missing)"
+08_descriptive_controls: Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_
+> ready_processed.dta with trust_pc1/pc2 (region 5 Other set to missing)
 
 . 
 . * ---------------------------------------------------------------------
@@ -3076,35 +3256,35 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
 . if "`regretvars'" != "" {
 .     tabstat `regretvars' `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 
-   Stats |  r1_~2022  r4_~2022  r5_~2022
+   Stats |  r1_ann..  r4_ann..  r5_ann..
 ---------+------------------------------
        N |      8330      4152      9168
-    Mean |  .3785716  .2022009  .3230414
-      SD |  1.836335  .7300951  .8597685
+    Mean |  .3785716   .200118  .3230414
+      SD |  1.836335  .7291838  .8597685
       p1 |        -1 -.8203947 -.7842487
-      p5 |        -1  -.513698 -.4266178
-     p50 |  .0382838  .0826399  .1545613
+      p5 |        -1 -.5210837 -.4266178
+     p50 |  .0382838   .081766  .1545613
      p95 |  2.751666  1.202837  1.609422
      p99 |  7.660254     2.833  3.653171
      Min |        -1        -1        -1
-     Max |  41.09515  13.28751  19.67032
+     Max |  41.09515  13.01873  19.67032
 ----------------------------------------
 . }
 
 . capture confirm variable r1_annual_2002
 
 . if !_rc {
-.     tabstat r1_annual_2002 r4_annual_2002 r5_annual_2002 `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min
->  max)
+.     tabstat r1_annual_2002 r4_annual_2002 r5_annual_2002 `wopt', statistics(n mean sd p1 p5 p50 p95 p99 m
+> in max)
 
-   Stats |  r1_~2002  r4_~2002  r5_~2002
+   Stats |  r1_ann..  r4_ann..  r5_ann..
 ---------+------------------------------
        N |     13839      6713     14186
-    Mean |  .3396622  .1329444  .1848722
-      SD |  1.541005  .6557833  .6326632
-      p1 |        -1 -.8019271 -.6937918
-      p5 | -.8911069 -.5571676 -.4259265
-     p50 |  .0079683  .0185573  .0789075
+    Mean |  .3396622  .1307731  .1848722
+      SD |  1.541005  .6565495  .6326632
+      p1 |        -1 -.8113064 -.6937918
+      p5 | -.8911069 -.5623271 -.4259265
+     p50 |  .0079683  .0164603  .0789075
      p95 |  2.649658  1.196811  1.084809
      p99 |  6.870338  2.508917  2.696371
      Min |        -1        -1        -1
@@ -3179,8 +3359,8 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
 . foreach v in ln_lab_inc_final_2022 ln_tot_inc_final_2022 {
   2.     capture confirm variable `v'
   3.     if !_rc {
-  4.         local vlabel = cond("`v'"=="ln_lab_inc_final_2022","Final log labor income (2022)","Final log to
-> tal income (2022)")
+  4.         local vlabel = cond("`v'"=="ln_lab_inc_final_2022","Final log labor income (2022)","Final log 
+> total income (2022)")
   5.         twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_others_2020), ///
 >             title("`vlabel' vs general trust") ///
 >             xtitle("General trust (2020)") ytitle("`vlabel'")
@@ -3188,25 +3368,25 @@ file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis
   7.     }
   8. }
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_2022.pn
+    > g saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_trust_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_trust_2022.pn
+    > g saved as PNG format
 
 . 
 . * Return measures (regression focus: r1 core, r4 Core+ret., r5 net wealth only)
 . foreach v in r1_annual_2022 r4_annual_2022 r5_annual_2022 ///
->             r1_annual_2022_win r4_annual_2022_win r5_annual_2022_win {
+>             r1_annual_win_2022 r4_annual_win_2022 r5_annual_win_2022 {
   2.     capture confirm variable `v'
   3.     if !_rc {
   4.         local vlabel "`v'"
   5.         if "`v'"=="r1_annual_2022" local vlabel "Core (2022)"
   6.         if "`v'"=="r4_annual_2022" local vlabel "Core+ret. (2022)"
   7.         if "`v'"=="r5_annual_2022" local vlabel "Net wealth (2022)"
-  8.         if "`v'"=="r1_annual_2022_win" local vlabel "Core (2022, winsorized)"
-  9.         if "`v'"=="r4_annual_2022_win" local vlabel "Core+ret. (2022, winsorized)"
- 10.         if "`v'"=="r5_annual_2022_win" local vlabel "Net wealth (2022, winsorized)"
+  8.         if "`v'"=="r1_annual_win_2022" local vlabel "Core (2022, winsorized)"
+  9.         if "`v'"=="r4_annual_win_2022" local vlabel "Core+ret. (2022, winsorized)"
+ 10.         if "`v'"=="r5_annual_win_2022" local vlabel "Net wealth (2022, winsorized)"
  11.         twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_others_2020), ///
 >             title("`vlabel' vs general trust") ///
 >             xtitle("General trust (2020)") ytitle("`vlabel'")
@@ -3223,13 +3403,13 @@ file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/r5_annual_2022_vs_trust_2022.png saved
     as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/r1_annual_2022_win_vs_trust_2022.png
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/r1_annual_win_2022_vs_trust_2022.png
     saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/r4_annual_2022_win_vs_trust_2022.png
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/r4_annual_win_2022_vs_trust_2022.png
     saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/r5_annual_2022_win_vs_trust_2022.png
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/r5_annual_win_2022_vs_trust_2022.png
     saved as PNG format
 
 . 
@@ -3252,14 +3432,14 @@ file /Volumes/SSD
 . local has_trust = (_rc == 0)
 
 . if `has_dep' & `has_trust' {
-.     capture binscatter depression_2020 trust_others_2020 if !missing(depression_2020) & !missing(trust_othe
-> rs_2020), nquantiles(50) ///
+.     capture binscatter depression_2020 trust_others_2020 if !missing(depression_2020) & !missing(trust_ot
+> hers_2020), nquantiles(50) ///
 >         ytitle("Depression (2020)") xtitle("General trust (2020)") ///
 >         title("Binscatter: Depression vs general trust")
 .     if _rc == 0 graph export "${DESCRIPTIVE}/Figures/depression_vs_trust_binscatter.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/depression_vs_trust_binscatter.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/depression_vs_trust_binscatter.png
+    saved as PNG format
 . }
 
 . 
@@ -3267,5 +3447,5 @@ file /Volumes/SSD
       name:  <unnamed>
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_descriptive_controls.log
   log type:  text
- closed on:   9 Feb 2026, 09:20:37
--------------------------------------------------------------------------------------------------------------
+ closed on:  10 Feb 2026, 18:26:32
+-----------------------------------------------------------------------------------------------------------

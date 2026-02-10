@@ -133,8 +133,9 @@ forvalues i = 1/11 {
         if !_rc gen double y_core_inc_`y' = h`wcur'icap
         else gen double y_core_inc_`y' = .
 
+        * Retirement (IRA) income: pension + other retirement only (exclude SSDI)
         local iravars ""
-        foreach v in `penavar' `ssdivar' `isretvar' {
+        foreach v in `penavar' `isretvar' {
             capture confirm variable `v'
             if !_rc local iravars "`iravars' `v'"
         }
@@ -164,8 +165,9 @@ forvalues i = 1/11 {
             gen double y_total_inc_`y' = .
         }
 
+        * Total interest income = core + IRA components only: h*icap, h*iothr, r*ipena, r*isret
         local totintvars ""
-        foreach v in `penavar' `ssdivar' `isretvar' r`wcur'iunwc r`wcur'igxfr h`wcur'icap h`wcur'iothr {
+        foreach v in h`wcur'icap h`wcur'iothr `penavar' `isretvar' {
             capture confirm variable `v'
             if !_rc local totintvars "`totintvars' `v'"
         }
@@ -335,19 +337,27 @@ egen double r5_annual_avg = rowmean(r5_annual_2002 r5_annual_2004 r5_annual_2006
 forvalues j = 6/16 {
     local y = 1990 + (2*`j')  // wave 6=2002, 16=2022
     capture drop labor_income_`y' total_income_`y'
-    local inc_vars "r`j'iearn r`j'ipena r`j'issdi r`j'isret r`j'iunwc r`j'igxfr"
+    * Labor income: respondent earnings + unemployment income
+    capture confirm variable r`j'iearn r`j'iunwc
+    if !_rc {
+        gen double labor_income_`y' = r`j'iearn + cond(missing(r`j'iunwc), 0, r`j'iunwc)
+        replace labor_income_`y' = . if missing(r`j'iearn) & missing(r`j'iunwc)
+    }
+
+    * Total income: all respondent flows + household capital and other income
+    local base_inc "r`j'iearn r`j'ipena r`j'issdi r`j'isret r`j'iunwc r`j'igxfr"
+    local all_inc "`base_inc'"
+    capture confirm variable h`j'icap
+    if !_rc local all_inc "`all_inc' h`j'icap"
+    capture confirm variable h`j'iothr
+    if !_rc local all_inc "`all_inc' h`j'iothr"
+
     capture confirm variable r`j'iearn r`j'ipena r`j'issdi r`j'isret r`j'iunwc r`j'igxfr
     if !_rc {
-        egen double labor_income_`y' = rowtotal(`inc_vars')
-        replace labor_income_`y' = . if missing(r`j'iearn) & missing(r`j'ipena) & missing(r`j'issdi) & ///
-            missing(r`j'isret) & missing(r`j'iunwc) & missing(r`j'igxfr)
-    }
-    capture confirm variable h`j'icap h`j'iothr
-    if !_rc {
-        gen double total_income_`y' = labor_income_`y' ///
-            + cond(missing(h`j'icap), 0, h`j'icap) ///
-            + cond(missing(h`j'iothr), 0, h`j'iothr)
-        replace total_income_`y' = . if missing(labor_income_`y') & missing(h`j'icap) & missing(h`j'iothr)
+        egen double total_income_`y' = rowtotal(`all_inc')
+        egen byte _ninc_`y' = rownonmiss(`all_inc')
+        replace total_income_`y' = . if _ninc_`y' == 0
+        drop _ninc_`y'
     }
 
     * Diagnostics: confirm income variables created
