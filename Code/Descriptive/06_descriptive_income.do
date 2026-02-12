@@ -390,7 +390,7 @@ forvalues r = 1/`=_N' {
     local max_s = string(max[`r'], "%9.4f")
     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s' & `min_s' & `max_s' \\\\" _n
 }
-file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Two-year log difference by end year; ln(1+income) so zeros included. Labor = earnings+unemployment; total = all components.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Two-year log difference by end year; ln(income), zero income dropped (N reflects). Labor = earnings+unemployment; total = all components.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 file close fh
 restore
 
@@ -455,5 +455,93 @@ foreach y of local years {
         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_total_income_binscatter_`y'.png", replace
     }
 }
+
+* ---------------------------------------------------------------------
+* Income vs trust (2022): deflated+winsorized and scaled-asinh transforms
+* ---------------------------------------------------------------------
+display "=== Income vs trust (2022): deflated+winsor and scaled asinh ==="
+
+preserve
+use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+* Restrict to 2022 if year variable exists
+capture confirm variable year
+if !_rc keep if year == 2022
+
+* Single-panel: scaled asinh labor income vs trust
+capture confirm variable ihs_lab_inc_defl_win_s_2022 trust_others_2020
+if !_rc {
+    twoway scatter ihs_lab_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_lab_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(navy%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Scaled asinh labor income vs trust (2022)")
+    graph export "${DESCRIPTIVE}/Figures/as_lab_trust_2022.png", replace
+}
+
+* Single-panel: scaled asinh total income vs trust
+capture confirm variable ihs_tot_inc_defl_win_s_2022 trust_others_2020
+if !_rc {
+    twoway scatter ihs_tot_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_tot_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(maroon%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Scaled asinh total income vs trust (2022)")
+    graph export "${DESCRIPTIVE}/Figures/as_tot_trust_2022.png", replace
+}
+
+* Three-panel combined figure: labor income (Defl+Win, Defl+Win+ln(x), Defl+Win+asinh(x/med+))
+capture confirm variable lab_inc_defl_win_2022 ln_lab_inc_defl_win_2022 ihs_lab_inc_defl_win_s_2022 trust_others_2020
+if !_rc {
+    twoway scatter lab_inc_defl_win_2022 trust_others_2020 if !missing(lab_inc_defl_win_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(navy%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Defl+Win") ///
+        name(g_l1, replace)
+    twoway scatter ln_lab_inc_defl_win_2022 trust_others_2020 if !missing(ln_lab_inc_defl_win_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(navy%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Defl+Win+ln(x)") ///
+        name(g_l2, replace)
+    twoway scatter ihs_lab_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_lab_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(navy%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Defl+Win+asinh(x/med+)") ///
+        name(g_l3, replace)
+    graph combine g_l1 g_l2 g_l3, cols(2) ///
+        title("Labor income vs trust (2022)")
+    graph export "${DESCRIPTIVE}/Figures/dw_lab_trust_2022.png", replace
+}
+
+* Three-panel combined figure: total income (Defl+Win, Defl+Win+ln(x), Defl+Win+asinh(x/med+))
+capture confirm variable tot_inc_defl_win_2022 ln_tot_inc_defl_win_2022 ihs_tot_inc_defl_win_s_2022 trust_others_2020
+if !_rc {
+    twoway scatter tot_inc_defl_win_2022 trust_others_2020 if !missing(tot_inc_defl_win_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(maroon%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Defl+Win") ///
+        name(g_t1, replace)
+    twoway scatter ln_tot_inc_defl_win_2022 trust_others_2020 if !missing(ln_tot_inc_defl_win_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(maroon%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Defl+Win+ln(x)") ///
+        name(g_t2, replace)
+    twoway scatter ihs_tot_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_tot_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(maroon%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("Defl+Win+asinh(x/med+)") ///
+        name(g_t3, replace)
+    graph combine g_t1 g_t2 g_t3, cols(2) ///
+        title("Total income vs trust (2022)")
+    graph export "${DESCRIPTIVE}/Figures/dw_tot_trust_2022.png", replace
+}
+
+restore
 
 log close

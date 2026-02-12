@@ -61,13 +61,29 @@ local years "2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022"
 display "=== 10_build_panel: Defining panel variable groups from analysis_ready_processed.dta ==="
 
 * ----------------------------------------------------------------------
+* Required: raw returns (r1_annual_*, r4_annual_*, r5_annual_*) for panel baseline (14)
+* Fail loudly if missing; do NOT silently continue.
+* ----------------------------------------------------------------------
+foreach stub in r1_annual r4_annual r5_annual {
+    capture unab rawlist : `stub'_*
+    if _rc {
+        display as error "10_build_panel: `stub'_* not found in analysis_ready_processed.dta."
+        display as error "  Run 02_compute_returns_income.do, 03_prep_controls.do, 04_processing_income.do, 05_processing_returns.do in order."
+        log close
+        exit 198
+    }
+    local n : word count `rawlist'
+    display "10_build_panel: `stub'_* present (`n' vars)"
+}
+
+* ----------------------------------------------------------------------
 * Time-varying groups: stubs for reshape + explicit varlists for keep
 * ----------------------------------------------------------------------
 
-* Returns (r1, r4, r5) and winsorized versions
+* Returns: raw (r*_annual), win (r*_annual_win), w5 (r*_annual_w5) — raw required for 14
 local ret_stubs ""
 local ret_vars  ""
-foreach s in r1_annual r1_annual_win r4_annual r4_annual_win r5_annual r5_annual_win {
+foreach s in r1_annual r1_annual_win r1_annual_w5 r4_annual r4_annual_win r4_annual_w5 r5_annual r5_annual_win r5_annual_w5 {
     capture unab tmp : `s'_*
     if !_rc {
         local ret_stubs "`ret_stubs' `s'_"
@@ -104,11 +120,27 @@ foreach s in wealth_core wealth_ira wealth_coreira wealth_total {
         local wealth_vars  "`wealth_vars' `tmp'"
     }
 }
+* Wealth deciles for panel regressions (14): r1->wealth_core_d*, r4->wealth_coreira_d*, r5->wealth_d*
+forvalues d = 2/10 {
+    foreach s in wealth_core_d`d' wealth_coreira_d`d' wealth_d`d' {
+        capture unab tmp : `s'_*
+        if !_rc {
+            local wealth_stubs "`wealth_stubs' `s'_"
+            local wealth_vars  "`wealth_vars' `tmp'"
+        }
+    }
+}
+* Leverage ratios for panel regressions (15)
+foreach s in leverage_long leverage_other {
+    capture unab tmp : `s'_*
+    if !_rc {
+        local wealth_stubs "`wealth_stubs' `s'_"
+        local wealth_vars  "`wealth_vars' `tmp'"
+    }
+}
 
-* Shares: gross-assets/core+IRA pipeline shares only
-*   - share_core_: core / gross assets
-*   - share_m3_ira_: IRA / gross assets
-*   - share_residential_: residential / gross assets
+* Shares for panel regressions (15): core/gross, ira/gross, res/gross (share_core, share_m3_ira, share_residential)
+* share_core_coreira and share_ira_coreira are created post-reshape from wealth_core, wealth_ira
 local share_stubs ""
 local share_vars  ""
 foreach s in share_core share_m3_ira share_residential {
@@ -122,8 +154,8 @@ foreach s in share_core share_m3_ira share_residential {
 * Core wave-specific controls
 local ctrl_stubs ""
 local ctrl_vars  ""
-foreach s in age married inlbrf region hometown_size region_pop_group region_pop3_group ///
-               townsize_trust pop_trust regional_trust {
+* censreg (census region) created in 03; region_pop_group, region_pop3_group, regional_trust no longer cause ambiguity
+foreach s in age age_bin married inlbrf censreg hometown_size region_pop_group region_pop3_group townsize_trust pop_trust regional_trust {
     capture unab tmp : `s'_*
     if !_rc {
         local ctrl_stubs "`ctrl_stubs' `s'_"
@@ -175,74 +207,39 @@ if "`long_stubs'" == "" {
 display "=== 10_build_panel: Reshaping to long person–year panel ==="
 reshape long `long_stubs', i(hhidpn) j(year)
 
-* Avoid Stata ambiguous abbreviation (r1_annual vs r1_annual_win): temp-rename _win, then rename _annual -> _annual_nw using varlist so we never type the ambiguous name.
-local r1var "r1_annual_nw"
-local r4var "r4_annual_nw"
-local r5var "r5_annual_nw"
+* Reshape creates vars from stub: r1_annual_ -> r1_annual_ (trailing underscore). Rename to r1_annual_nw.
+* Avoid Stata ambiguous abbreviation (r1_annual vs r1_annual_win): temp-rename _win first.
 capture confirm variable r1_annual_win
 if !_rc {
     rename r1_annual_win __r1win
     rename r4_annual_win __r4win
     rename r5_annual_win __r5win
-    foreach v of varlist _all {
-        if "`v'" == "r1_annual" {
-            rename `v' r1_annual_nw
-            continue, break
-        }
-    }
-    foreach v of varlist _all {
-        if "`v'" == "r4_annual" {
-            rename `v' r4_annual_nw
-            continue, break
-        }
-    }
-    foreach v of varlist _all {
-        if "`v'" == "r5_annual" {
-            rename `v' r5_annual_nw
-            continue, break
-        }
-    }
+}
+rename r1_annual_ r1_annual_nw
+rename r4_annual_ r4_annual_nw
+rename r5_annual_ r5_annual_nw
+capture confirm variable __r1win
+if !_rc {
     rename __r1win r1_annual_win
     rename __r4win r4_annual_win
     rename __r5win r5_annual_win
 }
-else {
-    foreach v of varlist _all {
-        if "`v'" == "r1_annual" {
-            rename `v' r1_annual_nw
-            continue, break
-        }
-    }
-    foreach v of varlist _all {
-        if "`v'" == "r4_annual" {
-            rename `v' r4_annual_nw
-            continue, break
-        }
-    }
-    foreach v of varlist _all {
-        if "`v'" == "r5_annual" {
-            rename `v' r5_annual_nw
-            continue, break
-        }
-    }
-}
 
-* Point to the return variable that exists (_nw if we renamed it, else _win when only winsorized is in data)
-capture confirm variable r1_annual_nw
-if _rc {
-    capture confirm variable r1_annual_win
-    if !_rc local r1var "r1_annual_win"
+* Post-reshape hard check: raw vars must be r1_annual_nw, r4_annual_nw, r5_annual_nw (required for 14)
+foreach v in r1_annual_nw r4_annual_nw r5_annual_nw {
+    capture confirm variable `v'
+    if _rc {
+        display as error "10_build_panel: `v' missing after reshape. Raw returns must be present in long panel."
+        display as error "  Check that r1_annual_*, r4_annual_*, r5_annual_* were in ret_stubs before reshape."
+        log close
+        exit 198
+    }
 }
-capture confirm variable r4_annual_nw
-if _rc {
-    capture confirm variable r4_annual_win
-    if !_rc local r4var "r4_annual_win"
-}
-capture confirm variable r5_annual_nw
-if _rc {
-    capture confirm variable r5_annual_win
-    if !_rc local r5var "r5_annual_win"
-}
+display "10_build_panel: raw panel returns present = yes"
+
+local r1var "r1_annual_nw"
+local r4var "r4_annual_nw"
+local r5var "r5_annual_nw"
 
 * Weight and time-invariant vars are already attached to each row (they were kept pre-reshape).
 
@@ -270,13 +267,14 @@ display "=== Panel structure: observations by year (unbalanced) ==="
 tab year
 
 display "=== Overlap: r1/r4/r5 and basic controls by year ==="
+* Use age_bin (not age) to avoid ambiguous abbreviation with age_bin
 foreach y of local years {
     quietly count if year == `y' & !missing(`r1var') & !missing(`r4var') & !missing(`r5var')
     display "Year `y': r1 & r4 & r5 nonmissing = " %9.0f r(N)
 
     quietly count if year == `y' & !missing(`r1var') & !missing(`r4var') & !missing(`r5var') ///
         & !missing(labor_income_real_win) & !missing(total_income_real_win) ///
-        & !missing(age) & !missing(married) & !missing(inlbrf)
+        & !missing(age_bin) & !missing(married) & !missing(inlbrf)
     display "Year `y': r1/r4/r5 + inc (lab+tot) + age/married/inlbrf nonmissing = " %9.0f r(N)
 }
 

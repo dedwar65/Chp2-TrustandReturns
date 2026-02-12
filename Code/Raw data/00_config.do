@@ -36,8 +36,6 @@ capture mkdir "${DESCRIPTIVE}"
 capture mkdir "${DESCRIPTIVE}/Figures"
 capture mkdir "${DESCRIPTIVE}/Tables"
 capture mkdir "${REGRESSIONS}"
-capture mkdir "${REGRESSIONS}/Tables"
-capture mkdir "${REGRESSIONS}/Figures"
 * Output subdirs: Trust (11), Income/Spec1 & Income/Spec2 (12), Returns/Spec1 & Spec2 (13)
 capture mkdir "${REGRESSIONS}/Trust"
 capture mkdir "${REGRESSIONS}/Income"

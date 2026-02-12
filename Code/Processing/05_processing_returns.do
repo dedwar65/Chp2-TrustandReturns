@@ -104,6 +104,27 @@ foreach v of local retvars {
 display "Tabstat returns after winsorization"
 tabstat `retwin', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 
+* ---------------------------------------------------------------------
+* 5% winsorization (p5/p95) for r1, r4, r5 — all years, for panel regressions (14)
+* Naming: r*_annual_w5_YYYY so 10_build_panel reshape finds r1_annual_w5_*, etc.
+* ---------------------------------------------------------------------
+display "=== 5% winsorization on r1/r4/r5 (all years) ==="
+foreach y of local years {
+    foreach stub in r1_annual r4_annual r5_annual {
+        local v `stub'_`y'
+        capture confirm variable `v'
+        if !_rc {
+            quietly summarize `v', detail
+            local p5  = r(p5)
+            local p95 = r(p95)
+            capture drop `stub'_w5_`y'
+            gen double `stub'_w5_`y' = `v'
+            replace `stub'_w5_`y' = `p5'  if `stub'_w5_`y' < `p5'  & !missing(`stub'_w5_`y')
+            replace `stub'_w5_`y' = `p95' if `stub'_w5_`y' > `p95' & !missing(`stub'_w5_`y')
+        }
+    }
+}
+
 save "${PROCESSED}/analysis_ready_processed.dta", replace
 display "05_processing_returns: Saved ${PROCESSED}/analysis_ready_processed.dta"
 

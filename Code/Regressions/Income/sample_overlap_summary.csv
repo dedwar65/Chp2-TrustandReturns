@@ -1,0 +1,321 @@
+outcome,trust,stub,step,ord,N_after
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,BASE(outcome+trust),0,1080
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ age_2020,1,1080
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ gender,2,1080
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ educ_yrs,3,1075
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ married_2020,4,1074
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ born_us,5,1074
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ inlbrf_2020,6,1069
+ihs_lab_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ race_eth,7,1068
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,BASE(outcome+trust),0,990
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,+ age_2020,1,990
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,+ gender,2,990
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,+ educ_yrs,3,986
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,+ married_2020,4,985
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,+ born_us,5,985
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,+ inlbrf_2020,6,979
+ihs_lab_inc_defl_win_s_2020,trust_banks_2020,banks,+ race_eth,7,978
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,BASE(outcome+trust),0,900
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,+ age_2020,1,900
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,+ gender,2,900
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,+ educ_yrs,3,896
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,+ married_2020,4,895
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,+ born_us,5,895
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,+ inlbrf_2020,6,891
+ihs_lab_inc_defl_win_s_2020,trust_others_2020,general,+ race_eth,7,890
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,BASE(outcome+trust),0,1147
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ age_2020,1,1147
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ gender,2,1147
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ educ_yrs,3,1141
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ married_2020,4,1140
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ born_us,5,1140
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ inlbrf_2020,6,1134
+ihs_lab_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ race_eth,7,1133
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,BASE(outcome+trust),0,1235
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,+ age_2020,1,1235
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,+ gender,2,1235
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,+ educ_yrs,3,1228
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,+ married_2020,4,1227
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,+ born_us,5,1227
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,+ inlbrf_2020,6,1222
+ihs_lab_inc_defl_win_s_2020,trust_media_2020,media,+ race_eth,7,1221
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,BASE(outcome+trust),0,1029
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ age_2020,1,1029
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ gender,2,1029
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ educ_yrs,3,1022
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ married_2020,4,1021
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ born_us,5,1021
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ inlbrf_2020,6,1014
+ihs_lab_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ race_eth,7,1013
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,BASE(outcome+trust),0,1072
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ age_2020,1,1072
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ gender,2,1072
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ educ_yrs,3,1067
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ married_2020,4,1066
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ born_us,5,1066
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ inlbrf_2020,6,1060
+ihs_lab_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ race_eth,7,1059
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,BASE(outcome+trust),0,536
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,+ age_2020,1,536
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,+ gender,2,536
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,+ educ_yrs,3,533
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,+ married_2020,4,533
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,+ born_us,5,533
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,+ inlbrf_2020,6,531
+ihs_lab_inc_defl_win_s_2020,trust_pc1,pc1,+ race_eth,7,530
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,BASE(outcome+trust),0,536
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,+ age_2020,1,536
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,+ gender,2,536
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,+ educ_yrs,3,533
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,+ married_2020,4,533
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,+ born_us,5,533
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,+ inlbrf_2020,6,531
+ihs_lab_inc_defl_win_s_2020,trust_pc2,pc2,+ race_eth,7,530
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,BASE(outcome+trust),0,1013
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ age_2020,1,1013
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ gender,2,1013
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ educ_yrs,3,1006
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ married_2020,4,1006
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ born_us,5,1006
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ inlbrf_2020,6,1001
+ihs_lab_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ race_eth,7,1000
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,BASE(outcome+trust),0,1080
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ age_2020,1,1080
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ gender,2,1080
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ educ_yrs,3,1075
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ married_2020,4,1074
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ born_us,5,1074
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ inlbrf_2020,6,1069
+ihs_tot_inc_defl_win_s_2020,trust_advisors_2020,advisors,+ race_eth,7,1068
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,BASE(outcome+trust),0,990
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,+ age_2020,1,990
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,+ gender,2,990
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,+ educ_yrs,3,986
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,+ married_2020,4,985
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,+ born_us,5,985
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,+ inlbrf_2020,6,979
+ihs_tot_inc_defl_win_s_2020,trust_banks_2020,banks,+ race_eth,7,978
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,BASE(outcome+trust),0,900
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,+ age_2020,1,900
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,+ gender,2,900
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,+ educ_yrs,3,896
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,+ married_2020,4,895
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,+ born_us,5,895
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,+ inlbrf_2020,6,891
+ihs_tot_inc_defl_win_s_2020,trust_others_2020,general,+ race_eth,7,890
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,BASE(outcome+trust),0,1147
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ age_2020,1,1147
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ gender,2,1147
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ educ_yrs,3,1141
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ married_2020,4,1140
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ born_us,5,1140
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ inlbrf_2020,6,1134
+ihs_tot_inc_defl_win_s_2020,trust_insurance_2020,insurance,+ race_eth,7,1133
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,BASE(outcome+trust),0,1235
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,+ age_2020,1,1235
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,+ gender,2,1235
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,+ educ_yrs,3,1228
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,+ married_2020,4,1227
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,+ born_us,5,1227
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,+ inlbrf_2020,6,1222
+ihs_tot_inc_defl_win_s_2020,trust_media_2020,media,+ race_eth,7,1221
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,BASE(outcome+trust),0,1029
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ age_2020,1,1029
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ gender,2,1029
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ educ_yrs,3,1022
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ married_2020,4,1021
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ born_us,5,1021
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ inlbrf_2020,6,1014
+ihs_tot_inc_defl_win_s_2020,trust_medicare_2020,medicare,+ race_eth,7,1013
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,BASE(outcome+trust),0,1072
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ age_2020,1,1072
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ gender,2,1072
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ educ_yrs,3,1067
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ married_2020,4,1066
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ born_us,5,1066
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ inlbrf_2020,6,1060
+ihs_tot_inc_defl_win_s_2020,trust_mutual_funds_2020,mutual_funds,+ race_eth,7,1059
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,BASE(outcome+trust),0,536
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,+ age_2020,1,536
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,+ gender,2,536
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,+ educ_yrs,3,533
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,+ married_2020,4,533
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,+ born_us,5,533
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,+ inlbrf_2020,6,531
+ihs_tot_inc_defl_win_s_2020,trust_pc1,pc1,+ race_eth,7,530
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,BASE(outcome+trust),0,536
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,+ age_2020,1,536
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,+ gender,2,536
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,+ educ_yrs,3,533
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,+ married_2020,4,533
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,+ born_us,5,533
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,+ inlbrf_2020,6,531
+ihs_tot_inc_defl_win_s_2020,trust_pc2,pc2,+ race_eth,7,530
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,BASE(outcome+trust),0,1013
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ age_2020,1,1013
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ gender,2,1013
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ educ_yrs,3,1006
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ married_2020,4,1006
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ born_us,5,1006
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ inlbrf_2020,6,1001
+ihs_tot_inc_defl_win_s_2020,trust_social_security_2020,social_security,+ race_eth,7,1000
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,BASE(outcome+trust),0,436
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,+ age_2020,1,436
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,+ gender,2,436
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,+ educ_yrs,3,433
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,+ married_2020,4,432
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,+ born_us,5,432
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,+ inlbrf_2020,6,432
+ln_lab_inc_final_2020,trust_advisors_2020,advisors,+ race_eth,7,431
+ln_lab_inc_final_2020,trust_banks_2020,banks,BASE(outcome+trust),0,400
+ln_lab_inc_final_2020,trust_banks_2020,banks,+ age_2020,1,400
+ln_lab_inc_final_2020,trust_banks_2020,banks,+ gender,2,400
+ln_lab_inc_final_2020,trust_banks_2020,banks,+ educ_yrs,3,398
+ln_lab_inc_final_2020,trust_banks_2020,banks,+ married_2020,4,397
+ln_lab_inc_final_2020,trust_banks_2020,banks,+ born_us,5,397
+ln_lab_inc_final_2020,trust_banks_2020,banks,+ inlbrf_2020,6,397
+ln_lab_inc_final_2020,trust_banks_2020,banks,+ race_eth,7,396
+ln_lab_inc_final_2020,trust_others_2020,general,BASE(outcome+trust),0,347
+ln_lab_inc_final_2020,trust_others_2020,general,+ age_2020,1,347
+ln_lab_inc_final_2020,trust_others_2020,general,+ gender,2,347
+ln_lab_inc_final_2020,trust_others_2020,general,+ educ_yrs,3,345
+ln_lab_inc_final_2020,trust_others_2020,general,+ married_2020,4,344
+ln_lab_inc_final_2020,trust_others_2020,general,+ born_us,5,344
+ln_lab_inc_final_2020,trust_others_2020,general,+ inlbrf_2020,6,344
+ln_lab_inc_final_2020,trust_others_2020,general,+ race_eth,7,343
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,BASE(outcome+trust),0,467
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,+ age_2020,1,467
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,+ gender,2,467
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,+ educ_yrs,3,464
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,+ married_2020,4,463
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,+ born_us,5,463
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,+ inlbrf_2020,6,462
+ln_lab_inc_final_2020,trust_insurance_2020,insurance,+ race_eth,7,461
+ln_lab_inc_final_2020,trust_media_2020,media,BASE(outcome+trust),0,500
+ln_lab_inc_final_2020,trust_media_2020,media,+ age_2020,1,500
+ln_lab_inc_final_2020,trust_media_2020,media,+ gender,2,500
+ln_lab_inc_final_2020,trust_media_2020,media,+ educ_yrs,3,497
+ln_lab_inc_final_2020,trust_media_2020,media,+ married_2020,4,496
+ln_lab_inc_final_2020,trust_media_2020,media,+ born_us,5,496
+ln_lab_inc_final_2020,trust_media_2020,media,+ inlbrf_2020,6,496
+ln_lab_inc_final_2020,trust_media_2020,media,+ race_eth,7,495
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,BASE(outcome+trust),0,429
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,+ age_2020,1,429
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,+ gender,2,429
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,+ educ_yrs,3,426
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,+ married_2020,4,425
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,+ born_us,5,425
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,+ inlbrf_2020,6,424
+ln_lab_inc_final_2020,trust_medicare_2020,medicare,+ race_eth,7,423
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,BASE(outcome+trust),0,431
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ age_2020,1,431
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ gender,2,431
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ educ_yrs,3,429
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ married_2020,4,428
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ born_us,5,428
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ inlbrf_2020,6,427
+ln_lab_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ race_eth,7,426
+ln_lab_inc_final_2020,trust_pc1,pc1,BASE(outcome+trust),0,232
+ln_lab_inc_final_2020,trust_pc1,pc1,+ age_2020,1,232
+ln_lab_inc_final_2020,trust_pc1,pc1,+ gender,2,232
+ln_lab_inc_final_2020,trust_pc1,pc1,+ educ_yrs,3,230
+ln_lab_inc_final_2020,trust_pc1,pc1,+ married_2020,4,230
+ln_lab_inc_final_2020,trust_pc1,pc1,+ born_us,5,230
+ln_lab_inc_final_2020,trust_pc1,pc1,+ inlbrf_2020,6,230
+ln_lab_inc_final_2020,trust_pc1,pc1,+ race_eth,7,229
+ln_lab_inc_final_2020,trust_pc2,pc2,BASE(outcome+trust),0,232
+ln_lab_inc_final_2020,trust_pc2,pc2,+ age_2020,1,232
+ln_lab_inc_final_2020,trust_pc2,pc2,+ gender,2,232
+ln_lab_inc_final_2020,trust_pc2,pc2,+ educ_yrs,3,230
+ln_lab_inc_final_2020,trust_pc2,pc2,+ married_2020,4,230
+ln_lab_inc_final_2020,trust_pc2,pc2,+ born_us,5,230
+ln_lab_inc_final_2020,trust_pc2,pc2,+ inlbrf_2020,6,230
+ln_lab_inc_final_2020,trust_pc2,pc2,+ race_eth,7,229
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,BASE(outcome+trust),0,428
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,+ age_2020,1,428
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,+ gender,2,428
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,+ educ_yrs,3,425
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,+ married_2020,4,425
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,+ born_us,5,425
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,+ inlbrf_2020,6,425
+ln_lab_inc_final_2020,trust_social_security_2020,social_security,+ race_eth,7,424
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,BASE(outcome+trust),0,1034
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,+ age_2020,1,1034
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,+ gender,2,1034
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,+ educ_yrs,3,1029
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,+ married_2020,4,1028
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,+ born_us,5,1028
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,+ inlbrf_2020,6,1026
+ln_tot_inc_final_2020,trust_advisors_2020,advisors,+ race_eth,7,1025
+ln_tot_inc_final_2020,trust_banks_2020,banks,BASE(outcome+trust),0,942
+ln_tot_inc_final_2020,trust_banks_2020,banks,+ age_2020,1,942
+ln_tot_inc_final_2020,trust_banks_2020,banks,+ gender,2,942
+ln_tot_inc_final_2020,trust_banks_2020,banks,+ educ_yrs,3,938
+ln_tot_inc_final_2020,trust_banks_2020,banks,+ married_2020,4,937
+ln_tot_inc_final_2020,trust_banks_2020,banks,+ born_us,5,937
+ln_tot_inc_final_2020,trust_banks_2020,banks,+ inlbrf_2020,6,934
+ln_tot_inc_final_2020,trust_banks_2020,banks,+ race_eth,7,933
+ln_tot_inc_final_2020,trust_others_2020,general,BASE(outcome+trust),0,856
+ln_tot_inc_final_2020,trust_others_2020,general,+ age_2020,1,856
+ln_tot_inc_final_2020,trust_others_2020,general,+ gender,2,856
+ln_tot_inc_final_2020,trust_others_2020,general,+ educ_yrs,3,852
+ln_tot_inc_final_2020,trust_others_2020,general,+ married_2020,4,851
+ln_tot_inc_final_2020,trust_others_2020,general,+ born_us,5,851
+ln_tot_inc_final_2020,trust_others_2020,general,+ inlbrf_2020,6,849
+ln_tot_inc_final_2020,trust_others_2020,general,+ race_eth,7,848
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,BASE(outcome+trust),0,1095
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,+ age_2020,1,1095
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,+ gender,2,1095
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,+ educ_yrs,3,1089
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,+ married_2020,4,1088
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,+ born_us,5,1088
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,+ inlbrf_2020,6,1085
+ln_tot_inc_final_2020,trust_insurance_2020,insurance,+ race_eth,7,1084
+ln_tot_inc_final_2020,trust_media_2020,media,BASE(outcome+trust),0,1184
+ln_tot_inc_final_2020,trust_media_2020,media,+ age_2020,1,1184
+ln_tot_inc_final_2020,trust_media_2020,media,+ gender,2,1184
+ln_tot_inc_final_2020,trust_media_2020,media,+ educ_yrs,3,1177
+ln_tot_inc_final_2020,trust_media_2020,media,+ married_2020,4,1176
+ln_tot_inc_final_2020,trust_media_2020,media,+ born_us,5,1176
+ln_tot_inc_final_2020,trust_media_2020,media,+ inlbrf_2020,6,1173
+ln_tot_inc_final_2020,trust_media_2020,media,+ race_eth,7,1172
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,BASE(outcome+trust),0,983
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,+ age_2020,1,983
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,+ gender,2,983
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,+ educ_yrs,3,976
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,+ married_2020,4,975
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,+ born_us,5,975
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,+ inlbrf_2020,6,971
+ln_tot_inc_final_2020,trust_medicare_2020,medicare,+ race_eth,7,970
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,BASE(outcome+trust),0,1026
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ age_2020,1,1026
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ gender,2,1026
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ educ_yrs,3,1021
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ married_2020,4,1020
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ born_us,5,1020
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ inlbrf_2020,6,1016
+ln_tot_inc_final_2020,trust_mutual_funds_2020,mutual_funds,+ race_eth,7,1015
+ln_tot_inc_final_2020,trust_pc1,pc1,BASE(outcome+trust),0,508
+ln_tot_inc_final_2020,trust_pc1,pc1,+ age_2020,1,508
+ln_tot_inc_final_2020,trust_pc1,pc1,+ gender,2,508
+ln_tot_inc_final_2020,trust_pc1,pc1,+ educ_yrs,3,505
+ln_tot_inc_final_2020,trust_pc1,pc1,+ married_2020,4,505
+ln_tot_inc_final_2020,trust_pc1,pc1,+ born_us,5,505
+ln_tot_inc_final_2020,trust_pc1,pc1,+ inlbrf_2020,6,504
+ln_tot_inc_final_2020,trust_pc1,pc1,+ race_eth,7,503
+ln_tot_inc_final_2020,trust_pc2,pc2,BASE(outcome+trust),0,508
+ln_tot_inc_final_2020,trust_pc2,pc2,+ age_2020,1,508
+ln_tot_inc_final_2020,trust_pc2,pc2,+ gender,2,508
+ln_tot_inc_final_2020,trust_pc2,pc2,+ educ_yrs,3,505
+ln_tot_inc_final_2020,trust_pc2,pc2,+ married_2020,4,505
+ln_tot_inc_final_2020,trust_pc2,pc2,+ born_us,5,505
+ln_tot_inc_final_2020,trust_pc2,pc2,+ inlbrf_2020,6,504
+ln_tot_inc_final_2020,trust_pc2,pc2,+ race_eth,7,503
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,BASE(outcome+trust),0,967
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,+ age_2020,1,967
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,+ gender,2,967
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,+ educ_yrs,3,960
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,+ married_2020,4,960
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,+ born_us,5,960
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,+ inlbrf_2020,6,958
+ln_tot_inc_final_2020,trust_social_security_2020,social_security,+ race_eth,7,957

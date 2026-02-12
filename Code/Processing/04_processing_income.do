@@ -125,6 +125,34 @@ foreach y of local years {
     replace total_income_real_win_`y' = `p1_tot' if total_income_real_win_`y' < `p1_tot' & !missing(total_income_real_win_`y')
     replace total_income_real_win_`y' = `p99_tot' if total_income_real_win_`y' > `p99_tot' & !missing(total_income_real_win_`y')
 
+    * Persist deflated + winsorized income and derived transforms
+    capture drop lab_inc_defl_win_`y' tot_inc_defl_win_`y'
+    gen double lab_inc_defl_win_`y' = labor_income_real_win_`y'
+    gen double tot_inc_defl_win_`y' = total_income_real_win_`y'
+
+    capture drop ln_lab_inc_defl_win_`y' ln_tot_inc_defl_win_`y'
+    gen double ln_lab_inc_defl_win_`y' = ln(lab_inc_defl_win_`y') if lab_inc_defl_win_`y' > 0
+    gen double ln_tot_inc_defl_win_`y' = ln(tot_inc_defl_win_`y') if tot_inc_defl_win_`y' > 0
+
+    * Scaled asinh: asinh(x / median_positive_x) for deflated + winsorized levels
+    quietly summarize lab_inc_defl_win_`y' if lab_inc_defl_win_`y' > 0, detail
+    local med_lab_dw = r(p50)
+    local N_pos_lab_dw = r(N)
+    capture drop ihs_lab_inc_defl_win_s_`y'
+    gen double ihs_lab_inc_defl_win_s_`y' = .
+    if `N_pos_lab_dw' > 0 & `med_lab_dw' > 0 {
+        replace ihs_lab_inc_defl_win_s_`y' = asinh(lab_inc_defl_win_`y' / `med_lab_dw') if !missing(lab_inc_defl_win_`y')
+    }
+
+    quietly summarize tot_inc_defl_win_`y' if tot_inc_defl_win_`y' > 0, detail
+    local med_tot_dw = r(p50)
+    local N_pos_tot_dw = r(N)
+    capture drop ihs_tot_inc_defl_win_s_`y'
+    gen double ihs_tot_inc_defl_win_s_`y' = .
+    if `N_pos_tot_dw' > 0 & `med_tot_dw' > 0 {
+        replace ihs_tot_inc_defl_win_s_`y' = asinh(tot_inc_defl_win_`y' / `med_tot_dw') if !missing(tot_inc_defl_win_`y')
+    }
+
     local labrealwin "`labrealwin' labor_income_real_win_`y'"
     local totrealwin "`totrealwin' total_income_real_win_`y'"
 }
@@ -236,10 +264,10 @@ foreach y of local years {
         gen double total_income_real_`y' = total_income_`y' * (`cpi_2021' / `cpi_`y'')
     }
 
-    * Log: use ln(1+x) so zeros stay in sample (same overlap as RAND; otherwise labor drops 0-earners)
+    * Log: use ln(x) for x > 0; zero income set to missing (dropped from log-income sample, N reflects this)
     capture drop ln_lab_inc_final_`y' ln_tot_inc_final_`y'
-    gen double ln_lab_inc_final_`y' = ln(1 + labor_income_real_`y') if !missing(labor_income_real_`y')
-    gen double ln_tot_inc_final_`y' = ln(1 + total_income_real_`y') if !missing(total_income_real_`y')
+    gen double ln_lab_inc_final_`y' = ln(labor_income_real_`y') if labor_income_real_`y' > 0
+    gen double ln_tot_inc_final_`y' = ln(total_income_real_`y') if total_income_real_`y' > 0
 
     * Winsorize on log values (p1/p99)
     quietly summarize ln_lab_inc_final_`y', detail

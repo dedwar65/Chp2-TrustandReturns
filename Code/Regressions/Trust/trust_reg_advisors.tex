@@ -1,0 +1,45 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Advisors trust (2020) on controls}
+\label{tab:trust_reg_advisors}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{2}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{Demographics}&\multicolumn{1}{c}{Full controls}\\
+\midrule
+Female              &        0.21         &        0.26         \\
+                    &      (0.18)         &      (0.18)         \\
+Years of education  &        0.05         &        0.04         \\
+                    &      (0.03)         &      (0.03)         \\
+Married             &        0.18         &        0.03         \\
+                    &      (0.18)         &      (0.20)         \\
+NH Black            &       -0.77\sym{***}&       -0.66\sym{***}\\
+                    &      (0.23)         &      (0.23)         \\
+Hispanic            &       -0.68\sym{**} &       -0.61\sym{**} \\
+                    &      (0.27)         &      (0.28)         \\
+NH Other            &       -0.96\sym{***}&       -0.96\sym{***}\\
+                    &      (0.34)         &      (0.35)         \\
+Depression          &                     &       -0.10\sym{**} \\
+                    &                     &      (0.05)         \\
+Health conditions   &                     &       -0.16\sym{**} \\
+                    &                     &      (0.07)         \\
+Covered by Medicare &                     &       -0.19         \\
+                    &                     &      (0.34)         \\
+Covered by Medicaid &                     &       -0.54\sym{*}  \\
+                    &                     &      (0.30)         \\
+Has life insurance  &                     &       -0.15         \\
+                    &                     &      (0.18)         \\
+Number of reported divorces&                     &       -0.23\sym{**} \\
+                    &                     &      (0.12)         \\
+Number of reported times being widowed&                     &        0.40         \\
+                    &                     &      (0.27)         \\
+Constant            &        3.32         &        3.82         \\
+                    &      (2.46)         &      (2.77)         \\
+\midrule
+Observations        &     1073.00         &     1047.00         \\
+Adj. R-squared      &        0.02         &        0.04         \\
+\bottomrule
+\multicolumn{3}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{3}{l}{\footnotesize Robust standard errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included; coefficients omitted.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

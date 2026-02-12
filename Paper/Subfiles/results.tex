@@ -4,15 +4,55 @@
 %\setcounter{page}{0}\pagenumbering{arabic}
 \subsection{Determinants of trust}
 
-\par First, I go beyond correlations between the variables by trying to consider which variables explain the variation in the trust measures.  
+\par First, I go beyond correlations between the variables by trying to consider which variables explain the variation in the trust measures.
+
+\input{../../Code/Regressions/Trust/trust_reg_general.tex}  
 
 \subsection{Income and trust}
 
 \par After understanding the determinants of trust in the HRS data, I wanted to see if the \say{hump-shape} relationship between trust and income found by \cite{jbpglg2016} was present in the HRS data. To do this I used the available income data from the 2020 wave with the trust measures from the same year.
 
+\par First, I consider the statistical relationship for labor income in the following figures. 
+
+\input{../../Code/Regressions/Income/Labor/income_trust_general_log.tex}
+
+\input{../../Code/Regressions/Income/Labor/income_trust_general_ihs.tex}
+
+\par The pattern seems to be stronger for total income, based on the figure .
+
+\input{../../Code/Regressions/Income/Total/income_trust_general_log.tex}
+
+\input{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
+
 \subsection{Returns and trust}
 
-\par With the hump-shape relationship between log earnings and trust present in the HRS, I wanted to see if a similar relationship held for returns. I used the formula from \cite{Daminato2024}: $$ r_t = \frac{y^c_t + cg_t -y^d_t}{A_{t-1} + .5F_t}   $$ where $y^c_t$ interest income and dividends, capital gains $cg_t$ measured as the difference between reported stock across waves, $F_t$ net investment flows, $y^d_t$ payments on debt (in the RAND longitudinal file, the variables were mentioned are all in net terms so this variable was $0$), and $A_{t-1}$ total net wealth at beginning of previous period.
+\par With the hump-shape relationship between earnings and trust present in the HRS, I wanted to see if a similar relationship held for returns.
+
+\par The smallest portfolio composition is of core assets only. The regression results for raw and winsorized annual returns for 2022 are given in figures and .
+
+\input{../../Code/Regressions/Returns/Core/returns_r1_trust_general_win.tex}
+\FloatBarrier
+
+\input{../../Code/Regressions/Returns/Core/returns_r1_trust_general.tex}
+\FloatBarrier
+
+\par The next portfolio composition includes retirement assets along with those core assets. The regression results for raw and winsorized annual returns for 2022 on these portfolios are given in figures and .
+
+\input{../../Code/Regressions/Returns/Core+res/returns_r4_trust_general_win.tex}
+\FloatBarrier
+
+\input{../../Code/Regressions/Returns/Core+res/returns_r4_trust_general.tex}
+\FloatBarrier
+
+
+\par The largest portfolio composition is on net wealth, which includes the previous assets, residential assets, along with other smaller categories (and debt variables). The regression results for raw and winsorized annual returns to net wealth for 2022 are given in figures and .
+
+\input{../../Code/Regressions/Returns/Net wealth/returns_r5_trust_general_win.tex}
+\FloatBarrier
+
+\input{../../Code/Regressions/Returns/Net wealth/returns_r5_trust_general.tex}
+\FloatBarrier
+
 
 \subsection{Returns from 2002-2022}
 

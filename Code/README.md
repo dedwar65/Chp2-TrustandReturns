@@ -22,7 +22,7 @@ The workflow for this is repository is the following: i) Raw data,  ii) Cleaned 
 
     * **10** = long-dataset regressions (when added).
 
-    * **11** = trust: `11_reg_trust.do` regresses **every** 2020 trust variable (8 items + PC1, PC2) on demographics vs full controls; one table per outcome. **Output:** `Regressions/Trust/trust_levels_<stub>.tex`. Log: `11_reg_trust.log`.
+    * **11** = trust: `11_reg_trust.do` regresses **every** 2020 trust variable (8 items + PC1, PC2) on demographics vs full controls; one table per outcome. **Output:** `Regressions/Trust/trust_reg_<stub>.tex`. Log: `11_reg_trust.log`.
 
     * **12** = income and trust (contemporary): `12_reg_income_trust.do` runs for **every** trust variable (8 + PC1, PC2), **twice** — once with **linear** trust (Spec1), once with **quadratic** trust (Spec2). For each (trust var, spec): one table, four columns — **Labor income** (no ctrl | with ctrl) | **Total income** (no ctrl | with ctrl). Variable labels used for all coefficients. **vce(robust)**. **Output:** `Regressions/Income/Spec1/income_trust_<stub>.tex` and `Regressions/Income/Spec2/income_trust_<stub>.tex`. Log: `12_reg_income_trust.log`.
 

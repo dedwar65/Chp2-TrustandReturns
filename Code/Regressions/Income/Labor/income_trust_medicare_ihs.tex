@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Labor income (2020) on Medicare trust (2020), scaled asinh}
+\label{tab:income_trust_medicare_labor_ihs}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+Trust Medicare      &       -0.04\sym{***}&        0.03         &       -0.01         &       -0.00         \\
+                    &      (0.01)         &      (0.02)         &      (0.00)         &      (0.02)         \\
+(Medicare)$^2$      &                     &       -0.01\sym{***}&                     &       -0.00         \\
+                    &                     &      (0.00)         &                     &      (0.00)         \\
+Female              &                     &                     &       -0.09\sym{***}&       -0.09\sym{***}\\
+                    &                     &                     &      (0.03)         &      (0.03)         \\
+Years of education  &                     &                     &        0.03\sym{***}&        0.03\sym{***}\\
+                    &                     &                     &      (0.00)         &      (0.00)         \\
+Married             &                     &                     &        0.04         &        0.04         \\
+                    &                     &                     &      (0.03)         &      (0.03)         \\
+Born in U.S.        &                     &                     &       -0.01         &       -0.01         \\
+                    &                     &                     &      (0.05)         &      (0.05)         \\
+In labor force      &                     &                     &        0.56\sym{***}&        0.56\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+NH Black            &                     &                     &       -0.04         &       -0.04         \\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Hispanic            &                     &                     &       -0.09\sym{*}  &       -0.09\sym{*}  \\
+                    &                     &                     &      (0.05)         &      (0.05)         \\
+NH Other            &                     &                     &       -0.05         &       -0.05         \\
+                    &                     &                     &      (0.07)         &      (0.07)         \\
+Constant            &        0.59\sym{***}&        0.45\sym{***}&       -0.19\sym{**} &       -0.19\sym{**} \\
+                    &      (0.04)         &      (0.07)         &      (0.09)         &      (0.09)         \\
+\midrule
+Observations        &     1029.00         &     1029.00         &     1013.00         &     1013.00         \\
+Adj. R-squared      &        0.03         &        0.03         &        0.44         &        0.44         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Age bins (5-yr) included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

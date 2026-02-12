@@ -193,6 +193,8 @@ forvalues w = 5/16 {
     if !_rc {
         capture drop age_`y'
         gen double age_`y' = r`w'agey_b
+        capture drop age_bin_`y'
+        gen int age_bin_`y' = floor(age_`y'/5)*5 if !missing(age_`y')
     }
     capture confirm variable r`w'inlbrf
     if !_rc {
@@ -206,19 +208,19 @@ forvalues w = 5/16 {
     }
 }
 
-* Region for all waves and hometown_size from region x population
+* Census region for all waves (censreg_* to avoid ambiguity with region_pop_group, regional_trust); hometown_size from censreg x population
 forvalues w = 5/16 {
     local y = 1990 + (2*`w')
     capture confirm variable r`w'cenreg
     if !_rc {
-        capture drop region_`y'
-        gen byte region_`y' = r`w'cenreg
+        capture drop censreg_`y'
+        gen byte censreg_`y' = r`w'cenreg
         * Region 5 (Other) left as-is here; recoded to missing in 08 before saving analysis_ready_processed.dta
     }
     capture confirm variable population_2020
     if !_rc {
         capture drop hometown_size_`y'
-        gen int hometown_size_`y' = region_`y' * 100 + population_2020 if !missing(region_`y') & !missing(population_2020)
+        gen int hometown_size_`y' = censreg_`y' * 100 + population_2020 if !missing(censreg_`y') & !missing(population_2020)
     }
 }
 
@@ -228,10 +230,10 @@ capture confirm variable trust_others_2020
 if !_rc {
     forvalues w = 5/16 {
         local y = 1990 + (2*`w')
-        capture confirm variable region_`y'
+        capture confirm variable censreg_`y'
         if !_rc {
             capture drop region_pop_group_`y' townsize_trust_`y'
-            gen int region_pop_group_`y' = region_`y' * 100 + population_2020 if !missing(region_`y') & !missing(population_2020)
+            gen int region_pop_group_`y' = censreg_`y' * 100 + population_2020 if !missing(censreg_`y') & !missing(population_2020)
             egen double townsize_trust_`y' = mean(trust_others_2020), by(region_pop_group_`y')
         }
     }
@@ -242,10 +244,10 @@ capture confirm variable trust_others_2020
 if !_rc {
     forvalues w = 5/16 {
         local y = 1990 + (2*`w')
-        capture confirm variable region_`y'
+        capture confirm variable censreg_`y'
         if !_rc {
             capture drop region_pop3_group_`y' townsize3_trust_`y'
-            gen int region_pop3_group_`y' = region_`y' * 10 + population_3bin_2020 if !missing(region_`y') & !missing(population_3bin_2020)
+            gen int region_pop3_group_`y' = censreg_`y' * 10 + population_3bin_2020 if !missing(censreg_`y') & !missing(population_3bin_2020)
             egen double townsize3_trust_`y' = mean(trust_others_2020), by(region_pop3_group_`y')
         }
     }
@@ -272,15 +274,15 @@ if !_rc {
     }
 }
 
-* Regional trust (group avg of trust by region, all waves)
+* Regional trust (group avg of trust by census region, all waves)
 capture confirm variable trust_others_2020
 if !_rc {
     forvalues w = 5/16 {
         local y = 1990 + (2*`w')
-        capture confirm variable region_`y'
+        capture confirm variable censreg_`y'
         if !_rc {
             capture drop regional_trust_`y'
-            egen double regional_trust_`y' = mean(trust_others_2020), by(region_`y')
+            egen double regional_trust_`y' = mean(trust_others_2020), by(censreg_`y')
         }
     }
 }
@@ -346,6 +348,18 @@ forvalues j = 1/12 {
         replace gross_wealth_`y' = . if _gross_n_`y' == 0
         gen double wealth_total_`y' = gross_wealth_`y' - _debt_total_`y'
         replace wealth_total_`y' = . if _gross_n_`y' == 0 & _debt_n_`y' == 0
+
+        * Leverage ratios (for panel regressions 15): long-term = mortgages + other home loans / net wealth; other = adebt / net wealth
+        capture drop long_term_debt_`y' leverage_long_`y' leverage_other_`y'
+        gen double long_term_debt_`y' = cond(missing(h`j'amort), 0, max(h`j'amort, 0)) + cond(missing(h`j'ahmln), 0, max(h`j'ahmln, 0))
+        capture confirm variable h`j'amrtb
+        if !_rc replace long_term_debt_`y' = long_term_debt_`y' + cond(missing(h`j'amrtb), 0, max(h`j'amrtb, 0))
+        gen double leverage_long_`y' = long_term_debt_`y' / wealth_total_`y' if !missing(wealth_total_`y') & wealth_total_`y' > 0
+        replace leverage_long_`y' = . if missing(wealth_total_`y') | wealth_total_`y' <= 0
+        gen double leverage_other_`y' = cond(missing(h`j'adebt), 0, max(h`j'adebt, 0)) / wealth_total_`y' if !missing(wealth_total_`y') & wealth_total_`y' > 0
+        replace leverage_other_`y' = . if missing(wealth_total_`y') | wealth_total_`y' <= 0
+        drop long_term_debt_`y'
+
         capture drop wealth_decile_`y'
         xtile wealth_decile_`y' = wealth_total_`y', nq(10)
         replace wealth_decile_`y' = . if missing(wealth_total_`y')
@@ -498,10 +512,10 @@ forvalues j = 5/16 {
 
 * Reduce dataset to relevant variables
 capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* r5_annual_* r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg r5_annual_avg
-capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_*
+capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_* leverage_long_* leverage_other_*
 capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_residential_* share_core_* share_debt_*
 capture unab _incvars : labor_income_* total_income_*
-capture unab _ctrlvars : age_* inlbrf_* married_* region_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_* ///
+capture unab _ctrlvars : age_* inlbrf_* married_* censreg_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_* ///
     population_3bin_2020 pop3_trust_* townsize3_trust_* region_pop3_group_*
 local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
@@ -509,7 +523,7 @@ local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
     interest_2020 inflation_2020 risk_div_2020 par_citizen_2020 par_loyalty_2020 population_2020 population_3bin_2020 ///
     depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 ///
     num_divorce_2020 num_widow_2020 ///
-    `_ctrlvars' `_retvars' `_wealthvars' `_sharevars' `_incvars'
+    `_ctrlvars' `_agebinvars' `_retvars' `_wealthvars' `_sharevars' `_incvars'
 keep `keepvars'
 
 save "${PROCESSED}/analysis_ready.dta", replace

@@ -7,6 +7,7 @@
     "latex2e"
     "Subfiles/packages"
     "Subfiles/data"
+    "Subfiles/results"
     "Subfiles/appendix"
     "article"
     "art10"

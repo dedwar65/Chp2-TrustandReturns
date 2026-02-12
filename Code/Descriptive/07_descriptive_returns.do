@@ -203,9 +203,35 @@ foreach v in r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg r5_annual_a
     }
 }
 
-* Tabstat for final return measures
-display "=== Return measures tabstat ==="
+* Tabstat for final return measures (unwinsorized)
+display "=== Return measures tabstat (unwinsorized) ==="
 tabstat `retvars' `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+
+* Winsorized return vars (r*_annual_win_YYYY) when present
+local retwinvars ""
+foreach y of local years {
+    foreach r in 1 2 3 4 5 {
+        capture confirm variable r`r'_annual_win_`y'
+        if !_rc local retwinvars "`retwinvars' r`r'_annual_win_`y'"
+    }
+}
+if "`retwinvars'" != "" {
+    display "=== Return measures tabstat (winsorized, all years) ==="
+    tabstat `retwinvars' `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+    display "=== Return measures tabstat (winsorized) by year ==="
+    foreach y of local years {
+        local win_yr ""
+        foreach r in 1 2 3 4 5 {
+            capture confirm variable r`r'_annual_win_`y'
+            if !_rc local win_yr "`win_yr' r`r'_annual_win_`y'"
+        }
+        if "`win_yr'" != "" {
+            display "--- Year `y' (winsorized) ---"
+            tabstat `win_yr' `wopt', statistics(n mean sd p1 p5 p50 p95 p99 min max)
+        }
+    }
+}
+else display "=== No winsorized return variables found; skip winsorized tabstat ==="
 
 * Mean returns by year: (1) components = r1, r2, r3; (2) aggregated = r1, r4, r5
 preserve
@@ -549,8 +575,6 @@ foreach yr in 2002 2022 {
     }
 }
 
-log close
-
 * ---------------------------------------------------------------------
 * Lorenz curves + Gini table (income + wealth)
 * ---------------------------------------------------------------------
@@ -714,3 +738,5 @@ twoway line cum_share cum_pop if year==2022 & measure=="wealth_core", lcolor(mar
        , title("Lorenz curves: wealth aggregated (2022)") xtitle("Cumulative population share") ytitle("Cumulative share") ///
        legend(order(1 "Core" 2 "Core+ret." 3 "Net wealth"))
 graph export "${DESCRIPTIVE}/Figures/lorenz_wealth_agg_2022.png", replace
+
+log close

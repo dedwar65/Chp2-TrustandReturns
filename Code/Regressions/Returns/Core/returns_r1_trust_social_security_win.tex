@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{2022 Returns to core (2022) on Social security trust (2020) (5% winsorized)}
+\label{tab:returns_r1_trust_social_security_win}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+Trust Social Security&       -0.00         &       -0.01         &       -0.00         &       -0.01         \\
+                    &      (0.02)         &      (0.06)         &      (0.02)         &      (0.06)         \\
+(Social security)$^2$&                     &        0.00         &                     &        0.00         \\
+                    &                     &      (0.01)         &                     &      (0.00)         \\
+Female              &                     &                     &       -0.04         &       -0.04         \\
+                    &                     &                     &      (0.09)         &      (0.09)         \\
+Years of education  &                     &                     &        0.06\sym{***}&        0.06\sym{***}\\
+                    &                     &                     &      (0.02)         &      (0.02)         \\
+Married             &                     &                     &        0.13         &        0.14         \\
+                    &                     &                     &      (0.10)         &      (0.10)         \\
+Born in U.S.        &                     &                     &       -0.26\sym{*}  &       -0.26\sym{*}  \\
+                    &                     &                     &      (0.15)         &      (0.15)         \\
+NH Black            &                     &                     &       -0.40\sym{***}&       -0.40\sym{***}\\
+                    &                     &                     &      (0.12)         &      (0.12)         \\
+Hispanic            &                     &                     &       -0.63\sym{***}&       -0.63\sym{***}\\
+                    &                     &                     &      (0.19)         &      (0.19)         \\
+NH Other            &                     &                     &       -0.29         &       -0.29         \\
+                    &                     &                     &      (0.20)         &      (0.20)         \\
+In labor force      &                     &                     &        0.19\sym{**} &        0.19\sym{**} \\
+                    &                     &                     &      (0.10)         &      (0.10)         \\
+\_cons              &        0.32\sym{***}&        0.34\sym{*}  &       -0.24         &       -0.21         \\
+                    &      (0.12)         &      (0.19)         &      (1.17)         &      (1.18)         \\
+\midrule
+Observations        &      531.00         &      531.00         &      525.00         &      525.00         \\
+Adj. R-squared      &       -0.00         &       -0.00         &        0.12         &        0.12         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

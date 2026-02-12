@@ -208,5 +208,140 @@ foreach v of local retlist {
     restore
 }
 
+* ---------------------------------------------------------------------
+* Labor income vs trust (2022): robustness transforms (7 panels)
+* ---------------------------------------------------------------------
+display "=== Robustness: labor income vs trust (2022) ==="
+
+preserve
+
+* Load raw data with income components
+use "${CLEANED}/all_data_merged.dta", clear
+
+* Compute CPI 2021 and 2022 from CPIAUCSL (same source as main pipeline)
+tempfile adata
+save "`adata'", replace
+import delimited "${FRED_DATA}/CPIAUCSL.csv", clear
+capture confirm variable date
+if _rc {
+    capture confirm variable DATE
+    if !_rc rename DATE date
+}
+capture confirm variable CPIAUCSL
+if _rc {
+    capture confirm variable cpiaucsl
+    if !_rc rename cpiaucsl CPIAUCSL
+}
+gen year = real(substr(date,1,4))
+collapse (mean) CPIAUCSL, by(year)
+rename CPIAUCSL cpi
+quietly summarize cpi if year == 2021
+local cpi_2021 = r(mean)
+quietly summarize cpi if year == 2022
+local cpi_2022 = r(mean)
+use "`adata'", clear
+
+* Keep 2022 observations only (if year variable exists)
+capture confirm variable year
+if !_rc keep if year == 2022
+
+* Labor income (2022): earnings + unemployment, missing only if both missing
+capture drop labor_income_2022
+capture confirm variable r16iearn r16iunwc
+if _rc {
+    display as error "r16iearn or r16iunwc not found; cannot build labor-income robustness plots."
+    restore
+}
+gen double labor_income_2022 = r16iearn + cond(missing(r16iunwc), 0, r16iunwc)
+replace labor_income_2022 = . if missing(r16iearn) & missing(r16iunwc)
+
+* Deflated labor income (2021 dollars)
+gen double labor_defl_2022 = .
+if "`cpi_2021'" != "" & "`cpi_2022'" != "" {
+    replace labor_defl_2022 = labor_income_2022 * (`cpi_2021' / `cpi_2022')
+}
+
+* Winsorize deflated labor income (p1/p99)
+capture drop labor_defl_win_2022
+gen double labor_defl_win_2022 = labor_defl_2022
+quietly summarize labor_defl_2022, detail
+local p1_lab = r(p1)
+local p99_lab = r(p99)
+replace labor_defl_win_2022 = `p1_lab' if labor_defl_win_2022 < `p1_lab' & !missing(labor_defl_win_2022)
+replace labor_defl_win_2022 = `p99_lab' if labor_defl_win_2022 > `p99_lab' & !missing(labor_defl_win_2022)
+
+* Income transforms for 2022
+capture drop labor_raw_2022 labor_defl_win_ln_2022 labor_defl_win_ln1p_2022 ///
+    labor_defl_win_asinh_2022 labor_defl_win_asinh_s_2022
+gen double labor_raw_2022 = labor_income_2022
+gen double labor_defl_win_ln_2022 = .
+replace labor_defl_win_ln_2022 = ln(labor_defl_win_2022) if labor_defl_win_2022 > 0
+gen double labor_defl_win_ln1p_2022 = ln(1 + labor_defl_win_2022) if !missing(labor_defl_win_2022)
+gen double labor_defl_win_asinh_2022 = asinh(labor_defl_win_2022) if !missing(labor_defl_win_2022)
+
+* Scaled asinh: asinh(x / median_positive_x)
+quietly summarize labor_defl_win_2022 if labor_defl_win_2022 > 0, detail
+local med_lab = r(p50)
+local N_pos = r(N)
+gen double labor_defl_win_asinh_s_2022 = .
+if `N_pos' > 0 & `med_lab' > 0 {
+    replace labor_defl_win_asinh_s_2022 = asinh(labor_defl_win_2022 / `med_lab') if !missing(labor_defl_win_2022)
+}
+
+* Reduce to one row per person and save to tempfile
+keep hhidpn labor_raw_2022 labor_defl_2022 labor_defl_win_2022 ///
+    labor_defl_win_ln_2022 labor_defl_win_ln1p_2022 ///
+    labor_defl_win_asinh_2022 labor_defl_win_asinh_s_2022
+drop if missing(hhidpn)
+duplicates drop hhidpn, force
+tempfile li2022
+save "`li2022'", replace
+
+* Merge trust from processed dataset
+use "${PROCESSED}/analysis_ready_processed.dta", clear
+keep hhidpn trust_others_2020
+drop if missing(hhidpn)
+duplicates drop hhidpn, force
+merge 1:1 hhidpn using "`li2022'", nogen keep(match)
+
+* Overlap counts for each transform with trust
+local tvars "labor_raw_2022 labor_defl_2022 labor_defl_win_2022 labor_defl_win_ln_2022 labor_defl_win_ln1p_2022 labor_defl_win_asinh_2022 labor_defl_win_asinh_s_2022"
+local tnames "Raw Deflated Deflated+Winsor Deflated+Winsor+ln(x) Deflated+Winsor+ln(1+x) Deflated+Winsor+asinh(x) Deflated+Winsor+asinh(x/median+)"
+
+display "=== Overlap N (income transform, trust nonmissing, 2022) ==="
+local i = 1
+foreach v of local tvars {
+    local tname : word `i' of `tnames'
+    quietly count if !missing(`v') & !missing(trust_others_2020)
+    display "`tname': N = " r(N)
+    local ++i
+}
+
+* Build 7 scatter panels and combine
+forvalues i = 1/7 {
+    local v : word `i' of `tvars'
+    local stitle ""
+    if `i' == 1 local stitle "Raw"
+    if `i' == 2 local stitle "Deflated"
+    if `i' == 3 local stitle "Deflated + Winsor"
+    if `i' == 4 local stitle "Deflated + Winsor + ln(x)"
+    if `i' == 5 local stitle "Deflated + Winsor + ln(1+x)"
+    if `i' == 6 local stitle "Deflated + Winsor + asinh(x)"
+    if `i' == 7 local stitle "Deflated + Winsor + asinh(x/median+)"
+    local gname "g`i'"
+    twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_others_2020), ///
+        msize(vsmall) mcolor(navy%40) ///
+        xtitle("General trust (2020)") ///
+        ytitle("Income transform value") ///
+        title("`stitle'") ///
+        name(`gname', replace)
+}
+
+graph combine g1 g2 g3 g4 g5 g6 g7, cols(3) ///
+    title("Labor income vs trust (2022)")
+graph export "${DESCRIPTIVE}/Figures/Robustness/labor_income_trust_all_toggles_2022.png", replace
+
+restore
+
 log close
 

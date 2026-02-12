@@ -48,7 +48,7 @@ capture label define pop_lbl 1 "Less than 1,000" 2 "1,000 to 10,000" 3 "10,000 t
     8 "DK/NA" 9 "Refused", replace
 capture label define pop3_lbl 1 "Small town (<10k)" 2 "Small/med city (10k-100k)" 3 "Large metro (100k+)", replace
 capture label define race_eth_lbl 1 "White (NH)" 2 "Black (NH)" 3 "Hispanic" 4 "Other (NH)", replace
-foreach v of varlist region_* {
+foreach v of varlist censreg_* {
     capture label values `v' region_lbl
 }
 capture label values population_2020 pop_lbl
@@ -71,7 +71,6 @@ program define _vlabel, rclass
     if "`v'"=="medicare_2020" return local vlabel "Medicare"
     if "`v'"=="medicaid_2020" return local vlabel "Medicaid"
     if "`v'"=="life_ins_2020" return local vlabel "Life insurance"
-    if "`v'"=="beq_any_2020" return local vlabel "Bequest"
     if "`v'"=="num_divorce_2020" return local vlabel "Times divorced"
     if "`v'"=="num_widow_2020" return local vlabel "Times widowed"
     if "`v'"=="age_2020" return local vlabel "Age"
@@ -175,14 +174,14 @@ summarize interest_2020 inflation_2020 risk_div_2020 ///
 
 display "=== Additional trust regression controls summary ==="
 summarize depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 ///
-    beq_any_2020 num_divorce_2020 num_widow_2020 `wopt'
+    num_divorce_2020 num_widow_2020 `wopt'
 
 display "=== Contextual trust IVs summary ==="
 summarize townsize_trust_* pop_trust_* regional_trust_* `wopt'
 
 display "=== Region + population summaries ==="
 summarize population_2020 `wopt'
-summarize region_* `wopt'
+summarize censreg_* `wopt'
 summarize region_pop_group_* `wopt'
 summarize hometown_size_* `wopt'
 
@@ -309,7 +308,7 @@ restore
 file open fh using "${DESCRIPTIVE}/Tables/demographics_other.tex", write replace
 file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics: other controls (2020)}" _n "\label{tab:demographics_other}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
 
-foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions" "medicare_2020 Medicare" "medicaid_2020 Medicaid" "life_ins_2020 Life insurance" "beq_any_2020 Bequest" "num_divorce_2020 Times divorced" "num_widow_2020 Times widowed" {
+foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions" "medicare_2020 Medicare" "medicaid_2020 Medicaid" "life_ins_2020 Life insurance" "num_divorce_2020 Times divorced" "num_widow_2020 Times widowed" {
     tokenize `pair'
     local v "`1'"
     local vlab "`2'"
@@ -381,17 +380,17 @@ restore
 * Overlap diagnostics: trust with region/pop groupings
 display "=== Overlap: trust x region (2020 only) ==="
 preserve
-keep hhidpn trust_others_2020 region_* 
-reshape long region_, i(hhidpn) j(year)
+keep hhidpn trust_others_2020 censreg_* 
+reshape long censreg_, i(hhidpn) j(year)
 keep if year == 2020
-keep if !missing(trust_others_2020) & !missing(region_)
-decode region_, gen(region_label)
-contract year region_ region_label, freq(n)
+keep if !missing(trust_others_2020) & !missing(censreg_)
+decode censreg_, gen(region_label)
+contract year censreg_ region_label, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_region_groups_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region overlap (2020): observations by region}" _n "\label{tab:trust_region_groups_2020}" _n "\begin{tabular}{rrlr}\toprule" _n "Year & Region (code) & Region & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local yr_s = string(year[`r'], "%9.0f")
-    local reg_s = string(region_[`r'], "%9.0f")
+    local reg_s = string(censreg_[`r'], "%9.0f")
     local rlab = region_label[`r']
     local n_s = string(n[`r'], "%9.0f")
     file write fh "`yr_s' & `reg_s' & `rlab' & `n_s' \\\\" _n
@@ -402,19 +401,19 @@ restore
 
 display "=== Overlap: trust x region_pop_group (2020 only) ==="
 preserve
-keep hhidpn trust_others_2020 region_* population_2020
-reshape long region_, i(hhidpn) j(year)
+keep hhidpn trust_others_2020 censreg_* population_2020
+reshape long censreg_, i(hhidpn) j(year)
 keep if year == 2020
-keep if !missing(trust_others_2020) & !missing(region_) & !missing(population_2020)
-decode region_, gen(region_label)
+keep if !missing(trust_others_2020) & !missing(censreg_) & !missing(population_2020)
+decode censreg_, gen(region_label)
 decode population_2020, gen(pop_label)
-gen int region_pop_group = region_ * 100 + population_2020
-contract year region_ region_label population_2020 pop_label region_pop_group, freq(n)
+gen int region_pop_group = censreg_ * 100 + population_2020
+contract year censreg_ region_label population_2020 pop_label region_pop_group, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop_groups_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--population overlap (2020)}" _n "\label{tab:trust_regionpop_groups_2020}" _n "\begin{tabular}{rrllrr}\toprule" _n "Year & Region (code) & Region & Pop (code) & Population size & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local yr_s = string(year[`r'], "%9.0f")
-    local reg_s = string(region_[`r'], "%9.0f")
+    local reg_s = string(censreg_[`r'], "%9.0f")
     local rlab = region_label[`r']
     local pop_s = string(population_2020[`r'], "%9.0f")
     local plab = pop_label[`r']
@@ -427,18 +426,18 @@ restore
 
 display "=== Overlap: trust x region_pop3_group (2020 only) ==="
 preserve
-keep hhidpn trust_others_2020 region_2020 population_3bin_2020
-keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-label values region_2020 region_lbl
+keep hhidpn trust_others_2020 censreg_2020 population_3bin_2020
+keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(population_3bin_2020)
+label values censreg_2020 region_lbl
 label values population_3bin_2020 pop3_lbl
-decode region_2020, gen(region_label)
+decode censreg_2020, gen(region_label)
 decode population_3bin_2020, gen(pop3_label)
-gen int region_pop3_group = region_2020 * 10 + population_3bin_2020
-contract region_2020 region_label population_3bin_2020 pop3_label region_pop3_group, freq(n)
+gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
+contract censreg_2020 region_label population_3bin_2020 pop3_label region_pop3_group, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop3_groups_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--population (3 bins) overlap (2020)}" _n "\label{tab:trust_regionpop3_groups_2020}" _n "\begin{tabular}{rllrr}\toprule" _n "Region (code) & Region & Pop3 (code) & Population & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_2020[`r'], "%9.0f")
+    local r_s = string(censreg_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
     local p3lab = pop3_label[`r']
@@ -452,15 +451,15 @@ restore
 display "=== Bin counts: region, population, townsize3 (2020 only) ==="
 preserve
 keep if !missing(trust_others_2020)
-label values region_2020 region_lbl
+label values censreg_2020 region_lbl
 label values population_2020 pop_lbl
 label values population_3bin_2020 pop3_lbl
-contract region_2020, freq(n)
-decode region_2020, gen(region_label)
-file open fh using "${DESCRIPTIVE}/Tables/bin_counts_region_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region (2020)}" _n "\label{tab:bin_counts_region_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
+contract censreg_2020, freq(n)
+decode censreg_2020, gen(region_label)
+file open fh using "${DESCRIPTIVE}/Tables/bin_counts_censreg_2020.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region (2020)}" _n "\label{tab:bin_counts_censreg_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_2020[`r'], "%9.0f")
+    local r_s = string(censreg_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
     local n_s = string(n[`r'], "%9.0f")
     file write fh "`r_s' & `rlab' & `n_s' \\\\" _n
@@ -504,13 +503,13 @@ file close fh
 restore
 
 preserve
-keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_2020)
-label values region_2020 region_lbl
+keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(population_2020)
+label values censreg_2020 region_lbl
 label values population_2020 pop_lbl
-gen int region_pop_group = region_2020 * 100 + population_2020
-decode region_2020, gen(region_label)
+gen int region_pop_group = censreg_2020 * 100 + population_2020
+decode censreg_2020, gen(region_label)
 decode population_2020, gen(pop_label)
-contract region_2020 region_label population_2020 pop_label region_pop_group, freq(n)
+contract censreg_2020 region_label population_2020 pop_label region_pop_group, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (2020)}" _n "\label{tab:bin_counts_regionpop_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population size & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
@@ -524,13 +523,13 @@ file close fh
 restore
 
 preserve
-keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-label values region_2020 region_lbl
+keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(population_3bin_2020)
+label values censreg_2020 region_lbl
 label values population_3bin_2020 pop3_lbl
-gen int region_pop3_group = region_2020 * 10 + population_3bin_2020
-decode region_2020, gen(region_label)
+gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
+decode censreg_2020, gen(region_label)
 decode population_3bin_2020, gen(pop3_label)
-contract region_2020 region_label population_3bin_2020 pop3_label region_pop3_group, freq(n)
+contract censreg_2020 region_label population_3bin_2020 pop3_label region_pop3_group, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop3_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region--population (3 bins, 2020)}" _n "\label{tab:bin_counts_regionpop3_2020}" _n "\begin{tabular}{llr}\toprule" _n "Region & Population & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
@@ -599,14 +598,14 @@ if !_rc {
 
 display "=== Mean trust by region, population, population3 (2020 only) ==="
 preserve
-keep if !missing(trust_others_2020) & !missing(region_2020)
-label values region_2020 region_lbl
-collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(region_2020)
-decode region_2020, gen(region_label)
-file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_region_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region (2020)}" _n "\label{tab:trust_mean_by_region_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Region (code) & Region & Mean trust & Obs \\\\ \midrule" _n
+keep if !missing(trust_others_2020) & !missing(censreg_2020)
+label values censreg_2020 region_lbl
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(censreg_2020)
+decode censreg_2020, gen(region_label)
+file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_censreg_2020.tex", write replace
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region (2020)}" _n "\label{tab:trust_mean_by_censreg_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Region (code) & Region & Mean trust & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_2020[`r'], "%9.0f")
+    local r_s = string(censreg_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
     local tm_s = string(trust_mean[`r'], "%9.4f")
     local n_s = string(n[`r'], "%9.0f")
@@ -618,20 +617,20 @@ restore
 
 * Region counts: 4 columns (Northeast, Midwest, South, West), no Other
 preserve
-keep if !missing(trust_others_2020) & !missing(region_2020) & region_2020 <= 4
-contract region_2020, freq(n)
-label values region_2020 region_lbl
-decode region_2020, gen(region_label)
+keep if !missing(trust_others_2020) & !missing(censreg_2020) & censreg_2020 <= 4
+contract censreg_2020, freq(n)
+label values censreg_2020 region_lbl
+decode censreg_2020, gen(region_label)
 * One row: four region counts in order 1..4
 local n1 0
 local n2 0
 local n3 0
 local n4 0
 forvalues r = 1/`=_N' {
-    if region_2020[`r'] == 1 local n1 = n[`r']
-    if region_2020[`r'] == 2 local n2 = n[`r']
-    if region_2020[`r'] == 3 local n3 = n[`r']
-    if region_2020[`r'] == 4 local n4 = n[`r']
+    if censreg_2020[`r'] == 1 local n1 = n[`r']
+    if censreg_2020[`r'] == 2 local n2 = n[`r']
+    if censreg_2020[`r'] == 3 local n3 = n[`r']
+    if censreg_2020[`r'] == 4 local n4 = n[`r']
 }
 file open fh using "${DESCRIPTIVE}/Tables/region_counts_4col_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Region counts (2020, 4 regions, no Other)}" _n "\label{tab:region_counts_4col_2020}" _n "\begin{tabular}{cccc}\toprule" _n "Northeast & Midwest & South & West \\\\ \midrule" _n
@@ -678,17 +677,17 @@ restore
 
 display "=== Mean trust by townsize3 (region x pop3, 2020 only) ==="
 preserve
-keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-label values region_2020 region_lbl
+keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(population_3bin_2020)
+label values censreg_2020 region_lbl
 label values population_3bin_2020 pop3_lbl
-gen int region_pop3_group = region_2020 * 10 + population_3bin_2020
-collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(region_2020 population_3bin_2020 region_pop3_group)
-decode region_2020, gen(region_label)
+gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(censreg_2020 population_3bin_2020 region_pop3_group)
+decode censreg_2020, gen(region_label)
 decode population_3bin_2020, gen(pop3_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_regionpop3_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region--population (3 bins, 2020)}" _n "\label{tab:trust_mean_by_regionpop3_2020}" _n "\begin{tabular}{rlllrr}\toprule" _n "Region (code) & Region & Pop3 (code) & Population & Mean trust & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_2020[`r'], "%9.0f")
+    local r_s = string(censreg_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
     local p3lab = pop3_label[`r']
@@ -727,7 +726,7 @@ display "=== Empty group diagnostics (2020 only) ==="
 * Region groups: expected 5
 preserve
 clear
-input byte region_ str12 region_label
+input byte censreg_ str12 region_label
 1 "Northeast"
 2 "Midwest"
 3 "South"
@@ -739,16 +738,16 @@ save "`region_all'", replace
 restore
 
 preserve
-keep hhidpn trust_others_2020 region_* 
-reshape long region_, i(hhidpn) j(year)
-keep if year == 2020 & !missing(trust_others_2020) & !missing(region_)
-contract region_, freq(n)
-merge 1:1 region_ using "`region_all'", nogenerate
+keep hhidpn trust_others_2020 censreg_* 
+reshape long censreg_, i(hhidpn) j(year)
+keep if year == 2020 & !missing(trust_others_2020) & !missing(censreg_)
+contract censreg_, freq(n)
+merge 1:1 censreg_ using "`region_all'", nogenerate
 replace n = 0 if missing(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_region_groups_2020_with_empty.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Region groups with empty cells (2020)}" _n "\label{tab:trust_region_groups_2020_with_empty}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_[`r'], "%9.0f")
+    local r_s = string(censreg_[`r'], "%9.0f")
     local rlab = region_label[`r']
     local n_s = string(n[`r'], "%9.0f")
     file write fh "`r_s' & `rlab' & `n_s' \\\\" _n
@@ -760,7 +759,7 @@ restore
 * Region-pop groups: expected 30 (5 regions x 6 pop bins)
 preserve
 clear
-input byte region_ str12 region_label
+input byte censreg_ str12 region_label
 1 "Northeast"
 2 "Midwest"
 3 "South"
@@ -788,22 +787,22 @@ restore
 preserve
 use "`region_vals'", clear
 cross using "`pop_vals'"
-gen int region_pop_group = region_ * 100 + population_2020
+gen int region_pop_group = censreg_ * 100 + population_2020
 tempfile regionpop_all
 save "`regionpop_all'", replace
 restore
 
 preserve
-keep hhidpn trust_others_2020 region_* population_2020
-reshape long region_, i(hhidpn) j(year)
-keep if year == 2020 & !missing(trust_others_2020) & !missing(region_) & !missing(population_2020)
-contract region_ population_2020, freq(n)
-merge 1:1 region_ population_2020 using "`regionpop_all'", nogenerate
+keep hhidpn trust_others_2020 censreg_* population_2020
+reshape long censreg_, i(hhidpn) j(year)
+keep if year == 2020 & !missing(trust_others_2020) & !missing(censreg_) & !missing(population_2020)
+contract censreg_ population_2020, freq(n)
+merge 1:1 censreg_ population_2020 using "`regionpop_all'", nogenerate
 replace n = 0 if missing(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop_groups_2020_with_empty.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population groups with empty cells (2020)}" _n "\label{tab:trust_regionpop_groups_2020_with_empty}" _n "\begin{tabular}{rllrlr}\toprule" _n "Region (code) & Region & Pop (code) & Population size & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_[`r'], "%9.0f")
+    local r_s = string(censreg_[`r'], "%9.0f")
     local rlab = region_label[`r']
     local pop_s = string(population_2020[`r'], "%9.0f")
     local plab = pop_label[`r']
@@ -817,7 +816,7 @@ restore
 * Region-pop3 groups: expected 12 (4 regions x 3 pop bins)
 preserve
 clear
-input byte region_ str12 region_label
+input byte censreg_ str12 region_label
 1 "Northeast"
 2 "Midwest"
 3 "South"
@@ -841,22 +840,22 @@ restore
 preserve
 use "`region_vals3'", clear
 cross using "`pop3_vals'"
-gen int region_pop3_group = region_ * 10 + population_3bin_2020
+gen int region_pop3_group = censreg_ * 10 + population_3bin_2020
 tempfile regionpop3_all
 save "`regionpop3_all'", replace
 restore
 
 preserve
-keep hhidpn trust_others_2020 region_2020 population_3bin_2020
-keep if !missing(trust_others_2020) & !missing(region_2020) & !missing(population_3bin_2020)
-gen byte region_ = region_2020
-contract region_ population_3bin_2020, freq(n)
-merge 1:1 region_ population_3bin_2020 using "`regionpop3_all'", nogenerate
+keep hhidpn trust_others_2020 censreg_2020 population_3bin_2020
+keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(population_3bin_2020)
+gen byte censreg_ = censreg_2020
+contract censreg_ population_3bin_2020, freq(n)
+merge 1:1 censreg_ population_3bin_2020 using "`regionpop3_all'", nogenerate
 replace n = 0 if missing(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop3_groups_2020_with_empty.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population (3 bins) groups with empty cells (2020)}" _n "\label{tab:trust_regionpop3_groups_2020_with_empty}" _n "\begin{tabular}{rllrr}\toprule" _n "Region (code) & Region & Pop3 (code) & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
-    local r_s = string(region_[`r'], "%9.0f")
+    local r_s = string(censreg_[`r'], "%9.0f")
     local rlab = region_label[`r']
     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
     local n_s = string(n[`r'], "%9.0f")
@@ -1066,7 +1065,7 @@ display "=== Trust + added controls correlations ==="
 * age, education, gender, immigration, marital, race, plus regression controls
 local ctrlvars age_2020 educ_yrs gender immigrant born_us race_eth married_2020 ///
     depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 ///
-    beq_any_2020 num_divorce_2020 num_widow_2020
+    num_divorce_2020 num_widow_2020
 
 pwcorr `trustvars' `ctrlvars', sig obs
 
@@ -1305,13 +1304,13 @@ restore
 * ---------------------------------------------------------------------
 display "=== Group coverage: N by region and by year ==="
 preserve
-keep hhidpn region_*
-reshape long region_, i(hhidpn) j(year)
-label values region_ region_lbl
-drop if missing(region_)
-contract year region_, freq(N)
+keep hhidpn censreg_*
+reshape long censreg_, i(hhidpn) j(year)
+label values censreg_ region_lbl
+drop if missing(censreg_)
+contract year censreg_, freq(N)
 * Wide table: year x region with N (drop Other)
-reshape wide N, i(year) j(region_)
+reshape wide N, i(year) j(censreg_)
 rename (N1 N2 N3 N4) (Northeast Midwest South West)
 file open fh using "${DESCRIPTIVE}/Tables/region_group_counts_by_year.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region and year}" _n "\label{tab:region_group_counts_by_year}" _n "\begin{tabular}{lrrrr}\toprule" _n "Year & Northeast & Midwest & South & West \\\\ \midrule" _n
@@ -1329,8 +1328,8 @@ restore
 
 display "=== Group coverage: N by region-population group and year ==="
 preserve
-keep hhidpn region_* region_pop_group_*
-reshape long region_ region_pop_group_, i(hhidpn) j(year)
+keep hhidpn censreg_* region_pop_group_*
+reshape long censreg_ region_pop_group_, i(hhidpn) j(year)
 contract year region_pop_group_, freq(N)
 drop if missing(region_pop_group_)
 rename N obs
@@ -1346,8 +1345,8 @@ file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Region $\times$
 file close fh
 restore
 
-* For analysis: treat region 5 (Other) as missing in prepped region variables before saving
-foreach v of varlist region_* {
+* For analysis: treat region 5 (Other) as missing in prepped censreg variables before saving
+foreach v of varlist censreg_* {
     capture confirm variable `v'
     if !_rc replace `v' = . if `v' == 5
 }
@@ -1398,7 +1397,7 @@ if !_rc {
 display "=== Scatter: trust vs income/returns (2022) ==="
 capture mkdir "${DESCRIPTIVE}/Figures"
 
-* Income vs trust scatter: uses final log series from 04 (deflate -> ln(1+x) -> winsorize p1/p99 on log)
+* Income vs trust scatter: uses final log series from 04 (deflate -> ln(x), x>0 -> winsorize p1/p99 on log; zero income dropped)
 * Variables: ln_lab_inc_final_2022, ln_tot_inc_final_2022 (see 04_processing_income.do "Final toggle" block)
 foreach v in ln_lab_inc_final_2022 ln_tot_inc_final_2022 {
     capture confirm variable `v'

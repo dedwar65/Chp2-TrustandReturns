@@ -1,0 +1,270 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/14_panel_reg_ret.log
+  log type:  text
+ opened on:  11 Feb 2026, 21:32:47
+
+. 
+. capture which esttab
+
+. if _rc ssc install estout, replace
+
+. 
+. * ----------------------------------------------------------------------
+. * Load long panel
+. * ----------------------------------------------------------------------
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. set showbaselevels off
+
+. 
+. * censreg (census region) created upstream in 10_build_panel
+. xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+
+. 
+. * Return variable names: raw = r1_annual_nw (or r1_annual) only; winsorized = r1_annual_w5
+. capture confirm variable r1_annual_nw
+
+. if !_rc {
+.     local r1_raw "r1_annual_nw"
+. }
+
+. else {
+.     capture confirm variable r1_annual
+.     if !_rc local r1_raw "r1_annual"
+.     else local r1_raw ""
+. }
+
+. 
+. capture confirm variable r1_annual_w5
+
+. local has_r1_w5 = (_rc == 0)
+
+. 
+. capture confirm variable r4_annual_nw
+
+. if !_rc {
+.     local r4_raw "r4_annual_nw"
+. }
+
+. else {
+.     capture confirm variable r4_annual
+.     if !_rc local r4_raw "r4_annual"
+.     else local r4_raw ""
+. }
+
+. 
+. capture confirm variable r4_annual_w5
+
+. local has_r4_w5 = (_rc == 0)
+
+. 
+. capture confirm variable r5_annual_nw
+
+. if !_rc {
+.     local r5_raw "r5_annual_nw"
+. }
+
+. else {
+.     capture confirm variable r5_annual
+.     if !_rc local r5_raw "r5_annual"
+.     else local r5_raw ""
+. }
+
+. 
+. capture confirm variable r5_annual_w5
+
+. local has_r5_w5 = (_rc == 0)
+
+. 
+. * Trust (time-invariant)
+. local trust_var "trust_others_2020"
+
+. 
+. * Base controls (all specs): age bins, region dummies, year dummies
+. local base_ctrl "i.age_bin educ_yrs i.gender i.race_eth inlbrf married born_us i.censreg i.year
+> "
+
+. 
+. * Build scope-specific control lists (wealth deciles)
+. local ctrl_r1 "`base_ctrl'"
+
+. local ctrl_r4 "`base_ctrl'"
+
+. local ctrl_r5 "`base_ctrl'"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_core_d`d'
+  3.     if !_rc local ctrl_r1 "`ctrl_r1' wealth_core_d`d'"
+  4.     capture confirm variable wealth_coreira_d`d'
+  5.     if !_rc local ctrl_r4 "`ctrl_r4' wealth_coreira_d`d'"
+  6.     capture confirm variable wealth_d`d'
+  7.     if !_rc local ctrl_r5 "`ctrl_r5' wealth_d`d'"
+  8. }
+
+. 
+. * Drop list for esttab: age bins, wealth deciles, region dummies, year dummies (omitted from ta
+> ble but included in regressions)
+. local drop_base "*.age_bin *.year *.censreg"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_core_d`d'
+  3.     if !_rc local drop_base "`drop_base' wealth_core_d`d'"
+  4.     capture confirm variable wealth_coreira_d`d'
+  5.     if !_rc local drop_base "`drop_base' wealth_coreira_d`d'"
+  6.     capture confirm variable wealth_d`d'
+  7.     if !_rc local drop_base "`drop_base' wealth_d`d'"
+  8. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Raw tables: panel_reg_r1.tex, panel_reg_r4.tex, panel_reg_r5.tex
+. * ----------------------------------------------------------------------
+. foreach ret in r1 r4 r5 {
+  2.     local yvar ""
+  3.     local ctrl ""
+  4.     local ret_label ""
+  5.     if "`ret'" == "r1" {
+  6.         local yvar "`r1_raw'"
+  7.         local ctrl "`ctrl_r1'"
+  8.         local ret_label "returns to core"
+  9.     }
+ 10.     if "`ret'" == "r4" {
+ 11.         local yvar "`r4_raw'"
+ 12.         local ctrl "`ctrl_r4'"
+ 13.         local ret_label "returns to core+IRA"
+ 14.     }
+ 15.     if "`ret'" == "r5" {
+ 16.         local yvar "`r5_raw'"
+ 17.         local ctrl "`ctrl_r5'"
+ 18.         local ret_label "returns to net wealth"
+ 19.     }
+ 20. 
+.     if "`yvar'" == "" {
+ 21.         di as txt "Skipping raw `ret': no raw return variable (r`ret'_annual_nw and r`ret'_a
+> nnual not in panel)."
+ 22.         di as txt "  Ensure 02, 03, 04, 05 run before 10; check 10_build_panel.log for r`ret
+> '_annual_*."
+ 23.         continue
+ 24.     }
+ 25. 
+.     capture confirm variable `yvar'
+ 26.     if _rc {
+ 27.         di as txt "Skipping raw `ret': variable `yvar' not found."
+ 28.         continue
+ 29.     }
+ 30. 
+.     eststo clear
+ 31.     quietly eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
+ 32.     quietly eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`t
+> rust_var'), vce(cluster hhidpn)
+ 33.     quietly eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !m
+> issing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+ 34. 
+.     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'.tex"
+ 35.     esttab m1 m2 m3 using "`outfile'", replace ///
+>         booktabs ///
+>         mtitles("(1)" "(2)" "(3)") ///
+>         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
+>         drop(`drop_base', relax) ///
+>         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_
+> eth "Hispanic" 4.race_eth "NH Other" inlbrf "Employed" married "Married" born_us "Born in U.S."
+>  c.`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
+>         stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+>         title("Panel: `ret_label' (raw)") ///
+>         addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dum
+> mies, and year dummies omitted from table but included in regressions.") ///
+>         alignment(D{.}{.}{-1}) width(0.85\hsize) nonumbers
+ 36. 
+.     di as txt "Wrote: `outfile'"
+ 37. }
+Skipping raw r1: no raw return variable (rr1_annual_nw and rr1_annual not in panel).
+  Ensure 02, 03, 04, 05 run before 10; check 10_build_panel.log for rr1_annual_*.
+Skipping raw r4: no raw return variable (rr4_annual_nw and rr4_annual not in panel).
+  Ensure 02, 03, 04, 05 run before 10; check 10_build_panel.log for rr4_annual_*.
+Skipping raw r5: no raw return variable (rr5_annual_nw and rr5_annual not in panel).
+  Ensure 02, 03, 04, 05 run before 10; check 10_build_panel.log for rr5_annual_*.
+
+. 
+. * ----------------------------------------------------------------------
+. * Winsorized tables: panel_reg_r1_win.tex, panel_reg_r4_win.tex, panel_reg_r5_win.tex
+. * ----------------------------------------------------------------------
+. foreach ret in r1 r4 r5 {
+  2.     local yvar ""
+  3.     local ctrl ""
+  4.     local ret_label ""
+  5.     if "`ret'" == "r1" {
+  6.         local yvar "r1_annual_w5"
+  7.         local ctrl "`ctrl_r1'"
+  8.         local ret_label "returns to core"
+  9.     }
+ 10.     if "`ret'" == "r4" {
+ 11.         local yvar "r4_annual_w5"
+ 12.         local ctrl "`ctrl_r4'"
+ 13.         local ret_label "returns to core+IRA"
+ 14.     }
+ 15.     if "`ret'" == "r5" {
+ 16.         local yvar "r5_annual_w5"
+ 17.         local ctrl "`ctrl_r5'"
+ 18.         local ret_label "returns to net wealth"
+ 19.     }
+ 20. 
+.     capture confirm variable `yvar'
+ 21.     if _rc {
+ 22.         di as txt "Skipping winsorized `ret': variable `yvar' not found."
+ 23.         continue
+ 24.     }
+ 25. 
+.     eststo clear
+ 26.     quietly eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
+ 27.     quietly eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`t
+> rust_var'), vce(cluster hhidpn)
+ 28.     quietly eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !m
+> issing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+ 29. 
+.     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_win.tex"
+ 30.     esttab m1 m2 m3 using "`outfile'", replace ///
+>         booktabs ///
+>         mtitles("(1)" "(2)" "(3)") ///
+>         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
+>         drop(`drop_base', relax) ///
+>         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_
+> eth "Hispanic" 4.race_eth "NH Other" inlbrf "Employed" married "Married" born_us "Born in U.S."
+>  c.`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
+>         stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+>         title("Panel: `ret_label' (5% winsorized)") ///
+>         addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dum
+> mies, and year dummies omitted from table but included in regressions.") ///
+>         alignment(D{.}{.}{-1}) width(0.85\hsize) nonumbers
+ 31. 
+.     di as txt "Wrote: `outfile'"
+ 32. }
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/pane
+> l_reg_r1_win.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/panel_reg_r1_win
+> .tex
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/pane
+> l_reg_r4_win.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/panel_reg_r4_win
+> .tex
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/pane
+> l_reg_r5_win.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/panel_reg_r5_win
+> .tex
+
+. 
+. eststo clear
+
+. di as txt "Done. Tables in ${REGRESSIONS}/Panel/"
+Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/
+
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/14_panel_reg_ret.log
+  log type:  text
+ closed on:  11 Feb 2026, 21:32:52
+-------------------------------------------------------------------------------------------------

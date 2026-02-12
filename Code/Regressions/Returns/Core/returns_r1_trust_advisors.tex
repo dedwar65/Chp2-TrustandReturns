@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{2022 Returns to core (2022) on Advisors trust (2020) (raw)}
+\label{tab:returns_r1_trust_advisors}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+Trust financial advisors&       -0.02         &        0.03         &       -0.01         &       -0.01         \\
+                    &      (0.03)         &      (0.08)         &      (0.03)         &      (0.09)         \\
+(Advisors)$^2$      &                     &       -0.01         &                     &       -0.00         \\
+                    &                     &      (0.01)         &                     &      (0.01)         \\
+Female              &                     &                     &        0.18         &        0.18         \\
+                    &                     &                     &      (0.17)         &      (0.17)         \\
+Years of education  &                     &                     &        0.15\sym{***}&        0.15\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Married             &                     &                     &        0.33\sym{*}  &        0.33\sym{*}  \\
+                    &                     &                     &      (0.18)         &      (0.19)         \\
+Born in U.S.        &                     &                     &        0.07         &        0.07         \\
+                    &                     &                     &      (0.23)         &      (0.23)         \\
+NH Black            &                     &                     &       -0.71\sym{***}&       -0.71\sym{***}\\
+                    &                     &                     &      (0.23)         &      (0.24)         \\
+Hispanic            &                     &                     &       -0.40         &       -0.40         \\
+                    &                     &                     &      (0.36)         &      (0.36)         \\
+NH Other            &                     &                     &       -0.30         &       -0.30         \\
+                    &                     &                     &      (0.41)         &      (0.41)         \\
+In labor force      &                     &                     &        0.40\sym{**} &        0.40\sym{**} \\
+                    &                     &                     &      (0.17)         &      (0.17)         \\
+\_cons              &        0.63\sym{***}&        0.55\sym{***}&       -3.93\sym{***}&       -3.93\sym{***}\\
+                    &      (0.18)         &      (0.21)         &      (1.03)         &      (1.03)         \\
+\midrule
+Observations        &      562.00         &      562.00         &      556.00         &      556.00         \\
+Adj. R-squared      &       -0.00         &       -0.00         &        0.11         &        0.11         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

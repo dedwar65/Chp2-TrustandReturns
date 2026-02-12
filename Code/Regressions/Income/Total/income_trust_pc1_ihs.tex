@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Total income (2020) on PC1 trust (2020), scaled asinh}
+\label{tab:income_trust_pc1_total_ihs}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+Trust PC1           &        0.02         &        0.03\sym{*}  &        0.02         &        0.02\sym{*}  \\
+                    &      (0.02)         &      (0.02)         &      (0.01)         &      (0.01)         \\
+(PC1)$^2$           &                     &       -0.03\sym{***}&                     &       -0.01         \\
+                    &                     &      (0.01)         &                     &      (0.00)         \\
+Female              &                     &                     &       -0.22\sym{***}&       -0.22\sym{***}\\
+                    &                     &                     &      (0.06)         &      (0.06)         \\
+Years of education  &                     &                     &        0.06\sym{***}&        0.06\sym{***}\\
+                    &                     &                     &      (0.01)         &      (0.01)         \\
+Married             &                     &                     &        0.18\sym{***}&        0.18\sym{***}\\
+                    &                     &                     &      (0.06)         &      (0.06)         \\
+Born in U.S.        &                     &                     &        0.08         &        0.08         \\
+                    &                     &                     &      (0.10)         &      (0.10)         \\
+In labor force      &                     &                     &        0.56\sym{***}&        0.55\sym{***}\\
+                    &                     &                     &      (0.06)         &      (0.06)         \\
+NH Black            &                     &                     &       -0.15\sym{**} &       -0.14\sym{**} \\
+                    &                     &                     &      (0.07)         &      (0.07)         \\
+Hispanic            &                     &                     &       -0.18\sym{*}  &       -0.17\sym{*}  \\
+                    &                     &                     &      (0.10)         &      (0.10)         \\
+NH Other            &                     &                     &       -0.18         &       -0.17         \\
+                    &                     &                     &      (0.11)         &      (0.11)         \\
+Constant            &        0.97\sym{***}&        1.07\sym{***}&       -0.44\sym{***}&       -0.28         \\
+                    &      (0.03)         &      (0.04)         &      (0.17)         &      (0.21)         \\
+\midrule
+Observations        &      536.00         &      536.00         &      530.00         &      530.00         \\
+Adj. R-squared      &        0.00         &        0.04         &        0.34         &        0.34         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Age bins (5-yr) included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

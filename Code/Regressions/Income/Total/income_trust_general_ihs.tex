@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Total income (2020) on General trust (2020), scaled asinh}
+\label{tab:income_trust_general_total_ihs}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+General trust       &        0.03\sym{***}&        0.19\sym{***}&        0.00         &        0.05\sym{**} \\
+                    &      (0.01)         &      (0.02)         &      (0.01)         &      (0.02)         \\
+(General)$^2$       &                     &       -0.02\sym{***}&                     &       -0.00\sym{**} \\
+                    &                     &      (0.00)         &                     &      (0.00)         \\
+Female              &                     &                     &       -0.27\sym{***}&       -0.27\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Years of education  &                     &                     &        0.07\sym{***}&        0.07\sym{***}\\
+                    &                     &                     &      (0.01)         &      (0.01)         \\
+Married             &                     &                     &        0.14\sym{***}&        0.14\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Born in U.S.        &                     &                     &        0.02         &        0.02         \\
+                    &                     &                     &      (0.07)         &      (0.07)         \\
+In labor force      &                     &                     &        0.50\sym{***}&        0.49\sym{***}\\
+                    &                     &                     &      (0.05)         &      (0.05)         \\
+NH Black            &                     &                     &       -0.24\sym{***}&       -0.23\sym{***}\\
+                    &                     &                     &      (0.05)         &      (0.05)         \\
+Hispanic            &                     &                     &       -0.24\sym{***}&       -0.23\sym{***}\\
+                    &                     &                     &      (0.07)         &      (0.07)         \\
+NH Other            &                     &                     &       -0.27\sym{***}&       -0.27\sym{***}\\
+                    &                     &                     &      (0.09)         &      (0.09)         \\
+Constant            &        0.83\sym{***}&        0.53\sym{***}&       -0.48\sym{***}&       -0.51\sym{***}\\
+                    &      (0.05)         &      (0.06)         &      (0.14)         &      (0.16)         \\
+\midrule
+Observations        &      900.00         &      900.00         &      890.00         &      890.00         \\
+Adj. R-squared      &        0.01         &        0.05         &        0.35         &        0.35         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Age bins (5-yr) included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

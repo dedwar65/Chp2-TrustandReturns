@@ -284,7 +284,11 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par Returns to net wealth is given by
 
-\par I present the means for the return measures in the following figures. I group them by the returns at the asset level (core, retirement, residential) and at the portfolio level (core, core and retirement, net wealth). 
+\par I present the means for the return measures in the following figures. I group them by the returns at the asset level (core, retirement, residential) and at the portfolio level (core, core and retirement, net wealth).
+
+%%%%%%%%%%
+ I used the formula from \cite{Daminato2024}: $$ r_t = \frac{y^c_t + cg_t -y^d_t}{A_{t-1} + .5F_t}   $$ where $y^c_t$ interest income and dividends, capital gains $cg_t$ measured as the difference between reported stock across waves, $F_t$ net investment flows, $y^d_t$ payments on debt (in the RAND longitudinal file, the variables were mentioned are all in net terms so this variable was $0$), and $A_{t-1}$ total net wealth at beginning of previous period.
+%%%%%%%%%%
 
 \begin{figure}[htbp]
 \centering
@@ -424,21 +428,32 @@ I repeat this for the measure of total income and both patterns persist.
 
 \subsubsection{Trust and income}
 
-\par I consider a scatterplot between trust and the measures for income. The relationship does seem to be slightly hump shaped, although the relationship does not look strong. 
+\par As discussed before, the literature on trust and economic performance suggests there's a \say{right amount of trust}. I want to see if this hump shaped relationship holds between the measures of trust and income in the HRS. After deflating and, more importantly, winsorizing labor income at the top and bottom 1\%, the relationship seems to be hump shaped.
+
+\par Income in the HRS is highly right-skewed and features a large mass at zero labor income (reflecting retirement and non-participation). In applied work, a common baseline is to use $\log(\text{income})$ because it reduces the influence of extreme values and yields coefficients interpretable as semi-elasticities. However, $\log(\cdot)$ is undefined at zero (and problematic with negative values when they arise from measurement or netting conventions), so using $\log(\text{income})$ in the HRS mechanically drops a large fraction of observations and can substantially change the visual and econometric relationship.
+
+\par In our data, the corresponding scatter of $\log(\text{income})$ versus trust changes markedly because so many observations have exactly zero labor income. Using $\log(1+\text{income})$ retains zeros but imposes an ad hoc curvature near zero and, in our case, does not restore the same qualitative picture.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/ln_lab_inc_final_2022_vs_trust_2022.png}
-\caption{Log labor income (final) vs.\ trust (2022)}
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/dw_lab_trust_2022.png}
+\caption{Labor income measures vs.\ trust (2022)}
 \end{figure}
-\FloatBarrier
+\FloatBarrier 
+
+\par Motivated by this issue, we follow a large applied econometrics literature that uses the inverse hyperbolic sine (IHS, or $\operatorname{asinh}$) transformation as a ``log-like'' mapping that is well-defined at zero and can accommodate negative values. The IHS transformation was advocated early on as an alternative to the log for heavy-tailed outcomes with extreme values and potential zeros/negatives (Burbidge, Magee, and Robb, \emph{``Alternative Transformations to Handle Extreme Values of the Dependent Variable''}; MacKinnon and Magee, \emph{``Transforming the Dependent Variable in Regression Models''}). More recently, Bellemare and Wichman (\emph{``Elasticities and the Inverse Hyperbolic Sine Transformation''}) provide practical guidance on interpretation, emphasizing that $\operatorname{asinh}(y)$ behaves similarly to $\log(y)$ for large $y$ (since $\operatorname{asinh}(y)\approx \log(2y)$ when $y$ is large) while remaining defined at $y=0$.
+
+\par A related point is that the IHS can be sensitive to the units of measurement, which motivates a \emph{scaled} IHS of the form $\operatorname{asinh}(y/\kappa)$ (see discussions in A\"ihounton and Henningsen, \emph{``Units of Measurement and the Inverse Hyperbolic Sine Transformation''}; Norton, \emph{``The Inverse Hyperbolic Sine Transformation''}). In practice, $\kappa$ is chosen as a meaningful scale (e.g., the median positive income), which makes the transformation more comparable across samples and improves interpretability near zero. Empirically, applying the (scaled) IHS to our deflated and winsorized income restores a scatter with trust that is visually well-behaved while retaining the economically important mass at zero labor income. This can be seen for the measure of toal income as well in the following figure .
+
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/ln_tot_inc_final_2022_vs_trust_2022.png}
-\caption{Log total income (final) vs.\ trust (2022)}
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/dw_tot_trust_2022.png}
+\caption{Total income measures vs.\ trust (2022)}
 \end{figure}
 \FloatBarrier
+
+%%%%%%
 
 \subsubsection{Trust and returns}
 
