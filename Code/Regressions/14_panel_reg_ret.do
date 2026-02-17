@@ -93,17 +93,6 @@ forvalues d = 2/10 {
     if !_rc local ctrl_r5 "`ctrl_r5' wealth_d`d'"
 }
 
-* Drop list for esttab: age bins, wealth deciles, region dummies, year dummies (omitted from table but included in regressions)
-local drop_base "*.age_bin *.year *.censreg"
-forvalues d = 2/10 {
-    capture confirm variable wealth_core_d`d'
-    if !_rc local drop_base "`drop_base' wealth_core_d`d'"
-    capture confirm variable wealth_coreira_d`d'
-    if !_rc local drop_base "`drop_base' wealth_coreira_d`d'"
-    capture confirm variable wealth_d`d'
-    if !_rc local drop_base "`drop_base' wealth_d`d'"
-}
-
 * ----------------------------------------------------------------------
 * Raw tables: panel_reg_r1.tex, panel_reg_r4.tex, panel_reg_r5.tex
 * ----------------------------------------------------------------------
@@ -128,21 +117,26 @@ foreach ret in r1 r4 r5 {
     }
     * raw vars guaranteed by 10; fail-fast above if missing
     eststo clear
-    quietly eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
-    quietly eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
-    quietly eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    di as txt _n "--- Raw `ret_label' ---"
+    eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
+    * Keep only main coefficients (explicit list; age, year, censreg, wealth omitted)
+    local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbrf_ married_ born_us `trust_var' c.`trust_var'#c.`trust_var' _cons"
+    eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+    estadd scalar p_joint_trust = r(p) : m3
 
     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'.tex"
     esttab m1 m2 m3 using "`outfile'", replace ///
         booktabs ///
         mtitles("(1)" "(2)" "(3)") ///
         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
-        drop(`drop_base', relax) ///
-        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf "Employed" married "Married" born_us "Born in U.S." c.`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
-        stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+        keep(`keep_list') ///
+        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
+        stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
         title("Panel: `ret_label' (raw)") ///
         addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies, and year dummies omitted from table but included in regressions.") ///
-        alignment(D{.}{.}{-1}) width(0.85\hsize) nonumbers
+        alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
 
     di as txt "Wrote: `outfile'"
 }
@@ -177,21 +171,25 @@ foreach ret in r1 r4 r5 {
     }
 
     eststo clear
-    quietly eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
-    quietly eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
-    quietly eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    di as txt _n "--- Winsorized `ret_label' ---"
+    eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
+    local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbrf_ married_ born_us `trust_var' c.`trust_var'#c.`trust_var' _cons"
+    eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+    estadd scalar p_joint_trust = r(p) : m3
 
     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_win.tex"
     esttab m1 m2 m3 using "`outfile'", replace ///
         booktabs ///
         mtitles("(1)" "(2)" "(3)") ///
         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
-        drop(`drop_base', relax) ///
-        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf "Employed" married "Married" born_us "Born in U.S." c.`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
-        stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+        keep(`keep_list') ///
+        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
+        stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
         title("Panel: `ret_label' (5% winsorized)") ///
         addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies, and year dummies omitted from table but included in regressions.") ///
-        alignment(D{.}{.}{-1}) width(0.85\hsize) nonumbers
+        alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
 
     di as txt "Wrote: `outfile'"
 }

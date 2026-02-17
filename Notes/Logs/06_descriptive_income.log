@@ -1,9 +1,9 @@
--------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_descriptive_income.
-> log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_des
+> criptive_income.log
   log type:  text
- opened on:  11 Feb 2026, 21:24:29
+ opened on:  17 Feb 2026, 16:19:08
 
 . 
 . * Load processed data
@@ -32,14 +32,15 @@
 . keep hhidpn educ_yrs age_* ///
 >     ln_lab_inc_final_* ln_tot_inc_final_* ///
 >     labor_income_real_win_* total_income_real_win_* ///
->     wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_* wealth_total_* gross_wealth_*
+>     wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_* wealth_total_* gro
+> ss_wealth_*
 
 . 
 . * Reshape to long for income descriptives
-. reshape long ln_lab_inc_final_ ln_tot_inc_final_ labor_income_real_win_ total_income_real_win_ 
-> ///
->     age_ wealth_core_ wealth_ira_ wealth_coreira_ wealth_res_ wealth_total_ gross_wealth_, i(hh
-> idpn) j(year)
+. reshape long ln_lab_inc_final_ ln_tot_inc_final_ labor_income_real_win_ total_i
+> ncome_real_win_ ///
+>     age_ wealth_core_ wealth_ira_ wealth_coreira_ wealth_res_ wealth_total_ gro
+> ss_wealth_, i(hhidpn) j(year)
 (j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
 
 Data                               Wide   ->   Long
@@ -48,12 +49,14 @@ Number of observations           45,234   ->   542,808
 Number of variables                 696   ->   576         
 j variable (12 values)                    ->   year
 xij variables:
-ln_lab_inc_final_2000 ln_lab_inc_final_2002 ... ln_lab_inc_final_2022->ln_lab_inc_final_
-ln_tot_inc_final_2000 ln_tot_inc_final_2002 ... ln_tot_inc_final_2022->ln_tot_inc_final_
-labor_income_real_win_2000 labor_income_real_win_2002 ... labor_income_real_win_2022->labor_incom
-> e_real_win_
-total_income_real_win_2000 total_income_real_win_2002 ... total_income_real_win_2022->total_incom
-> e_real_win_
+ln_lab_inc_final_2000 ln_lab_inc_final_2002 ... ln_lab_inc_final_2022->ln_lab_inc
+> _final_
+ln_tot_inc_final_2000 ln_tot_inc_final_2002 ... ln_tot_inc_final_2022->ln_tot_inc
+> _final_
+labor_income_real_win_2000 labor_income_real_win_2002 ... labor_income_real_win_2
+> 022->labor_income_real_win_
+total_income_real_win_2000 total_income_real_win_2002 ... total_income_real_win_2
+> 022->total_income_real_win_
          age_2000 age_2002 ... age_2022   ->   age_
 wealth_core_2000 wealth_core_2002 ... wealth_core_2022->wealth_core_
 wealth_ira_2000 wealth_ira_2002 ... wealth_ira_2022->wealth_ira_
@@ -81,21 +84,21 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . display "=== Income descriptives (real, winsorized) ==="
 === Income descriptives (real, winsorized) ===
 
-. tabstat labor_income_real_win_ total_income_real_win_ `wopt', statistics(n mean sd p1 p5 p50 p9
-> 5 p99 min max)
+. tabstat labor_income_real_win_ total_income_real_win_ `wopt', statistics(n mean
+>  sd p1 p5 p50 p95 p99 min max)
 
    Stats |  labor_~_  total_~_
 ---------+--------------------
        N |    204952    204952
-    Mean |  18329.46   52002.7
-      SD |  37031.49  68034.26
+    Mean |  18329.83  52003.74
+      SD |  37032.23  68035.62
       p1 |         0         0
-      p5 |         0   1453.77
-     p50 |         0  29102.81
-     p95 |  97922.06  177493.9
-     p99 |  178925.5  389510.5
+      p5 |         0    1453.8
+     p50 |         0   29103.4
+     p95 |  97924.05  177497.5
+     p99 |  178929.1  389518.4
      Min |         0         0
-     Max |  215256.8  457538.5
+     Max |  215261.1  457547.8
 ------------------------------
 
 . 
@@ -104,9 +107,10 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 
 . tempfile income_stats
 
-. postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max using "`income_stats
-> '", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001h not found)
+. postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max usin
+> g "`income_stats'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000003 not
+    found)
 
 . 
 . foreach v in labor_income_real_win_ total_income_real_win_ {
@@ -123,13 +127,13 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
  12.         local p50 = r(c_3)
  13.         local p95 = r(c_4)
  14.         local p99 = r(c_5)
- 15.         post handle ("`v'") (`N') (`mean') (`sd') (`p1') (`p5') (`p50') (`p95') (`p99') (`mi
-> n') (`max')
+ 15.         post handle ("`v'") (`N') (`mean') (`sd') (`p1') (`p5') (`p50') (`p9
+> 5') (`p99') (`min') (`max')
  16.     }
  17.     else {
  18.         quietly summarize `v', detail
- 19.         post handle ("`v'") (r(N)) (r(mean)) (r(sd)) (r(p1)) (r(p5)) (r(p50)) (r(p95)) (r(p9
-> 9)) (r(min)) (r(max))
+ 19.         post handle ("`v'") (r(N)) (r(mean)) (r(sd)) (r(p1)) (r(p5)) (r(p50)
+> ) (r(p95)) (r(p99)) (r(min)) (r(max))
  20.     }
  21. }
 
@@ -139,7 +143,8 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . use "`income_stats'", clear
 
 . 
-. file open fh using "${DESCRIPTIVE}/Tables/income_final_tabstat.tex", write replace
+. file open fh using "${DESCRIPTIVE}/Tables/income_final_tabstat.tex", write repl
+> ace
 
 . file write fh "\begin{table}[htbp]\centering\small" _n ///
 >     "\caption{Income (real, winsorized): summary statistics}" _n ///
@@ -150,8 +155,10 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . 
 . forvalues r = 1/`=_N' {
   2.     local vname = varname[`r']
-  3.     if "`vname'" == "labor_income_real_win_"  local vname "Labor income (real, winsorized)"
-  4.     if "`vname'" == "total_income_real_win_"  local vname "Total income (real, winsorized)"
+  3.     if "`vname'" == "labor_income_real_win_"  local vname "Labor income (rea
+> l, winsorized)"
+  4.     if "`vname'" == "total_income_real_win_"  local vname "Total income (rea
+> l, winsorized)"
   5.     local obs_s = string(obs[`r'], "%9.0fc")
   6.     local mean_s = string(mean[`r'], "%9.0fc")
   7.     local sd_s   = string(sd[`r'],   "%9.0fc")
@@ -160,13 +167,14 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
  10.     local min_s  = string(min[`r'],  "%9.0fc")
  11.     local max_s  = string(max[`r'],  "%9.0fc")
  12. 
-.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s' & `min_s' & `max_s
-> ' \\\\" _n
+.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s' & 
+> `min_s' & `max_s' \\\\" _n
  13. }
 
 . 
-. file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Real USD, winsorized; summary 
-> over person-years.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Real USD, wins
+> orized; summary over person-years.} \\\\" _n "\end{tabular}}" _n "\end{table}" 
+> _n
 
 . file close fh
 
@@ -177,8 +185,8 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 . display "=== Mean income by year ==="
 === Mean income by year ===
 
-. tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year >= 2002, by(year) statisti
-> cs(n mean sd p50 p95)
+. tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year >= 2002, b
+> y(year) statistics(n mean sd p50 p95)
 
 Summary statistics: N, Mean, SD, p50, p95
 Group variable: year 
@@ -186,76 +194,76 @@ Group variable: year
     year |  labor_~_  total_~_
 ---------+--------------------
     2002 |     18165     18165
-         |  15135.65   51878.5
-         |   32580.9  66407.29
-         |         0  30190.13
-         |  85870.12  174149.9
+         |  15135.96  51879.56
+         |  32581.56  66408.64
+         |         0  30190.74
+         |  85871.86  174153.5
 ---------+--------------------
     2004 |     20129     20129
-         |  19002.57  55397.86
-         |  37650.35  71841.79
-         |         0  31556.55
-         |  100407.2  192724.4
+         |  19002.95  55398.98
+         |  37651.11  71843.25
+         |         0  31557.19
+         |  100409.2  192728.3
 ---------+--------------------
     2006 |     18469     18469
-         |  16158.67  53489.83
-         |  33697.37  70022.36
-         |         0  30651.52
-         |  90072.44  179792.2
+         |     16159  53490.91
+         |  33698.05  70023.78
+         |         0  30652.14
+         |  90074.27  179795.8
 ---------+--------------------
     2008 |     17217     17217
-         |  14976.15  52958.03
-         |  32820.09  69115.31
-         |         0  29723.43
-         |  88117.91  182559.4
+         |  14976.45   52959.1
+         |  32820.76  69116.71
+         |         0  29724.03
+         |   88119.7  182563.1
 ---------+--------------------
     2010 |     22034     22034
-         |  20164.64  50369.49
-         |  37831.49  62362.26
-         |         0  29266.74
-         |  101888.1  168118.3
+         |  20165.05  50370.51
+         |  37832.26  62363.52
+         |         0  29267.33
+         |  101890.2  168121.7
 ---------+--------------------
     2012 |     20554     20554
-         |  18249.65  49178.34
-         |  36189.97   63012.2
-         |         0  27766.46
-         |  95599.88  167599.6
+         |  18250.02  49179.34
+         |  36190.71  63013.48
+         |         0  27767.02
+         |  95601.82    167603
 ---------+--------------------
     2014 |     18747     18747
-         |  17278.13  49727.28
-         |  36129.72  63834.37
-         |         0  27987.94
-         |  95010.19  166563.2
+         |  17278.48  49728.29
+         |  36130.46  63835.67
+         |         0  27988.51
+         |  95012.12  166566.6
 ---------+--------------------
     2016 |     20912     20912
-         |  21643.79  53539.04
-         |  41288.64  71987.89
-         |         0  29321.51
-         |  112900.8  183099.8
+         |  21644.23  53540.13
+         |  41289.47  71989.35
+         |         0  29322.11
+         |    112903  183103.5
 ---------+--------------------
     2018 |     17146     17146
-         |  19847.19   52319.7
-         |  39573.18   71354.6
-         |         0  28057.27
-         |  106833.4  180753.6
+         |  19847.59  52320.76
+         |  39573.98  71356.05
+         |         0  28057.84
+         |  106835.6  180757.2
 ---------+--------------------
     2020 |     15723     15723
-         |   19567.6  52701.73
-         |  39173.18  70307.44
-         |         0   29048.9
-         |  104679.1    181723
+         |     19568   52702.8
+         |  39173.98  70308.87
+         |         0  29049.48
+         |  104681.2  181726.6
 ---------+--------------------
     2022 |     15856     15856
-         |  18859.67  50624.16
-         |  38345.13  68371.47
-         |         0  26985.26
-         |  100006.8  179641.9
+         |  18859.99  50625.02
+         |  38345.78  68372.63
+         |         0  26985.72
+         |  100008.5  179644.9
 ---------+--------------------
    Total |    204952    204952
-         |  18329.46   52002.7
-         |  37031.49  68034.26
-         |         0  29102.81
-         |  97922.06  177493.9
+         |  18329.83  52003.74
+         |  37032.23  68035.62
+         |         0   29103.4
+         |  97924.05  177497.5
 ------------------------------
 
 . preserve
@@ -263,16 +271,18 @@ Group variable: year
 . keep if year >= 2002
 (45,234 observations deleted)
 
-. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor
-> _income_real_win_ `wopt', by(year)
+. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_
+>  (count) n=labor_income_real_win_ `wopt', by(year)
 
 . local dl = char(92) + char(36)
 
-. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_year_real_win.tex", write replace
+. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_year_real_win.tex", wr
+> ite replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by year (real, winsorize
-> d)}" _n "\label{tab:income_mean_by_year_real_win}" _n "\begin{tabular}{lrrr}\toprule" _n "Year 
-> & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by year 
+> (real, winsorized)}" _n "\label{tab:income_mean_by_year_real_win}" _n "\begin{t
+> abular}{lrrr}\toprule" _n "Year & Labor income (mean `dl') & Total income (mean
+>  `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local yr_s = string(year[`r'], "%9.0f")
@@ -282,8 +292,9 @@ Group variable: year
   6.     file write fh "`yr_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Real USD; winsorized at 1st an
-> d 99th percentile.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Real USD; wins
+> orized at 1st and 99th percentile.} \\\\" _n "\end{tabular}" _n "\end{table}" _
+> n
 
 . file close fh
 
@@ -297,8 +308,8 @@ Group variable: year
 . gen int age_group = floor(age/5)*5 if !missing(age)
 (318,278 missing values generated)
 
-. tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year == 2002, by(age_group) sta
-> tistics(n mean sd p50 p95)
+. tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year == 2002, b
+> y(age_group) statistics(n mean sd p50 p95)
 
 Summary statistics: N, Mean, SD, p50, p95
 Group variable: age_group 
@@ -306,112 +317,112 @@ Group variable: age_group
 age_group |  labor_~_  total_~_
 ----------+--------------------
        25 |         7         7
-          |  33573.28  42684.55
-          |  21388.57  17561.82
-          |  30129.87  34649.35
-          |  63272.72  70503.89
+          |  33573.96  42685.42
+          |     21389  17562.17
+          |  30130.48  34650.05
+          |     63274  70505.31
 ----------+--------------------
        30 |         9         9
-          |  24890.62  85055.65
-          |  24295.19  126477.1
-          |  21090.91  49262.33
-          |  63272.72  416775.3
+          |  24891.12  85057.37
+          |  24295.68  126479.7
+          |  21091.33  49263.33
+          |     63274  416783.7
 ----------+--------------------
        35 |        37        37
-          |  26630.32  66191.96
-          |  26781.72  77557.38
-          |  19885.71  48219.84
-          |  75324.66    301600
+          |  26630.86   66193.3
+          |  26782.26  77558.95
+          |  19886.11  48220.81
+          |  75326.19  301606.1
 ----------+--------------------
        40 |       105       105
-          |  31333.55  64267.81
-          |  36664.01  75695.13
-          |  21090.91  42181.81
-          |    112987  224919.4
+          |  31334.18  64269.11
+          |  36664.75  75696.66
+          |  21091.33  42182.67
+          |  112989.3    224924
 ----------+--------------------
        45 |       250       250
-          |  36588.38  64877.56
-          |   40404.9  79764.64
-          |  27116.88  39873.86
-          |  119766.2  219044.1
+          |  36589.12  64878.88
+          |  40405.72  79766.26
+          |  27117.43  39874.67
+          |  119768.6  219048.6
 ----------+--------------------
        50 |       783       783
-          |   38699.7  72377.16
-          |  44523.44  87410.24
-          |  26363.63  43266.49
-          |  138597.4  266649.3
+          |  38700.48  72378.63
+          |  44524.34  87412.01
+          |  26364.17  43267.36
+          |  138600.2  266654.7
 ----------+--------------------
        55 |      2381      2381
-          |  38755.23  72493.52
-          |  45474.67  82153.96
-          |  25610.39  48433.76
-          |  140103.9  252488.3
+          |  38756.01  72494.99
+          |   45475.6  82155.62
+          |   25610.9  48434.74
+          |  140106.7  252493.4
 ----------+--------------------
        60 |      3653      3653
-          |  24974.84  60750.65
-          |  38612.05  77090.81
-          |         0  36445.09
-          |  108467.5    225974
+          |  24975.35  60751.88
+          |  38612.83  77092.37
+          |         0  36445.82
+          |  108469.7  225978.6
 ----------+--------------------
        65 |      3303      3303
-          |   9984.27   50403.3
-          |  25745.04  63524.48
-          |         0  30274.49
-          |  60259.73  164685.3
+          |  9984.473  50404.32
+          |  25745.57  63525.77
+          |         0   30275.1
+          |  60260.95  164688.7
 ----------+--------------------
        70 |      2569      2569
-          |  3788.693  45926.14
-          |  15234.42  57875.61
-          |         0  28798.13
-          |  24103.89  148281.1
+          |   3788.77  45927.07
+          |  15234.73  57876.78
+          |         0  28798.71
+          |  24104.38  148284.1
 ----------+--------------------
        75 |      2039      2039
-          |  1594.032  39306.29
-          |  9429.776  45228.65
-          |         0  25819.79
-          |  7532.466  116301.3
+          |  1594.065  39307.09
+          |  9429.967  45229.57
+          |         0  25820.31
+          |  7532.619  116303.6
 ----------+--------------------
        80 |      1660      1660
-          |  718.2688  34633.99
-          |  7852.212   40468.4
-          |         0  22847.58
-          |         0  97946.17
+          |  718.2833  34634.69
+          |  7852.371  40469.22
+          |         0  22848.05
+          |         0  97948.15
 ----------+--------------------
        85 |       868       868
-          |  91.05259  32256.54
-          |  1217.383  37720.35
-          |         0  21372.62
-          |         0   94728.3
+          |  91.05444  32257.19
+          |  1217.408  37721.11
+          |         0  21373.05
+          |         0  94730.22
 ----------+--------------------
        90 |       399       399
-          |  34.35862  28829.51
-          |  454.9814  32502.59
-          |         0  18077.92
-          |         0  76077.91
+          |  34.35931  28830.09
+          |  454.9906  32503.24
+          |         0  18078.29
+          |         0  76079.45
 ----------+--------------------
        95 |        89        89
-          |         0  32284.73
-          |         0  41172.03
-          |         0  18077.92
-          |         0    130161
+          |         0  32285.39
+          |         0  41172.86
+          |         0  18078.29
+          |         0  130163.7
 ----------+--------------------
       100 |        10        10
-          |         0  17743.72
-          |         0  14707.82
-          |         0  13404.78
-          |         0  55288.51
+          |         0  17744.08
+          |         0  14708.12
+          |         0  13405.05
+          |         0  55289.63
 ----------+--------------------
       105 |         3         3
-          |         0  11618.08
-          |         0  1551.475
-          |         0   12365.3
-          |         0  12654.54
+          |         0  11618.31
+          |         0  1551.506
+          |         0  12365.55
+          |         0   12654.8
 ----------+--------------------
     Total |     18165     18165
-          |  15135.65   51878.5
-          |   32580.9  66407.29
-          |         0  30190.13
-          |  85870.12  174149.9
+          |  15135.96  51879.56
+          |  32581.56  66408.64
+          |         0  30190.74
+          |  85871.86  174153.5
 -------------------------------
 
 . preserve
@@ -419,17 +430,18 @@ age_group |  labor_~_  total_~_
 . keep if year == 2002
 (497,574 observations deleted)
 
-. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor
-> _income_real_win_ `wopt', by(age_group)
+. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_
+>  (count) n=labor_income_real_win_ `wopt', by(age_group)
 
 . local dl = char(92) + char(36)
 
-. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2002.tex", write rep
-> lace
+. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2002
+> .tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age group (2002)}" _n
->  "\label{tab:income_mean_by_agegroup_2002}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoin
-> t) & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age g
+> roup (2002)}" _n "\label{tab:income_mean_by_agegroup_2002}" _n "\begin{tabular}
+> {lrrr}\toprule" _n "Age (midpoint) & Labor income (mean `dl') & Total income (m
+> ean `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local age_s = string(age_group[`r'], "%9.0f")
@@ -439,8 +451,9 @@ age_group |  labor_~_  total_~_
   6.     file write fh "`age_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age bins (e.g., 50 =
->  50--54). Real USD, winsorized.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age 
+> bins (e.g., 50 = 50--54). Real USD, winsorized.} \\\\" _n "\end{tabular}" _n "\
+> end{table}" _n
 
 . file close fh
 
@@ -450,8 +463,8 @@ age_group |  labor_~_  total_~_
 . display "=== Mean income by age group (2022) ==="
 === Mean income by age group (2022) ===
 
-. tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year == 2022, by(age_group) sta
-> tistics(n mean sd p50 p95)
+. tabstat labor_income_real_win_ total_income_real_win_ `wopt' if year == 2022, b
+> y(age_group) statistics(n mean sd p50 p95)
 
 Summary statistics: N, Mean, SD, p50, p95
 Group variable: age_group 
@@ -459,112 +472,112 @@ Group variable: age_group
 age_group |  labor_~_  total_~_
 ----------+--------------------
        25 |         2         2
-          |         0  11354.68
-          |         0  10557.85
-          |         0  11354.68
-          |         0  18820.22
+          |         0  11354.88
+          |         0  10558.03
+          |         0  11354.88
+          |         0  18820.53
 ----------+--------------------
        30 |         8         8
-          |  32108.67   88032.6
-          |   20462.7  99536.27
-          |  35187.58     45179
-          |  61115.27  252054.2
+          |  32109.21  88034.09
+          |  20463.04  99537.96
+          |  35188.18  45179.77
+          |  61116.31  252058.5
 ----------+--------------------
        35 |        28        28
-          |  19994.19  60830.85
-          |  28935.53  108912.1
-          |  2777.967  24260.91
-          |  88894.94  423781.9
+          |  19994.52  60831.88
+          |  28936.02    108914
+          |  2778.014  24261.32
+          |  88896.45    423789
 ----------+--------------------
        40 |        95        95
-          |  25891.59  47445.22
-          |  35115.33  77235.47
-          |   9259.89  24538.71
-          |  95376.87  181493.8
+          |  25892.03  47446.03
+          |  35115.92  77236.78
+          |  9260.047  24539.12
+          |  95378.48  181496.9
 ----------+--------------------
        45 |       233       233
-          |  36850.89  63805.37
-          |  41907.81  74092.76
-          |   25001.7  46299.45
-          |  118967.4  232423.2
+          |  36851.51  63806.45
+          |  41908.52  74094.02
+          |  25002.13  46300.23
+          |  118969.4  232427.2
 ----------+--------------------
        50 |      1286      1286
-          |  43922.35  69037.36
-          |  52492.33  81767.03
-          |  27779.67  43527.04
-          |  162048.1  245398.2
+          |  43923.09  69038.53
+          |  52493.22  81768.42
+          |  27780.14  43527.78
+          |  162050.8  245402.4
 ----------+--------------------
        55 |      2285      2285
-          |  38021.38  62012.86
-          |   48882.5  79165.58
-          |  21297.75  36224.69
-          |  145380.3  229274.9
+          |  38022.03  62013.91
+          |  48883.33  79166.92
+          |  21298.11   36225.3
+          |  145382.7  229278.8
 ----------+--------------------
        60 |      2924      2924
-          |  28185.13   55428.1
-          |  43559.95  75456.71
-          |  1851.978  28718.16
-          |  120378.6  200721.1
+          |  28185.61  55429.04
+          |  43560.69  75457.99
+          |  1852.009  28718.65
+          |  120380.6  200724.5
 ----------+--------------------
        65 |      2641      2641
-          |  14748.55  46993.13
-          |  33356.92  63816.28
-          |         0  25201.72
-          |  81487.03  155567.1
+          |   14748.8  46993.92
+          |  33357.48  63817.36
+          |         0  25202.14
+          |  81488.41  155569.7
 ----------+--------------------
        70 |      2204      2204
-          |  6731.785  43628.73
-          |  22000.18  57242.82
-          |         0  24480.81
-          |  44447.47  143398.7
+          |  6731.899  43629.47
+          |  22000.55  57243.78
+          |         0  24481.23
+          |  44448.22  143401.1
 ----------+--------------------
        75 |      1401      1401
-          |  3486.729  43554.85
-          |  17363.54  59371.05
-          |         0  24446.11
-          |  18334.58  139442.8
+          |  3486.788  43555.59
+          |  17363.84  59372.06
+          |         0  24446.52
+          |  18334.89  139445.2
 ----------+--------------------
        80 |      1421      1421
-          |  1463.643  39317.07
-          |  10521.47  52833.32
-          |         0  22368.19
-          |  4629.945  127638.3
+          |  1463.668  39317.74
+          |  10521.64  52834.22
+          |         0  22368.57
+          |  4630.023  127640.5
 ----------+--------------------
        85 |       871       871
-          |  528.0397  37901.86
-          |  6784.737  48021.33
-          |         0  23530.92
-          |         0  121703.7
+          |  528.0486  37902.51
+          |  6784.852  48022.14
+          |         0  23531.32
+          |         0  121705.7
 ----------+--------------------
        90 |       361       361
-          |   519.426     39475
-          |  9747.676  63085.74
-          |         0   22279.3
-          |         0  128934.5
+          |  519.4348  39475.66
+          |  9747.841  63086.81
+          |         0  22279.67
+          |         0  128936.7
 ----------+--------------------
        95 |        79        79
-          |         0  46537.63
-          |         0  85761.39
-          |         0  20668.07
-          |         0  293542.2
+          |         0  46538.41
+          |         0  85762.84
+          |         0  20668.42
+          |         0  293547.2
 ----------+--------------------
       100 |        16        16
-          |         0  14516.52
-          |         0  5382.809
-          |         0  14019.58
-          |         0  23334.92
+          |         0  14516.77
+          |         0    5382.9
+          |         0  14019.82
+          |         0  23335.32
 ----------+--------------------
       105 |         1         1
-          |         0  11111.87
+          |         0  11112.06
           |         .         .
-          |         0  11111.87
-          |         0  11111.87
+          |         0  11112.06
+          |         0  11112.06
 ----------+--------------------
     Total |     15856     15856
-          |  18859.67  50624.16
-          |  38345.13  68371.47
-          |         0  26985.26
-          |  100006.8  179641.9
+          |  18859.99  50625.02
+          |  38345.78  68372.63
+          |         0  26985.72
+          |  100008.5  179644.9
 -------------------------------
 
 . preserve
@@ -572,17 +585,18 @@ age_group |  labor_~_  total_~_
 . keep if year == 2022
 (497,574 observations deleted)
 
-. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor
-> _income_real_win_ `wopt', by(age_group)
+. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_
+>  (count) n=labor_income_real_win_ `wopt', by(age_group)
 
 . local dl = char(92) + char(36)
 
-. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2022.tex", write rep
-> lace
+. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_agegroup_real_win_2022
+> .tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age group (2022)}" _n
->  "\label{tab:income_mean_by_agegroup_2022}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoin
-> t) & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by age g
+> roup (2022)}" _n "\label{tab:income_mean_by_agegroup_2022}" _n "\begin{tabular}
+> {lrrr}\toprule" _n "Age (midpoint) & Labor income (mean `dl') & Total income (m
+> ean `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local age_s = string(age_group[`r'], "%9.0f")
@@ -592,8 +606,9 @@ age_group |  labor_~_  total_~_
   6.     file write fh "`age_s' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age bins (e.g., 50 =
->  50--54). Real USD, winsorized.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Five-year age 
+> bins (e.g., 50 = 50--54). Real USD, winsorized.} \\\\" _n "\end{tabular}" _n "\
+> end{table}" _n
 
 . file close fh
 
@@ -622,12 +637,13 @@ age_group |  labor_~_  total_~_
 . replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
 (51,144 real changes made)
 
-. label define educ_group 1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad"
+. label define educ_group 1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "gra
+> d"
 
 . label values educ_group educ_group
 
-. tabstat labor_income_real_win_ total_income_real_win_ `wopt', by(educ_group) statistics(n mean 
-> sd p50 p95)
+. tabstat labor_income_real_win_ total_income_real_win_ `wopt', by(educ_group) st
+> atistics(n mean sd p50 p95)
 
 Summary statistics: N, Mean, SD, p50, p95
 Group variable: educ_group 
@@ -635,46 +651,46 @@ Group variable: educ_group
   educ_group |  labor_~_  total_~_
 -------------+--------------------
        no hs |     44654     44654
-             |  6075.283  23986.55
-             |  17517.82  34232.59
-             |         0  15164.39
-             |  39515.26  69759.12
+             |  6075.405  23987.03
+             |  17518.17  34233.27
+             |         0   15164.7
+             |  39516.07  69760.53
 -------------+--------------------
           hs |     63826     63826
-             |  12589.92  39600.44
-             |   26534.7  48415.94
-             |         0  25840.32
-             |  67218.24  117158.7
+             |  12590.17  39601.23
+             |  26535.23  48416.92
+             |         0  25840.84
+             |   67219.6  117161.1
 -------------+--------------------
 some college |     47390     47390
-             |  20297.25  53481.54
-             |  35644.77  63386.68
-             |         0  34325.13
-             |  94412.05    164961
+             |  20297.66  53482.61
+             |  35645.48  63387.95
+             |         0  34325.77
+             |  94413.96  164964.4
 -------------+--------------------
   4yr degree |     24820     24820
-             |  32778.33  82575.98
-             |  50227.92  87882.94
-             |         0  55093.44
-             |  147480.4  272375.1
+             |  32778.98  82577.63
+             |  50228.92   87884.7
+             |         0  55094.56
+             |  147483.3  272380.6
 -------------+--------------------
         grad |     23091     23091
-             |  37444.03  104063.9
-             |  56539.49  99113.26
-             |         0  73309.74
-             |  173246.7  347141.1
+             |  37444.78    104066
+             |  56540.62  99115.25
+             |         0  73311.23
+             |  173250.2  347148.1
 -------------+--------------------
        Total |    203781    203781
-             |  18229.94  51945.96
-             |  36927.72  67975.79
-             |         0  29058.92
-             |  97922.06  177184.4
+             |   18230.3     51947
+             |  36928.46  67977.16
+             |         0  29059.51
+             |  97924.05  177187.9
 ----------------------------------
 
 . preserve
 
-. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_ (count) n=labor
-> _income_real_win_ `wopt', by(educ_group)
+. collapse (mean) mean_lab=labor_income_real_win_ mean_tot=total_income_real_win_
+>  (count) n=labor_income_real_win_ `wopt', by(educ_group)
 
 . drop if missing(educ_group)
 (1 observation deleted)
@@ -683,12 +699,13 @@ some college |     47390     47390
 
 . local dl = char(92) + char(36)
 
-. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_educgroup_real_win.tex", write replace
+. file open fh using "${DESCRIPTIVE}/Tables/income_mean_by_educgroup_real_win.tex
+> ", write replace
 
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by education group (real
-> , winsorized)}" _n "\label{tab:income_mean_by_educgroup_real_win}" _n "\begin{tabular}{lrrr}\to
-> prule" _n "Education & Labor income (mean `dl') & Total income (mean `dl') & Obs \\\\ \midrule"
->  _n
+. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean income by educa
+> tion group (real, winsorized)}" _n "\label{tab:income_mean_by_educgroup_real_wi
+> n}" _n "\begin{tabular}{lrrr}\toprule" _n "Education & Labor income (mean `dl')
+>  & Total income (mean `dl') & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local edlab = educ_label[`r']
@@ -698,9 +715,9 @@ some college |     47390     47390
   6.     file write fh "`edlab' & `lab_s' & `tot_s' & `n_s' \\\\" _n
   7. }
 
-. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Real USD, winsorized. no hs = 
-> $<$12y; hs = 12y; some college = 13--15y; 4yr = 16y; grad = 17+y.} \\\\" _n "\end{tabular}" _n 
-> "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Real USD, wins
+> orized. no hs = $<$12y; hs = 12y; some college = 13--15y; 4yr = 16y; grad = 17+
+> y.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
 
 . file close fh
 
@@ -708,44 +725,48 @@ some college |     47390     47390
 
 . 
 . * ---------------------------------------------------------------------
-. * Figure 1A, 2A, 3: Income by age, income by age and education, income over time
+. * Figure 1A, 2A, 3: Income by age, income by age and education, income over tim
+> e
 . * ---------------------------------------------------------------------
 . 
-. * Figure 1A — Mean labor and total income by age group (2 lines per graph, 2002 and 2022)
+. * Figure 1A — Mean labor and total income by age group (2 lines per graph, 2002
+>  and 2022)
 . foreach yr in 2002 2022 {
   2.     preserve
   3.     keep if year == `yr'
-  4.     collapse (mean) mean_lab=labor_income_real_win_ (mean) mean_tot=total_income_real_win_ `
-> wopt', by(age_group)
+  4.     collapse (mean) mean_lab=labor_income_real_win_ (mean) mean_tot=total_in
+> come_real_win_ `wopt', by(age_group)
   5.     sort age_group
-  6.     twoway (line mean_lab age_group, lwidth(medthick) lcolor(navy)) (line mean_tot age_group
-> , lpattern(dash) lcolor(maroon)), ///
+  6.     twoway (line mean_lab age_group, lwidth(medthick) lcolor(navy)) (line me
+> an_tot age_group, lpattern(dash) lcolor(maroon)), ///
 >         xtitle("Age group (5-year bins)") ///
 >         xlabel(20(10)90) ///
 >         ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
 >         title("Income by age group (`yr')") ///
->         legend(order(1 "Labor income" 2 "Total income") cols(1) size(small) position(3) ring(0)
->  region(lstyle(none)))
-  7.     graph export "${DESCRIPTIVE}/Figures/income_by_agegroup_`yr'.png", replace
+>         legend(order(1 "Labor income" 2 "Total income") cols(1) size(small) pos
+> ition(3) ring(0) region(lstyle(none)))
+  7.     graph export "${DESCRIPTIVE}/Figures/income_by_agegroup_`yr'.png", repla
+> ce
   8.     restore
   9. }
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_by_agegroup_2002.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_by_ag
+    > egroup_2002.png saved as PNG format
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_by_agegroup_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_by_ag
+    > egroup_2022.png saved as PNG format
 
 . 
-. * Figure 2A — Income by age group with lines by education (labor and total separately, 2002 and
->  2022)
+. * Figure 2A — Income by age group with lines by education (labor and total sepa
+> rately, 2002 and 2022)
 . foreach yr in 2002 2022 {
   2.     * Labor income by age and education (5 lines = 5 educ groups)
 .     preserve
   3.     keep if year == `yr'
-  4.     collapse (mean) mean_inc=labor_income_real_win_ `wopt', by(age_group educ_group)
+  4.     collapse (mean) mean_inc=labor_income_real_win_ `wopt', by(age_group edu
+> c_group)
   5.     sort age_group educ_group
   6.     twoway (line mean_inc age_group if educ_group==1, lcolor(navy)) ///
 >            (line mean_inc age_group if educ_group==2, lcolor(maroon)) ///
@@ -756,14 +777,16 @@ file /Volumes/SSD
 >         xlabel(20(10)90) ///
 >         ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
 >         title("Labor income by age and education (`yr')") ///
->         legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad") cols(1) size(sm
-> all) position(3) ring(0) region(lstyle(none)))
-  7.     graph export "${DESCRIPTIVE}/Figures/labinc_by_age_educ_`yr'.png", replace
+>         legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad")
+>  cols(1) size(small) position(3) ring(0) region(lstyle(none)))
+  7.     graph export "${DESCRIPTIVE}/Figures/labinc_by_age_educ_`yr'.png", repla
+> ce
   8.     restore
   9.     * Total income by age and education (5 lines = 5 educ groups)
 .     preserve
  10.     keep if year == `yr'
- 11.     collapse (mean) mean_inc=total_income_real_win_ `wopt', by(age_group educ_group)
+ 11.     collapse (mean) mean_inc=total_income_real_win_ `wopt', by(age_group edu
+> c_group)
  12.     sort age_group educ_group
  13.     twoway (line mean_inc age_group if educ_group==1, lcolor(navy)) ///
 >            (line mean_inc age_group if educ_group==2, lcolor(maroon)) ///
@@ -774,46 +797,47 @@ file /Volumes/SSD
 >         xlabel(20(10)90) ///
 >         ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
 >         title("Total income by age and education (`yr')") ///
->         legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad") cols(1) size(sm
-> all) position(3) ring(0) region(lstyle(none)))
- 14.     graph export "${DESCRIPTIVE}/Figures/totinc_by_age_educ_`yr'.png", replace
+>         legend(order(1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad")
+>  cols(1) size(small) position(3) ring(0) region(lstyle(none)))
+ 14.     graph export "${DESCRIPTIVE}/Figures/totinc_by_age_educ_`yr'.png", repla
+> ce
  15.     restore
  16. }
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labinc_by_age_educ_2002.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labinc_by_ag
+    > e_educ_2002.png saved as PNG format
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/totinc_by_age_educ_2002.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/totinc_by_ag
+    > e_educ_2002.png saved as PNG format
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labinc_by_age_educ_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labinc_by_ag
+    > e_educ_2022.png saved as PNG format
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/totinc_by_age_educ_2022.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/totinc_by_ag
+    > e_educ_2022.png saved as PNG format
 
 . 
 . * Figure 3 — Mean labor and total income over time (one graph, 2 lines)
 . preserve
 
-. collapse (mean) mean_lab=labor_income_real_win_ (mean) mean_tot=total_income_real_win_ `wopt', 
-> by(year)
+. collapse (mean) mean_lab=labor_income_real_win_ (mean) mean_tot=total_income_re
+> al_win_ `wopt', by(year)
 
-. twoway (line mean_lab year, lwidth(medthick) lcolor(navy)) (line mean_tot year, lpattern(dash) 
-> lcolor(maroon)), ///
+. twoway (line mean_lab year, lwidth(medthick) lcolor(navy)) (line mean_tot year,
+>  lpattern(dash) lcolor(maroon)), ///
 >     xtitle("Year") ytitle("Income (winsorized)") ylabel(, format(%9.0fc)) ///
 >     title("Income over time") ///
->     legend(order(1 "Labor income" 2 "Total income") cols(1) size(small) position(3) ring(0) reg
-> ion(lstyle(none)))
+>     legend(order(1 "Labor income" 2 "Total income") cols(1) size(small) positio
+> n(3) ring(0) region(lstyle(none)))
 
 . graph export "${DESCRIPTIVE}/Figures/income_over_time.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_over_time.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_over_
+    > time.png saved as PNG format
 
 . restore
 
@@ -828,7 +852,8 @@ file /Volumes/SSD
 . tempfile growth_means
 
 . postfile handle double year double g_lab g_tot using "`growth_means'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001u not found)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000g not
+    found)
 
 . 
 . foreach v of varlist ln_lab_inc_final_growth_* {
@@ -863,13 +888,13 @@ file /Volumes/SSD
 >     ytitle("Average income growth (\%)") ///
 >     ylabel(, format(%9.1f)) ///
 >     title("Income growth over time") ///
->     legend(order(1 "Labor income growth" 2 "Total income growth") cols(1) size(small) position(
-> 3) ring(0) region(lstyle(none)))
+>     legend(order(1 "Labor income growth" 2 "Total income growth") cols(1) size(
+> small) position(3) ring(0) region(lstyle(none)))
 
 . graph export "${DESCRIPTIVE}/Figures/income_growth_over_time.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_growth_over_time.png
-    saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/income_growt
+    > h_over_time.png saved as PNG format
 
 . restore
 
@@ -886,12 +911,14 @@ file /Volumes/SSD
 . * Export tabstat-like summary for income growth variables
 . tempfile growth_stats
 
-. postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max using "`growth_stats
-> '", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001w not found)
+. postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max usin
+> g "`growth_stats'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000i not
+    found)
 
 . foreach v of varlist ln_lab_inc_final_growth_* ln_tot_inc_final_growth_* {
-  2.     * Restrict to the wave corresponding to the end year encoded in the variable name
+  2.     * Restrict to the wave corresponding to the end year encoded in the vari
+> able name
 .     local ifcond ""
   3.     if strpos("`v'", "ln_lab_inc_final_growth_") > 0 {
   4.         local base "ln_lab_inc_final_growth_"
@@ -917,13 +944,13 @@ file /Volumes/SSD
  23.         local p50 = r(c_3)
  24.         local p95 = r(c_4)
  25.         local p99 = r(c_5)
- 26.         post handle ("`v'") (`N') (`mean') (`sd') (`p1') (`p5') (`p50') (`p95') (`p99') (`mi
-> n') (`max')
+ 26.         post handle ("`v'") (`N') (`mean') (`sd') (`p1') (`p5') (`p50') (`p9
+> 5') (`p99') (`min') (`max')
  27.     }
  28.     else {
  29.         quietly summarize `v' `ifcond', detail
- 30.         post handle ("`v'") (r(N)) (r(mean)) (r(sd)) (r(p1)) (r(p5)) (r(p50)) (r(p95)) (r(p9
-> 9)) (r(min)) (r(max))
+ 30.         post handle ("`v'") (r(N)) (r(mean)) (r(sd)) (r(p1)) (r(p5)) (r(p50)
+> ) (r(p95)) (r(p99)) (r(min)) (r(max))
  31.     }
  32. }
 
@@ -931,11 +958,13 @@ file /Volumes/SSD
 
 . use "`growth_stats'", clear
 
-. file open fh using "${DESCRIPTIVE}/Tables/income_growth_tabstat.tex", write replace
+. file open fh using "${DESCRIPTIVE}/Tables/income_growth_tabstat.tex", write rep
+> lace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Income growth: summary statist
-> ics}" _n "\label{tab:income_growth_tabstat}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{lrrr
-> rrrr}\toprule" _n "Variable & Obs & Mean & SD & P50 & P95 & Min & Max \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Income growth:
+>  summary statistics}" _n "\label{tab:income_growth_tabstat}" _n "\resizebox{\te
+> xtwidth}{!}{\begin{tabular}{lrrrrrrr}\toprule" _n "Variable & Obs & Mean & SD &
+>  P50 & P95 & Min & Max \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     * Skip variables with zero observations (e.g. earliest growth year)
@@ -944,7 +973,8 @@ file /Volumes/SSD
 .     local vraw = varname[`r']
   4.     local vname "`vraw'"
   5. 
-.     * Make labels more interpretable by attaching the end year of the growth period
+.     * Make labels more interpretable by attaching the end year of the growth pe
+> riod
 .     if strpos("`vraw'", "ln_lab_inc_final_growth_") > 0 {
   6.         local base "ln_lab_inc_final_growth_"
   7.         local yr = substr("`vraw'", `=length("`base'")'+1, .)
@@ -963,21 +993,22 @@ file /Volumes/SSD
  19.     local p95_s = string(p95[`r'], "%9.4f")
  20.     local min_s = string(min[`r'], "%9.4f")
  21.     local max_s = string(max[`r'], "%9.4f")
- 22.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s' & `min_s' & `ma
-> x_s' \\\\" _n
+ 22.     file write fh "`vname' & `obs_s' & `mean_s' & `sd_s' & `p50_s' & `p95_s'
+>  & `min_s' & `max_s' \\\\" _n
  23. }
 
-. file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Two-year log difference by end
->  year; ln(income), zero income dropped (N reflects). Labor = earnings+unemployment; total = all
->  components.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+. file write fh "\bottomrule" _n "\multicolumn{8}{l}{\footnotesize Two-year log d
+> ifference by end year; ln(income), zero income dropped (N reflects). Labor = ea
+> rnings+unemployment; total = all components.} \\\\" _n "\end{tabular}}" _n "\en
+> d{table}" _n
 
 . file close fh
 
 . restore
 
 . 
-. * Income vs wealth percentile: mean+IQR ribbon and binscatter (titles/labels aligned with 07 re
-> turns)
+. * Income vs wealth percentile: mean+IQR ribbon and binscatter (titles/labels al
+> igned with 07 returns)
 . * Wealth percentiles by year (1-100)
 . local pctvars "wealth_core wealth_ira wealth_res wealth_total gross_wealth"
 
@@ -998,7 +1029,7 @@ file /Volumes/SSD
 (542,808 missing values generated)
 (144,138 real changes made)
 (542,808 missing values generated)
-(224,530 real changes made)
+(210,180 real changes made)
 
 . 
 . capture which binscatter
@@ -1016,87 +1047,93 @@ file /Volumes/SSD
   3.     if r(N) < 10 continue
   4. 
 .     * --- Labor income: mean + P10-P90 range; binscatter uses log ---
-.     quietly count if year == `y' & !missing(labor_income_real_win_) & !missing(wealth_total_pct
-> )
+.     quietly count if year == `y' & !missing(labor_income_real_win_) & !missing(
+> wealth_total_pct)
   5.     if r(N) >= 10 {
   6.         preserve
   7.         keep if year == `y'
-  8.         collapse (mean) mean_inc = labor_income_real_win_ (p10) p10_inc = labor_income_real_
-> win_ (p90) p90_inc = labor_income_real_win_, by(wealth_total_pct)
-  9.         twoway (rarea p90_inc p10_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_t
-> otal_pct, lcolor(navy) lwidth(medthick)), ///
->             xtitle("Wealth total (pct.)") ytitle("Labor income (real, win, $)") ylabel(, format
-> (%9.0fc)) ///
->             title("Mean/P10-P90: Labor income by wealth (pct.) (`y')") legend(off)
- 10.         graph export "${DESCRIPTIVE}/Figures/labor_income_real_win_p10p90_by_wealthpct_`y'.p
-> ng", replace
+  8.         collapse (mean) mean_inc = labor_income_real_win_ (p10) p10_inc = la
+> bor_income_real_win_ (p90) p90_inc = labor_income_real_win_, by(wealth_total_pc
+> t)
+  9.         twoway (rarea p90_inc p10_inc wealth_total_pct, color(gs12)) (line m
+> ean_inc wealth_total_pct, lcolor(navy) lwidth(medthick)), ///
+>             xtitle("Wealth total (pct.)") ytitle("Labor income (real, win, $)")
+>  ylabel(, format(%9.0fc)) ///
+>             title("Mean/P10-P90: Labor income by wealth (pct.) (`y')") legend(o
+> ff)
+ 10.         graph export "${DESCRIPTIVE}/Figures/labor_income_real_win_p10p90_by
+> _wealthpct_`y'.png", replace
  11.         restore
  12.     }
- 13.     quietly count if year == `y' & !missing(ln_lab_inc_final_) & !missing(wealth_total_pct)
+ 13.     quietly count if year == `y' & !missing(ln_lab_inc_final_) & !missing(we
+> alth_total_pct)
  14.     if r(N) >= 10 {
- 15.         capture binscatter ln_lab_inc_final_ wealth_total_pct if year == `y', nquantiles(50)
->  ///
+ 15.         capture binscatter ln_lab_inc_final_ wealth_total_pct if year == `y'
+> , nquantiles(50) ///
 >             ytitle("Log labor income") xtitle("Wealth total (pct.)") ///
 >             title("Binscatter: Labor income by wealth (pct.) (`y')")
- 16.         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_labor_income_binscatter_`y'.png
-> ", replace
+ 16.         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_labor_income_bi
+> nscatter_`y'.png", replace
  17.     }
  18. 
-.     * --- Total income: mean+IQR uses real winsorized (level); binscatter uses log ---
-.     quietly count if year == `y' & !missing(total_income_real_win_) & !missing(wealth_total_pct
-> )
+.     * --- Total income: mean+IQR uses real winsorized (level); binscatter uses 
+> log ---
+.     quietly count if year == `y' & !missing(total_income_real_win_) & !missing(
+> wealth_total_pct)
  19.     if r(N) >= 10 {
  20.         preserve
  21.         keep if year == `y'
- 22.         collapse (mean) mean_inc = total_income_real_win_ (p25) p25_inc = total_income_real_
-> win_ (p75) p75_inc = total_income_real_win_, by(wealth_total_pct)
- 23.         twoway (rarea p75_inc p25_inc wealth_total_pct, color(gs12)) (line mean_inc wealth_t
-> otal_pct, lcolor(maroon) lwidth(medthick)), ///
->             xtitle("Wealth total (pct.)") ytitle("Total income (real, win, $)") ylabel(, format
-> (%9.0fc)) ///
+ 22.         collapse (mean) mean_inc = total_income_real_win_ (p25) p25_inc = to
+> tal_income_real_win_ (p75) p75_inc = total_income_real_win_, by(wealth_total_pc
+> t)
+ 23.         twoway (rarea p75_inc p25_inc wealth_total_pct, color(gs12)) (line m
+> ean_inc wealth_total_pct, lcolor(maroon) lwidth(medthick)), ///
+>             xtitle("Wealth total (pct.)") ytitle("Total income (real, win, $)")
+>  ylabel(, format(%9.0fc)) ///
 >             title("Mean/IQR: Total income by wealth (pct.) (`y')") legend(off)
- 24.         graph export "${DESCRIPTIVE}/Figures/total_income_real_win_iqr_by_wealthpct_`y'.png"
-> , replace
+ 24.         graph export "${DESCRIPTIVE}/Figures/total_income_real_win_iqr_by_we
+> althpct_`y'.png", replace
  25.         restore
  26.     }
- 27.     quietly count if year == `y' & !missing(ln_tot_inc_final_) & !missing(wealth_total_pct)
+ 27.     quietly count if year == `y' & !missing(ln_tot_inc_final_) & !missing(we
+> alth_total_pct)
  28.     if r(N) >= 10 {
- 29.         capture binscatter ln_tot_inc_final_ wealth_total_pct if year == `y', nquantiles(50)
->  ///
+ 29.         capture binscatter ln_tot_inc_final_ wealth_total_pct if year == `y'
+> , nquantiles(50) ///
 >             ytitle("Log total income") xtitle("Wealth total (pct.)") ///
 >             title("Binscatter: Total income by wealth (pct.) (`y')")
- 30.         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_total_income_binscatter_`y'.png
-> ", replace
+ 30.         if _rc == 0 graph export "${DESCRIPTIVE}/Figures/log_total_income_bi
+> nscatter_`y'.png", replace
  31.     }
  32. }
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labor_income_real_win_p10p90
-    > _by_wealthpct_2002.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labor_income
+    > _real_win_p10p90_by_wealthpct_2002.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_labor_income_binscatter_
-    > 2002.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_labor_in
+    > come_binscatter_2002.png saved as PNG format
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/total_income_real_win_iqr_by
-    > _wealthpct_2002.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/total_income
+    > _real_win_iqr_by_wealthpct_2002.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_total_income_binscatter_
-    > 2002.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_total_in
+    > come_binscatter_2002.png saved as PNG format
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labor_income_real_win_p10p90
-    > _by_wealthpct_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/labor_income
+    > _real_win_p10p90_by_wealthpct_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_labor_income_binscatter_
-    > 2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_labor_in
+    > come_binscatter_2022.png saved as PNG format
 (497,574 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/total_income_real_win_iqr_by
-    > _wealthpct_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/total_income
+    > _real_win_iqr_by_wealthpct_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_total_income_binscatter_
-    > 2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/log_total_in
+    > come_binscatter_2022.png saved as PNG format
 
 . 
 . * ---------------------------------------------------------------------
@@ -1121,16 +1158,16 @@ file /Volumes/SSD
 . capture confirm variable ihs_lab_inc_defl_win_s_2022 trust_others_2020
 
 . if !_rc {
-.     twoway scatter ihs_lab_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_lab_inc_defl_w
-> in_s_2022) & !missing(trust_others_2020), ///
+.     twoway scatter ihs_lab_inc_defl_win_s_2022 trust_others_2020 if !missing(ih
+> s_lab_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(navy%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
 >         title("Scaled asinh labor income vs trust (2022)")
 .     graph export "${DESCRIPTIVE}/Figures/as_lab_trust_2022.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/as_lab_trust_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/as_lab_trust
+    > _2022.png saved as PNG format
 . }
 
 . 
@@ -1138,40 +1175,41 @@ file /Volumes/SSD
 . capture confirm variable ihs_tot_inc_defl_win_s_2022 trust_others_2020
 
 . if !_rc {
-.     twoway scatter ihs_tot_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_tot_inc_defl_w
-> in_s_2022) & !missing(trust_others_2020), ///
+.     twoway scatter ihs_tot_inc_defl_win_s_2022 trust_others_2020 if !missing(ih
+> s_tot_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(maroon%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
 >         title("Scaled asinh total income vs trust (2022)")
 .     graph export "${DESCRIPTIVE}/Figures/as_tot_trust_2022.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/as_tot_trust_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/as_tot_trust
+    > _2022.png saved as PNG format
 . }
 
 . 
-. * Three-panel combined figure: labor income (Defl+Win, Defl+Win+ln(x), Defl+Win+asinh(x/med+))
-. capture confirm variable lab_inc_defl_win_2022 ln_lab_inc_defl_win_2022 ihs_lab_inc_defl_win_s_
-> 2022 trust_others_2020
+. * Three-panel combined figure: labor income (Defl+Win, Defl+Win+ln(x), Defl+Win
+> +asinh(x/med+))
+. capture confirm variable lab_inc_defl_win_2022 ln_lab_inc_defl_win_2022 ihs_lab
+> _inc_defl_win_s_2022 trust_others_2020
 
 . if !_rc {
-.     twoway scatter lab_inc_defl_win_2022 trust_others_2020 if !missing(lab_inc_defl_win_2022) &
->  !missing(trust_others_2020), ///
+.     twoway scatter lab_inc_defl_win_2022 trust_others_2020 if !missing(lab_inc_
+> defl_win_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(navy%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
 >         title("Defl+Win") ///
 >         name(g_l1, replace)
-.     twoway scatter ln_lab_inc_defl_win_2022 trust_others_2020 if !missing(ln_lab_inc_defl_win_2
-> 022) & !missing(trust_others_2020), ///
+.     twoway scatter ln_lab_inc_defl_win_2022 trust_others_2020 if !missing(ln_la
+> b_inc_defl_win_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(navy%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
 >         title("Defl+Win+ln(x)") ///
 >         name(g_l2, replace)
-.     twoway scatter ihs_lab_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_lab_inc_defl_w
-> in_s_2022) & !missing(trust_others_2020), ///
+.     twoway scatter ihs_lab_inc_defl_win_s_2022 trust_others_2020 if !missing(ih
+> s_lab_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(navy%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
@@ -1181,32 +1219,33 @@ file /Volumes/SSD
 >         title("Labor income vs trust (2022)")
 .     graph export "${DESCRIPTIVE}/Figures/dw_lab_trust_2022.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/dw_lab_trust_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/dw_lab_trust
+    > _2022.png saved as PNG format
 . }
 
 . 
-. * Three-panel combined figure: total income (Defl+Win, Defl+Win+ln(x), Defl+Win+asinh(x/med+))
-. capture confirm variable tot_inc_defl_win_2022 ln_tot_inc_defl_win_2022 ihs_tot_inc_defl_win_s_
-> 2022 trust_others_2020
+. * Three-panel combined figure: total income (Defl+Win, Defl+Win+ln(x), Defl+Win
+> +asinh(x/med+))
+. capture confirm variable tot_inc_defl_win_2022 ln_tot_inc_defl_win_2022 ihs_tot
+> _inc_defl_win_s_2022 trust_others_2020
 
 . if !_rc {
-.     twoway scatter tot_inc_defl_win_2022 trust_others_2020 if !missing(tot_inc_defl_win_2022) &
->  !missing(trust_others_2020), ///
+.     twoway scatter tot_inc_defl_win_2022 trust_others_2020 if !missing(tot_inc_
+> defl_win_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(maroon%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
 >         title("Defl+Win") ///
 >         name(g_t1, replace)
-.     twoway scatter ln_tot_inc_defl_win_2022 trust_others_2020 if !missing(ln_tot_inc_defl_win_2
-> 022) & !missing(trust_others_2020), ///
+.     twoway scatter ln_tot_inc_defl_win_2022 trust_others_2020 if !missing(ln_to
+> t_inc_defl_win_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(maroon%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
 >         title("Defl+Win+ln(x)") ///
 >         name(g_t2, replace)
-.     twoway scatter ihs_tot_inc_defl_win_s_2022 trust_others_2020 if !missing(ihs_tot_inc_defl_w
-> in_s_2022) & !missing(trust_others_2020), ///
+.     twoway scatter ihs_tot_inc_defl_win_s_2022 trust_others_2020 if !missing(ih
+> s_tot_inc_defl_win_s_2022) & !missing(trust_others_2020), ///
 >         msize(vsmall) mcolor(maroon%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
@@ -1216,8 +1255,8 @@ file /Volumes/SSD
 >         title("Total income vs trust (2022)")
 .     graph export "${DESCRIPTIVE}/Figures/dw_tot_trust_2022.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/dw_tot_trust_2022.png saved
-    as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/dw_tot_trust
+    > _2022.png saved as PNG format
 . }
 
 . 
@@ -1226,8 +1265,8 @@ file /Volumes/SSD
 . 
 . log close
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_descriptive_income.
-> log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_des
+> criptive_income.log
   log type:  text
- closed on:  11 Feb 2026, 21:25:39
--------------------------------------------------------------------------------------------------
+ closed on:  17 Feb 2026, 16:21:01
+---------------------------------------------------------------------------------

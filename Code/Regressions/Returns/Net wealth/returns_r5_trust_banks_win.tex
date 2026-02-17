@@ -2,12 +2,12 @@
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
 \caption{2022 Returns to net wealth (2022) on Banks trust (2020) (5% winsorized)}
 \label{tab:returns_r5_trust_banks_win}
-\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{{.}}{{.}}{{-1}}}}
 \toprule
                     &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
 \midrule
-Trust banks         &       -0.01         &       -0.02         &        0.00         &       -0.01         \\
-                    &      (0.01)         &      (0.03)         &      (0.01)         &      (0.03)         \\
+Trust banks         &       -0.01         &       -0.02         &        0.01         &       -0.00         \\
+                    &      (0.01)         &      (0.03)         &      (0.01)         &      (0.02)         \\
 (Banks)$^2$         &                     &        0.00         &                     &        0.00         \\
                     &                     &      (0.00)         &                     &      (0.00)         \\
 Female              &                     &                     &       -0.05         &       -0.05         \\
@@ -16,21 +16,22 @@ Years of education  &                     &                     &        0.02\sy
                     &                     &                     &      (0.01)         &      (0.01)         \\
 Married             &                     &                     &        0.06         &        0.06         \\
                     &                     &                     &      (0.04)         &      (0.05)         \\
-Born in U.S.        &                     &                     &        0.02         &        0.02         \\
+Born in U.S.        &                     &                     &        0.03         &        0.03         \\
                     &                     &                     &      (0.06)         &      (0.06)         \\
-NH Black            &                     &                     &       -0.17\sym{***}&       -0.17\sym{***}\\
+NH Black            &                     &                     &       -0.16\sym{***}&       -0.16\sym{***}\\
                     &                     &                     &      (0.06)         &      (0.06)         \\
-Hispanic            &                     &                     &       -0.14\sym{*}  &       -0.14\sym{*}  \\
+Hispanic            &                     &                     &       -0.15\sym{*}  &       -0.15\sym{*}  \\
                     &                     &                     &      (0.08)         &      (0.08)         \\
-NH Other            &                     &                     &        0.02         &        0.02         \\
+NH Other            &                     &                     &        0.03         &        0.03         \\
                     &                     &                     &      (0.10)         &      (0.10)         \\
-In labor force      &                     &                     &        0.09\sym{**} &        0.09\sym{**} \\
+In labor force      &                     &                     &        0.08\sym{*}  &        0.08\sym{*}  \\
                     &                     &                     &      (0.04)         &      (0.04)         \\
-\_cons              &        0.34\sym{***}&        0.37\sym{***}&       -0.23         &       -0.24         \\
+\_cons              &        0.33\sym{***}&        0.37\sym{***}&       -0.23         &       -0.23         \\
                     &      (0.05)         &      (0.08)         &      (0.19)         &      (0.19)         \\
 \midrule
 Observations        &      557.00         &      557.00         &      452.00         &      452.00         \\
 Adj. R-squared      &       -0.00         &       -0.00         &        0.28         &        0.28         \\
+Joint test: Trust p-value&                     &        0.62         &                     &        0.73         \\
 \bottomrule
 \multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
 \multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.}\\

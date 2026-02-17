@@ -2,35 +2,36 @@
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
 \caption{2022 Returns to net wealth (2022) on General trust (2020) (raw)}
 \label{tab:returns_r5_trust_general}
-\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{{.}}{{.}}{{-1}}}}
 \toprule
                     &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
 \midrule
-General trust       &        0.01         &        0.09\sym{***}&        0.01         &        0.06         \\
+General trust       &        0.01         &        0.09\sym{***}&        0.01         &        0.07\sym{*}  \\
                     &      (0.01)         &      (0.03)         &      (0.01)         &      (0.04)         \\
 (General)$^2$       &                     &       -0.01\sym{**} &                     &       -0.01         \\
                     &                     &      (0.00)         &                     &      (0.00)         \\
-Female              &                     &                     &       -0.07         &       -0.07         \\
+Female              &                     &                     &       -0.07         &       -0.06         \\
                     &                     &                     &      (0.07)         &      (0.07)         \\
-Years of education  &                     &                     &        0.04\sym{**} &        0.03\sym{**} \\
+Years of education  &                     &                     &        0.03\sym{**} &        0.03\sym{*}  \\
                     &                     &                     &      (0.02)         &      (0.02)         \\
-Married             &                     &                     &        0.09         &        0.10         \\
-                    &                     &                     &      (0.08)         &      (0.08)         \\
-Born in U.S.        &                     &                     &        0.07         &        0.07         \\
+Married             &                     &                     &        0.08         &        0.08         \\
+                    &                     &                     &      (0.09)         &      (0.08)         \\
+Born in U.S.        &                     &                     &        0.09         &        0.09         \\
                     &                     &                     &      (0.08)         &      (0.08)         \\
 NH Black            &                     &                     &       -0.15         &       -0.14         \\
                     &                     &                     &      (0.10)         &      (0.10)         \\
-Hispanic            &                     &                     &       -0.07         &       -0.07         \\
+Hispanic            &                     &                     &       -0.08         &       -0.08         \\
                     &                     &                     &      (0.13)         &      (0.13)         \\
-NH Other            &                     &                     &       -0.10         &       -0.09         \\
+NH Other            &                     &                     &       -0.10         &       -0.08         \\
                     &                     &                     &      (0.14)         &      (0.15)         \\
 In labor force      &                     &                     &        0.15\sym{**} &        0.15\sym{**} \\
                     &                     &                     &      (0.07)         &      (0.07)         \\
-\_cons              &        0.31\sym{***}&        0.14\sym{*}  &       -0.47         &       -0.43         \\
+\_cons              &        0.31\sym{***}&        0.14\sym{*}  &       -0.44         &       -0.40         \\
                     &      (0.07)         &      (0.08)         &      (0.44)         &      (0.43)         \\
 \midrule
-Observations        &      496.00         &      496.00         &      406.00         &      406.00         \\
-Adj. R-squared      &       -0.00         &        0.00         &        0.22         &        0.22         \\
+Observations        &      497.00         &      497.00         &      406.00         &      406.00         \\
+Adj. R-squared      &       -0.00         &        0.00         &        0.20         &        0.20         \\
+Joint test: Trust p-value&                     &        0.01         &                     &        0.22         \\
 \bottomrule
 \multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
 \multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.}\\

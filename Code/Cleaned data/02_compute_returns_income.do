@@ -63,8 +63,7 @@ forvalues i = 1/11 {
         h`wcur'atran h`wprev'atran h`wcur'aothr h`wprev'aothr ///
         h`wprev'amort h`wprev'ahmln h`wprev'adebt ///
         flow_core_`y' flow_ira_`y' flow_res_`y' flow_total_`y'
-    capture confirm variable h`wprev'amrtb
-    if !_rc local req_vars "`req_vars' h`wprev'amrtb"
+    * amrtb (secondary mortgage) excluded: not available in all waves 2002-2022
 
     local missing_any 0
     foreach v of local req_vars {
@@ -91,8 +90,8 @@ forvalues i = 1/11 {
             }
         }
     }
-    * Clean missing codes on debt inputs (if present)
-    foreach v in h`wcur'amort h`wprev'amort h`wcur'ahmln h`wprev'ahmln h`wcur'adebt h`wprev'adebt h`wcur'amrtb h`wprev'amrtb {
+    * Clean missing codes on debt inputs (if present); amrtb excluded
+    foreach v in h`wcur'amort h`wprev'amort h`wcur'ahmln h`wprev'ahmln h`wcur'adebt h`wprev'adebt {
         capture confirm numeric variable `v'
         if !_rc {
             foreach mc of local misscodes {
@@ -210,15 +209,13 @@ forvalues i = 1/11 {
         * Base and returns (scope-specific wealth)
         capture drop net_total_`y' base_core_`y' base_ira_`y' base_res_`y' base_total_`y'
         * Net total: constructed wealth (treat missing components as 0 so base is defined whenever we have any data)
-        local secmort_term ""
-        capture confirm variable h`wprev'amrtb
-        if !_rc local secmort_term " - cond(missing(h`wprev'amrtb), 0, max(h`wprev'amrtb,0))"
+        * Debt: amort + ahmln + adebt only (amrtb excluded: not available in all waves)
         gen double net_total_`y' = cond(missing(h`wprev'atoth), 0, max(h`wprev'atoth,0)) + cond(missing(h`wprev'anethb), 0, max(h`wprev'anethb,0)) + ///
             cond(missing(h`wprev'arles), 0, max(h`wprev'arles,0)) + cond(missing(h`wprev'atran), 0, max(h`wprev'atran,0)) + ///
             cond(missing(h`wprev'absns), 0, max(h`wprev'absns,0)) + cond(missing(h`wprev'aira), 0, max(h`wprev'aira,0)) + ///
             cond(missing(h`wprev'astck), 0, max(h`wprev'astck,0)) + cond(missing(h`wprev'achck), 0, max(h`wprev'achck,0)) + ///
             cond(missing(h`wprev'acd), 0, max(h`wprev'acd,0)) + cond(missing(h`wprev'abond), 0, max(h`wprev'abond,0)) + ///
-            cond(missing(h`wprev'aothr), 0, max(h`wprev'aothr,0)) - cond(missing(h`wprev'amort), 0, max(h`wprev'amort,0)) - cond(missing(h`wprev'ahmln), 0, max(h`wprev'ahmln,0)) - cond(missing(h`wprev'adebt), 0, max(h`wprev'adebt,0)) `secmort_term'
+            cond(missing(h`wprev'aothr), 0, max(h`wprev'aothr,0)) - cond(missing(h`wprev'amort), 0, max(h`wprev'amort,0)) - cond(missing(h`wprev'ahmln), 0, max(h`wprev'ahmln,0)) - cond(missing(h`wprev'adebt), 0, max(h`wprev'adebt,0))
         gen double base_total_`y' = net_total_`y' + 0.5 * flow_total_adj_`y'
         replace _ok_total_`y' = 1 if !missing(base_total_`y') & base_total_`y' > 0 & !missing(y_total_inc_`y')
 
@@ -383,8 +380,8 @@ forvalues w = 5/16 {
     local y = 1990 + (2*`w')
     capture drop wealth_total_`y' gross_wealth_`y' _gross_n_`y' _debt_total_`y' _debt_n_`y'
     egen byte _gross_n_`y' = rownonmiss(h`w'atoth h`w'anethb h`w'arles h`w'atran h`w'absns h`w'aira h`w'astck h`w'achck h`w'acd h`w'abond h`w'aothr)
-    egen double _debt_total_`y' = rowtotal(h`w'amort h`w'ahmln h`w'adebt h`w'amrtb), missing
-    egen byte _debt_n_`y' = rownonmiss(h`w'amort h`w'ahmln h`w'adebt h`w'amrtb)
+    egen double _debt_total_`y' = rowtotal(h`w'amort h`w'ahmln h`w'adebt), missing
+    egen byte _debt_n_`y' = rownonmiss(h`w'amort h`w'ahmln h`w'adebt)
     gen double gross_wealth_`y' = ///
         cond(missing(h`w'atoth), 0, max(h`w'atoth, 0)) + cond(missing(h`w'anethb), 0, max(h`w'anethb, 0)) + ///
         cond(missing(h`w'arles), 0, max(h`w'arles, 0)) + cond(missing(h`w'atran), 0, max(h`w'atran, 0)) + ///

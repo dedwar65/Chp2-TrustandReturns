@@ -336,8 +336,8 @@ forvalues j = 1/12 {
         capture drop _debt_n_`y'
         capture drop wealth_decile_`y'
         egen byte _gross_n_`y' = rownonmiss(`wre' `wbus' `wstk' `wbond' `wchck' `wcd' `wpri' `wsec' `wira' `wtran' `woth')
-        egen double _debt_total_`y' = rowtotal(h`j'amort h`j'ahmln h`j'adebt h`j'amrtb), missing
-        egen byte _debt_n_`y' = rownonmiss(h`j'amort h`j'ahmln h`j'adebt h`j'amrtb)
+        egen double _debt_total_`y' = rowtotal(h`j'amort h`j'ahmln h`j'adebt), missing
+        egen byte _debt_n_`y' = rownonmiss(h`j'amort h`j'ahmln h`j'adebt)
         gen double gross_wealth_`y' = ///
             cond(missing(`wre'), 0, max(`wre', 0)) + cond(missing(`wbus'), 0, max(`wbus', 0)) + ///
             cond(missing(`wstk'), 0, max(`wstk', 0)) + cond(missing(`wbond'), 0, max(`wbond', 0)) + ///
@@ -348,17 +348,6 @@ forvalues j = 1/12 {
         replace gross_wealth_`y' = . if _gross_n_`y' == 0
         gen double wealth_total_`y' = gross_wealth_`y' - _debt_total_`y'
         replace wealth_total_`y' = . if _gross_n_`y' == 0 & _debt_n_`y' == 0
-
-        * Leverage ratios (for panel regressions 15): long-term = mortgages + other home loans / net wealth; other = adebt / net wealth
-        capture drop long_term_debt_`y' leverage_long_`y' leverage_other_`y'
-        gen double long_term_debt_`y' = cond(missing(h`j'amort), 0, max(h`j'amort, 0)) + cond(missing(h`j'ahmln), 0, max(h`j'ahmln, 0))
-        capture confirm variable h`j'amrtb
-        if !_rc replace long_term_debt_`y' = long_term_debt_`y' + cond(missing(h`j'amrtb), 0, max(h`j'amrtb, 0))
-        gen double leverage_long_`y' = long_term_debt_`y' / wealth_total_`y' if !missing(wealth_total_`y') & wealth_total_`y' > 0
-        replace leverage_long_`y' = . if missing(wealth_total_`y') | wealth_total_`y' <= 0
-        gen double leverage_other_`y' = cond(missing(h`j'adebt), 0, max(h`j'adebt, 0)) / wealth_total_`y' if !missing(wealth_total_`y') & wealth_total_`y' > 0
-        replace leverage_other_`y' = . if missing(wealth_total_`y') | wealth_total_`y' <= 0
-        drop long_term_debt_`y'
 
         capture drop wealth_decile_`y'
         xtile wealth_decile_`y' = wealth_total_`y', nq(10)
@@ -422,21 +411,19 @@ forvalues j = 1/12 {
     }
 }
 
-* Asset shares by return-scope per wave (core; core+IRA; total)
+* Asset shares: component / gross_assets (decoupled from m1-m5)
+* r1-r5: returns to core, retirement, residential, core+IRA, net wealth
+* m1-m5: wealth_core, wealth_res, wealth_ira, wealth_coreira, wealth_total (portfolios)
+* gross_min = 500: avoid tiny denominators (debt/gross explodes when gross=1 etc.)
+local gross_min 500
 forvalues j = 5/16 {
     local y = 1990 + (2*`j')  // wave 5=2000, 16=2022
-    capture drop share_pri_res_`y' share_sec_res_`y' share_re_`y' share_vehicles_`y' share_bus_`y' share_ira_`y' share_stk_`y' share_chck_`y' share_cd_`y' share_bond_`y' share_other_`y'
-    capture drop share_m1_re_`y' share_m1_bus_`y' share_m1_stk_`y' share_m1_chck_`y' share_m1_cd_`y' share_m1_bond_`y'
-    capture drop share_m2_re_`y' share_m2_bus_`y' share_m2_ira_`y' share_m2_stk_`y' share_m2_chck_`y' share_m2_cd_`y' share_m2_bond_`y'
-    capture drop share_m3_pri_res_`y' share_m3_sec_res_`y' share_m3_re_`y' share_m3_vehicles_`y' share_m3_bus_`y' share_m3_ira_`y' share_m3_stk_`y' share_m3_chck_`y' share_m3_cd_`y' share_m3_bond_`y' share_m3_other_`y' share_residential_`y' share_core_`y'
-    capture drop share_debt_long_`y' share_debt_other_`y'
-    capture drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_`y'
+    capture drop share_pri_res_`y' share_sec_res_`y' share_res_`y' share_re_`y' share_bus_`y' share_ira_`y' share_stk_`y' share_bond_`y' share_chck_`y' share_other_`y' share_core_`y' share_fin_`y' share_debt_long_`y' share_debt_other_`y' share_debt_amort_`y' share_debt_ahmln_`y'
     capture drop gross_wealth_`y'
     capture drop h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
     capture confirm variable h`j'atotb
     if !_rc {
-        * Asset-base denominators (gross total assets, not net wealth)
-        * Use nonnegative components for gross assets and shares
+        * Nonnegative components for gross assets
         gen double h`j'atoth_pos = cond(missing(h`j'atoth), ., max(h`j'atoth, 0))
         gen double h`j'anethb_pos = cond(missing(h`j'anethb), ., max(h`j'anethb, 0))
         gen double h`j'arles_pos = cond(missing(h`j'arles), ., max(h`j'arles, 0))
@@ -449,71 +436,44 @@ forvalues j = 5/16 {
         gen double h`j'abond_pos = cond(missing(h`j'abond), ., max(h`j'abond, 0))
         gen double h`j'aothr_pos = cond(missing(h`j'aothr), ., max(h`j'aothr, 0))
 
-        egen double base_m3_assets_`y' = rowtotal(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
-        egen byte base_m3_n_`y' = rownonmiss(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
-        replace base_m3_assets_`y' = . if base_m3_n_`y' == 0
-        gen double gross_wealth_`y' = base_m3_assets_`y'
+        egen double gross_wealth_`y' = rowtotal(h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos)
+        replace gross_wealth_`y' = . if gross_wealth_`y' == 0
 
-        egen double base_m2_assets_`y' = rowtotal(h`j'arles_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos)
-        egen byte base_m2_n_`y' = rownonmiss(h`j'arles_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos)
-        replace base_m2_assets_`y' = . if base_m2_n_`y' == 0
+        * Component shares (all / gross_assets; gross >= gross_min to avoid tiny denominators)
+        gen double share_pri_res_`y' = h`j'atoth_pos / gross_wealth_`y' if !missing(h`j'atoth_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_sec_res_`y' = h`j'anethb_pos / gross_wealth_`y' if !missing(h`j'anethb_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_res_`y' = (h`j'atoth_pos + h`j'anethb_pos) / gross_wealth_`y' if !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_re_`y' = h`j'arles_pos / gross_wealth_`y' if !missing(h`j'arles_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_bus_`y' = h`j'absns_pos / gross_wealth_`y' if !missing(h`j'absns_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_ira_`y' = h`j'aira_pos / gross_wealth_`y' if !missing(h`j'aira_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_stk_`y' = h`j'astck_pos / gross_wealth_`y' if !missing(h`j'astck_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_bond_`y' = h`j'abond_pos / gross_wealth_`y' if !missing(h`j'abond_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_chck_`y' = h`j'achck_pos / gross_wealth_`y' if !missing(h`j'achck_pos) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_other_`y' = (h`j'acd_pos + h`j'atran_pos + h`j'aothr_pos) / gross_wealth_`y' if !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        gen double share_core_`y' = (h`j'arles_pos + h`j'absns_pos + h`j'astck_pos + h`j'abond_pos + h`j'achck_pos + h`j'acd_pos) / gross_wealth_`y' if !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        * share_fin = stk+bond+chck+cd; missing only if all four missing (amrtb excluded from debt)
+        gen double _fin_sum_`y' = cond(missing(h`j'astck_pos),0,max(h`j'astck_pos,0)) + cond(missing(h`j'abond_pos),0,max(h`j'abond_pos,0)) + cond(missing(h`j'achck_pos),0,max(h`j'achck_pos,0)) + cond(missing(h`j'acd_pos),0,max(h`j'acd_pos,0))
+        gen byte _fin_allmiss_`y' = missing(h`j'astck_pos) & missing(h`j'abond_pos) & missing(h`j'achck_pos) & missing(h`j'acd_pos)
+        gen double share_fin_`y' = _fin_sum_`y' / gross_wealth_`y' if !_fin_allmiss_`y' & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        drop _fin_sum_`y' _fin_allmiss_`y'
 
-        egen double base_m1_assets_`y' = rowtotal(h`j'arles_pos h`j'absns_pos h`j'astck_pos h`j'abond_pos h`j'achck_pos h`j'acd_pos)
-        egen byte base_m1_n_`y' = rownonmiss(h`j'arles_pos h`j'absns_pos h`j'astck_pos h`j'abond_pos h`j'achck_pos h`j'acd_pos)
-        replace base_m1_assets_`y' = . if base_m1_n_`y' == 0
-
-        * m3 shares (gross total assets base)
-        gen double share_m3_pri_res_`y' = h`j'atoth_pos / base_m3_assets_`y' if !missing(h`j'atoth_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_sec_res_`y' = h`j'anethb_pos / base_m3_assets_`y' if !missing(h`j'anethb_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        * Residential share = (primary + secondary res) / gross assets (same denominator as other m3 shares)
-        gen double share_residential_`y' = (h`j'atoth_pos + h`j'anethb_pos) / base_m3_assets_`y' if !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        * Core share = (bonds + stocks + real estate + business) / gross assets (same denominator)
-        gen double share_core_`y' = (h`j'abond_pos + h`j'astck_pos + h`j'arles_pos + h`j'absns_pos) / base_m3_assets_`y' if !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_re_`y' = h`j'arles_pos / base_m3_assets_`y' if !missing(h`j'arles_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_vehicles_`y' = h`j'atran_pos / base_m3_assets_`y' if !missing(h`j'atran_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_bus_`y' = h`j'absns_pos / base_m3_assets_`y' if !missing(h`j'absns_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_ira_`y' = h`j'aira_pos / base_m3_assets_`y' if !missing(h`j'aira_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_stk_`y' = h`j'astck_pos / base_m3_assets_`y' if !missing(h`j'astck_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_chck_`y' = h`j'achck_pos / base_m3_assets_`y' if !missing(h`j'achck_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_cd_`y' = h`j'acd_pos / base_m3_assets_`y' if !missing(h`j'acd_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_bond_`y' = h`j'abond_pos / base_m3_assets_`y' if !missing(h`j'abond_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-        gen double share_m3_other_`y' = h`j'aothr_pos / base_m3_assets_`y' if !missing(h`j'aothr_pos) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
-
-        * Debt shares (gross assets base)
-        gen double share_debt_long_`y' = ///
-            (cond(missing(h`j'amort), 0, max(h`j'amort, 0)) + cond(missing(h`j'ahmln), 0, max(h`j'ahmln, 0))) ///
-            / base_m3_assets_`y' if !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+        * Debt shares (gross assets base; long = amort+ahmln only, no amrtb; gross >= gross_min)
+        gen double share_debt_amort_`y' = cond(missing(h`j'amort), 0, max(h`j'amort, 0)) / gross_wealth_`y' if !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        replace share_debt_amort_`y' = . if missing(h`j'amort)
+        gen double share_debt_ahmln_`y' = cond(missing(h`j'ahmln), 0, max(h`j'ahmln, 0)) / gross_wealth_`y' if !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
+        replace share_debt_ahmln_`y' = . if missing(h`j'ahmln)
+        gen double share_debt_long_`y' = (cond(missing(h`j'amort), 0, max(h`j'amort, 0)) + cond(missing(h`j'ahmln), 0, max(h`j'ahmln, 0))) / gross_wealth_`y' if !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
         replace share_debt_long_`y' = . if missing(h`j'amort) & missing(h`j'ahmln)
-        gen double share_debt_other_`y' = max(h`j'adebt, 0) / base_m3_assets_`y' if !missing(h`j'adebt) & !missing(base_m3_assets_`y') & base_m3_assets_`y' != 0
+        gen double share_debt_other_`y' = max(h`j'adebt, 0) / gross_wealth_`y' if !missing(h`j'adebt) & !missing(gross_wealth_`y') & gross_wealth_`y' >= `gross_min'
 
-        * core+IRA shares (exclude residences; gross assets base)
-        gen double share_m2_re_`y' = h`j'arles_pos / base_m2_assets_`y' if !missing(h`j'arles_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_bus_`y' = h`j'absns_pos / base_m2_assets_`y' if !missing(h`j'absns_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_ira_`y' = h`j'aira_pos / base_m2_assets_`y' if !missing(h`j'aira_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_stk_`y' = h`j'astck_pos / base_m2_assets_`y' if !missing(h`j'astck_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_chck_`y' = h`j'achck_pos / base_m2_assets_`y' if !missing(h`j'achck_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_cd_`y' = h`j'acd_pos / base_m2_assets_`y' if !missing(h`j'acd_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        gen double share_m2_bond_`y' = h`j'abond_pos / base_m2_assets_`y' if !missing(h`j'abond_pos) & !missing(base_m2_assets_`y') & base_m2_assets_`y' != 0
-        capture drop share_m2_other_`y'
-
-        * core shares (exclude residences and IRA; gross assets base)
-        gen double share_m1_re_`y' = h`j'arles_pos / base_m1_assets_`y' if !missing(h`j'arles_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        gen double share_m1_bus_`y' = h`j'absns_pos / base_m1_assets_`y' if !missing(h`j'absns_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        gen double share_m1_stk_`y' = h`j'astck_pos / base_m1_assets_`y' if !missing(h`j'astck_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        gen double share_m1_chck_`y' = h`j'achck_pos / base_m1_assets_`y' if !missing(h`j'achck_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        gen double share_m1_cd_`y' = h`j'acd_pos / base_m1_assets_`y' if !missing(h`j'acd_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        gen double share_m1_bond_`y' = h`j'abond_pos / base_m1_assets_`y' if !missing(h`j'abond_pos) & !missing(base_m1_assets_`y') & base_m1_assets_`y' != 0
-        capture drop share_m1_other_`y'
-
-        drop base_m3_assets_`y' base_m3_n_`y' base_m2_assets_`y' base_m2_n_`y' base_m1_assets_`y' base_m1_n_`y' ///
-            h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
+        drop h`j'atoth_pos h`j'anethb_pos h`j'arles_pos h`j'atran_pos h`j'absns_pos h`j'aira_pos h`j'astck_pos h`j'achck_pos h`j'acd_pos h`j'abond_pos h`j'aothr_pos
     }
 }
 
 * Reduce dataset to relevant variables
 capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* r5_annual_* r1_annual_avg r2_annual_avg r3_annual_avg r4_annual_avg r5_annual_avg
-capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_* leverage_long_* leverage_other_*
-capture unab _sharevars : share_m1_* share_m2_* share_m3_* share_residential_* share_core_* share_debt_*
+capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_*
+capture unab _sharevars : share_pri_res_* share_sec_res_* share_res_* share_re_* share_bus_* share_ira_* share_stk_* share_bond_* share_chck_* share_other_* share_core_* share_fin_* share_debt_long_* share_debt_other_* share_debt_amort_* share_debt_ahmln_*
 capture unab _incvars : labor_income_* total_income_*
 capture unab _ctrlvars : age_* inlbrf_* married_* censreg_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_* ///
     population_3bin_2020 pop3_trust_* townsize3_trust_* region_pop3_group_*

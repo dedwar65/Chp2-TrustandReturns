@@ -7,7 +7,6 @@
     "../../Code/Descriptive/Tables/income_growth_tabstat"
     "../../Code/Descriptive/Tables/income_mean_by_agegroup_real_win_2022"
     "../../Code/Descriptive/Tables/income_mean_by_educgroup_real_win"
-    "../../Code/Descriptive/Tables/mean_share_by_asset_class_year"
     "../../Code/Descriptive/Tables/trust_corr"
     "../../Code/Descriptive/Tables/trust_pca_loadings"
     "../../Code/Descriptive/Tables/demographics_general"

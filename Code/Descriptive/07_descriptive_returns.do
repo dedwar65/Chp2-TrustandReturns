@@ -55,9 +55,9 @@ forvalues w = 5/16 {
         capture drop wealth_total_`y' gross_wealth_`y'
         capture drop _gross_n_`y' _debt_total_`y' _debt_n_`y'
         egen byte _gross_n_`y' = rownonmiss(h`w'atoth h`w'anethb h`w'arles h`w'atran h`w'absns h`w'aira h`w'astck h`w'achck h`w'acd h`w'abond h`w'aothr)
-        egen byte _debt_n_`y' = rownonmiss(h`w'amort h`w'ahmln h`w'adebt h`w'amrtb)
+        egen byte _debt_n_`y' = rownonmiss(h`w'amort h`w'ahmln h`w'adebt)
         gen double _debt_total_`y' = ///
-            max(h`w'amort,0) + max(h`w'ahmln,0) + max(h`w'adebt,0) + max(h`w'amrtb,0)
+            max(h`w'amort,0) + max(h`w'ahmln,0) + max(h`w'adebt,0)
         replace _debt_total_`y' = . if _debt_n_`y' == 0
         gen double gross_wealth_`y' = ///
             max(h`w'atoth,0) + max(h`w'anethb,0) + max(h`w'arles,0) + max(h`w'atran,0) + ///
@@ -233,6 +233,229 @@ if "`retwinvars'" != "" {
 }
 else display "=== No winsorized return variables found; skip winsorized tabstat ==="
 
+* ---------------------------------------------------------------------
+* Share descriptive statistics (debt = amort+ahmln only, no amrtb)
+* ---------------------------------------------------------------------
+* Block 1: Tabstat table for 2002 and 2022
+local share_years "2002 2022"
+local share_asset_vars "share_pri_res share_sec_res share_re share_bus share_ira share_stk share_bond share_chck share_other"
+local share_agg_vars "share_res share_core share_fin"
+local share_debt_vars "share_debt_long share_debt_other"
+local share_rowlabels "Share in primary residence" "Share in secondary residence" "Share in real estate" "Share in private business" "Share in IRA" "Share in stocks" "Share in bonds" "Share in checking" "Share in other assets" "Share residential (operative)" "Share core" "Share financial" "Share long-term debt" "Share other debt"
+
+preserve
+tempfile share_stats
+postfile sh_handle str32 varname int year double obs mean sd p50 p95 min max using "`share_stats'", replace
+foreach y of local share_years {
+    foreach v in `share_asset_vars' `share_agg_vars' `share_debt_vars' {
+        local v_y "`v'_`y'"
+        capture confirm variable `v_y'
+        if _rc continue
+        quietly summarize `v_y' `wopt', detail
+        post sh_handle ("`v'") (`y') (r(N)) (r(mean)) (r(sd)) (r(p50)) (r(p95)) (r(min)) (r(max))
+    }
+}
+postclose sh_handle
+
+use "`share_stats'", clear
+local dl = char(92) + char(36)
+file open fh using "${DESCRIPTIVE}/Tables/share_tabstat_2002_2022.tex", write replace
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Portfolio share summary statistics (2002 and 2022)}" _n "\label{tab:share_tabstat_2002_2022}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{llrrrrrrr}\toprule" _n "Variable & Year & Obs & Mean & SD & P50 & P95 & Min & Max \\\\ \midrule" _n
+forvalues r = 1/`=_N' {
+    local v = varname[`r']
+    local v_lab "`v'"
+    * Map varname to display label
+    if "`v'" == "share_pri_res" local v_lab "Share in primary residence"
+    if "`v'" == "share_sec_res" local v_lab "Share in secondary residence"
+    if "`v'" == "share_re" local v_lab "Share in real estate"
+    if "`v'" == "share_bus" local v_lab "Share in private business"
+    if "`v'" == "share_ira" local v_lab "Share in IRA"
+    if "`v'" == "share_stk" local v_lab "Share in stocks"
+    if "`v'" == "share_bond" local v_lab "Share in bonds"
+    if "`v'" == "share_chck" local v_lab "Share in checking"
+    if "`v'" == "share_other" local v_lab "Share in other assets"
+    if "`v'" == "share_res" local v_lab "Share residential (operative)"
+    if "`v'" == "share_core" local v_lab "Share core"
+    if "`v'" == "share_fin" local v_lab "Share financial"
+    if "`v'" == "share_debt_long" local v_lab "Share long-term debt"
+    if "`v'" == "share_debt_other" local v_lab "Share other debt"
+    local yr_s = string(year[`r'], "%9.0f")
+    local o_s = string(obs[`r'], "%9.0fc")
+    local m_s = string(mean[`r'], "%6.4f")
+    local sd_s = string(sd[`r'], "%6.4f")
+    local p50_s = string(p50[`r'], "%6.4f")
+    local p95_s = string(p95[`r'], "%6.4f")
+    local min_s = string(min[`r'], "%6.4f")
+    local max_s = string(max[`r'], "%6.4f")
+    file write fh "`v_lab' & `yr_s' & `o_s' & `m_s' & `sd_s' & `p50_s' & `p95_s' & `min_s' & `max_s' \\\\" _n
+}
+file write fh "\bottomrule" _n "\multicolumn{9}{l}{\footnotesize Shares = component / gross assets. Long-term debt = amort + ahmln only.} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+file close fh
+restore
+
+* Block 2: Mean share per year — four graphs
+preserve
+local share_stubs "share_re share_bus share_fin share_core share_res share_ira share_debt_amort share_debt_ahmln share_debt_long share_debt_other"
+local share_keep ""
+foreach s of local share_stubs {
+    capture unab tmp : `s'_*
+    if !_rc local share_keep "`share_keep' `tmp'"
+}
+keep hhidpn `share_keep'
+reshape long share_re_ share_bus_ share_fin_ share_core_ share_res_ share_ira_ share_debt_amort_ share_debt_ahmln_ share_debt_long_ share_debt_other_, i(hhidpn) j(year)
+* 2a: Assets within core (share_re, share_bus, share_fin)
+collapse (mean) share_re_ share_bus_ share_fin_ `wopt', by(year)
+graph bar (asis) share_re_ share_bus_ share_fin_, over(year) legend(order(1 "Real estate" 2 "Business" 3 "Financial")) title("Mean Holdings within Core Assets")
+graph export "${DESCRIPTIVE}/Figures/share_mean_by_year_core_components.png", replace
+restore
+
+preserve
+local share_stubs "share_core share_res share_ira"
+local share_keep ""
+foreach s of local share_stubs {
+    capture unab tmp : `s'_*
+    if !_rc local share_keep "`share_keep' `tmp'"
+}
+keep hhidpn `share_keep'
+reshape long share_core_ share_res_ share_ira_, i(hhidpn) j(year)
+collapse (mean) share_core_ share_res_ share_ira_ `wopt', by(year)
+graph bar (asis) share_core_ share_res_ share_ira_, over(year) legend(order(1 "Core" 2 "Residential" 3 "Retirement")) title("Mean Asset Shares")
+graph export "${DESCRIPTIVE}/Figures/share_mean_by_year_core_res_ret.png", replace
+restore
+
+preserve
+local share_stubs "share_debt_amort share_debt_ahmln"
+local share_keep ""
+foreach s of local share_stubs {
+    capture unab tmp : `s'_*
+    if !_rc local share_keep "`share_keep' `tmp'"
+}
+keep hhidpn `share_keep'
+reshape long share_debt_amort_ share_debt_ahmln_, i(hhidpn) j(year)
+collapse (mean) share_debt_amort_ share_debt_ahmln_ `wopt', by(year)
+graph bar (asis) share_debt_amort_ share_debt_ahmln_, over(year) legend(order(1 "Mortgage" 2 "Other home loans")) title("Mean Holdings within Long Debt")
+graph export "${DESCRIPTIVE}/Figures/share_mean_by_year_debt_long_components.png", replace
+restore
+
+preserve
+local share_stubs "share_debt_long share_debt_other"
+local share_keep ""
+foreach s of local share_stubs {
+    capture unab tmp : `s'_*
+    if !_rc local share_keep "`share_keep' `tmp'"
+}
+keep hhidpn `share_keep'
+reshape long share_debt_long_ share_debt_other_, i(hhidpn) j(year)
+collapse (mean) share_debt_long_ share_debt_other_ `wopt', by(year)
+graph bar (asis) share_debt_long_ share_debt_other_, over(year) legend(order(1 "Long-term debt" 2 "Other debt")) title("Mean Liability Shares")
+graph export "${DESCRIPTIVE}/Figures/share_mean_by_year_debt_long_other.png", replace
+restore
+
+* Block 3: Share by income/wealth percentile (2002, 2022) — data must be wide
+* Force clean reload so Block 3 does not depend on prior preserve/restore/reshape state
+use "${PROCESSED}/analysis_ready_processed.dta", clear
+display "=== Block 3 asset_shares: reloaded wide data, N=" _N " ==="
+
+foreach yr in 2002 2022 {
+    foreach dec_type in labor_inc total_inc gross net {
+        preserve
+        local skip 0
+        if "`dec_type'" == "labor_inc" capture confirm variable labor_income_real_win_`yr'
+        else if "`dec_type'" == "total_inc" capture confirm variable total_income_real_win_`yr'
+        else if "`dec_type'" == "gross" capture confirm variable gross_wealth_`yr'
+        else if "`dec_type'" == "net" capture confirm variable wealth_total_`yr'
+        if _rc local skip 1
+        if !`skip' {
+            capture confirm variable share_core_`yr'
+            if _rc local skip 1
+        }
+        if !`skip' {
+            capture confirm variable share_res_`yr'
+            if _rc local skip 1
+        }
+        if !`skip' {
+            capture confirm variable share_ira_`yr'
+            if _rc local skip 1
+        }
+        if !`skip' {
+            if "`dec_type'" == "labor_inc" local rankvar "labor_income_real_win_`yr'"
+            else if "`dec_type'" == "total_inc" local rankvar "total_income_real_win_`yr'"
+            else if "`dec_type'" == "gross" local rankvar "gross_wealth_`yr'"
+            else local rankvar "wealth_total_`yr'"
+            if "`dec_type'" == "labor_inc" local dec_lab "Labor Income"
+            else if "`dec_type'" == "total_inc" local dec_lab "Total Income"
+            else if "`dec_type'" == "gross" local dec_lab "Gross Wealth"
+            else local dec_lab "Net Wealth"
+            keep hhidpn share_core_`yr' share_res_`yr' share_ira_`yr' `rankvar'
+            keep if !missing(`rankvar') & `rankvar' >= 0
+            quietly count if !missing(share_core_`yr') | !missing(share_res_`yr') | !missing(share_ira_`yr')
+            if r(N) >= 10 {
+                sort `rankvar'
+                gen long _rank = sum(!missing(`rankvar'))
+                gen long _total = _rank[_N]
+                gen int pct = ceil(100 * _rank / _total) if !missing(`rankvar')
+                drop _rank _total
+                gen byte pct_grp = ceil(pct/20) if !missing(pct)
+                replace pct_grp = 5 if pct_grp > 5
+                collapse (mean) mean_core=share_core_`yr' mean_res=share_res_`yr' mean_ira=share_ira_`yr', by(pct_grp)
+                graph bar mean_core mean_res mean_ira, over(pct_grp, relabel(1 "0-20" 2 "20-40" 3 "40-60" 4 "60-80" 5 "80-100")) ///
+                    ytitle("Mean share") ///
+                    legend(order(1 "Core" 2 "Residential" 3 "Retirement")) title("Asset Shares by `dec_lab' Percentile (`yr')")
+                graph export "${DESCRIPTIVE}/Figures/asset_shares_by_`dec_type'_pct_`yr'.png", replace
+            }
+        }
+        restore
+    }
+}
+foreach yr in 2002 2022 {
+    foreach dec_type in labor_inc total_inc gross net {
+        preserve
+        local skip 0
+        if "`dec_type'" == "labor_inc" capture confirm variable labor_income_real_win_`yr'
+        else if "`dec_type'" == "total_inc" capture confirm variable total_income_real_win_`yr'
+        else if "`dec_type'" == "gross" capture confirm variable gross_wealth_`yr'
+        else if "`dec_type'" == "net" capture confirm variable wealth_total_`yr'
+        if _rc local skip 1
+        if !`skip' {
+            capture confirm variable share_debt_long_`yr'
+            if _rc local skip 1
+        }
+        if !`skip' {
+            capture confirm variable share_debt_other_`yr'
+            if _rc local skip 1
+        }
+        if !`skip' {
+            if "`dec_type'" == "labor_inc" local rankvar "labor_income_real_win_`yr'"
+            else if "`dec_type'" == "total_inc" local rankvar "total_income_real_win_`yr'"
+            else if "`dec_type'" == "gross" local rankvar "gross_wealth_`yr'"
+            else local rankvar "wealth_total_`yr'"
+            if "`dec_type'" == "labor_inc" local dec_lab "Labor Income"
+            else if "`dec_type'" == "total_inc" local dec_lab "Total Income"
+            else if "`dec_type'" == "gross" local dec_lab "Gross Wealth"
+            else local dec_lab "Net Wealth"
+            keep hhidpn share_debt_long_`yr' share_debt_other_`yr' `rankvar'
+            keep if !missing(`rankvar') & `rankvar' >= 0
+            quietly count if !missing(share_debt_long_`yr') | !missing(share_debt_other_`yr')
+            if r(N) >= 10 {
+                sort `rankvar'
+                gen long _rank = sum(!missing(`rankvar'))
+                gen long _total = _rank[_N]
+                gen int pct = ceil(100 * _rank / _total) if !missing(`rankvar')
+                drop _rank _total
+                gen byte pct_grp = ceil(pct/20) if !missing(pct)
+                replace pct_grp = 5 if pct_grp > 5 & !missing(pct_grp)
+                drop if missing(pct_grp)
+                collapse (mean) mean_long=share_debt_long_`yr' mean_other=share_debt_other_`yr', by(pct_grp)
+                graph bar mean_long mean_other, over(pct_grp, relabel(1 "0-20" 2 "20-40" 3 "40-60" 4 "60-80" 5 "80-100")) ///
+                    ytitle("Mean share") ///
+                    legend(order(1 "Long-term debt" 2 "Other debt")) title("Debt Shares by `dec_lab' Percentile (`yr')")
+                graph export "${DESCRIPTIVE}/Figures/debt_shares_by_`dec_type'_pct_`yr'.png", replace
+            }
+        }
+        restore
+    }
+}
+
 * Mean returns by year: (1) components = r1, r2, r3; (2) aggregated = r1, r4, r5
 preserve
 keep hhidpn r1_annual_* r2_annual_* r3_annual_* r4_annual_* r5_annual_*
@@ -272,180 +495,6 @@ label values educ_group educ_group
 tabstat r1_annual_ r2_annual_ r3_annual_ r4_annual_ r5_annual_ `wopt', by(educ_group) statistics(n mean sd p50 p95)
 restore
 
-* ---------------------------------------------------------------------
-* Asset share concentration table (top share thresholds)
-* Core assets = bonds + stocks + real estate + business (mutually exclusive).
-* ---------------------------------------------------------------------
-preserve
-keep hhidpn gross_wealth_* ///
-    share_m3_pri_res_* share_m3_sec_res_* share_m3_re_* share_m3_bus_* share_m3_ira_* ///
-    share_m3_stk_* share_m3_bond_* share_m3_chck_* share_m3_cd_* share_m3_vehicles_* share_m3_other_*
-capture confirm variable share_residential_2002
-if _rc {
-    foreach y in 2002 2022 {
-        capture confirm variable share_m3_pri_res_`y' share_m3_sec_res_`y'
-        if !_rc egen double share_residential_`y' = rowtotal(share_m3_pri_res_`y' share_m3_sec_res_`y'), missing
-    }
-}
-local years "2002 2022"
-foreach y of local years {
-    capture confirm variable share_m3_bond_`y'
-    if !_rc {
-        egen double share_core_`y' = rowtotal(share_m3_bond_`y' share_m3_stk_`y' share_m3_re_`y' share_m3_bus_`y'), missing
-    }
-}
-
-tempfile share_conc
-postfile handle str12 asset int year int threshold double pct_of_asset using "`share_conc'", replace
-
-foreach y of local years {
-    foreach asset in pri_res sec_res re bus ira stk bond chck cd vehicles other core residential {
-        local sharevar = cond("`asset'" == "core", "share_core", cond("`asset'" == "residential", "share_residential", "share_m3_`asset'"))
-        capture confirm variable `sharevar'_`y'
-        capture confirm variable gross_wealth_`y'
-        if !_rc {
-            gen double asset_value = `sharevar'_`y' * gross_wealth_`y'
-            if "`wopt'" != "" {
-                gen double asset_value_w = asset_value * `wtvar'
-                quietly summarize asset_value_w if !missing(asset_value_w)
-                local total = r(sum)
-                foreach t in 25 50 75 90 95 {
-                    quietly summarize asset_value_w if `sharevar'_`y' >= `t'/100 & !missing(asset_value_w)
-                    local part = r(sum)
-                    local pct = .
-                    if `total' > 0 local pct = 100 * (`part' / `total')
-                    post handle ("`asset'") (`y') (`t') (`pct')
-                }
-                drop asset_value_w
-            }
-            else {
-                quietly summarize asset_value if !missing(asset_value)
-                local total = r(sum)
-                foreach t in 25 50 75 90 95 {
-                    quietly summarize asset_value if `sharevar'_`y' >= `t'/100 & !missing(asset_value)
-                    local part = r(sum)
-                    local pct = .
-                    if `total' > 0 local pct = 100 * (`part' / `total')
-                    post handle ("`asset'") (`y') (`t') (`pct')
-                }
-            }
-            drop asset_value
-        }
-    }
-}
-postclose handle
-use "`share_conc'", clear
-file open fh using "${DESCRIPTIVE}/Tables/share_concentration_by_asset.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{4pt}" _n "\caption{Share concentration by asset class}" _n "\label{tab:share_concentration_by_asset}" _n "\begin{tabular}{@{}@{\extracolsep{0pt}}lrrr@{}}\toprule" _n "Asset & Year & Threshold (\%) & Pct.\ of asset \\\\ \midrule" _n
-forvalues r = 1/`=_N' {
-    local a = asset[`r']
-    if "`a'" == "pri_res" local a "Primary residence"
-    if "`a'" == "sec_res" local a "Secondary residence"
-    if "`a'" == "re" local a "Real estate"
-    if "`a'" == "bus" local a "Business"
-    if "`a'" == "ira" local a "IRA"
-    if "`a'" == "stk" local a "Stocks"
-    if "`a'" == "bond" local a "Bonds"
-    if "`a'" == "chck" local a "Checking"
-    if "`a'" == "cd" local a "CD"
-    if "`a'" == "vehicles" local a "Vehicles"
-    if "`a'" == "other" local a "Other"
-    if "`a'" == "core" local a "Core"
-    if "`a'" == "residential" local a "Residential"
-    local yr_s = string(year[`r'], "%9.0f")
-    local th_s = string(threshold[`r'], "%9.0f")
-    local pct_s = string(pct_of_asset[`r'], "%5.2f")
-    file write fh "`a' & `yr_s' & `th_s' & `pct_s' \\\\" _n
-}
-file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Share of total asset held by households with portfolio share in that class $\ge$ threshold.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
-file close fh
-display "=== Share concentration by asset (pct of asset held by households with share >= threshold) ==="
-list, noobs sep(0)
-
-* Share concentration: bar graph. Three groups: Core assets, Residential (primary + secondary), Retirement.
-replace asset = "residential" if asset == "residentia"
-keep if inlist(asset, "core", "residential", "ira")
-reshape wide pct_of_asset, i(year threshold) j(asset) string
-
-local ylab "Percent of total asset held"
-
-* 2002 panel. Bar order = Core assets, Residential, Retirement.
-graph bar pct_of_assetcore pct_of_assetresidential pct_of_assetira if year == 2002, ///
-    over(threshold, relabel(25 "25%" 50 "50%" 75 "75%" 90 "90%" 95 "95%")) ///
-    bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
-    title("Wealth concentration by asset class (2002)") ///
-    b1title("Percent invested in asset class") ytitle("`ylab'", margin(small)) ///
-    ylabel(0(20)100, format(%4.0f)) ///
-    graphregion(margin(l=12)) ///
-    plotregion(margin(r+14)) ///
-    legend(label(1 "Core assets") label(2 "Residential") label(3 "Retirement") ///
-           cols(1) size(small) position(3) ring(0) region(lstyle(none)))
-graph export "${DESCRIPTIVE}/Figures/share_concentration_2002.png", replace
-
-* 2022 panel
-graph bar pct_of_assetcore pct_of_assetresidential pct_of_assetira if year == 2022, ///
-    over(threshold, relabel(25 "25%" 50 "50%" 75 "75%" 90 "90%" 95 "95%")) ///
-    bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
-    title("Wealth concentration by asset class (2022)") ///
-    b1title("Percent invested in asset class") ytitle("`ylab'", margin(small)) ///
-    ylabel(0(20)100, format(%4.0f)) ///
-    graphregion(margin(l=12)) ///
-    plotregion(margin(r+14)) ///
-    legend(label(1 "Core assets") label(2 "Residential") label(3 "Retirement") ///
-           cols(1) size(small) position(3) ring(0) region(lstyle(none)))
-graph export "${DESCRIPTIVE}/Figures/share_concentration_2022.png", replace
-
-restore
-
-* ---------------------------------------------------------------------
-* Mean portfolio share by year: Core assets, Residential (primary+secondary), Retirement.
-* Share in core = (bonds+stocks+real estate+business)/gross assets; residential = pri+sec res; ret = IRA.
-* ---------------------------------------------------------------------
-preserve
-capture confirm variable share_residential_2002
-if _rc {
-    foreach y in 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022 {
-        capture confirm variable share_m3_pri_res_`y' share_m3_sec_res_`y'
-        if !_rc egen double share_residential_`y' = rowtotal(share_m3_pri_res_`y' share_m3_sec_res_`y'), missing
-    }
-}
-tempfile mean_shares
-postfile mhandle int year double mean_core double mean_residential double mean_ira using "`mean_shares'", replace
-foreach y in 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022 {
-    capture confirm variable share_residential_`y'
-    if _rc continue
-    capture drop share_core_`y'
-    egen double share_core_`y' = rowtotal(share_m3_bond_`y' share_m3_stk_`y' share_m3_re_`y' share_m3_bus_`y'), missing
-    summarize share_core_`y' `wopt'
-    local mc = r(mean)
-    summarize share_residential_`y' `wopt'
-    local mr = r(mean)
-    summarize share_m3_ira_`y' `wopt'
-    local mi = r(mean)
-    post mhandle (`y') (`mc') (`mr') (`mi')
-    drop share_core_`y'
-}
-postclose mhandle
-use "`mean_shares'", clear
-file open fh using "${DESCRIPTIVE}/Tables/mean_share_by_asset_class_year.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{4pt}" _n "\caption{Mean portfolio share by asset class and year}" _n "\label{tab:mean_share_by_asset_class_year}" _n "\begin{tabular}{@{}@{\extracolsep{0pt}}lrrr@{}}\toprule" _n "Year & Core & Residential & Retirement \\\\ \midrule" _n
-forvalues r = 1/`=_N' {
-    local yr_s = string(year[`r'], "%9.0f")
-    local mc_s = string(mean_core[`r'], "%5.3f")
-    local mr_s = string(mean_residential[`r'], "%5.3f")
-    local mi_s = string(mean_ira[`r'], "%5.3f")
-    file write fh "`yr_s' & `mc_s' & `mr_s' & `mi_s' \\\\" _n
-}
-file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Core = bonds, stocks, real estate, business; Residential = primary + secondary; Retirement = IRA.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
-file close fh
-graph bar mean_core mean_residential mean_ira, over(year) ///
-    bar(1, color(navy)) bar(2, color(maroon)) bar(3, color(green)) ///
-    title("Mean portfolio share by asset class") ///
-    ytitle("Mean share") ylabel(0(0.1)0.6, format(%3.2f)) yscale(range(0 0.6)) ///
-    legend(label(1 "Core assets") label(2 "Residential") label(3 "Retirement") ///
-           cols(1) size(small) position(3) ring(0) region(lstyle(none)))
-graph export "${DESCRIPTIVE}/Figures/mean_share_by_asset_class_year.png", replace
-restore
 
 * Returns vs wealth percentile: mean+IQR ribbon and binscatter (2002 and 2022)
 capture confirm variable wealth_core_2002
@@ -664,19 +713,12 @@ file open fh using "${DESCRIPTIVE}/Tables/gini_by_year.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Gini coefficient by measure and year}" _n "\label{tab:gini_by_year}" _n "\begin{tabular}{llrrr}\toprule" _n "Measure & Year & Gini & Obs & Total (sum `dl') \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local m = measure[`r']
-    if "`m'" == "labor_income_real_win" local m "Labor income (real, win)"
-    if "`m'" == "total_income_real_win" local m "Total income (real, win)"
-    if "`m'" == "wealth_core" local m "Wealth core"
-    if "`m'" == "wealth_ira" local m "Wealth IRA"
-    if "`m'" == "wealth_coreira" local m "Wealth Core+ret."
-    if "`m'" == "wealth_res" local m "Wealth residential"
-    if "`m'" == "wealth_total" local m "Wealth total"
-    if "`m'" == "gross_wealth" local m "Gross wealth"
+    local m_lab = cond("`m'"=="labor_income_real_win","Labor income (real, win)",cond("`m'"=="total_income_real_win","Total income (real, win)",cond("`m'"=="wealth_core","Wealth core",cond("`m'"=="wealth_ira","Wealth IRA",cond("`m'"=="wealth_coreira","Wealth Core+ret.",cond("`m'"=="wealth_res","Wealth residential",cond("`m'"=="wealth_total","Wealth total",cond("`m'"=="gross_wealth","Gross wealth","`m'"))))))))
     local yr_s = string(year[`r'], "%9.0f")
     local g_s = string(gini[`r'], "%5.3f")
     local o_s = string(obs[`r'], "%9.0fc")
     local t_s = string(total_sum[`r'], "%12.0fc")
-    file write fh "`m' & `yr_s' & `g_s' & `o_s' & `t_s' \\\\" _n
+    file write fh "`m_lab' & `yr_s' & `g_s' & `o_s' & `t_s' \\\\" _n
 }
 file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize Total = sum of variable in wave. Income in real USD, winsorized.} \\\\" _n "\end{tabular}" _n "\end{table}" _n
 file close fh

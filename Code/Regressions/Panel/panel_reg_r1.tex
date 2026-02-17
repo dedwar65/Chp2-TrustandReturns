@@ -1,0 +1,39 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Panel: returns to core (raw)}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{{.}}{{.}}{{-1}}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+\midrule
+Years of education  &       -0.03\sym{***}&       -0.02\sym{*}  &       -0.02\sym{*}  \\
+                    &      (0.00)         &      (0.01)         &      (0.01)         \\
+Female              &       -0.00         &        0.09         &        0.08         \\
+                    &      (0.01)         &      (0.07)         &      (0.06)         \\
+NH Black            &        0.24\sym{***}&        0.36\sym{***}&        0.36\sym{***}\\
+                    &      (0.02)         &      (0.10)         &      (0.10)         \\
+Hispanic            &        0.17\sym{***}&        0.44\sym{***}&        0.44\sym{***}\\
+                    &      (0.03)         &      (0.15)         &      (0.15)         \\
+NH Other            &        0.03         &        0.18         &        0.17         \\
+                    &      (0.03)         &      (0.17)         &      (0.17)         \\
+Employed            &        0.14\sym{***}&        0.11         &        0.11\sym{*}  \\
+                    &      (0.01)         &      (0.06)         &      (0.06)         \\
+Married             &       -0.07\sym{***}&       -0.02         &       -0.02         \\
+                    &      (0.01)         &      (0.07)         &      (0.07)         \\
+Born in U.S.        &       -0.02         &        0.12         &        0.12         \\
+                    &      (0.02)         &      (0.10)         &      (0.10)         \\
+Trust               &                     &       -0.00         &       -0.07         \\
+                    &                     &      (0.01)         &      (0.05)         \\
+Trust²              &                     &                     &        0.01         \\
+                    &                     &                     &      (0.00)         \\
+\_cons              &       -1.06\sym{***}&       -1.05\sym{**} &       -1.00\sym{***}\\
+                    &      (0.05)         &      (0.42)         &      (0.38)         \\
+\midrule
+Observations        &   129298.00         &     3906.00         &     3906.00         \\
+Adj. R-squared      &        0.08         &        0.07         &        0.07         \\
+Joint test: Trust+Trust² p-value&                     &                     &        0.34         \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies, and year dummies omitted from table but included in regressions.}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

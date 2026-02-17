@@ -198,77 +198,97 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \subsubsection{Portfolio composition}
 
-\par To describe the composition of portfolio during the period, I document mean portfolio shares for the relevant asset classes. 
-\input{../../Code/Descriptive/Tables/mean_share_by_asset_class_year.tex}
-
-\par As you can see from figure , residential assets typically dominate portfolios for those who hold assets. The relative composition of portofolio (i.e. allocation between core, retirement, and residential assets) does not change much over the period. 
+\par To describe the composition of portfolio during the period, I document mean portfolio shares for the relevant asset classes.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/mean_share_by_asset_class_year.png}
-\caption{Share core by wealth percentile (2022)}
-\end{figure}
-\FloatBarrier
-
-\par Investment behavior is likely to vary with income and wealth. To see this relationship, I start by considering the share of core assets to gross wealth conditional on percentiles of the income/wealth distribution the respondent is in. As you can see in figure, those with labor earnings below the 40th percentile still have a signficant portion of their wealth in core assets. 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_core_by_income_pct_2022.png}
-\caption{Share core by income percentile (2022)}
-\end{figure}
-\FloatBarrier
-
-\par This, however, is not true for shares conditional on wealth percentiles, suggesting that shares in core assets are much more unequal. Individuals below the 40th percentile hold virtually no core assets. That said, in both cases, it is clear: high earners and high net worth individual have higher shares of their assets invested into their defined portfolios. 
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_core_by_wealth_pct_2022.png}
-\caption{Share core by wealth percentile (2022)}
-\end{figure}
-\FloatBarrier
-
-\par The pattern persists when considering the share of core and retirement assets to gross wealth. The relationship is striking for wealth: top $20\%$ income earners have $40\%$ of their assets in core and retirement assets, while the top $20\%$ of the wealth distribution have almost $60\%$ of their assets in core and retirement assets!
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_core_ira_by_income_pct_2022.png}
-\caption{Share core and IRA by income percentile (2022)}
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_core_components.png}
+\caption{Mean holdings within Core assets, by year}
 \end{figure}
 \FloatBarrier
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_core_ira_by_wealth_pct_2022.png}
-\caption{Share core and IRA by wealth percentile (2022)}
-\end{figure}
-\FloatBarrier
-
-\par  These patterns again persist when considering the share of core, retirement, and residential assets to gross wealth. When retirement assets are added in, we see that most earners hold some wealth in one of the three asset classes: the bottom 20\% of earners hold 60\% of their assets in these assets.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_core_ira_res_by_income_pct_2022.png}
-\caption{Share core, IRA and residential by income percentile (2022)}
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_core_res_ret.png}
+\caption{Mean Asset shares, by year}
 \end{figure}
 \FloatBarrier
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_core_ira_res_by_wealth_pct_2022.png}
-\caption{Share core, IRA and residential by wealth percentile (2022)}
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_core_components.png}
+\caption{Mean holdings within Liabilities, by year}
 \end{figure}
 \FloatBarrier
-
-\par Lastly, I consider another measure of inquality based on portfolio composition. The figure shows us, for a given threshold invested in an asset class, how much of the total value of that asset does the respondent hold. If for smaller thresholds, like 25\% of your gross wealth invested in an asset class, an investor is able to hold a large share of the total value of that asset, then this suggest significant inequality within that asset class.
-
- % come back and check this.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_concentration_2022.png}
-\caption{Share concentration (2022)}
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_debt_long_other.png}
+\caption{Mean Liability shares, by year}
 \end{figure}
 \FloatBarrier
+
+\par Investment behavior is likely to vary with income and wealth. Asset shares (core, residential, retirement) by percentile of labor income, total income, gross wealth, and net wealth (2022): 
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_labor_inc_pct_2022.png}
+\caption{Asset shares by labor income percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_total_inc_pct_2022.png}
+\caption{Asset shares by total income percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_gross_pct_2022.png}
+\caption{Asset shares by gross wealth percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_net_pct_2022.png}
+\caption{Asset shares by net wealth percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+\par We can also look at the same breakdown by income and wealth percentiles but for the ratio of debt to gross assets. This is captured in the following figures .
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
+\caption{Debt shares by labor income percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
+\caption{Debt shares by total income percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
+\caption{Debt shares by gross wealth percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
+\caption{Debt shares by net wealth percentile (2022)}
+\end{figure}
+\FloatBarrier
+
+
 
 \subsection{Returns}
 

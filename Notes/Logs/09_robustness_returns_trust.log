@@ -1,9 +1,9 @@
--------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/09_robustness_returns_
-> trust.log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/09_rob
+> ustness_returns_trust.log
   log type:  text
- opened on:  11 Feb 2026, 21:31:14
+ opened on:  17 Feb 2026, 16:28:34
 
 . 
 . use "${PROCESSED}/analysis_ready_processed.dta", clear
@@ -13,7 +13,8 @@
 . capture confirm variable trust_others_2020
 
 . if _rc {
-.     display as error "trust_others_2020 not found; cannot build trust-return robustness plots."
+.     display as error "trust_others_2020 not found; cannot build trust-return ro
+> bustness plots."
 .     log close
 .     exit 0
 . }
@@ -45,21 +46,24 @@
 
 . gen int age_bin = floor(age_2020/5)*5
 
-. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(age_bin)
+. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(ag
+> e_bin)
 
 . twoway connected trust_mean age_bin, mcolor(navy) lcolor(navy) msymbol(o) ///
->     title("Mean trust by age (5-year bins)") xtitle("Age bin") ytitle("Mean general trust") yla
-> bel(, angle(0))
+>     title("Mean trust by age (5-year bins)") xtitle("Age bin") ytitle("Mean gen
+> eral trust") ylabel(, angle(0))
 
-. graph export "${DESCRIPTIVE}/Figures/Robustness/trust_mean_by_age_bin.png", replace
+. graph export "${DESCRIPTIVE}/Figures/Robustness/trust_mean_by_age_bin.png", rep
+> lace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/trust_mean_by_age
-    > _bin.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/t
+    > rust_mean_by_age_bin.png saved as PNG format
 
 . restore
 
 . 
-. display "=== Robustness: trust vs returns (r1, r4, r5; 5% winsor, 1%/5% trims) ==="
+. display "=== Robustness: trust vs returns (r1, r4, r5; 5% winsor, 1%/5% trims) 
+> ==="
 === Robustness: trust vs returns (r1, r4, r5; 5% winsor, 1%/5% trims) ===
 
 . 
@@ -93,12 +97,14 @@ file /Volumes/SSD
 .     * 1% trimmed version
 .     capture drop `v'_t1
  19.     gen double `v'_t1 = `v'
- 20.     replace `v'_t1 = . if (`v'_t1 < `p1' | `v'_t1 > `p99') & !missing(`v'_t1)
+ 20.     replace `v'_t1 = . if (`v'_t1 < `p1' | `v'_t1 > `p99') & !missing(`v'_t1
+> )
  21. 
 .     * 5% trimmed version
 .     capture drop `v'_t5
  22.     gen double `v'_t5 = `v'
- 23.     replace `v'_t5 = . if (`v'_t5 < `p5' | `v'_t5 > `p95') & !missing(`v'_t5)
+ 23.     replace `v'_t5 = . if (`v'_t5 < `p5' | `v'_t5 > `p95') & !missing(`v'_t5
+> )
  24. 
 .     * Short label for the base return (for titles)
 .     local vlabel "`v'"
@@ -109,12 +115,14 @@ file /Volumes/SSD
 .     * -----------------------------------------------------------------
 .     * Tabstat-style summary for raw and transformed versions
 .     * -----------------------------------------------------------------
-.     file open fh using "${DESCRIPTIVE}/Tables/Robustness/robust_tabstat_`v'.tex", write replace
+.     file open fh using "${DESCRIPTIVE}/Tables/Robustness/robust_tabstat_`v'.tex
+> ", write replace
  29.     file write fh "\begin{table}[htbp]\centering" _n ///
 >         "\caption{Return robustness summary: `vlabel'}" _n ///
 >         "\label{tab:robust_tabstat_`v'}" _n ///
 >         "\begin{tabular}{lrrrrrrrrrr}\toprule" _n ///
->         "Series & N & Mean & SD & P1 & P5 & P50 & P95 & P99 & Min & Max \\\\ \midrule" _n
+>         "Series & N & Mean & SD & P1 & P5 & P50 & P95 & P99 & Min & Max \\\\ \m
+> idrule" _n
  30. 
 .     foreach s in raw w5 t1 t5 {
  31.         local svar ""
@@ -149,12 +157,13 @@ file /Volumes/SSD
  60.         local p99_s = string(r(p99), "%9.3f")
  61.         local min_s = string(r(min), "%9.3f")
  62.         local max_s = string(r(max), "%9.3f")
- 63.         file write fh "`slabel' & `n_s' & `m_s' & `sd_s' & `p1_s' & `p5_s' & `p50_s' & `p95_
-> s' & `p99_s' & `min_s' & `max_s' \\\\" _n
+ 63.         file write fh "`slabel' & `n_s' & `m_s' & `sd_s' & `p1_s' & `p5_s' &
+>  `p50_s' & `p95_s' & `p99_s' & `min_s' & `max_s' \\\\" _n
  64.     }
  65. 
-.     file write fh "\bottomrule" _n "\multicolumn{11}{l}{\footnotesize Based on 2022 observation
-> s with nonmissing trust and returns.} \\\\" _n "\end{tabular}\end{table}" _n
+.     file write fh "\bottomrule" _n "\multicolumn{11}{l}{\footnotesize Based on 
+> 2022 observations with nonmissing trust and returns.} \\\\" _n "\end{tabular}\e
+> nd{table}" _n
  66.     file close fh
  67. 
 .     * 5% winsorized scatter
@@ -162,21 +171,24 @@ file /Volumes/SSD
 >         title("`vlabel' vs trust (5% winsorized)") ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("`vlabel' (5% winsorized)")
- 68.     graph export "${DESCRIPTIVE}/Figures/Robustness/`v'_w5_vs_trust_2022.png", replace
+ 68.     graph export "${DESCRIPTIVE}/Figures/Robustness/`v'_w5_vs_trust_2022.png
+> ", replace
  69. 
 .     * 1% trimmed scatter
 .     twoway scatter `v'_t1 trust_others_2020, ///
 >         title("`vlabel' vs trust (1% trimmed)") ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("`vlabel' (1% trimmed)")
- 70.     graph export "${DESCRIPTIVE}/Figures/Robustness/`v'_t1_vs_trust_2022.png", replace
+ 70.     graph export "${DESCRIPTIVE}/Figures/Robustness/`v'_t1_vs_trust_2022.png
+> ", replace
  71. 
 .     * 5% trimmed scatter
 .     twoway scatter `v'_t5 trust_others_2020, ///
 >         title("`vlabel' vs trust (5% trimmed)") ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("`vlabel' (5% trimmed)")
- 72.     graph export "${DESCRIPTIVE}/Figures/Robustness/`v'_t5_vs_trust_2022.png", replace
+ 72.     graph export "${DESCRIPTIVE}/Figures/Robustness/`v'_t5_vs_trust_2022.png
+> ", replace
  73. 
 .     * -----------------------------------------------------------------
 .     * Histograms for raw and transformed versions (aggregated returns)
@@ -206,7 +218,8 @@ file /Volumes/SSD
 >             title("Histogram: `slabel'") ///
 >             xtitle("`slabel'") ///
 >             ytitle("Frequency")
- 95.         graph export "${DESCRIPTIVE}/Figures/Robustness/`svar'_hist_2022.png", replace
+ 95.         graph export "${DESCRIPTIVE}/Figures/Robustness/`svar'_hist_2022.png
+> ", replace
  96.     }
  97. 
 .     restore
@@ -217,90 +230,90 @@ file /Volumes/SSD
 (4 real changes made, 4 to missing)
 (23 real changes made, 23 to missing)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_w5
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 1_annual_2022_w5_vs_trust_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t1
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 1_annual_2022_t1_vs_trust_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t5
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 1_annual_2022_t5_vs_trust_2022.png saved as PNG format
 (bin=21, start=-1, width=1.1328931)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_hi
-    > st_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 1_annual_2022_hist_2022.png saved as PNG format
 (bin=21, start=-1, width=.19440395)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_w5
-    > _hist_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 1_annual_2022_w5_hist_2022.png saved as PNG format
 (bin=20, start=-1, width=.64565858)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t1
-    > _hist_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 1_annual_2022_t1_hist_2022.png saved as PNG format
 (bin=20, start=-1, width=.20001795)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r1_annual_2022_t5
-    > _hist_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 1_annual_2022_t5_hist_2022.png saved as PNG format
 (45,024 observations deleted)
 (11 real changes made)
 (10 real changes made)
 (4 real changes made, 4 to missing)
 (21 real changes made, 21 to missing)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_w5
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 4_annual_2022_w5_vs_trust_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t1
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 4_annual_2022_t1_vs_trust_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t5
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 4_annual_2022_t5_vs_trust_2022.png saved as PNG format
 (bin=14, start=-1, width=.25741328)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_hi
-    > st_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 4_annual_2022_hist_2022.png saved as PNG format
 (bin=14, start=-.47023289, width=.11710733)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_w5
-    > _hist_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 4_annual_2022_w5_hist_2022.png saved as PNG format
 (bin=14, start=-.87918703, width=.20807903)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t1
-    > _hist_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 4_annual_2022_t1_hist_2022.png saved as PNG format
 (bin=13, start=-.44938133, width=.12451162)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r4_annual_2022_t5
-    > _hist_2022.png saved as PNG format
-(44,738 observations deleted)
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 4_annual_2022_t5_hist_2022.png saved as PNG format
+(44,737 observations deleted)
 (25 real changes made)
 (25 real changes made)
 (8 real changes made, 8 to missing)
 (50 real changes made, 50 to missing)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_w5
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 5_annual_2022_w5_vs_trust_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t1
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 5_annual_2022_t1_vs_trust_2022.png saved as PNG format
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t5
-    > _vs_trust_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 5_annual_2022_t5_vs_trust_2022.png saved as PNG format
 (bin=22, start=-.89325416, width=.30754679)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_hi
-    > st_2022.png saved as PNG format
-(bin=22, start=-.40530803, width=.10591143)
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 5_annual_2022_hist_2022.png saved as PNG format
+(bin=22, start=-.40530803, width=.10563446)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_w5
-    > _hist_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 5_annual_2022_w5_hist_2022.png saved as PNG format
 (bin=22, start=-.70420482, width=.20682917)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t1
-    > _hist_2022.png saved as PNG format
-(bin=21, start=-.36754447, width=.10886641)
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 5_annual_2022_t1_hist_2022.png saved as PNG format
+(bin=21, start=-.36754447, width=.10145014)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r5_annual_2022_t5
-    > _hist_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/r
+    > 5_annual_2022_t5_hist_2022.png saved as PNG format
 
 . 
 . * ---------------------------------------------------------------------
@@ -321,12 +334,14 @@ file /Volumes/SSD
 . tempfile adata
 
 . save "`adata'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001l not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001l saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000007 not
+    found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000007 saved as
+    .dta format
 
 . import delimited "${FRED_DATA}/CPIAUCSL.csv", clear
 (encoding automatically selected: ISO-8859-1)
-(3 vars, 948 obs)
+(3 vars, 949 obs)
 
 . capture confirm variable date
 
@@ -371,8 +386,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001l saved as .
 . capture confirm variable r16iearn r16iunwc
 
 . if _rc {
-.     display as error "r16iearn or r16iunwc not found; cannot build labor-income robustness plot
-> s."
+.     display as error "r16iearn or r16iunwc not found; cannot build labor-income
+>  robustness plots."
 .     restore
 . }
 
@@ -405,12 +420,12 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001l saved as .
 
 . local p99_lab = r(p99)
 
-. replace labor_defl_win_2022 = `p1_lab' if labor_defl_win_2022 < `p1_lab' & !missing(labor_defl_
-> win_2022)
+. replace labor_defl_win_2022 = `p1_lab' if labor_defl_win_2022 < `p1_lab' & !mis
+> sing(labor_defl_win_2022)
 (0 real changes made)
 
-. replace labor_defl_win_2022 = `p99_lab' if labor_defl_win_2022 > `p99_lab' & !missing(labor_def
-> l_win_2022)
+. replace labor_defl_win_2022 = `p99_lab' if labor_defl_win_2022 > `p99_lab' & !m
+> issing(labor_defl_win_2022)
 (154 real changes made)
 
 . 
@@ -424,15 +439,16 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001l saved as .
 . gen double labor_defl_win_ln_2022 = .
 (45,234 missing values generated)
 
-. replace labor_defl_win_ln_2022 = ln(labor_defl_win_2022) if labor_defl_win_2022 > 0
+. replace labor_defl_win_ln_2022 = ln(labor_defl_win_2022) if labor_defl_win_2022
+>  > 0
 (5,715 real changes made)
 
-. gen double labor_defl_win_ln1p_2022 = ln(1 + labor_defl_win_2022) if !missing(labor_defl_win_20
-> 22)
+. gen double labor_defl_win_ln1p_2022 = ln(1 + labor_defl_win_2022) if !missing(l
+> abor_defl_win_2022)
 (29,378 missing values generated)
 
-. gen double labor_defl_win_asinh_2022 = asinh(labor_defl_win_2022) if !missing(labor_defl_win_20
-> 22)
+. gen double labor_defl_win_asinh_2022 = asinh(labor_defl_win_2022) if !missing(l
+> abor_defl_win_2022)
 (29,378 missing values generated)
 
 . 
@@ -447,8 +463,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001l saved as .
 (45,234 missing values generated)
 
 . if `N_pos' > 0 & `med_lab' > 0 {
-.     replace labor_defl_win_asinh_s_2022 = asinh(labor_defl_win_2022 / `med_lab') if !missing(la
-> bor_defl_win_2022)
+.     replace labor_defl_win_asinh_s_2022 = asinh(labor_defl_win_2022 / `med_lab'
+> ) if !missing(labor_defl_win_2022)
 (15,856 real changes made)
 . }
 
@@ -470,8 +486,10 @@ Duplicates in terms of hhidpn
 . tempfile li2022
 
 . save "`li2022'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001m not found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_04886.00001m saved as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000008 not
+    found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000008 saved as
+    .dta format
 
 . 
 . * Merge trust from processed dataset
@@ -498,11 +516,12 @@ Duplicates in terms of hhidpn
 
 . 
 . * Overlap counts for each transform with trust
-. local tvars "labor_raw_2022 labor_defl_2022 labor_defl_win_2022 labor_defl_win_ln_2022 labor_de
-> fl_win_ln1p_2022 labor_defl_win_asinh_2022 labor_defl_win_asinh_s_2022"
+. local tvars "labor_raw_2022 labor_defl_2022 labor_defl_win_2022 labor_defl_win_
+> ln_2022 labor_defl_win_ln1p_2022 labor_defl_win_asinh_2022 labor_defl_win_asinh
+> _s_2022"
 
-. local tnames "Raw Deflated Deflated+Winsor Deflated+Winsor+ln(x) Deflated+Winsor+ln(1+x) Deflat
-> ed+Winsor+asinh(x) Deflated+Winsor+asinh(x/median+)"
+. local tnames "Raw Deflated Deflated+Winsor Deflated+Winsor+ln(x) Deflated+Winso
+> r+ln(1+x) Deflated+Winsor+asinh(x) Deflated+Winsor+asinh(x/median+)"
 
 . 
 . display "=== Overlap N (income transform, trust nonmissing, 2022) ==="
@@ -537,7 +556,8 @@ Deflated+Winsor+asinh(x/median+): N = 699
   9.     if `i' == 6 local stitle "Deflated + Winsor + asinh(x)"
  10.     if `i' == 7 local stitle "Deflated + Winsor + asinh(x/median+)"
  11.     local gname "g`i'"
- 12.     twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_others_2020), ///
+ 12.     twoway scatter `v' trust_others_2020 if !missing(`v') & !missing(trust_o
+> thers_2020), ///
 >         msize(vsmall) mcolor(navy%40) ///
 >         xtitle("General trust (2020)") ///
 >         ytitle("Income transform value") ///
@@ -549,11 +569,11 @@ Deflated+Winsor+asinh(x/median+): N = 699
 . graph combine g1 g2 g3 g4 g5 g6 g7, cols(3) ///
 >     title("Labor income vs trust (2022)")
 
-. graph export "${DESCRIPTIVE}/Figures/Robustness/labor_income_trust_all_toggles_2022.png", repla
-> ce
+. graph export "${DESCRIPTIVE}/Figures/Robustness/labor_income_trust_all_toggles_
+> 2022.png", replace
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/labor_income_trus
-    > t_all_toggles_2022.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/Robustness/l
+    > abor_income_trust_all_toggles_2022.png saved as PNG format
 
 . 
 . restore
@@ -561,8 +581,8 @@ file /Volumes/SSD
 . 
 . log close
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/09_robustness_returns_
-> trust.log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/09_rob
+> ustness_returns_trust.log
   log type:  text
- closed on:  11 Feb 2026, 21:31:41
--------------------------------------------------------------------------------------------------
+ closed on:  17 Feb 2026, 16:29:11
+---------------------------------------------------------------------------------

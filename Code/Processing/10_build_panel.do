@@ -120,6 +120,30 @@ foreach s in wealth_core wealth_ira wealth_coreira wealth_total {
         local wealth_vars  "`wealth_vars' `tmp'"
     }
 }
+* Shares for panel regressions (15 Spec 2): share_core, share_ira, share_res, share_debt_long, share_debt_other
+foreach s in share_core share_ira share_res share_debt_long share_debt_other {
+    capture unab tmp : `s'_*
+    if !_rc {
+        local wealth_stubs "`wealth_stubs' `s'_"
+        local wealth_vars  "`wealth_vars' `tmp'"
+    }
+}
+* Fallback: if share_ira_* missing but wealth_ira_* and gross_wealth_* exist, construct share_ira = wealth_ira/gross_wealth
+capture unab _share_ira : share_ira_*
+if _rc {
+    foreach y of local years {
+        capture confirm variable wealth_ira_`y' gross_wealth_`y'
+        if !_rc {
+            gen double share_ira_`y' = wealth_ira_`y' / gross_wealth_`y' if !missing(gross_wealth_`y') & gross_wealth_`y' >= 500
+        }
+    }
+    capture unab _share_ira : share_ira_*
+    if !_rc {
+        local wealth_stubs "`wealth_stubs' share_ira_"
+        local wealth_vars "`wealth_vars' `_share_ira'"
+        display "10_build_panel: constructed share_ira_* from wealth_ira/gross_wealth (fallback)"
+    }
+}
 * Wealth deciles for panel regressions (14): r1->wealth_core_d*, r4->wealth_coreira_d*, r5->wealth_d*
 forvalues d = 2/10 {
     foreach s in wealth_core_d`d' wealth_coreira_d`d' wealth_d`d' {
@@ -130,27 +154,6 @@ forvalues d = 2/10 {
         }
     }
 }
-* Leverage ratios for panel regressions (15)
-foreach s in leverage_long leverage_other {
-    capture unab tmp : `s'_*
-    if !_rc {
-        local wealth_stubs "`wealth_stubs' `s'_"
-        local wealth_vars  "`wealth_vars' `tmp'"
-    }
-}
-
-* Shares for panel regressions (15): core/gross, ira/gross, res/gross (share_core, share_m3_ira, share_residential)
-* share_core_coreira and share_ira_coreira are created post-reshape from wealth_core, wealth_ira
-local share_stubs ""
-local share_vars  ""
-foreach s in share_core share_m3_ira share_residential {
-    capture unab tmp : `s'_*
-    if !_rc {
-        local share_stubs "`share_stubs' `s'_"
-        local share_vars  "`share_vars' `tmp'"
-    }
-}
-
 * Core wave-specific controls
 local ctrl_stubs ""
 local ctrl_vars  ""
@@ -180,7 +183,6 @@ foreach v in trust_others_2020 trust_social_security_2020 trust_medicare_2020 tr
 display "Returns stubs: `ret_stubs'"
 display "Income stubs:  `inc_stubs'"
 display "Wealth stubs:  `wealth_stubs'"
-display "Share stubs:   `share_stubs'"
 display "Control stubs: `ctrl_stubs'"
 display "Time-invariant vars: `tinv_vars'"
 
@@ -190,12 +192,12 @@ display "Time-invariant vars: `tinv_vars'"
 local base_keep "hhidpn"
 if `has_wt' local base_keep "`base_keep' `wtvar'"
 
-keep `base_keep' `tinv_vars' `ret_vars' `inc_vars' `wealth_vars' `share_vars' `ctrl_vars'
+keep `base_keep' `tinv_vars' `ret_vars' `inc_vars' `wealth_vars' `ctrl_vars'
 
 * ----------------------------------------------------------------------
 * Reshape to long: person–year panel
 * ----------------------------------------------------------------------
-local long_stubs "`ret_stubs' `inc_stubs' `wealth_stubs' `share_stubs' `ctrl_stubs'"
+local long_stubs "`ret_stubs' `inc_stubs' `wealth_stubs' `ctrl_stubs'"
 
 * If there are no stubs, abort gracefully
 if "`long_stubs'" == "" {
@@ -224,6 +226,18 @@ if !_rc {
     rename __r4win r4_annual_win
     rename __r5win r5_annual_win
 }
+* Share vars for 15 Spec 2: drop trailing underscore
+capture confirm variable share_core_
+if !_rc {
+    rename share_core_ share_core
+    rename share_ira_ share_ira
+    rename share_res_ share_res
+}
+capture confirm variable share_debt_long_
+if !_rc {
+    rename share_debt_long_ share_debt_long
+    rename share_debt_other_ share_debt_other
+}
 
 * Post-reshape hard check: raw vars must be r1_annual_nw, r4_annual_nw, r5_annual_nw (required for 14)
 foreach v in r1_annual_nw r4_annual_nw r5_annual_nw {
@@ -242,23 +256,6 @@ local r4var "r4_annual_nw"
 local r5var "r5_annual_nw"
 
 * Weight and time-invariant vars are already attached to each row (they were kept pre-reshape).
-
-* ----------------------------------------------------------------------
-* Core+IRA composition shares: core/(core+IRA) and IRA/(core+IRA)
-* Using wealth variables: wealth_core and wealth_ira (per person–year).
-* ----------------------------------------------------------------------
-capture confirm variable wealth_core
-local has_wcore = (_rc == 0)
-capture confirm variable wealth_ira
-local has_wira = (_rc == 0)
-if `has_wcore' & `has_wira' {
-    display "=== 10_build_panel: Creating core/(core+IRA) and IRA/(core+IRA) from wealth_core and wealth_ira ==="
-    gen double coreira = wealth_core + wealth_ira
-    gen double share_core_coreira = .
-    gen double share_ira_coreira  = .
-    replace share_core_coreira = wealth_core / coreira if coreira > 0 & !missing(wealth_core) & !missing(wealth_ira)
-    replace share_ira_coreira  = wealth_ira  / coreira if coreira > 0 & !missing(wealth_core) & !missing(wealth_ira)
-}
 
 * ----------------------------------------------------------------------
 * Overlap diagnostics: Ns by year and for key variable sets

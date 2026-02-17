@@ -195,14 +195,18 @@ foreach pair of local trust_list {
 
             eststo clear
             * 4 regressions: trust; trust^2; trust+controls; trust^2+controls
-            * 1. Trust only
+            * 1. Trust only (linear — joint test redundant with t-test)
             noisily eststo lin_raw: regress `y' c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
             * 2. Trust + trust^2
             noisily eststo quad_raw: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
-            * 3. Trust + controls
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : quad_raw
+            * 3. Trust + controls (linear — joint test redundant with t-test)
             noisily eststo lin_ctl: regress `y' c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
             * 4. Trust + trust^2 + controls
             noisily eststo quad_ctl: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : quad_ctl
 
             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -249,12 +253,12 @@ foreach pair of local trust_list {
                 booktabs ///
                 mtitles("1" "2" "3" "4") ///
                 se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
-                drop(`drop_list' *.age_bin) ///
+                drop(`drop_list' *.age_bin, relax) ///
                 varlabels(c.`trust_var'#c.`trust_var' "`vlab_trust2'" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
-                stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+                stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
                 title("2022 `ret_label' on `capt_stub' trust (2020)`win_label'") ///
                 addnotes("Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.") ///
-                alignment(D{.}{.}{-1}) width(0.85\hsize) nonumbers
+                alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
 
             * Insert \label after \caption
             tempfile tmpf

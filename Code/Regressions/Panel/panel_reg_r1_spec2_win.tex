@@ -1,0 +1,42 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Panel Spec 2: returns to core (5% winsorized, share×year)}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{{.}}{{.}}{{-1}}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+\midrule
+Years of education  &       -0.01\sym{***}&       -0.01\sym{*}  &       -0.01\sym{*}  \\
+                    &      (0.00)         &      (0.01)         &      (0.01)         \\
+Female              &       -0.01         &        0.01         &        0.01         \\
+                    &      (0.00)         &      (0.03)         &      (0.03)         \\
+NH Black            &        0.11\sym{***}&        0.16\sym{***}&        0.16\sym{***}\\
+                    &      (0.01)         &      (0.04)         &      (0.04)         \\
+Hispanic            &        0.08\sym{***}&        0.20\sym{***}&        0.20\sym{***}\\
+                    &      (0.01)         &      (0.07)         &      (0.07)         \\
+NH Other            &        0.02         &        0.10         &        0.10         \\
+                    &      (0.02)         &      (0.08)         &      (0.08)         \\
+Employed            &        0.10\sym{***}&        0.08\sym{**} &        0.08\sym{**} \\
+                    &      (0.01)         &      (0.03)         &      (0.03)         \\
+Married             &        0.00         &        0.00         &        0.00         \\
+                    &      (0.01)         &      (0.03)         &      (0.03)         \\
+Born in U.S.        &       -0.00         &        0.06         &        0.06         \\
+                    &      (0.01)         &      (0.05)         &      (0.05)         \\
+Share core          &        0.36\sym{***}&        0.82\sym{***}&        0.82\sym{***}\\
+                    &      (0.02)         &      (0.26)         &      (0.26)         \\
+Trust               &                     &       -0.00         &       -0.01         \\
+                    &                     &      (0.01)         &      (0.02)         \\
+Trust²              &                     &                     &        0.00         \\
+                    &                     &                     &      (0.00)         \\
+\_cons              &       -0.93\sym{***}&       -0.99\sym{**} &       -0.98\sym{**} \\
+                    &      (0.03)         &      (0.44)         &      (0.43)         \\
+\midrule
+Observations        &   127338.00         &     3854.00         &     3854.00         \\
+Adj. R-squared      &        0.18         &        0.18         &        0.18         \\
+Joint test: Trust+Trust² p-value&                     &                     &        0.82         \\
+Joint test: Share core×year p-value&        0.00         &        0.04         &        0.04         \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize Cluster-robust SE in parentheses. Spec 2: share×year controls for risk exposure. Age bins, wealth deciles, region dummies, year dummies, and share×year omitted from table but included in regressions.}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}
