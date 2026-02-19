@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_pro
 > cessing_income.log
   log type:  text
- opened on:  18 Feb 2026, 18:19:52
+ opened on:  19 Feb 2026, 13:47:59
 
 . 
 . use "${PROCESSED}/analysis_ready.dta", clear
@@ -91,9 +91,9 @@
 . rename CPIAUCSL cpi
 
 . save "`cpi'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 
 . 
@@ -1681,5 +1681,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_pro
 > cessing_income.log
   log type:  text
- closed on:  18 Feb 2026, 18:19:57
+ closed on:  19 Feb 2026, 13:48:05
 ---------------------------------------------------------------------------------

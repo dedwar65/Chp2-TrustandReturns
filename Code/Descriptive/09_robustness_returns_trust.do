@@ -32,6 +32,12 @@ log using "${LOG_DIR}/09_robustness_returns_trust.log", replace text
 
 use "${PROCESSED}/analysis_ready_processed.dta", clear
 
+* Respondent weight (optional)
+local wtvar "RwWTRESP"
+capture confirm variable `wtvar'
+local wopt ""
+if !_rc local wopt "[aw=`wtvar']"
+
 * Check required variables
 capture confirm variable trust_others_2020
 if _rc {
@@ -47,16 +53,46 @@ capture mkdir "${DESCRIPTIVE}/Tables"
 capture mkdir "${DESCRIPTIVE}/Tables/Robustness"
 
 * ---------------------------------------------------------------------
+* Age distribution (2020): histogram with narrow bins
+* Table 7 (demographics_general) shows mean age 68; this visualizes the full distribution.
+* ---------------------------------------------------------------------
+display "=== Age distribution (2020): histogram ==="
+preserve
+keep if !missing(age_2020)
+histogram age_2020 `wopt', width(1) frequency ///
+    title("Age distribution (2020)") ///
+    xtitle("Age") ytitle("Frequency") ///
+    xlabel(50(5)100, labsize(small)) ///
+    fcolor(navy)
+graph export "${DESCRIPTIVE}/Figures/age_distribution_2020.png", replace width(1200)
+
+* Age distribution: min up to 50 (younger respondents)
+histogram age_2020 if age_2020 <= 50 `wopt', width(1) frequency ///
+    title("Age distribution (2020), ages up to 50") ///
+    xtitle("Age") ytitle("Frequency") ///
+    xlabel(24 30 40 50, labsize(small)) ///
+    fcolor(navy)
+graph export "${DESCRIPTIVE}/Figures/age_distribution_2020_up_to_50.png", replace width(1200)
+
+* Age distribution: min up to 40
+histogram age_2020 if age_2020 <= 40 `wopt', width(1) frequency ///
+    title("Age distribution (2020), ages up to 40") ///
+    xtitle("Age") ytitle("Frequency") ///
+    xlabel(24 30 40, labsize(small)) ///
+    fcolor(navy)
+graph export "${DESCRIPTIVE}/Figures/age_distribution_2020_up_to_40.png", replace width(1200)
+restore
+
+* ---------------------------------------------------------------------
 * Trust vs age (5-year bins): mean general trust by age bin
 * ---------------------------------------------------------------------
-display "=== Robustness: mean general trust by 5-year age bins ==="
+display "=== Robustness: mean general trust by 10-year age bins ==="
 preserve
-keep hhidpn age_2020 trust_others_2020
 drop if missing(age_2020) | missing(trust_others_2020)
-gen int age_bin = floor(age_2020/5)*5
-collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(age_bin)
+gen int age_bin = floor(age_2020/10)*10
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(age_bin)
 twoway connected trust_mean age_bin, mcolor(navy) lcolor(navy) msymbol(o) ///
-    title("Mean trust by age (5-year bins)") xtitle("Age bin") ytitle("Mean general trust") ylabel(, angle(0))
+    title("Mean trust by age (10-year bins)") xtitle("Age bin") ytitle("Mean general trust") ylabel(, angle(0))
 graph export "${DESCRIPTIVE}/Figures/Robustness/trust_mean_by_age_bin.png", replace
 restore
 

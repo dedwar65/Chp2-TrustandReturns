@@ -108,7 +108,7 @@ preserve
     foreach v in age_2020 female educ_yrs married_2020 immigrant born_us {
         capture confirm variable `v'
         if _rc continue
-        quietly summarize `v'
+        quietly summarize `v' `wopt'
         if r(N) == 0 continue
         local vlab "`v'"
         if "`v'"=="age_2020" local vlab "Age"
@@ -128,7 +128,13 @@ preserve
     if !_rc {
         tempfile demog_work
         save "`demog_work'", replace
-        contract race_eth, freq(n)
+        if "`wopt'" != "" {
+            gen byte _one = 1
+            collapse (sum) n=_one `wopt', by(race_eth)
+        }
+        else {
+            contract race_eth, freq(n)
+        }
         drop if missing(race_eth)
         egen long total_n = total(n)
         gen double pct = n / total_n
@@ -148,7 +154,7 @@ preserve
     * Employment: Working (proportion); verify inlbrf_2020 is dummy (1=working)
     capture confirm variable inlbrf_2020
     if !_rc {
-        quietly summarize inlbrf_2020
+        quietly summarize inlbrf_2020 `wopt'
         local n_s = string(r(N), "%9.0f")
         local m_s = string(r(mean), "%9.3f")
         local s_s = string(r(sd), "%9.3f")
@@ -156,7 +162,7 @@ preserve
     }
 
     file write fh "\bottomrule" _n ///
-        "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categories mean = proportion (pct).} \\\\" _n ///
+        "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categories mean = proportion (pct). Respondent weights used when available.} \\\\" _n ///
         "\end{tabular}\end{table}" _n
     file close fh
 restore
@@ -245,7 +251,7 @@ file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics (2
 foreach v in age_2020 gender educ_yrs married_2020 immigrant born_us {
     capture confirm variable `v'
     if _rc continue
-    quietly summarize `v'
+    quietly summarize `v' `wopt'
     if r(N) == 0 continue
     _vlabel `v'
     local vlab `r(vlabel)'
@@ -567,7 +573,7 @@ if !_rc {
         preserve
         keep if !missing(`tvar') & !missing(race_eth)
         label values race_eth race_eth_lbl
-        collapse (mean) trust_mean=`tvar' (count) n=`tvar', by(race_eth)
+        collapse (mean) trust_mean=`tvar' (count) n=`tvar' `wopt', by(race_eth)
         decode race_eth, gen(race_label)
         local stub = subinstr("`tvar'", "trust_", "", .)
         local stub = subinstr("`stub'", "_2020", "", .)
@@ -600,7 +606,7 @@ display "=== Mean trust by region, population, population3 (2020 only) ==="
 preserve
 keep if !missing(trust_others_2020) & !missing(censreg_2020)
 label values censreg_2020 region_lbl
-collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(censreg_2020)
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(censreg_2020)
 decode censreg_2020, gen(region_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_censreg_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region (2020)}" _n "\label{tab:trust_mean_by_censreg_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Region (code) & Region & Mean trust & Obs \\\\ \midrule" _n
@@ -642,7 +648,7 @@ restore
 preserve
 keep if !missing(trust_others_2020) & !missing(population_2020)
 label values population_2020 pop_lbl
-collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(population_2020)
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(population_2020)
 decode population_2020, gen(pop_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_population_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population size (2020)}" _n "\label{tab:trust_mean_by_population_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Population (code) & Population size & Mean trust & Obs \\\\ \midrule" _n
@@ -660,7 +666,7 @@ restore
 preserve
 keep if !missing(trust_others_2020) & !missing(population_3bin_2020)
 label values population_3bin_2020 pop3_lbl
-collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(population_3bin_2020)
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(population_3bin_2020)
 decode population_3bin_2020, gen(pop3_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_population3_2020.tex", write replace
 file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population (3 bins, 2020)}" _n "\label{tab:trust_mean_by_population3_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Pop3 (code) & Population & Mean trust & Obs \\\\ \midrule" _n
@@ -681,7 +687,7 @@ keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(populati
 label values censreg_2020 region_lbl
 label values population_3bin_2020 pop3_lbl
 gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
-collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(censreg_2020 population_3bin_2020 region_pop3_group)
+collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(censreg_2020 population_3bin_2020 region_pop3_group)
 decode censreg_2020, gen(region_label)
 decode population_3bin_2020, gen(pop3_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_regionpop3_2020.tex", write replace

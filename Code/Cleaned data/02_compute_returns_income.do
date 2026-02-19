@@ -48,9 +48,6 @@ forvalues i = 1/11 {
     local penavar ""
     capture confirm variable r`wcur'ipena
     if !_rc local penavar "r`wcur'ipena"
-    local ssdivar ""
-    capture confirm variable r`wcur'issdi
-    if !_rc local ssdivar "r`wcur'issdi"
     local isretvar ""
     capture confirm variable r`wcur'isret
     if !_rc local isretvar "r`wcur'isret"
@@ -70,9 +67,10 @@ forvalues i = 1/11 {
         capture confirm variable `v'
         if _rc local missing_any 1
     }
-    if "`penavar'" == "" & "`ssdivar'" == "" & "`isretvar'" == "" local missing_any 1
+    if "`penavar'" == "" & "`isretvar'" == "" local missing_any 1
+    * totvars: total income for returns = h*icap + pension + retirement (excludes h*iothr, SSDI)
     local totvars ""
-    foreach v in `penavar' `ssdivar' `isretvar' h`wcur'icap h`wcur'iothr {
+    foreach v in `penavar' `isretvar' h`wcur'icap {
         capture confirm variable `v'
         if !_rc local totvars "`totvars' `v'"
     }
@@ -152,6 +150,7 @@ forvalues i = 1/11 {
 
         gen double y_res_inc_`y' = 0
 
+        * y_total_inc: total income for r5 returns (excludes h*iothr; uses totvars)
         if "`totvars'" != "" {
             egen double y_total_inc_`y' = rowtotal(`totvars')
             local totmiss "1"
@@ -164,9 +163,9 @@ forvalues i = 1/11 {
             gen double y_total_inc_`y' = .
         }
 
-        * Total interest income = core + IRA components only: h*icap, h*iothr, r*ipena, r*isret
+        * Total interest income = core + retirement only (excludes h*iothr): h*icap, r*ipena, r*isret
         local totintvars ""
-        foreach v in h`wcur'icap h`wcur'iothr `penavar' `isretvar' {
+        foreach v in h`wcur'icap `penavar' `isretvar' {
             capture confirm variable `v'
             if !_rc local totintvars "`totintvars' `v'"
         }
@@ -222,6 +221,9 @@ forvalues i = 1/11 {
         gen double base_core_`y' = (h`wprev'arles + h`wprev'absns + h`wprev'astck + h`wprev'abond + h`wprev'achck + h`wprev'acd) + 0.5 * flow_core_adj_`y' if _ok_core_`y'
         gen double base_ira_`y' = h`wprev'aira + 0.5 * flow_ira_adj_`y' if _ok_ira_`y'
         gen double base_res_`y' = (h`wprev'atoth + h`wprev'anethb) + 0.5 * flow_res_adj_`y' if _ok_res_`y'
+        * Raw (unthresholded) bases for r4 composite — clone before applying r1/r2 thresholds
+        gen double base_core_raw_`y' = base_core_`y'
+        gen double base_ira_raw_`y'  = base_ira_`y'
 
         * Base diagnostics (minimal overlap sample, before dropping base thresholds)
         quietly count if _ok_core_`y' & base_core_`y' <= 0
@@ -267,15 +269,16 @@ forvalues i = 1/11 {
         gen double num_res_`y' = y_res_inc_`y' + cg_res_total_`y' - flow_res_adj_`y' if _ok_res_`y'
         gen double num_total_`y' = y_total_inc_`y' + cg_total_`y' - flow_total_adj_`y' if _ok_total_`y'
         * r4 = core+IRA: return nonmissing when either core OR IRA has nonmissing (same rule as r1/r2/r3)
+        * base_coreira built from raw (unthresholded) bases so r4 not dropped when one component fails r1/r2 threshold
         gen byte _ok_coreira_`y' = (_ok_core_`y' | _ok_ira_`y')
         gen double num_coreira_`y' = .
         gen double base_coreira_`y' = .
         replace num_coreira_`y' = num_core_`y' + num_ira_`y' if _ok_core_`y' & _ok_ira_`y'
-        replace base_coreira_`y' = base_core_`y' + base_ira_`y' if _ok_core_`y' & _ok_ira_`y'
+        replace base_coreira_`y' = base_core_raw_`y' + base_ira_raw_`y' if _ok_core_`y' & _ok_ira_`y'
         replace num_coreira_`y' = num_core_`y' if _ok_core_`y' & !_ok_ira_`y'
-        replace base_coreira_`y' = base_core_`y' if _ok_core_`y' & !_ok_ira_`y'
+        replace base_coreira_`y' = base_core_raw_`y' if _ok_core_`y' & !_ok_ira_`y'
         replace num_coreira_`y' = num_ira_`y' if !_ok_core_`y' & _ok_ira_`y'
-        replace base_coreira_`y' = base_ira_`y' if !_ok_core_`y' & _ok_ira_`y'
+        replace base_coreira_`y' = base_ira_raw_`y' if !_ok_core_`y' & _ok_ira_`y'
         local base_coreira_min = 1500
         replace base_coreira_`y' = . if base_coreira_`y' != . & base_coreira_`y' < `base_coreira_min'
         quietly count if _ok_coreira_`y' & base_coreira_`y' != . & base_coreira_`y' <= 0
@@ -312,11 +315,30 @@ forvalues i = 1/11 {
         replace r4_annual_`y' = . if missing(r4_period_`y')
         replace r5_annual_`y' = . if missing(r5_period_`y')
 
+        * r4 fix validation (2022)
+        if `y' == 2022 {
+            quietly count if !missing(r1_annual_2022) & missing(r4_annual_2022)
+            display "r4 fix validation (2022): r1 nonmissing & r4 missing = " r(N)
+            quietly count if !missing(r2_annual_2022) & missing(r4_annual_2022)
+            display "r4 fix validation (2022): r2 nonmissing & r4 missing = " r(N)
+            quietly count if (_ok_core_2022 | _ok_ira_2022) & missing(r4_annual_2022)
+            display "r4 fix validation (2022): (_ok_core|_ok_ira) & r4 missing = " r(N)
+            quietly count if (_ok_core_2022 | _ok_ira_2022) & !missing(r4_annual_2022)
+            display "r4 fix validation (2022): (_ok_core|_ok_ira) & r4 nonmissing = " r(N)
+        }
+
         capture drop flow_core_adj_`y' flow_ira_adj_`y' flow_res_adj_`y' flow_total_adj_`y'
+        capture drop base_core_raw_`y' base_ira_raw_`y'
 
     }
     capture drop _ok_core_`y' _ok_ira_`y' _ok_res_`y' _ok_total_`y' _ok_coreira_`y'
 }
+
+* Validation: y_total_inc definition (excludes h*iothr), 2022
+display "=== y_total_inc_2022 (excludes h*iothr, SSDI): h*icap + r*ipena + r*isret ==="
+quietly count if !missing(y_total_inc_2022)
+display "y_total_inc_2022 nonmissing: " r(N)
+summarize y_total_inc_2022, detail
 
 * Average returns across waves (row mean of nonmissing)
 capture drop r1_annual_avg

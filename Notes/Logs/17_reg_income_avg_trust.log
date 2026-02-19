@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/17_reg
 > _income_avg_trust.log
   log type:  text
- opened on:  18 Feb 2026, 18:43:51
+ opened on:  19 Feb 2026, 13:58:31
 
 . 
 . capture which esttab
@@ -326,7 +326,7 @@ Writing (Labor, deflwin): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
 (results m4 are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Average/Income/Labor/income_trust_general_deflwin.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 not
     found)
 
 Linear regression                               Number of obs     =        900
@@ -452,7 +452,7 @@ Writing (Total, deflwin): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
 (results m4 are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Average/Income/Total/income_trust_general_deflwin.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000003 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000003 not
     found)
 
 Linear regression                               Number of obs     =        900
@@ -578,7 +578,7 @@ Writing (Labor, deflwin_ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns
 (results m4 are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Average/Income/Labor/income_trust_general_deflwin_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000004 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 not
     found)
 
 Linear regression                               Number of obs     =        900
@@ -704,7 +704,7 @@ Writing (Total, deflwin_ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns
 (results m4 are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Average/Income/Total/income_trust_general_deflwin_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000005 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000005 not
     found)
 
 . 
@@ -720,5 +720,5 @@ Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressi
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/17_reg
 > _income_avg_trust.log
   log type:  text
- closed on:  18 Feb 2026, 18:43:52
+ closed on:  19 Feb 2026, 13:58:32
 ---------------------------------------------------------------------------------

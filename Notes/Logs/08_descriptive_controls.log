@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_des
 > criptive_controls.log
   log type:  text
- opened on:  17 Feb 2026, 16:27:25
+ opened on:  19 Feb 2026, 13:55:23
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -115,7 +115,7 @@
 .     foreach v in age_2020 female educ_yrs married_2020 immigrant born_us {
   2.         capture confirm variable `v'
   3.         if _rc continue
-  4.         quietly summarize `v'
+  4.         quietly summarize `v' `wopt'
   5.         if r(N) == 0 continue
   6.         local vlab "`v'"
   7.         if "`v'"=="age_2020" local vlab "Age"
@@ -137,11 +137,17 @@
 .     if !_rc {
 .         tempfile demog_work
 .         save "`demog_work'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000003 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000003 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000003 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000003 saved as
     .dta format
-.         contract race_eth, freq(n)
+.         if "`wopt'" != "" {
+.             gen byte _one = 1
+.             collapse (sum) n=_one `wopt', by(race_eth)
+.         }
+.         else {
+.             contract race_eth, freq(n)
+.         }
 .         drop if missing(race_eth)
 (1 observation deleted)
 .         egen long total_n = total(n)
@@ -164,7 +170,7 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000003 saved as
 .     capture confirm variable inlbrf_2020
 
 .     if !_rc {
-.         quietly summarize inlbrf_2020
+.         quietly summarize inlbrf_2020 `wopt'
 .         local n_s = string(r(N), "%9.0f")
 .         local m_s = string(r(mean), "%9.3f")
 .         local s_s = string(r(sd), "%9.3f")
@@ -175,7 +181,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000003 saved as
 . 
 .     file write fh "\bottomrule" _n ///
 >         "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/catego
-> ries mean = proportion (pct).} \\\\" _n ///
+> ries mean = proportion (pct). Respondent weights used when available.} \\\\" _n
+>  ///
 >         "\end{tabular}\end{table}" _n
 
 .     file close fh
@@ -457,7 +464,7 @@ hometow~2022 |        889    275.5973    98.70103        101        506
 . foreach v in age_2020 gender educ_yrs married_2020 immigrant born_us {
   2.     capture confirm variable `v'
   3.     if _rc continue
-  4.     quietly summarize `v'
+  4.     quietly summarize `v' `wopt'
   5.     if r(N) == 0 continue
   6.     _vlabel `v'
   7.     local vlab `r(vlabel)'
@@ -474,9 +481,9 @@ hometow~2022 |        889    275.5973    98.70103        101        506
 . if !_rc {
 .     tempfile demog_work
 .     save "`demog_work'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000007 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000007 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000007 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000007 saved as
     .dta format
 .     contract race_eth, freq(n)
 .     drop if missing(race_eth)
@@ -503,9 +510,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000007 saved as
 . if !_rc {
 .     tempfile demog_work
 .     save "`demog_work'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000008 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000008 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 saved as
     .dta format
 .     contract inlbrf_2020, freq(n)
 .     drop if missing(inlbrf_2020)
@@ -1028,7 +1035,8 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
   6.         preserve
   7.         keep if !missing(`tvar') & !missing(race_eth)
   8.         label values race_eth race_eth_lbl
-  9.         collapse (mean) trust_mean=`tvar' (count) n=`tvar', by(race_eth)
+  9.         collapse (mean) trust_mean=`tvar' (count) n=`tvar' `wopt', by(race_e
+> th)
  10.         decode race_eth, gen(race_label)
  11.         local stub = subinstr("`tvar'", "trust_", "", .)
  12.         local stub = subinstr("`stub'", "_2020", "", .)
@@ -1105,8 +1113,8 @@ file /Volumes/SSD
 
 . label values censreg_2020 region_lbl
 
-. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(ce
-> nsreg_2020)
+. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt'
+> , by(censreg_2020)
 
 . decode censreg_2020, gen(region_label)
 
@@ -1187,8 +1195,8 @@ file /Volumes/SSD
 
 . label values population_2020 pop_lbl
 
-. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(po
-> pulation_2020)
+. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt'
+> , by(population_2020)
 
 . decode population_2020, gen(pop_label)
 
@@ -1223,8 +1231,8 @@ file /Volumes/SSD
 
 . label values population_3bin_2020 pop3_lbl
 
-. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(po
-> pulation_3bin_2020)
+. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt'
+> , by(population_3bin_2020)
 
 . decode population_3bin_2020, gen(pop3_label)
 
@@ -1267,8 +1275,8 @@ file /Volumes/SSD
 
 . gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
 
-. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020, by(ce
-> nsreg_2020 population_3bin_2020 region_pop3_group)
+. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt'
+> , by(censreg_2020 population_3bin_2020 region_pop3_group)
 
 . decode censreg_2020, gen(region_label)
 
@@ -1375,9 +1383,9 @@ hometown_size_2000 hometown_size_2002 ... hometown_size_2022->hometown_size_
 . tempfile region_all
 
 . save "`region_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000010 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000010 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000010 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000010 saved as
     .dta format
 
 . restore
@@ -1454,9 +1462,9 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . tempfile region_vals
 
 . save "`region_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000013 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000013 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000013 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000013 saved as
     .dta format
 
 . restore
@@ -1480,9 +1488,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000013 saved as
 . tempfile pop_vals
 
 . save "`pop_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000015 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000015 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000015 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000015 saved as
     .dta format
 
 . restore
@@ -1499,9 +1507,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000015 saved as
 . tempfile regionpop_all
 
 . save "`regionpop_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000017 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000017 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000017 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000017 saved as
     .dta format
 
 . restore
@@ -1584,9 +1592,9 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . tempfile region_vals3
 
 . save "`region_vals3'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001a not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001a not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001a saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001a saved as
     .dta format
 
 . restore
@@ -1607,9 +1615,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001a saved as
 . tempfile pop3_vals
 
 . save "`pop3_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001c not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001c not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001c saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001c saved as
     .dta format
 
 . restore
@@ -1626,9 +1634,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001c saved as
 . tempfile regionpop3_all
 
 . save "`regionpop3_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001e not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001e not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001e saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001e saved as
     .dta format
 
 . restore
@@ -1691,9 +1699,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001e saved as
 . tempfile pop_all
 
 . save "`pop_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001h not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001h not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001h saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001h saved as
     .dta format
 
 . restore
@@ -2020,7 +2028,7 @@ num_wid~2020 |   1.0000
 
 . postfile handle str32 var1 str32 var2 double corr using "`trustctrlcorr'", repl
 > ace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001k not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001k not
     found)
 
 . correlate `trustvars' `ctrlvars'
@@ -2316,7 +2324,7 @@ Scoring coefficients
 . tempfile pcload
 
 . postfile handle str32 varname double pc1 pc2 using "`pcload'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001n not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001n not
     found)
 
 . matrix L = e(L)
@@ -2497,7 +2505,7 @@ trust_o~2020 |   0.0682   0.0606  -0.0346   1.0000
 . tempfile ivcorr
 
 . postfile handle str32 var1 str32 var2 double corr using "`ivcorr'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001q not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001q not
     found)
 
 . correlate par_citizen_2020 par_loyalty_2020 population_2020 trust_others_2020
@@ -2920,16 +2928,16 @@ file /Volumes/SSD
 
    Stats |  r1_ann..  r4_ann..  r5_ann..
 ---------+------------------------------
-       N |      8330      4152      9190
-    Mean |  .3785716   .200118  .3198696
-      SD |  1.836335  .7291838  .8504767
-      p1 |        -1 -.8203947 -.7842487
-      p5 |        -1 -.5210837 -.4271745
-     p50 |  .0382838   .081766  .1544909
-     p95 |  2.751666  1.202837   1.58457
-     p99 |  7.660254     2.833  3.610437
+       N |      8330      8031      9183
+    Mean |  .3785716  .5208448  .3040901
+      SD |  1.836335  1.443754  .8388391
+      p1 |        -1        -1  -.825767
+      p5 |        -1 -.6818938 -.4483227
+     p50 |  .0382838  .1564856  .1474449
+     p95 |  2.751666  2.838558   1.54951
+     p99 |  7.660254  6.071068  3.530093
      Min |        -1        -1        -1
-     Max |  41.09515  13.01873  19.67032
+     Max |  41.09515  25.58872  19.67032
 ----------------------------------------
 . }
 
@@ -2941,16 +2949,16 @@ file /Volumes/SSD
 
    Stats |  r1_ann..  r4_ann..  r5_ann..
 ---------+------------------------------
-       N |     13839      6713     14222
-    Mean |  .3396622  .1307731   .184071
-      SD |  1.541005  .6565495  .6265629
-      p1 |        -1 -.8113064 -.6937918
-      p5 | -.8911069 -.5623271 -.4260791
-     p50 |  .0079683  .0164603  .0787754
-     p95 |  2.649658  1.196811  1.081154
-     p99 |  6.870338  2.508917  2.675682
+       N |     13839     13167     14209
+    Mean |  .3396622  .3441784  .1758168
+      SD |  1.541005  1.066634  .6228046
+      p1 |        -1       -.9 -.7018664
+      p5 | -.8911069 -.6025773 -.4351646
+     p50 |  .0079683    .08775  .0740954
+     p95 |  2.649658  2.114903  1.056174
+     p99 |  6.870338  4.525698  2.642344
      Min |        -1        -1        -1
-     Max |  31.90998  10.79102  14.16723
+     Max |  31.90998  15.50959  14.16723
 ----------------------------------------
 . }
 
@@ -3122,5 +3130,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_des
 > criptive_controls.log
   log type:  text
- closed on:  17 Feb 2026, 16:28:28
+ closed on:  19 Feb 2026, 13:56:02
 ---------------------------------------------------------------------------------

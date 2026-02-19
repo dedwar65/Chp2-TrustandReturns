@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/11_reg
 > _trust.log
   log type:  text
- opened on:  18 Feb 2026, 18:41:46
+ opened on:  19 Feb 2026, 13:56:25
 
 . 
 . capture which esttab
@@ -329,7 +329,7 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 not
     found)
 
 Linear regression                               Number of obs     =      1,005
@@ -457,7 +457,7 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000003 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000003 not
     found)
 
 Linear regression                               Number of obs     =      1,020
@@ -585,7 +585,7 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000004 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 not
     found)
 
 Linear regression                               Number of obs     =        984
@@ -713,7 +713,7 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000005 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000005 not
     found)
 
 Linear regression                               Number of obs     =      1,073
@@ -841,7 +841,7 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000006 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 not
     found)
 
 Linear regression                               Number of obs     =      1,065
@@ -969,7 +969,7 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000007 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000007 not
     found)
 
 Linear regression                               Number of obs     =      1,139
@@ -1097,7 +1097,7 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000008 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 not
     found)
 
 Linear regression                               Number of obs     =      1,226
@@ -1225,10 +1225,264 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Trust/trust_reg_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000009 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000009 not
     found)
-Skipping (not found): trust_pc1
-Skipping (not found): trust_pc2
+
+Linear regression                               Number of obs     =        532
+                                                F(15, 513)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.0781
+                                                Root MSE          =     1.8723
+
+------------------------------------------------------------------------------
+             |               Robust
+   trust_pc1 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     age_bin |
+         30  |   7.528407   .1885876    39.92   0.000     7.157908    7.898905
+         35  |   1.642364   .3912568     4.20   0.000     .8737012    2.411027
+         40  |   1.176648    .468447     2.51   0.012     .2563373    2.096958
+         45  |   3.620627   .7082202     5.11   0.000     2.229259    5.011996
+         50  |   4.195862   .4393518     9.55   0.000     3.332712    5.059012
+         55  |   4.033547   .2492817    16.18   0.000     3.543809    4.523286
+         60  |   3.928359   .2290133    17.15   0.000      3.47844    4.378278
+         65  |   4.448938   .2642231    16.84   0.000     3.929845     4.96803
+         70  |   4.778444   .3265289    14.63   0.000     4.136946    5.419942
+         75  |   4.625246   .3519361    13.14   0.000     3.933833     5.31666
+         80  |   4.966892   .4173346    11.90   0.000     4.146997    5.786787
+         85  |   5.086529   .5122245     9.93   0.000     4.080213    6.092845
+             |
+    2.gender |   .1772329   .1693486     1.05   0.296    -.1554692    .5099349
+    educ_yrs |  -.0002308   .0293762    -0.01   0.994    -.0579433    .0574817
+married_2020 |   .1315796   .1684324     0.78   0.435    -.1993225    .4624818
+             |
+    race_eth |
+          2  |  -.0123464    .212386    -0.06   0.954    -.4295997    .4049069
+          3  |   .0895445   .2366461     0.38   0.705    -.3753702    .5544592
+          4  |  -.2106666   .2790731    -0.75   0.451    -.7589333    .3376001
+             |
+       _cons |  -4.480508   .4564992    -9.81   0.000    -5.377346    -3.58367
+------------------------------------------------------------------------------
+
+Linear regression                               Number of obs     =        522
+                                                F(22, 496)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1078
+                                                Root MSE          =     1.8569
+
+--------------------------------------------------------------------------------
+               |               Robust
+     trust_pc1 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           30  |   7.927035    .309655    25.60   0.000     7.318637    8.535432
+           35  |   1.964385   .4891333     4.02   0.000     1.003356    2.925414
+           40  |   1.679123   .4580923     3.67   0.000      .779082    2.579163
+           45  |   3.993292   .6869796     5.81   0.000     2.643543    5.343041
+           50  |   4.604532   .4565059    10.09   0.000     3.707608    5.501455
+           55  |   4.436405   .3074082    14.43   0.000     3.832422    5.040388
+           60  |    4.36186   .3085382    14.14   0.000     3.755657    4.968063
+           65  |   4.889472   .4067166    12.02   0.000     4.090372    5.688572
+           70  |   5.229563    .484922    10.78   0.000     4.276809    6.182317
+           75  |   5.057756   .5128473     9.86   0.000     4.050135    6.065376
+           80  |   5.471662   .5406165    10.12   0.000     4.409481    6.533843
+           85  |   5.402632   .6381044     8.47   0.000     4.148911    6.656352
+               |
+      2.gender |   .2144591   .1741083     1.23   0.219    -.1276217    .5565398
+      educ_yrs |  -.0043677   .0293594    -0.15   0.882    -.0620518    .0533164
+  married_2020 |   .0025641   .1825288     0.01   0.989     -.356061    .3611892
+               |
+      race_eth |
+            2  |  -.0021382    .225639    -0.01   0.992    -.4454643    .4411879
+            3  |   .0766367   .2353797     0.33   0.745    -.3858276     .539101
+            4  |  -.2884849   .2851646    -1.01   0.312    -.8487644    .2717946
+               |
+depressio~2020 |  -.0747625   .0443156    -1.69   0.092     -.161832    .0123069
+health_co~2020 |  -.1096494   .0599097    -1.83   0.068    -.2273574    .0080586
+ medicare_2020 |   .0720848   .2923469     0.25   0.805    -.5023063    .6464758
+ medicaid_2020 |  -.0571877   .2746783    -0.21   0.835    -.5968642    .4824887
+ life_ins_2020 |   .0408885   .1668408     0.25   0.806    -.2869133    .3686903
+num_divor~2020 |  -.1044341   .1063678    -0.98   0.327    -.3134211    .1045529
+num_widow_2020 |   .1228103   .2636046     0.47   0.642    -.3951091    .6407296
+         _cons |  -4.399399   .4526687    -9.72   0.000    -5.288784   -3.510015
+--------------------------------------------------------------------------------
+(results full are active now)
+Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Trus
+> t/trust_reg_pc1.tex
+estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code
+> /Regressions/Trust/trust_reg_pc1.tex"' ,
+ cells(b(fmt(2) star) se(fmt(2) par))
+ drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bin 
+> 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bin *.
+> age_bin)
+ stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<@\
+> )"))
+ varwidth(20)
+ modelwidth(12)
+ delimiter(&)
+ end(\\)
+ title("PC1 trust (2020) on controls")
+ prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}
+> \)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep
+> \extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
+ posthead("\midrule")
+ prefoot("\midrule")
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard errors 
+> in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard erro
+> rs in parentheses. Trust and controls from 2020. Age bins (5-yr) included; coef
+> ficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlegend}\\"' 
+> `"\end{tabular*}"' `"\end{table}"')
+ label
+ varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 
+> 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depression_2
+> 020 "Depression" health_cond_2020 "Health conditions" medicare_2020 "Covered by
+>  Medicare" medicaid_2020 "Covered by Medicaid" life_ins_2020 "Has life insuranc
+> e" num_divorce_2020 "Number of reported divorces" num_widow_2020 "Number of rep
+> orted times being widowed" _cons "Constant")
+ mlabels("Demographics" "Full controls", titles span prefix(\multicolumn{@span}{c
+> }{) suffix(}))
+ nonumbers
+ collabels(none)
+ eqlabels(, begin("\midrule" "") nofirst)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/Trust/trust_reg_pc1.tex)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a not
+    found)
+
+Linear regression                               Number of obs     =        532
+                                                F(15, 513)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1430
+                                                Root MSE          =     1.0323
+
+------------------------------------------------------------------------------
+             |               Robust
+   trust_pc2 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     age_bin |
+         30  |  -.9420702   .1061163    -8.88   0.000    -1.150546   -.7335942
+         35  |  -.1690285   .2060706    -0.82   0.412    -.5738746    .2358176
+         40  |  -1.100269   .1726417    -6.37   0.000    -1.439441   -.7610971
+         45  |  -.2538841   .9057895    -0.28   0.779    -2.033397    1.525629
+         50  |  -.4756881   .2494899    -1.91   0.057    -.9658358    .0144596
+         55  |  -.2450338   .1416379    -1.73   0.084    -.5232956    .0332279
+         60  |  -.6113764    .139957    -4.37   0.000    -.8863358    -.336417
+         65  |  -.7312924   .1232776    -5.93   0.000    -.9734834   -.4891014
+         70  |  -.8857796   .1780289    -4.98   0.000    -1.235535   -.5360241
+         75  |  -.6685869   .2164211    -3.09   0.002    -1.093768   -.2434062
+         80  |  -.7377201   .2043709    -3.61   0.000    -1.139227   -.3362133
+         85  |  -.6521892   .3904666    -1.67   0.095      -1.4193    .1149211
+             |
+    2.gender |    .258227   .0925562     2.79   0.005     .0763912    .4400629
+    educ_yrs |   .0557434   .0171707     3.25   0.001     .0220098     .089477
+married_2020 |   .4310039   .0964525     4.47   0.000     .2415135    .6204944
+             |
+    race_eth |
+          2  |  -.2387034   .1172428    -2.04   0.042    -.4690385   -.0083684
+          3  |    -.16514   .1509316    -1.09   0.274      -.46166      .13138
+          4  |  -.0529193   .1522029    -0.35   0.728    -.3519369    .2460983
+             |
+       _cons |   -.384468    .283241    -1.36   0.175    -.9409229     .171987
+------------------------------------------------------------------------------
+
+Linear regression                               Number of obs     =        522
+                                                F(22, 496)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.2039
+                                                Root MSE          =     1.0034
+
+--------------------------------------------------------------------------------
+               |               Robust
+     trust_pc2 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           30  |  -.9258296   .1628544    -5.69   0.000    -1.245799   -.6058601
+           35  |   .3191777   .2803887     1.14   0.256    -.2317183    .8700738
+           40  |  -1.003227   .2393536    -4.19   0.000    -1.473499   -.5329553
+           45  |  -.0613967   .8981043    -0.07   0.946    -1.825955    1.703161
+           50  |  -.2641065   .2792485    -0.95   0.345    -.8127623    .2845493
+           55  |  -.0616919   .1778143    -0.35   0.729    -.4110539    .2876702
+           60  |  -.4052334   .1957083    -2.07   0.039    -.7897528    -.020714
+           65  |   -.296286   .2216409    -1.34   0.182    -.7317567    .1391847
+           70  |  -.4131874   .2854042    -1.45   0.148    -.9739378    .1475629
+           75  |  -.3129903   .2980591    -1.05   0.294    -.8986044    .2726237
+           80  |  -.3789329   .3034501    -1.25   0.212    -.9751389    .2172731
+           85  |  -.3119481    .450167    -0.69   0.489    -1.196417    .5725212
+               |
+      2.gender |    .225698   .0933306     2.42   0.016     .0423259    .4090701
+      educ_yrs |   .0461018   .0170459     2.70   0.007     .0126108    .0795928
+  married_2020 |   .3580079   .1009645     3.55   0.000     .1596371    .5563787
+               |
+      race_eth |
+            2  |  -.2213028   .1167256    -1.90   0.059    -.4506404    .0080347
+            3  |  -.1595511   .1451943    -1.10   0.272    -.4448228    .1257205
+            4  |  -.0844597   .1693555    -0.50   0.618    -.4172024     .248283
+               |
+depressio~2020 |  -.0155389   .0244736    -0.63   0.526    -.0636235    .0325457
+health_co~2020 |  -.0326925    .033668    -0.97   0.332     -.098842    .0334571
+ medicare_2020 |  -.3399457   .1575824    -2.16   0.031    -.6495571   -.0303343
+ medicaid_2020 |  -.5115482   .1560186    -3.28   0.001    -.8180871   -.2050093
+ life_ins_2020 |   .0906555   .0956331     0.95   0.344    -.0972404    .2785514
+num_divor~2020 |   .0081294   .0654147     0.12   0.901    -.1203947    .1366535
+num_widow_2020 |   .1449039   .1256801     1.15   0.249    -.1020272     .391835
+         _cons |  -.2284598   .2849545    -0.80   0.423    -.7883266     .331407
+--------------------------------------------------------------------------------
+(results full are active now)
+Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Trus
+> t/trust_reg_pc2.tex
+estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code
+> /Regressions/Trust/trust_reg_pc2.tex"' ,
+ cells(b(fmt(2) star) se(fmt(2) par))
+ drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bin 
+> 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bin *.
+> age_bin)
+ stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<@\
+> )"))
+ varwidth(20)
+ modelwidth(12)
+ delimiter(&)
+ end(\\)
+ title("PC2 trust (2020) on controls")
+ prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}
+> \)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep
+> \extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
+ posthead("\midrule")
+ prefoot("\midrule")
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard errors 
+> in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard erro
+> rs in parentheses. Trust and controls from 2020. Age bins (5-yr) included; coef
+> ficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlegend}\\"' 
+> `"\end{tabular*}"' `"\end{table}"')
+ label
+ varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 
+> 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depression_2
+> 020 "Depression" health_cond_2020 "Health conditions" medicare_2020 "Covered by
+>  Medicare" medicaid_2020 "Covered by Medicaid" life_ins_2020 "Has life insuranc
+> e" num_divorce_2020 "Number of reported divorces" num_widow_2020 "Number of rep
+> orted times being widowed" _cons "Constant")
+ mlabels("Demographics" "Full controls", titles span prefix(\multicolumn{@span}{c
+> }{) suffix(}))
+ nonumbers
+ collabels(none)
+ eqlabels(, begin("\midrule" "") nofirst)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/Trust/trust_reg_pc2.tex)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000b not
+    found)
 
 . 
 . eststo clear
@@ -1242,5 +1496,5 @@ Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressi
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/11_reg
 > _trust.log
   log type:  text
- closed on:  18 Feb 2026, 18:41:47
+ closed on:  19 Feb 2026, 13:56:26
 ---------------------------------------------------------------------------------

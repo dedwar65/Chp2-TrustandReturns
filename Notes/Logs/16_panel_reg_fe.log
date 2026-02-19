@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/16_pan
 > el_reg_fe.log
   log type:  text
- opened on:  18 Feb 2026, 18:42:36
+ opened on:  19 Feb 2026, 13:57:16
 
 . 
 . capture which esttab
@@ -478,11 +478,11 @@ Joint test: Share ~-         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (414,589 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000004 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved as
     .dta format
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_reg_r1_spec3.tex)
@@ -494,220 +494,226 @@ Panel variable: hhidpn (strongly balanced)
          Delta: 1 unit
 
 --- Spec 3 FE: returns to core and IRA (raw) ---
-(478,881 missing values generated)
-(478,881 missing values generated)
+(420,018 missing values generated)
+(420,018 missing values generated)
 
 added scalar:
- e(p_joint_share_core) =  1.128e-10
+ e(p_joint_share_core) =  2.309e-17
 
 added scalar:
-  e(p_joint_share_ira) =  .00012437
+  e(p_joint_share_ira) =  1.703e-23
 
 ------------------------------------
 ------------------------------------
-age_bin_=25                  0.00   
+age_bin_=20                  0.00   
                               (.)   
 
-age_bin_=30                 -0.91   
-                           (0.64)   
+age_bin_=25                  0.23***
+                           (0.02)   
 
-age_bin_=35                 -0.95   
-                           (0.69)   
+age_bin_=30                  0.10   
+                           (0.31)   
 
-age_bin_=40                 -0.96   
-                           (0.73)   
+age_bin_=35                  0.41   
+                           (0.27)   
 
-age_bin_=45                 -0.95   
-                           (0.74)   
+age_bin_=40                  0.33   
+                           (0.31)   
 
-age_bin_=50                 -0.99   
-                           (0.74)   
+age_bin_=45                  0.11   
+                           (0.31)   
 
-age_bin_=55                 -1.03   
-                           (0.74)   
+age_bin_=50                  0.09   
+                           (0.31)   
 
-age_bin_=60                 -1.09   
-                           (0.74)   
+age_bin_=55                  0.02   
+                           (0.31)   
 
-age_bin_=65                 -1.10   
-                           (0.74)   
+age_bin_=60                 -0.06   
+                           (0.32)   
 
-age_bin_=70                 -1.09   
-                           (0.74)   
+age_bin_=65                 -0.01   
+                           (0.32)   
 
-age_bin_=75                 -1.03   
-                           (0.74)   
+age_bin_=70                  0.01   
+                           (0.32)   
 
-age_bin_=80                 -0.99   
-                           (0.74)   
+age_bin_=75                  0.06   
+                           (0.32)   
 
-age_bin_=85                 -0.94   
-                           (0.74)   
+age_bin_=80                  0.10   
+                           (0.33)   
 
-age_bin_=90                 -0.84   
-                           (0.74)   
+age_bin_=85                  0.18   
+                           (0.33)   
 
-age_bin_=95                 -1.02   
-                           (0.75)   
+age_bin_=90                  0.25   
+                           (0.34)   
 
-age_bin_=100                -1.00   
-                           (0.86)   
+age_bin_=95                  0.29   
+                           (0.35)   
 
-inlbrf_                      0.03***
+age_bin_=100                 0.17   
+                           (0.39)   
+
+age_bin_=105                 0.14   
+                           (0.39)   
+
+inlbrf_                      0.04***
                            (0.01)   
 
-married_                    -0.03** 
-                           (0.01)   
+married_                    -0.10***
+                           (0.02)   
 
 year=2002                    0.00   
                               (.)   
 
-year=2004                    0.09***
-                           (0.03)   
+year=2004                    0.04   
+                           (0.02)   
 
-year=2006                    0.13***
+year=2006                    0.08***
                            (0.03)   
 
 year=2008                    0.17***
                            (0.03)   
 
-year=2010                   -0.03   
+year=2010                   -0.05*  
                            (0.03)   
 
-year=2012                    0.03   
+year=2012                    0.01   
                            (0.03)   
 
-year=2014                    0.04   
+year=2014                    0.14***
                            (0.04)   
 
-year=2016                   -0.01   
+year=2016                    0.06   
                            (0.04)   
 
-year=2018                   -0.00   
-                           (0.04)   
-
-year=2020                    0.01   
-                           (0.04)   
-
-year=2022                    0.06   
+year=2018                    0.09*  
                            (0.05)   
 
-wealth_coreira_d2           -0.45***
-                           (0.12)   
+year=2020                    0.21***
+                           (0.05)   
 
-wealth_coreira_d3           -0.29***
+year=2022                    0.30***
                            (0.06)   
 
-wealth_coreira_d4           -0.15***
+wealth_coreira_d2           -0.36***
                            (0.05)   
 
-wealth_coreira_d5            0.09** 
+wealth_coreira_d3           -0.30***
+                           (0.03)   
+
+wealth_coreira_d4            0.02   
+                           (0.03)   
+
+wealth_coreira_d5            0.34***
+                           (0.03)   
+
+wealth_coreira_d6            0.68***
+                           (0.03)   
+
+wealth_coreira_d7            0.96***
+                           (0.03)   
+
+wealth_coreira_d8            1.20***
+                           (0.03)   
+
+wealth_coreira_d9            1.45***
                            (0.04)   
 
-wealth_coreira_d6            0.35***
-                           (0.04)   
-
-wealth_coreira_d7            0.58***
-                           (0.04)   
-
-wealth_coreira_d8            0.79***
-                           (0.04)   
-
-wealth_coreira_d9            1.00***
-                           (0.04)   
-
-wealth_coreira_d10           1.24***
+wealth_coreira_d10           1.72***
                            (0.05)   
 
-share_core                   0.82***
+share_core                   0.95***
                            (0.05)   
 
 year=2002 # share_~e         0.00   
                               (.)   
 
-year=2004 # share_~e        -0.07   
+year=2004 # share_~e        -0.04   
+                           (0.05)   
+
+year=2006 # share_~e        -0.13** 
+                           (0.05)   
+
+year=2008 # share_~e        -0.30***
                            (0.06)   
 
-year=2006 # share_~e        -0.23***
-                           (0.05)   
-
-year=2008 # share_~e        -0.34***
-                           (0.05)   
-
-year=2010 # share_~e        -0.26***
-                           (0.05)   
-
-year=2012 # share_~e        -0.32***
-                           (0.05)   
-
-year=2014 # share_~e        -0.29***
-                           (0.05)   
-
-year=2016 # share_~e        -0.25***
+year=2010 # share_~e        -0.34***
                            (0.06)   
 
-year=2018 # share_~e        -0.29***
+year=2012 # share_~e        -0.37***
                            (0.06)   
 
-year=2020 # share_~e        -0.40***
+year=2014 # share_~e        -0.41***
                            (0.06)   
 
-year=2022 # share_~e        -0.40***
+year=2016 # share_~e        -0.41***
                            (0.07)   
 
-share_ira                    0.55***
+year=2018 # share_~e        -0.35***
+                           (0.08)   
+
+year=2020 # share_~e        -0.57***
+                           (0.08)   
+
+year=2022 # share_~e        -0.66***
+                           (0.10)   
+
+share_ira                    0.60***
                            (0.08)   
 
 year=2002 # share_~a         0.00   
                               (.)   
 
-year=2004 # share_~a        -0.13   
-                           (0.08)   
+year=2004 # share_~a        -0.06   
+                           (0.09)   
 
-year=2006 # share_~a         0.08   
+year=2006 # share_~a         0.21** 
                            (0.10)   
 
-year=2008 # share_~a        -0.20** 
+year=2008 # share_~a        -0.22** 
                            (0.09)   
 
-year=2010 # share_~a        -0.13   
+year=2010 # share_~a        -0.10   
                            (0.09)   
 
-year=2012 # share_~a        -0.22***
-                           (0.08)   
+year=2012 # share_~a        -0.16   
+                           (0.10)   
 
-year=2014 # share_~a        -0.10   
+year=2014 # share_~a        -0.27***
                            (0.09)   
 
-year=2016 # share_~a        -0.20** 
-                           (0.09)   
+year=2016 # share_~a        -0.24** 
+                           (0.10)   
 
-year=2018 # share_~a        -0.15   
-                           (0.09)   
+year=2018 # share_~a        -0.34***
+                           (0.10)   
 
-year=2020 # share_~a        -0.15*  
-                           (0.09)   
+year=2020 # share_~a        -0.52***
+                           (0.11)   
 
-year=2022 # share_~a        -0.32***
-                           (0.09)   
+year=2022 # share_~a        -0.88***
+                           (0.11)   
 
-Constant                     0.13   
-                           (0.74)   
+Constant                    -0.82***
+                           (0.32)   
 ------------------------------------
-Observations             63927.00   
-Within R²                    0.21   
-Rho                          0.58   
-Sigma u                      0.66   
-Sigma e                      0.56   
+Observations            122790.00   
+Within R²                    0.14   
+Rho                          0.54   
+Sigma u                      1.16   
+Sigma e                      1.06   
 Joint test: Share ~-         0.00   
 Joint test: Share ~v         0.00   
 ------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(478,881 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000006 saved as
+(420,018 observations deleted)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 saved as
     .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_reg_r4_spec3.tex)
@@ -719,14 +725,14 @@ Panel variable: hhidpn (strongly balanced)
          Delta: 1 unit
 
 --- Spec 3 FE: returns to net wealth (raw) ---
-(441,203 missing values generated)
-(441,203 missing values generated)
+(441,265 missing values generated)
+(441,265 missing values generated)
 
 added scalar:
-e(p_joint_share_asset) =  1.372e-14
+e(p_joint_share_asset) =  2.035e-15
 
 added scalar:
- e(p_joint_share_debt) =  2.274e-06
+ e(p_joint_share_debt) =  1.638e-06
 
 ------------------------------------
 ------------------------------------
@@ -736,67 +742,67 @@ age_bin_=30                  0.00
 age_bin_=35                  0.11   
                            (0.20)   
 
-age_bin_=40                  0.43** 
+age_bin_=40                  0.40** 
                            (0.20)   
 
-age_bin_=45                  0.34   
+age_bin_=45                  0.31   
                            (0.20)   
 
-age_bin_=50                  0.30   
+age_bin_=50                  0.27   
                            (0.21)   
 
-age_bin_=55                  0.26   
+age_bin_=55                  0.23   
                            (0.21)   
 
-age_bin_=60                  0.21   
+age_bin_=60                  0.17   
                            (0.21)   
 
-age_bin_=65                  0.17   
+age_bin_=65                  0.14   
                            (0.21)   
 
-age_bin_=70                  0.14   
+age_bin_=70                  0.10   
                            (0.21)   
 
-age_bin_=75                  0.16   
+age_bin_=75                  0.13   
                            (0.21)   
 
-age_bin_=80                  0.18   
+age_bin_=80                  0.15   
                            (0.21)   
 
-age_bin_=85                  0.25   
+age_bin_=85                  0.21   
                            (0.22)   
 
-age_bin_=90                  0.33   
+age_bin_=90                  0.29   
                            (0.22)   
 
-age_bin_=95                  0.42*  
+age_bin_=95                  0.37*  
                            (0.22)   
 
-age_bin_=100                 0.53** 
+age_bin_=100                 0.49*  
                            (0.25)   
 
-age_bin_=105                 0.33   
+age_bin_=105                 0.29   
                            (0.25)   
 
 inlbrf_                      0.04***
                            (0.01)   
 
-married_                    -0.09***
+married_                    -0.08***
                            (0.01)   
 
 year=2002                    0.00   
                               (.)   
 
-year=2004                    0.05   
+year=2004                    0.04   
                            (0.07)   
 
-year=2006                    0.13*  
+year=2006                    0.11   
                            (0.07)   
 
-year=2008                    0.18** 
+year=2008                    0.15** 
                            (0.07)   
 
-year=2010                    0.21***
+year=2010                    0.20** 
                            (0.08)   
 
 year=2012                    0.15** 
@@ -808,13 +814,13 @@ year=2014                    0.23***
 year=2016                    0.37***
                            (0.08)   
 
-year=2018                    0.08   
+year=2018                    0.09   
                            (0.08)   
 
-year=2020                    0.35***
+year=2020                    0.36***
                            (0.09)   
 
-year=2022                    0.46***
+year=2022                    0.47***
                            (0.10)   
 
 wealth_d2                   -0.17***
@@ -826,14 +832,14 @@ wealth_d3                    0.09***
 wealth_d4                    0.38***
                            (0.02)   
 
-wealth_d5                    0.55***
+wealth_d5                    0.56***
                            (0.02)   
 
-wealth_d6                    0.72***
+wealth_d6                    0.73***
                            (0.02)   
 
-wealth_d7                    0.86***
-                           (0.03)   
+wealth_d7                    0.87***
+                           (0.02)   
 
 wealth_d8                    1.04***
                            (0.03)   
@@ -844,7 +850,7 @@ wealth_d9                    1.20***
 wealth_d10                   1.48***
                            (0.04)   
 
-share_core                   0.33***
+share_core                   0.31***
                            (0.07)   
 
 year=2002 # share_~e         0.00   
@@ -853,34 +859,34 @@ year=2002 # share_~e         0.00
 year=2004 # share_~e        -0.03   
                            (0.08)   
 
-year=2006 # share_~e        -0.11   
+year=2006 # share_~e        -0.09   
                            (0.08)   
 
-year=2008 # share_~e        -0.18** 
+year=2008 # share_~e        -0.14*  
                            (0.08)   
 
-year=2010 # share_~e        -0.30***
+year=2010 # share_~e        -0.29***
                            (0.09)   
 
 year=2012 # share_~e        -0.24***
                            (0.09)   
 
-year=2014 # share_~e        -0.21** 
+year=2014 # share_~e        -0.20** 
                            (0.09)   
 
-year=2016 # share_~e        -0.44***
+year=2016 # share_~e        -0.43***
                            (0.09)   
 
-year=2018 # share_~e        -0.09   
+year=2018 # share_~e        -0.08   
                            (0.09)   
 
-year=2020 # share_~e        -0.41***
+year=2020 # share_~e        -0.40***
                            (0.10)   
 
-year=2022 # share_~e        -0.46***
+year=2022 # share_~e        -0.45***
                            (0.12)   
 
-share_ira                    0.14*  
+share_ira                    0.13*  
                            (0.08)   
 
 year=2002 # share_~a         0.00   
@@ -889,16 +895,16 @@ year=2002 # share_~a         0.00
 year=2004 # share_~a        -0.03   
                            (0.09)   
 
-year=2006 # share_~a         0.00   
+year=2006 # share_~a         0.03   
                            (0.09)   
 
-year=2008 # share_~a        -0.18** 
+year=2008 # share_~a        -0.15*  
                            (0.09)   
 
-year=2010 # share_~a        -0.22** 
+year=2010 # share_~a        -0.21** 
                            (0.10)   
 
-year=2012 # share_~a        -0.03   
+year=2012 # share_~a        -0.02   
                            (0.10)   
 
 year=2014 # share_~a        -0.12   
@@ -910,13 +916,13 @@ year=2016 # share_~a        -0.31***
 year=2018 # share_~a        -0.03   
                            (0.10)   
 
-year=2020 # share_~a        -0.31***
+year=2020 # share_~a        -0.32***
                            (0.10)   
 
-year=2022 # share_~a        -0.38***
+year=2022 # share_~a        -0.39***
                            (0.12)   
 
-share_res                    0.22***
+share_res                    0.21***
                            (0.07)   
 
 year=2002 # share_~s         0.00   
@@ -925,13 +931,13 @@ year=2002 # share_~s         0.00
 year=2004 # share_~s        -0.03   
                            (0.08)   
 
-year=2006 # share_~s        -0.04   
+year=2006 # share_~s        -0.02   
                            (0.08)   
 
-year=2008 # share_~s        -0.23***
+year=2008 # share_~s        -0.20** 
                            (0.08)   
 
-year=2010 # share_~s        -0.30***
+year=2010 # share_~s        -0.29***
                            (0.09)   
 
 year=2012 # share_~s        -0.27***
@@ -973,13 +979,13 @@ year=2010 # share_~g         0.01
 year=2012 # share_~g         0.00   
                            (0.01)   
 
-year=2014 # share_~g        -0.01   
-                           (0.03)   
+year=2014 # share_~g         0.00   
+                           (0.04)   
 
 year=2016 # share_~g         0.00   
                            (0.01)   
 
-year=2018 # share_~g        -0.05*  
+year=2018 # share_~g        -0.04   
                            (0.03)   
 
 year=2020 # share_~g         0.00   
@@ -988,59 +994,59 @@ year=2020 # share_~g         0.00
 year=2022 # share_~g        -0.00   
                            (0.01)   
 
-share_debt_other            -0.06   
-                           (0.04)   
+share_debt_other            -0.14** 
+                           (0.07)   
 
 year=2002 # share_~r         0.00   
                               (.)   
 
-year=2004 # share_~r        -0.00   
-                           (0.06)   
+year=2004 # share_~r         0.07   
+                           (0.08)   
 
-year=2006 # share_~r        -0.07   
-                           (0.06)   
+year=2006 # share_~r        -0.00   
+                           (0.08)   
 
-year=2008 # share_~r         0.05   
-                           (0.04)   
+year=2008 # share_~r         0.12*  
+                           (0.07)   
 
-year=2010 # share_~r         0.04   
-                           (0.04)   
+year=2010 # share_~r         0.12*  
+                           (0.07)   
 
-year=2012 # share_~r         0.07   
-                           (0.04)   
+year=2012 # share_~r         0.14** 
+                           (0.07)   
 
-year=2014 # share_~r         0.04   
-                           (0.04)   
+year=2014 # share_~r         0.12*  
+                           (0.07)   
 
-year=2016 # share_~r         0.05   
-                           (0.04)   
+year=2016 # share_~r         0.12*  
+                           (0.07)   
 
-year=2018 # share_~r         0.05   
-                           (0.06)   
+year=2018 # share_~r         0.14*  
+                           (0.08)   
 
-year=2020 # share_~r         0.04   
-                           (0.04)   
+year=2020 # share_~r         0.12*  
+                           (0.07)   
 
-year=2022 # share_~r         0.06   
-                           (0.04)   
+year=2022 # share_~r         0.14** 
+                           (0.07)   
 
-Constant                    -0.94***
+Constant                    -0.91***
                            (0.22)   
 ------------------------------------
-Observations            101605.00   
+Observations            101543.00   
 Within R²                    0.12   
-Rho                          0.61   
-Sigma u                      0.73   
+Rho                          0.60   
+Sigma u                      0.72   
 Sigma e                      0.59   
 Joint test: Share ~)         0.00   
 Joint test: Share ~h         0.00   
 ------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(441,203 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000008 saved as
+(441,265 observations deleted)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 saved as
     .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_reg_r5_spec3.tex)
@@ -1229,9 +1235,9 @@ Joint test: Share ~-         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (414,589 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000a saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a saved as
     .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_reg_r1_spec3_win.tex)
@@ -1243,69 +1249,75 @@ Panel variable: hhidpn (strongly balanced)
          Delta: 1 unit
 
 --- Spec 3 FE: returns to core and IRA (5 percent winsorized) ---
-(478,881 missing values generated)
-(478,881 missing values generated)
+(420,018 missing values generated)
+(420,018 missing values generated)
 
 added scalar:
- e(p_joint_share_core) =  1.197e-17
+ e(p_joint_share_core) =  1.499e-48
 
 added scalar:
-  e(p_joint_share_ira) =  1.969e-09
+  e(p_joint_share_ira) =  5.037e-57
 
 ------------------------------------
 ------------------------------------
-age_bin_=25                  0.00   
+age_bin_=20                  0.00   
                               (.)   
 
-age_bin_=30                 -0.03   
-                           (0.11)   
+age_bin_=25                  0.25***
+                           (0.02)   
 
-age_bin_=35                 -0.11   
-                           (0.22)   
+age_bin_=30                  0.32   
+                           (0.26)   
 
-age_bin_=40                 -0.23   
-                           (0.30)   
+age_bin_=35                  0.47*  
+                           (0.24)   
 
-age_bin_=45                 -0.20   
-                           (0.31)   
+age_bin_=40                  0.37   
+                           (0.28)   
 
-age_bin_=50                 -0.23   
-                           (0.31)   
+age_bin_=45                  0.25   
+                           (0.28)   
 
-age_bin_=55                 -0.29   
-                           (0.31)   
+age_bin_=50                  0.20   
+                           (0.28)   
 
-age_bin_=60                 -0.32   
-                           (0.31)   
+age_bin_=55                  0.15   
+                           (0.28)   
 
-age_bin_=65                 -0.33   
-                           (0.31)   
+age_bin_=60                  0.10   
+                           (0.28)   
 
-age_bin_=70                 -0.32   
-                           (0.31)   
+age_bin_=65                  0.15   
+                           (0.28)   
 
-age_bin_=75                 -0.29   
-                           (0.31)   
+age_bin_=70                  0.16   
+                           (0.28)   
 
-age_bin_=80                 -0.26   
-                           (0.31)   
+age_bin_=75                  0.20   
+                           (0.29)   
 
-age_bin_=85                 -0.23   
-                           (0.31)   
+age_bin_=80                  0.22   
+                           (0.29)   
 
-age_bin_=90                 -0.16   
-                           (0.31)   
+age_bin_=85                  0.25   
+                           (0.29)   
 
-age_bin_=95                 -0.30   
-                           (0.32)   
+age_bin_=90                  0.29   
+                           (0.29)   
 
-age_bin_=100                -0.37   
-                           (0.38)   
+age_bin_=95                  0.34   
+                           (0.29)   
 
-inlbrf_                      0.03***
+age_bin_=100                 0.37   
+                           (0.33)   
+
+age_bin_=105                 0.44   
+                           (0.34)   
+
+inlbrf_                      0.02** 
                            (0.01)   
 
-married_                    -0.02***
+married_                    -0.08***
                            (0.01)   
 
 year=2002                    0.00   
@@ -1314,149 +1326,149 @@ year=2002                    0.00
 year=2004                    0.06***
                            (0.02)   
 
-year=2006                    0.08***
+year=2006                    0.09***
                            (0.02)   
 
-year=2008                    0.10***
+year=2008                    0.15***
                            (0.02)   
 
-year=2010                   -0.05** 
+year=2010                   -0.03   
                            (0.02)   
 
-year=2012                   -0.00   
+year=2012                    0.06***
                            (0.02)   
 
-year=2014                    0.01   
-                           (0.02)   
-
-year=2016                   -0.01   
+year=2014                    0.19***
                            (0.03)   
 
-year=2018                    0.01   
+year=2016                    0.12***
                            (0.03)   
 
-year=2020                    0.02   
+year=2018                    0.15***
                            (0.03)   
 
-year=2022                    0.06*  
+year=2020                    0.25***
                            (0.03)   
 
-wealth_coreira_d2           -0.27***
-                           (0.07)   
-
-wealth_coreira_d3           -0.20***
+year=2022                    0.33***
                            (0.04)   
 
-wealth_coreira_d4           -0.14***
+wealth_coreira_d2           -0.26***
+                           (0.04)   
+
+wealth_coreira_d3           -0.19***
+                           (0.02)   
+
+wealth_coreira_d4            0.03*  
+                           (0.02)   
+
+wealth_coreira_d5            0.24***
+                           (0.02)   
+
+wealth_coreira_d6            0.46***
+                           (0.02)   
+
+wealth_coreira_d7            0.63***
+                           (0.02)   
+
+wealth_coreira_d8            0.78***
+                           (0.02)   
+
+wealth_coreira_d9            0.95***
+                           (0.02)   
+
+wealth_coreira_d10           1.18***
                            (0.03)   
 
-wealth_coreira_d5            0.01   
-                           (0.03)   
-
-wealth_coreira_d6            0.18***
-                           (0.03)   
-
-wealth_coreira_d7            0.34***
-                           (0.03)   
-
-wealth_coreira_d8            0.49***
-                           (0.03)   
-
-wealth_coreira_d9            0.65***
-                           (0.03)   
-
-wealth_coreira_d10           0.84***
-                           (0.03)   
-
-share_core                   0.61***
+share_core                   0.78***
                            (0.03)   
 
 year=2002 # share_~e         0.00   
                               (.)   
 
-year=2004 # share_~e        -0.05   
+year=2004 # share_~e        -0.08** 
                            (0.03)   
 
-year=2006 # share_~e        -0.08** 
+year=2006 # share_~e        -0.14***
                            (0.03)   
 
-year=2008 # share_~e        -0.21***
+year=2008 # share_~e        -0.26***
                            (0.03)   
 
-year=2010 # share_~e        -0.17***
+year=2010 # share_~e        -0.26***
                            (0.03)   
 
-year=2012 # share_~e        -0.20***
-                           (0.03)   
-
-year=2014 # share_~e        -0.17***
-                           (0.03)   
-
-year=2016 # share_~e        -0.19***
+year=2012 # share_~e        -0.33***
                            (0.04)   
 
-year=2018 # share_~e        -0.20***
+year=2014 # share_~e        -0.39***
                            (0.04)   
 
-year=2020 # share_~e        -0.29***
+year=2016 # share_~e        -0.39***
                            (0.04)   
 
-year=2022 # share_~e        -0.28***
+year=2018 # share_~e        -0.38***
                            (0.04)   
 
-share_ira                    0.37***
+year=2020 # share_~e        -0.55***
+                           (0.04)   
+
+year=2022 # share_~e        -0.59***
+                           (0.05)   
+
+share_ira                    0.53***
                            (0.04)   
 
 year=2002 # share_~a         0.00   
                               (.)   
 
-year=2004 # share_~a        -0.01   
-                           (0.04)   
+year=2004 # share_~a        -0.02   
+                           (0.05)   
 
 year=2006 # share_~a         0.11** 
-                           (0.04)   
-
-year=2008 # share_~a        -0.05   
-                           (0.04)   
-
-year=2010 # share_~a        -0.02   
-                           (0.04)   
-
-year=2012 # share_~a        -0.07*  
-                           (0.04)   
-
-year=2014 # share_~a         0.02   
-                           (0.04)   
-
-year=2016 # share_~a        -0.09** 
-                           (0.04)   
-
-year=2018 # share_~a        -0.06   
                            (0.05)   
 
-year=2020 # share_~a        -0.09*  
+year=2008 # share_~a        -0.14***
                            (0.05)   
 
-year=2022 # share_~a        -0.21***
+year=2010 # share_~a        -0.08   
                            (0.05)   
 
-Constant                    -0.31   
-                           (0.31)   
+year=2012 # share_~a        -0.18***
+                           (0.05)   
+
+year=2014 # share_~a        -0.26***
+                           (0.05)   
+
+year=2016 # share_~a        -0.27***
+                           (0.05)   
+
+year=2018 # share_~a        -0.33***
+                           (0.06)   
+
+year=2020 # share_~a        -0.51***
+                           (0.06)   
+
+year=2022 # share_~a        -0.80***
+                           (0.06)   
+
+Constant                    -0.72** 
+                           (0.28)   
 ------------------------------------
-Observations             63927.00   
-Within R²                    0.26   
-Rho                          0.59   
-Sigma u                      0.43   
-Sigma e                      0.36   
+Observations            122790.00   
+Within R²                    0.17   
+Rho                          0.58   
+Sigma u                      0.77   
+Sigma e                      0.65   
 Joint test: Share ~-         0.00   
 Joint test: Share ~v         0.00   
 ------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(478,881 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000c saved as
+(420,018 observations deleted)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000c saved as
     .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_reg_r4_spec3_win.tex)
@@ -1468,78 +1480,78 @@ Panel variable: hhidpn (strongly balanced)
          Delta: 1 unit
 
 --- Spec 3 FE: returns to net wealth (5 percent winsorized) ---
-(441,203 missing values generated)
-(441,203 missing values generated)
+(441,265 missing values generated)
+(441,265 missing values generated)
 
 added scalar:
-e(p_joint_share_asset) =  7.046e-32
+e(p_joint_share_asset) =  6.191e-34
 
 added scalar:
- e(p_joint_share_debt) =  4.267e-09
+ e(p_joint_share_debt) =  1.290e-09
 
 ------------------------------------
 ------------------------------------
 age_bin_=30                  0.00   
                               (.)   
 
-age_bin_=35                  0.11   
+age_bin_=35                  0.09   
                            (0.15)   
 
 age_bin_=40                  0.11   
                            (0.12)   
 
-age_bin_=45                  0.07   
+age_bin_=45                  0.06   
                            (0.12)   
 
-age_bin_=50                  0.04   
+age_bin_=50                  0.02   
+                           (0.12)   
+
+age_bin_=55                 -0.02   
+                           (0.12)   
+
+age_bin_=60                 -0.05   
+                           (0.12)   
+
+age_bin_=65                 -0.06   
                            (0.13)   
 
-age_bin_=55                 -0.00   
+age_bin_=70                 -0.08   
                            (0.13)   
 
-age_bin_=60                 -0.03   
+age_bin_=75                 -0.07   
                            (0.13)   
 
-age_bin_=65                 -0.05   
+age_bin_=80                 -0.06   
                            (0.13)   
 
-age_bin_=70                 -0.07   
+age_bin_=85                 -0.03   
                            (0.13)   
 
-age_bin_=75                 -0.06   
+age_bin_=90                  0.01   
                            (0.13)   
 
-age_bin_=80                 -0.04   
+age_bin_=95                  0.06   
                            (0.13)   
 
-age_bin_=85                 -0.01   
-                           (0.13)   
-
-age_bin_=90                  0.03   
-                           (0.13)   
-
-age_bin_=95                  0.09   
-                           (0.13)   
-
-age_bin_=100                 0.18   
+age_bin_=100                 0.16   
                            (0.15)   
 
-age_bin_=105                -0.08   
+age_bin_=105                -0.10   
                            (0.15)   
 
 inlbrf_                      0.03***
                            (0.00)   
 
-married_                    -0.06***
+married_                    -0.05***
                            (0.01)   
 
 year=2002                    0.00   
                               (.)   
 
-year=2004                    0.02   
+year=2004                    0.03   
                            (0.04)   
 
-year=2006                    0.12***
+year=2006                    0.11***
                            (0.04)   
 
 year=2008                    0.15***
@@ -1548,28 +1560,28 @@ year=2008                    0.15***
 year=2010                    0.13***
                            (0.04)   
 
-year=2012                    0.16***
+year=2012                    0.17***
                            (0.04)   
 
-year=2014                    0.25***
+year=2014                    0.26***
                            (0.04)   
 
-year=2016                    0.33***
+year=2016                    0.34***
                            (0.04)   
 
-year=2018                    0.18***
+year=2018                    0.19***
                            (0.05)   
 
 year=2020                    0.33***
                            (0.05)   
 
-year=2022                    0.41***
+year=2022                    0.42***
                            (0.05)   
 
 wealth_d2                   -0.11***
                            (0.02)   
 
-wealth_d3                    0.05***
+wealth_d3                    0.06***
                            (0.01)   
 
 wealth_d4                    0.24***
@@ -1581,19 +1593,19 @@ wealth_d5                    0.36***
 wealth_d6                    0.48***
                            (0.01)   
 
-wealth_d7                    0.58***
+wealth_d7                    0.59***
                            (0.01)   
 
 wealth_d8                    0.72***
                            (0.02)   
 
-wealth_d9                    0.85***
+wealth_d9                    0.86***
                            (0.02)   
 
 wealth_d10                   1.06***
                            (0.02)   
 
-share_core                   0.25***
+share_core                   0.24***
                            (0.04)   
 
 year=2002 # share_~e         0.00   
@@ -1602,34 +1614,34 @@ year=2002 # share_~e         0.00
 year=2004 # share_~e         0.01   
                            (0.04)   
 
-year=2006 # share_~e        -0.08*  
+year=2006 # share_~e        -0.07   
                            (0.04)   
 
-year=2008 # share_~e        -0.15***
+year=2008 # share_~e        -0.14***
                            (0.04)   
 
-year=2010 # share_~e        -0.20***
+year=2010 # share_~e        -0.19***
                            (0.05)   
 
-year=2012 # share_~e        -0.20***
+year=2012 # share_~e        -0.21***
                            (0.05)   
 
 year=2014 # share_~e        -0.24***
                            (0.05)   
 
-year=2016 # share_~e        -0.36***
+year=2016 # share_~e        -0.35***
                            (0.05)   
 
-year=2018 # share_~e        -0.18***
+year=2018 # share_~e        -0.19***
                            (0.05)   
 
 year=2020 # share_~e        -0.37***
                            (0.05)   
 
-year=2022 # share_~e        -0.37***
+year=2022 # share_~e        -0.36***
                            (0.06)   
 
-share_ira                    0.07*  
+share_ira                    0.08*  
                            (0.04)   
 
 year=2002 # share_~a         0.00   
@@ -1638,19 +1650,19 @@ year=2002 # share_~a         0.00
 year=2004 # share_~a         0.03   
                            (0.05)   
 
-year=2006 # share_~a         0.05   
+year=2006 # share_~a         0.06   
                            (0.05)   
 
 year=2008 # share_~a        -0.12** 
                            (0.05)   
 
-year=2010 # share_~a        -0.12** 
+year=2010 # share_~a        -0.13***
                            (0.05)   
 
-year=2012 # share_~a        -0.08*  
+year=2012 # share_~a        -0.09*  
                            (0.05)   
 
-year=2014 # share_~a        -0.13***
+year=2014 # share_~a        -0.14***
                            (0.05)   
 
 year=2016 # share_~a        -0.27***
@@ -1659,13 +1671,13 @@ year=2016 # share_~a        -0.27***
 year=2018 # share_~a        -0.10*  
                            (0.05)   
 
-year=2020 # share_~a        -0.29***
+year=2020 # share_~a        -0.30***
                            (0.06)   
 
 year=2022 # share_~a        -0.36***
                            (0.06)   
 
-share_res                    0.13***
+share_res                    0.14***
                            (0.04)   
 
 year=2002 # share_~s         0.00   
@@ -1674,16 +1686,16 @@ year=2002 # share_~s         0.00
 year=2004 # share_~s        -0.02   
                            (0.04)   
 
-year=2006 # share_~s        -0.05   
+year=2006 # share_~s        -0.04   
                            (0.04)   
 
-year=2008 # share_~s        -0.21***
+year=2008 # share_~s        -0.20***
                            (0.04)   
 
 year=2010 # share_~s        -0.24***
                            (0.05)   
 
-year=2012 # share_~s        -0.26***
+year=2012 # share_~s        -0.27***
                            (0.05)   
 
 year=2014 # share_~s        -0.29***
@@ -1695,13 +1707,13 @@ year=2016 # share_~s        -0.38***
 year=2018 # share_~s        -0.26***
                            (0.05)   
 
-year=2020 # share_~s        -0.42***
+year=2020 # share_~s        -0.43***
                            (0.05)   
 
 year=2022 # share_~s        -0.44***
                            (0.06)   
 
-share_debt_long             -0.01** 
+share_debt_long             -0.01*  
                            (0.01)   
 
 year=2002 # share_~g         0.00   
@@ -1722,7 +1734,7 @@ year=2010 # share_~g         0.01
 year=2012 # share_~g         0.01   
                            (0.01)   
 
-year=2014 # share_~g        -0.02   
+year=2014 # share_~g        -0.01   
                            (0.02)   
 
 year=2016 # share_~g         0.01   
@@ -1737,59 +1749,59 @@ year=2020 # share_~g         0.00
 year=2022 # share_~g         0.00   
                            (0.01)   
 
-share_debt_other            -0.03   
-                           (0.02)   
+share_debt_other            -0.08** 
+                           (0.04)   
 
 year=2002 # share_~r         0.00   
                               (.)   
 
-year=2004 # share_~r        -0.01   
-                           (0.03)   
-
-year=2006 # share_~r        -0.05   
+year=2004 # share_~r         0.03   
                            (0.04)   
 
-year=2008 # share_~r         0.03   
-                           (0.02)   
+year=2006 # share_~r        -0.01   
+                           (0.05)   
 
-year=2010 # share_~r         0.02   
-                           (0.02)   
-
-year=2012 # share_~r         0.04*  
-                           (0.02)   
-
-year=2014 # share_~r         0.02   
-                           (0.02)   
-
-year=2016 # share_~r         0.02   
-                           (0.02)   
-
-year=2018 # share_~r         0.04   
+year=2008 # share_~r         0.07*  
                            (0.04)   
 
-year=2020 # share_~r         0.02   
-                           (0.02)   
+year=2010 # share_~r         0.08*  
+                           (0.04)   
 
-year=2022 # share_~r         0.03   
-                           (0.03)   
+year=2012 # share_~r         0.09** 
+                           (0.04)   
 
-Constant                    -0.46***
+year=2014 # share_~r         0.07*  
+                           (0.04)   
+
+year=2016 # share_~r         0.07*  
+                           (0.04)   
+
+year=2018 # share_~r         0.10** 
+                           (0.05)   
+
+year=2020 # share_~r         0.07*  
+                           (0.04)   
+
+year=2022 # share_~r         0.08** 
+                           (0.04)   
+
+Constant                    -0.47***
                            (0.13)   
 ------------------------------------
-Observations            101605.00   
+Observations            101543.00   
 Within R²                    0.19   
-Rho                          0.67   
-Sigma u                      0.47   
+Rho                          0.66   
+Sigma u                      0.46   
 Sigma e                      0.33   
 Joint test: Share ~)         0.00   
 Joint test: Share ~h         0.00   
 ------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(441,203 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000e saved as
+(441,265 observations deleted)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000e saved as
     .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_reg_r5_spec3_win.tex)
@@ -1815,7 +1827,7 @@ Duplicates in terms of hhidpn
 . tempfile tinv
 
 . save `tinv'
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000g saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g saved as
     .dta format
 
 . restore
@@ -1827,15 +1839,15 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000g saved as
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                        17,167
+    Not matched                        17,048
         from master                         0  
-        from using                     17,167  
+        from using                     17,048  
 
-    Matched                           125,700  
+    Matched                           147,654  
     -----------------------------------------
 
 . save `fe_append', replace
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
     .dta format
 
 . 
@@ -1867,12 +1879,12 @@ file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
     > t_r1.png saved as PNG format
 Wrote: fe_dist_r1.png
-(bin=1452, start=-1.6736225, width=.01)
+(bin=3148, start=-2.3359342, width=.01)
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
     > t_r4.png saved as PNG format
 Wrote: fe_dist_r4.png
-(bin=2015, start=-1.4109026, width=.01)
+(bin=2014, start=-1.3954664, width=.01)
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
     > t_r5.png saved as PNG format
@@ -1882,12 +1894,12 @@ file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
     > t_r1_win.png saved as PNG format
 Wrote: fe_dist_r1_win.png
-(bin=336, start=-1.2969266, width=.01)
+(bin=505, start=-1.8611324, width=.01)
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
     > t_r4_win.png saved as PNG format
 Wrote: fe_dist_r4_win.png
-(bin=657, start=-1.1765044, width=.01)
+(bin=704, start=-1.1677145, width=.01)
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
     > t_r5_win.png saved as PNG format
@@ -1957,7 +1969,7 @@ Wrote: fe_dist_r5_win.png
 .         di as txt "Wrote: panel_fe_on_tinv_`ret'_`win'.tex"
  23.     }
  24. }
-(116,164 observations deleted)
+(137,999 observations deleted)
 (109 observations deleted)
 
 Linear regression                               Number of obs     =     26,576
@@ -2081,81 +2093,81 @@ Standard errors in parentheses
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_fe_on_tinv_r1_raw.tex)
 Wrote: panel_fe_on_tinv_r1_raw.tex
-(128,441 observations deleted)
-(49 observations deleted)
+(139,283 observations deleted)
+(102 observations deleted)
 
-Linear regression                               Number of obs     =     14,368
-                                                F(6, 14361)       =     123.62
+Linear regression                               Number of obs     =     25,300
+                                                F(6, 25293)       =     366.15
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.0547
-                                                Root MSE          =     .64336
+                                                R-squared         =     0.0796
+                                                Root MSE          =     1.1098
 
 ------------------------------------------------------------------------------
              |               Robust
           fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-    educ_yrs |  -.0415174   .0022198   -18.70   0.000    -.0458684   -.0371663
-    2.gender |   .0094345   .0108218     0.87   0.383    -.0117777    .0306466
+    educ_yrs |  -.0713837   .0026475   -26.96   0.000    -.0765729   -.0661945
+    2.gender |  -.0063443   .0141761    -0.45   0.654    -.0341304    .0214417
              |
     race_eth |
-          2  |    .352303   .0208907    16.86   0.000     .3113545    .3932515
-          3  |   .2124012    .024162     8.79   0.000     .1650407    .2597618
-          4  |   .0554641   .0297023     1.87   0.062    -.0027563    .1136845
+          2  |   .6391246   .0201153    31.77   0.000     .5996975    .6785517
+          3  |   .3944954   .0313578    12.58   0.000     .3330322    .4559585
+          4  |   .2329766   .0388172     6.00   0.000     .1568926    .3090607
              |
-     born_us |  -.0055434   .0217555    -0.25   0.799    -.0481869    .0371001
-       _cons |     .65082   .0384902    16.91   0.000     .5753743    .7262656
+     born_us |   .0703262   .0340697     2.06   0.039     .0035476    .1371048
+       _cons |   .9211079   .0457644    20.13   0.000     .8314072    1.010809
 ------------------------------------------------------------------------------
 
-Linear regression                               Number of obs     =        403
-                                                F(7, 395)         =      10.32
+Linear regression                               Number of obs     =        657
+                                                F(7, 649)         =      15.41
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1394
-                                                Root MSE          =     .51839
+                                                R-squared         =     0.1175
+                                                Root MSE          =     1.0291
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0686588   .0105145    -6.53   0.000    -.0893302   -.0479874
-      2.gender |   .0248671   .0514224     0.48   0.629    -.0762287     .125963
+      educ_yrs |  -.0514442   .0157303    -3.27   0.001    -.0823327   -.0205557
+      2.gender |   .1835465   .0813896     2.26   0.024     .0237278    .3433652
                |
       race_eth |
-            2  |   .2069216   .0760868     2.72   0.007     .0573359    .3565072
-            3  |     .45148   .1314393     3.43   0.001     .1930721     .709888
-            4  |   .0319625   .0941289     0.34   0.734    -.1530937    .2170188
+            2  |   .5336678   .1100803     4.85   0.000     .3175113    .7498243
+            3  |   .8936556   .1626915     5.49   0.000     .5741904    1.213121
+            4  |   .6415116   .2270094     2.83   0.005       .19575    1.087273
                |
-       born_us |   .0407374   .0878295     0.46   0.643    -.1319344    .2134092
-trust_oth~2020 |  -.0070421   .0131696    -0.53   0.593    -.0329333    .0188491
-         _cons |   1.057072   .1877284     5.63   0.000     .6880003    1.426144
+       born_us |   .3566029   .1322402     2.70   0.007     .0969326    .6162731
+trust_oth~2020 |   .0080333   .0191266     0.42   0.675    -.0295242    .0455909
+         _cons |   .2308176   .2766293     0.83   0.404    -.3123789     .774014
 --------------------------------------------------------------------------------
 
-Linear regression                               Number of obs     =        403
-                                                F(8, 394)         =       9.12
+Linear regression                               Number of obs     =        657
+                                                F(8, 648)         =      13.59
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1399
-                                                Root MSE          =     .51891
+                                                R-squared         =     0.1185
+                                                Root MSE          =     1.0293
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0676904   .0105518    -6.42   0.000    -.0884352   -.0469455
-      2.gender |   .0231268   .0523028     0.44   0.659    -.0797006    .1259542
+      educ_yrs |   -.049634   .0161949    -3.06   0.002    -.0814348   -.0178332
+      2.gender |   .1779686   .0804592     2.21   0.027     .0199763    .3359609
                |
       race_eth |
-            2  |   .2055923   .0754421     2.73   0.007     .0572729    .3539117
-            3  |   .4533336   .1316286     3.44   0.001     .1945513    .7121159
-            4  |   .0322211   .0939506     0.34   0.732    -.1524861    .2169282
+            2  |   .5249773   .1118135     4.70   0.000     .3054169    .7445378
+            3  |   .8926292   .1623373     5.50   0.000     .5738586      1.2114
+            4  |   .6419002   .2274108     2.82   0.005     .1953491    1.088451
                |
-       born_us |   .0420626   .0883321     0.48   0.634    -.1315986    .2157237
-trust_oth~2020 |  -.0257209   .0415769    -0.62   0.537    -.1074612    .0560195
+       born_us |   .3554061   .1326297     2.68   0.008     .0949701     .615842
+trust_oth~2020 |  -.0345314   .0631185    -0.55   0.585     -.158473    .0894102
                |
             c. |
 trust_oth~2020#|
             c. |
-trust_oth~2020 |   .0016169   .0035422     0.46   0.648    -.0053471    .0085809
+trust_oth~2020 |   .0039545   .0052123     0.76   0.448    -.0062805    .0141895
                |
-         _cons |   1.090077   .1996628     5.46   0.000     .6975394    1.482615
+         _cons |   .3051672   .2908731     1.05   0.295    -.2660004    .8763347
 --------------------------------------------------------------------------------
 
 Second-stage: FE from returns to core and IRA (raw) — full results
@@ -2163,123 +2175,123 @@ Second-stage: FE from returns to core and IRA (raw) — full results
                               (1)             (2)             (3)   
                               (1)             (2)             (3)   
 --------------------------------------------------------------------
-educ_yrs                    -0.04***        -0.07***        -0.07***
-                           (0.00)          (0.01)          (0.01)   
+educ_yrs                    -0.07***        -0.05***        -0.05***
+                           (0.00)          (0.02)          (0.02)   
 
 gender=1                     0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-gender=2                     0.01            0.02            0.02   
-                           (0.01)          (0.05)          (0.05)   
+gender=2                    -0.01            0.18**          0.18** 
+                           (0.01)          (0.08)          (0.08)   
 
 race_eth=1                   0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-race_eth=2                   0.35***         0.21***         0.21***
-                           (0.02)          (0.08)          (0.08)   
+race_eth=2                   0.64***         0.53***         0.52***
+                           (0.02)          (0.11)          (0.11)   
 
-race_eth=3                   0.21***         0.45***         0.45***
-                           (0.02)          (0.13)          (0.13)   
+race_eth=3                   0.39***         0.89***         0.89***
+                           (0.03)          (0.16)          (0.16)   
 
-race_eth=4                   0.06*           0.03            0.03   
-                           (0.03)          (0.09)          (0.09)   
+race_eth=4                   0.23***         0.64***         0.64***
+                           (0.04)          (0.23)          (0.23)   
 
-born_us                     -0.01            0.04            0.04   
-                           (0.02)          (0.09)          (0.09)   
+born_us                      0.07**          0.36***         0.36***
+                           (0.03)          (0.13)          (0.13)   
 
-trust_others_2020                           -0.01           -0.03   
-                                           (0.01)          (0.04)   
+trust_others_2020                            0.01           -0.03   
+                                           (0.02)          (0.06)   
 
 trust_others_2020 ~s                                         0.00   
-                                                           (0.00)   
+                                                           (0.01)   
 
-Constant                     0.65***         1.06***         1.09***
-                           (0.04)          (0.19)          (0.20)   
+Constant                     0.92***         0.23            0.31   
+                           (0.05)          (0.28)          (0.29)   
 --------------------------------------------------------------------
-Observations             14368.00          403.00          403.00   
-Adj. R-squared               0.05            0.12            0.12   
-Joint test: Trust+~e                                         0.76   
+Observations             25300.00          657.00          657.00   
+Adj. R-squared               0.08            0.11            0.11   
+Joint test: Trust+~e                                         0.62   
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_fe_on_tinv_r4_raw.tex)
 Wrote: panel_fe_on_tinv_r4_raw.tex
-(121,146 observations deleted)
-(77 observations deleted)
+(142,997 observations deleted)
+(76 observations deleted)
 
-Linear regression                               Number of obs     =     21,628
-                                                F(6, 21621)       =     536.98
+Linear regression                               Number of obs     =     21,613
+                                                F(6, 21606)       =     540.61
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1159
-                                                Root MSE          =     .68973
+                                                R-squared         =     0.1161
+                                                Root MSE          =     .67985
 
 ------------------------------------------------------------------------------
              |               Robust
           fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-    educ_yrs |  -.0473742   .0016641   -28.47   0.000    -.0506361   -.0441124
-    2.gender |   .0129893   .0095453     1.36   0.174    -.0057202    .0316988
+    educ_yrs |  -.0473217   .0016392   -28.87   0.000    -.0505347   -.0441087
+    2.gender |   .0150827   .0094105     1.60   0.109    -.0033626     .033528
              |
     race_eth |
-          2  |   .4594153   .0145645    31.54   0.000     .4308678    .4879629
-          3  |   .3281267   .0253702    12.93   0.000     .2783993    .3778542
-          4  |   .2181013   .0312806     6.97   0.000      .156789    .2794135
+          2  |   .4496327     .01445    31.12   0.000     .4213096    .4779559
+          3  |   .3160538   .0253246    12.48   0.000     .2664157     .365692
+          4  |   .2042657   .0306844     6.66   0.000      .144122    .2644095
              |
-     born_us |   .0793813   .0213376     3.72   0.000     .0375579    .1212046
-       _cons |   .5384362   .0312956    17.20   0.000     .4770946    .5997778
+     born_us |   .0719958   .0212837     3.38   0.001     .0302782    .1137133
+       _cons |   .5423776   .0311797    17.40   0.000     .4812631    .6034921
 ------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        560
-                                                F(7, 552)         =      17.50
+                                                F(7, 552)         =      18.24
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1401
-                                                Root MSE          =     .65855
+                                                R-squared         =     0.1480
+                                                Root MSE          =     .62536
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0494731    .008401    -5.89   0.000     -.065975   -.0329711
-      2.gender |   .0563442   .0568279     0.99   0.322    -.0552812    .1679697
+      educ_yrs |  -.0478349   .0080521    -5.94   0.000    -.0636514   -.0320185
+      2.gender |   .0582244   .0538789     1.08   0.280    -.0476083    .1640571
                |
       race_eth |
-            2  |   .3961312   .0728932     5.43   0.000     .2529492    .5393132
-            3  |   .3678675   .0812551     4.53   0.000     .2082605    .5274745
-            4  |   .2718448   .1965496     1.38   0.167     -.114232    .6579215
+            2  |   .4020021   .0712689     5.64   0.000     .2620107    .5419934
+            3  |   .3512105   .0773886     4.54   0.000     .1991983    .5032227
+            4  |   .2772466   .1873299     1.48   0.139      -.09072    .6452131
                |
-       born_us |   .2443248   .0701609     3.48   0.001     .1065098    .3821397
-trust_oth~2020 |   .0056441   .0099927     0.56   0.572    -.0139843    .0252726
-         _cons |   .4314977   .1434916     3.01   0.003     .1496413    .7133541
+       born_us |   .2103789   .0684972     3.07   0.002     .0758319    .3449259
+trust_oth~2020 |   .0066962    .009535     0.70   0.483    -.0120331    .0254255
+         _cons |   .4095058   .1359532     3.01   0.003     .1424569    .6765547
 --------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        560
-                                                F(8, 551)         =      15.68
+                                                F(8, 551)         =      16.27
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1414
-                                                Root MSE          =     .65865
+                                                R-squared         =     0.1496
+                                                Root MSE          =     .62532
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0516207   .0084902    -6.08   0.000    -.0682977   -.0349436
-      2.gender |   .0595992   .0570258     1.05   0.296    -.0524154    .1716138
+      educ_yrs |  -.0501572   .0081955    -6.12   0.000    -.0662554    -.034059
+      2.gender |   .0617441   .0540964     1.14   0.254    -.0445163    .1680045
                |
       race_eth |
-            2  |   .4019531   .0732341     5.49   0.000     .2581009    .5458052
-            3  |   .3670856   .0812947     4.52   0.000     .2074001     .526771
-            4  |   .2775074   .1963689     1.41   0.158    -.1082158    .6632305
+            2  |   .4082974   .0716706     5.70   0.000     .2675164    .5490785
+            3  |    .350365    .077342     4.53   0.000     .1984437    .5022863
+            4  |   .2833698   .1870999     1.51   0.130    -.0841465     .650886
                |
-       born_us |   .2455417   .0703113     3.49   0.001     .1074308    .3836526
-trust_oth~2020 |   .0367823   .0286671     1.28   0.200    -.0195279    .0930926
+       born_us |   .2116948   .0685904     3.09   0.002     .0769642    .3464254
+trust_oth~2020 |   .0403671   .0274542     1.47   0.142    -.0135607    .0942948
                |
             c. |
 trust_oth~2020#|
             c. |
-trust_oth~2020 |  -.0028365   .0026858    -1.06   0.291    -.0081122    .0024392
+trust_oth~2020 |  -.0030672   .0025528    -1.20   0.230    -.0080817    .0019473
                |
-         _cons |   .3870976   .1489654     2.60   0.010     .0944881    .6797071
+         _cons |   .3614943   .1403196     2.58   0.010     .0858675    .6371211
 --------------------------------------------------------------------------------
 
 Second-stage: FE from returns to net wealth (raw) — full results
@@ -2293,22 +2305,22 @@ educ_yrs                    -0.05***        -0.05***        -0.05***
 gender=1                     0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-gender=2                     0.01            0.06            0.06   
-                           (0.01)          (0.06)          (0.06)   
+gender=2                     0.02            0.06            0.06   
+                           (0.01)          (0.05)          (0.05)   
 
 race_eth=1                   0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-race_eth=2                   0.46***         0.40***         0.40***
+race_eth=2                   0.45***         0.40***         0.41***
                            (0.01)          (0.07)          (0.07)   
 
-race_eth=3                   0.33***         0.37***         0.37***
+race_eth=3                   0.32***         0.35***         0.35***
                            (0.03)          (0.08)          (0.08)   
 
-race_eth=4                   0.22***         0.27            0.28   
-                           (0.03)          (0.20)          (0.20)   
+race_eth=4                   0.20***         0.28            0.28   
+                           (0.03)          (0.19)          (0.19)   
 
-born_us                      0.08***         0.24***         0.25***
+born_us                      0.07***         0.21***         0.21***
                            (0.02)          (0.07)          (0.07)   
 
 trust_others_2020                            0.01            0.04   
@@ -2317,19 +2329,19 @@ trust_others_2020                            0.01            0.04
 trust_others_2020 ~s                                        -0.00   
                                                            (0.00)   
 
-Constant                     0.54***         0.43***         0.39***
-                           (0.03)          (0.14)          (0.15)   
+Constant                     0.54***         0.41***         0.36** 
+                           (0.03)          (0.14)          (0.14)   
 --------------------------------------------------------------------
-Observations             21628.00          560.00          560.00   
-Adj. R-squared               0.12            0.13            0.13   
-Joint test: Trust+~e                                         0.40   
+Observations             21613.00          560.00          560.00   
+Adj. R-squared               0.12            0.14            0.14   
+Joint test: Trust+~e                                         0.29   
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_fe_on_tinv_r5_raw.tex)
 Wrote: panel_fe_on_tinv_r5_raw.tex
-(116,164 observations deleted)
+(137,999 observations deleted)
 (109 observations deleted)
 
 Linear regression                               Number of obs     =     26,576
@@ -2453,81 +2465,81 @@ Standard errors in parentheses
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_fe_on_tinv_r1_win.tex)
 Wrote: panel_fe_on_tinv_r1_win.tex
-(128,441 observations deleted)
-(49 observations deleted)
+(139,283 observations deleted)
+(102 observations deleted)
 
-Linear regression                               Number of obs     =     14,368
-                                                F(6, 14361)       =     136.31
+Linear regression                               Number of obs     =     25,300
+                                                F(6, 25293)       =     410.30
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.0590
-                                                Root MSE          =      .4129
+                                                R-squared         =     0.0932
+                                                Root MSE          =     .73298
 
 ------------------------------------------------------------------------------
              |               Robust
           fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-    educ_yrs |  -.0293199    .001468   -19.97   0.000    -.0321973   -.0264424
-    2.gender |  -.0020091   .0069548    -0.29   0.773    -.0156415    .0116232
+    educ_yrs |  -.0545902   .0017304   -31.55   0.000    -.0579819   -.0511984
+    2.gender |  -.0107325   .0093464    -1.15   0.251    -.0290519    .0075869
              |
     race_eth |
-          2  |   .2189016   .0124269    17.62   0.000     .1945434    .2432599
-          3  |   .1473636   .0163636     9.01   0.000     .1152888    .1794383
-          4  |   .0341518   .0188447     1.81   0.070    -.0027863    .0710899
+          2  |   .4398645   .0137333    32.03   0.000     .4129464    .4667826
+          3  |   .2731193   .0191809    14.24   0.000     .2355236    .3107151
+          4  |   .1622348   .0248536     6.53   0.000     .1135203    .2109493
              |
-     born_us |   .0028833    .014197     0.20   0.839    -.0249446    .0307112
-       _cons |   .4514744   .0254309    17.75   0.000     .4016265    .5013222
+     born_us |   .0733747   .0175107     4.19   0.000     .0390528    .1076966
+       _cons |   .6842723   .0298518    22.92   0.000     .6257611    .7427835
 ------------------------------------------------------------------------------
 
-Linear regression                               Number of obs     =        403
-                                                F(7, 395)         =      10.35
+Linear regression                               Number of obs     =        657
+                                                F(7, 649)         =      13.77
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1393
-                                                Root MSE          =      .3504
+                                                R-squared         =     0.1185
+                                                Root MSE          =     .71021
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0486476   .0071668    -6.79   0.000    -.0627374   -.0345578
-      2.gender |   .0076889   .0354791     0.22   0.829    -.0620627    .0774405
+      educ_yrs |  -.0454706   .0111077    -4.09   0.000    -.0672819   -.0236593
+      2.gender |    .093396   .0563789     1.66   0.098     -.017311    .2041029
                |
       race_eth |
-            2  |   .1376492   .0502283     2.74   0.006      .038901    .2363974
-            3  |   .2692961   .0884877     3.04   0.002     .0953303    .4432619
-            4  |   .0323783   .0706781     0.46   0.647    -.1065741    .1713307
+            2  |   .3775507   .0740024     5.10   0.000     .2322378    .5228637
+            3  |   .5618472   .1099506     5.11   0.000     .3459453    .7777491
+            4  |    .397584    .140122     2.84   0.005     .1224368    .6727313
                |
-       born_us |   .0281236   .0609695     0.46   0.645    -.0917416    .1479889
-trust_oth~2020 |  -.0066045   .0091553    -0.72   0.471    -.0246037    .0113948
-         _cons |   .7550222   .1290375     5.85   0.000     .5013361    1.008708
+       born_us |   .2161304   .0942673     2.29   0.022     .0310247    .4012361
+trust_oth~2020 |   .0154488   .0125923     1.23   0.220    -.0092777    .0401753
+         _cons |   .2718908   .1900463     1.43   0.153    -.1012891    .6450708
 --------------------------------------------------------------------------------
 
-Linear regression                               Number of obs     =        403
-                                                F(8, 394)         =       9.19
+Linear regression                               Number of obs     =        657
+                                                F(8, 648)         =      12.03
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1395
-                                                Root MSE          =      .3508
+                                                R-squared         =     0.1185
+                                                Root MSE          =     .71076
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0481971   .0071529    -6.74   0.000    -.0622597   -.0341345
-      2.gender |   .0068794   .0362855     0.19   0.850     -.064458    .0782168
+      educ_yrs |  -.0454221   .0113995    -3.98   0.000    -.0678066   -.0230377
+      2.gender |   .0932466   .0563927     1.65   0.099    -.0174879    .2039812
                |
       race_eth |
-            2  |   .1370309   .0498709     2.75   0.006     .0389845    .2350773
-            3  |   .2701583   .0886914     3.05   0.002     .0957908    .4445258
-            4  |   .0324985   .0706334     0.46   0.646    -.1063668    .1713639
+            2  |   .3773181   .0744189     5.07   0.000     .2311868    .5234494
+            3  |   .5618197   .1099497     5.11   0.000      .345919    .7777204
+            4  |   .3975944   .1402229     2.84   0.005     .1222483    .6729406
                |
-       born_us |     .02874   .0613461     0.47   0.640    -.0918666    .1493466
-trust_oth~2020 |  -.0152931   .0309504    -0.49   0.621    -.0761417    .0455555
+       born_us |   .2160984   .0942419     2.29   0.022     .0310421    .4011547
+trust_oth~2020 |   .0143094   .0397578     0.36   0.719    -.0637603     .092379
                |
             c. |
 trust_oth~2020#|
             c. |
-trust_oth~2020 |   .0007521   .0026355     0.29   0.776    -.0044293    .0059334
+trust_oth~2020 |   .0001059    .003467     0.03   0.976     -.006702    .0069137
                |
-         _cons |   .7703748   .1419467     5.43   0.000     .4913072    1.049442
+         _cons |   .2738811   .1926191     1.42   0.156    -.1043519     .652114
 --------------------------------------------------------------------------------
 
 Second-stage: FE from returns to core and IRA (5 percent winsorized) — full resul
@@ -2536,123 +2548,123 @@ Second-stage: FE from returns to core and IRA (5 percent winsorized) — full re
                               (1)             (2)             (3)   
                               (1)             (2)             (3)   
 --------------------------------------------------------------------
-educ_yrs                    -0.03***        -0.05***        -0.05***
+educ_yrs                    -0.05***        -0.05***        -0.05***
                            (0.00)          (0.01)          (0.01)   
 
 gender=1                     0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-gender=2                    -0.00            0.01            0.01   
-                           (0.01)          (0.04)          (0.04)   
+gender=2                    -0.01            0.09*           0.09*  
+                           (0.01)          (0.06)          (0.06)   
 
 race_eth=1                   0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-race_eth=2                   0.22***         0.14***         0.14***
-                           (0.01)          (0.05)          (0.05)   
+race_eth=2                   0.44***         0.38***         0.38***
+                           (0.01)          (0.07)          (0.07)   
 
-race_eth=3                   0.15***         0.27***         0.27***
+race_eth=3                   0.27***         0.56***         0.56***
+                           (0.02)          (0.11)          (0.11)   
+
+race_eth=4                   0.16***         0.40***         0.40***
+                           (0.02)          (0.14)          (0.14)   
+
+born_us                      0.07***         0.22**          0.22** 
                            (0.02)          (0.09)          (0.09)   
 
-race_eth=4                   0.03*           0.03            0.03   
-                           (0.02)          (0.07)          (0.07)   
-
-born_us                      0.00            0.03            0.03   
-                           (0.01)          (0.06)          (0.06)   
-
-trust_others_2020                           -0.01           -0.02   
-                                           (0.01)          (0.03)   
+trust_others_2020                            0.02            0.01   
+                                           (0.01)          (0.04)   
 
 trust_others_2020 ~s                                         0.00   
                                                            (0.00)   
 
-Constant                     0.45***         0.76***         0.77***
-                           (0.03)          (0.13)          (0.14)   
+Constant                     0.68***         0.27            0.27   
+                           (0.03)          (0.19)          (0.19)   
 --------------------------------------------------------------------
-Observations             14368.00          403.00          403.00   
-Adj. R-squared               0.06            0.12            0.12   
-Joint test: Trust+~e                                         0.72   
+Observations             25300.00          657.00          657.00   
+Adj. R-squared               0.09            0.11            0.11   
+Joint test: Trust+~e                                         0.47   
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Panel/panel_fe_on_tinv_r4_win.tex)
 Wrote: panel_fe_on_tinv_r4_win.tex
-(121,146 observations deleted)
-(77 observations deleted)
+(142,997 observations deleted)
+(76 observations deleted)
 
-Linear regression                               Number of obs     =     21,628
-                                                F(6, 21621)       =     663.67
+Linear regression                               Number of obs     =     21,613
+                                                F(6, 21606)       =     662.71
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1432
-                                                Root MSE          =     .43286
+                                                R-squared         =     0.1433
+                                                Root MSE          =     .42567
 
 ------------------------------------------------------------------------------
              |               Robust
           fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-    educ_yrs |    -.03622   .0009883   -36.65   0.000    -.0381572   -.0342828
-    2.gender |   .0110609    .005973     1.85   0.064    -.0006466    .0227684
+    educ_yrs |  -.0360539   .0009712   -37.12   0.000    -.0379576   -.0341502
+    2.gender |   .0123267   .0058742     2.10   0.036     .0008129    .0238405
              |
     race_eth |
-          2  |    .311521   .0085919    36.26   0.000     .2946801    .3283618
-          3  |   .2158979   .0123727    17.45   0.000     .1916464    .2401493
-          4  |   .1504314   .0194406     7.74   0.000     .1123264    .1885364
+          2  |   .3036338   .0084941    35.75   0.000     .2869848    .3202828
+          3  |   .2079235   .0123038    16.90   0.000     .1838071      .23204
+          4  |   .1421605   .0190552     7.46   0.000     .1048108    .1795101
              |
-     born_us |   .0772965   .0120093     6.44   0.000     .0537574    .1008355
-       _cons |   .3938665   .0178702    22.04   0.000     .3588396    .4288934
+     born_us |   .0719361    .011981     6.00   0.000     .0484525    .0954198
+       _cons |   .3950374   .0177155    22.30   0.000     .3603137    .4297611
 ------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        560
-                                                F(7, 552)         =      20.27
+                                                F(7, 552)         =      20.15
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1669
-                                                Root MSE          =     .43399
+                                                R-squared         =     0.1706
+                                                Root MSE          =     .41601
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0403366   .0060366    -6.68   0.000    -.0521942    -.028479
-      2.gender |   .0373036   .0370997     1.01   0.315    -.0355703    .1101775
+      educ_yrs |   -.038675   .0058585    -6.60   0.000    -.0501826   -.0271673
+      2.gender |   .0414099   .0356316     1.16   0.246    -.0285801       .1114
                |
       race_eth |
-            2  |   .2495083    .046714     5.34   0.000     .1577495    .3412672
-            3  |   .2379571   .0553131     4.30   0.000     .1293072     .346607
-            4  |   .0565557   .0693934     0.82   0.415    -.0797517    .1928631
+            2  |    .251544   .0460469     5.46   0.000     .1610955    .3419925
+            3  |   .2245667   .0530585     4.23   0.000     .1203454     .328788
+            4  |   .0650181   .0687188     0.95   0.344    -.0699642    .2000004
                |
-       born_us |   .1555844   .0466326     3.34   0.001     .0639854    .2471835
-trust_oth~2020 |   .0004699    .006968     0.07   0.946    -.0132171    .0141568
-         _cons |   .4149189   .1033096     4.02   0.000     .2119909     .617847
+       born_us |   .1315666   .0459618     2.86   0.004     .0412853     .221848
+trust_oth~2020 |   .0003527   .0066327     0.05   0.958    -.0126757    .0133812
+         _cons |   .3984171   .0985368     4.04   0.000      .204864    .5919701
 --------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        560
-                                                F(8, 551)         =      17.77
+                                                F(8, 551)         =      17.70
                                                 Prob > F          =     0.0000
-                                                R-squared         =     0.1672
-                                                Root MSE          =     .43429
+                                                R-squared         =     0.1715
+                                                Root MSE          =     .41615
 
 --------------------------------------------------------------------------------
                |               Robust
             fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ---------------+----------------------------------------------------------------
-      educ_yrs |  -.0410808   .0061893    -6.64   0.000    -.0532384   -.0289233
-      2.gender |   .0384317   .0372282     1.03   0.302    -.0346949    .1115582
+      educ_yrs |  -.0398686   .0060558    -6.58   0.000    -.0517638   -.0279733
+      2.gender |   .0432191   .0358124     1.21   0.228    -.0271265    .1135646
                |
       race_eth |
-            2  |    .251526   .0470615     5.34   0.000      .159084    .3439679
-            3  |   .2376861   .0554269     4.29   0.000     .1288123      .34656
-            4  |   .0585181   .0691623     0.85   0.398    -.0773359    .1943722
+            2  |   .2547798   .0463709     5.49   0.000     .1636945    .3458651
+            3  |   .2241321   .0531008     4.22   0.000     .1198274    .3284369
+            4  |   .0681653   .0684717     1.00   0.320    -.0663322    .2026629
                |
-       born_us |   .1560062   .0467172     3.34   0.001     .0642405    .2477718
-trust_oth~2020 |   .0112613   .0208741     0.54   0.590    -.0297412    .0522638
+       born_us |    .132243   .0460397     2.87   0.004     .0418083    .2226777
+trust_oth~2020 |   .0176593   .0201821     0.87   0.382     -.021984    .0573025
                |
             c. |
 trust_oth~2020#|
             c. |
-trust_oth~2020 |   -.000983   .0018931    -0.52   0.604    -.0047017    .0027356
+trust_oth~2020 |  -.0015765   .0018049    -0.87   0.383    -.0051218    .0019688
                |
-         _cons |   .3995314    .105729     3.78   0.000     .1918502    .6072126
+         _cons |   .3737396    .100397     3.72   0.000     .1765319    .5709473
 --------------------------------------------------------------------------------
 
 Second-stage: FE from returns to net wealth (5 percent winsorized) — full results
@@ -2666,36 +2678,36 @@ educ_yrs                    -0.04***        -0.04***        -0.04***
 gender=1                     0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-gender=2                     0.01*           0.04            0.04   
+gender=2                     0.01**          0.04            0.04   
                            (0.01)          (0.04)          (0.04)   
 
 race_eth=1                   0.00            0.00            0.00   
                               (.)             (.)             (.)   
 
-race_eth=2                   0.31***         0.25***         0.25***
+race_eth=2                   0.30***         0.25***         0.25***
                            (0.01)          (0.05)          (0.05)   
 
-race_eth=3                   0.22***         0.24***         0.24***
-                           (0.01)          (0.06)          (0.06)   
+race_eth=3                   0.21***         0.22***         0.22***
+                           (0.01)          (0.05)          (0.05)   
 
-race_eth=4                   0.15***         0.06            0.06   
+race_eth=4                   0.14***         0.07            0.07   
                            (0.02)          (0.07)          (0.07)   
 
-born_us                      0.08***         0.16***         0.16***
+born_us                      0.07***         0.13***         0.13***
                            (0.01)          (0.05)          (0.05)   
 
-trust_others_2020                            0.00            0.01   
+trust_others_2020                            0.00            0.02   
                                            (0.01)          (0.02)   
 
 trust_others_2020 ~s                                        -0.00   
                                                            (0.00)   
 
-Constant                     0.39***         0.41***         0.40***
-                           (0.02)          (0.10)          (0.11)   
+Constant                     0.40***         0.40***         0.37***
+                           (0.02)          (0.10)          (0.10)   
 --------------------------------------------------------------------
-Observations             21628.00          560.00          560.00   
+Observations             21613.00          560.00          560.00   
 Adj. R-squared               0.14            0.16            0.16   
-Joint test: Trust+~e                                         0.86   
+Joint test: Trust+~e                                         0.68   
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
@@ -2839,5 +2851,5 @@ Done. Spec 3 tables and figures in /Volumes/SSD PRO/Github-forks/Chp2-TrustandRe
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/16_pan
 > el_reg_fe.log
   log type:  text
- closed on:  18 Feb 2026, 18:43:51
+ closed on:  19 Feb 2026, 13:58:31
 ---------------------------------------------------------------------------------

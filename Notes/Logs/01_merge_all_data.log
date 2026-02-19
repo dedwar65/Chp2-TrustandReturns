@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_mer
 > ge_all_data.log
   log type:  text
- opened on:  18 Feb 2026, 18:08:53
+ opened on:  19 Feb 2026, 13:39:09
 
 . 
 . * -----------------------------------------------------------------------------
@@ -70,8 +70,6 @@ Saved FRED CPIAUCSL to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 > TA}/h22e3a.dta", clear
 
 . save "`scratch'", replace
-(file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
-    data/_merge_scratch.dta not found)
 file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Raw
     data/_merge_scratch.dta saved
 
@@ -715,5 +713,5 @@ Saved /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Cleaned data/all_d
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/01_mer
 > ge_all_data.log
   log type:  text
- closed on:  18 Feb 2026, 18:13:55
+ closed on:  19 Feb 2026, 13:43:28
 ---------------------------------------------------------------------------------

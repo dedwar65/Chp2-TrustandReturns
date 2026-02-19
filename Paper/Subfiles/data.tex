@@ -282,21 +282,46 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par I follow recent literature using Norwegian administrative tax data at the population level and and using PSID in terms of the components used to construct a measure of returns. However, I take seriously the structure of the dataset I am working with(the HRS RAND longitudinal file) in defining the portfolio/asset class for which the returns are being accrued to. As mentioned before, core assets is the most narrowly defined asset class here because interest income and dividends does not disaggregate into the asset classes: stocks, bonds, private business, IRA/Keogh.
 
+ The following formula from \cite{Daminato2024} serves as motivation for the return measures defined using the HRS data: $$ r_t = \frac{y^c_t + cg_t -F_t -y^d_t}{A_{t-1} + .5F_t}   $$ where $y^c_t$ interest income and dividends, capital gains $cg_t$ measured as the difference between reported stock across waves, $F_t$ net investment flows, $y^d_t$ payments on debt (in the RAND longitudinal file, the variables were mentioned are all in net terms so this variable was $0$), and $A_{t-1}$ total net wealth at beginning of previous period.
+%%%%%%%%%%
+
+ \subsubsection{Narrow asset classes}
+ 
+\par Recall that we only see interest income and dividends for core assets and retirement assets. Since this is an important component of the returns calculation, we construct the narrowest return measure on core assets. To do so, I keep track of all asset classes captured in the capital gains variable\footnote{Those asset classes are: other real estate, business/farm, stocks/mutual funds, bonds, checking/savings, and CDs/t-bills.} and aggregate the capital gains and net investment flows for this group of assets.
+
 \par Returns to core assets are given by
 
-\par Returns to retirement assets are given by
+$$ r_t = \frac{y^c_{core,t} + cg_{core,t} - F_{core,t}}{A_{core,t-1} + .5F_{core,t}}   $$
 
-\par Returns to residential assets are given by
+where $y^c_{core,t}$ is the interest income and dividents on the core assets, $cg_{core,t}$ are the capital gains on the core assets\footnote{where the capital gains for each asset class is $V_{i,t} - V_{i,t-1}$, where $V_{i,t}$ is the value of the asset (business or stock or real estate) for the i-th respondent in the t-th wave of the survey.}, $F_{core,t}$ are the net investment flows on core assets, and importantly, $A_{core,t-1}$ is the total value of the core assets in the previous period.
 
-\par Returns to core and residential assets are given by
+\par The rest of the return measures are defined similarly. In the HRS data, we can see income on retirement assets as well. This allows us to define a return measure for retirement assets:
+
+
+$$ r_t = \frac{y^c_{ret.,t} + cg_{ret.,t} - F_{ret.,t}}{A_{ret.,t-1} + .5F_{ret.,t}}   $$
+
+where $y^c_{ret.,t}$ is the interest income and dividents on the retirement assets, $cg_{ret.,t}$ are the capital gains on the retirement assets, $F_{ret.,t}$ are the net investment flows on retirement assets, and $A_{ret.,t-1}$ is the total value of the retirement assets in the previous period.
+
+\par Based on the modules offered in a given wave of the survey, assume that there are no interest income or dividends to either primary and secondary residential assets, so that the interest income and dividends accrued to residential assets is 0 in a given period $(y^c_{ret.,t})$. With this in mind, returns to residential assets are defined as:
+
+$$ r_t = \frac{cg_{res.,t} - F_{res.,t}}{A_{res.,t-1} + .5F_{res.,t}}   $$
+
+where  $cg_{res.,t}$ are the capital gains on the residential assets, $F_{res.,t}$ are the net investment flows on residential assets (including improvement costs), and $A_{res.,t-1}$ is the total value of the residential assets in the previous period.
+
+\subsubsection{Broad asset classes}
+
+\par After defining returns for narrow asset classes (i.e. returns to a single asset), I also define return measure for portfolios (returns on multiple assets). The first is for returns to both core and retirement assets: 
+
+$$ r_t = \frac{y^c_{coret.,t} + cg_{coret.,t} - F_{coret.,t}}{A_{coret.,t-1} + .5F_{coret.,t}}   $$
+
+where $y^c_{coret.,t}$ is the interest income and dividends on core and retirement assets, $cg_{coret.,t}$ are the capital gains on the retirement assets, $F_{coret.,t}$ are the net investment flows on retirement assets, and $A_{ret.,t-1}$ is the total value of the retirement assets in the previous period.
 
 \par Returns to net wealth is given by
 
 \par I present the means for the return measures in the following figures. I group them by the returns at the asset level (core, retirement, residential) and at the portfolio level (core, core and retirement, net wealth).
 
 %%%%%%%%%%
- I used the formula from \cite{Daminato2024}: $$ r_t = \frac{y^c_t + cg_t -y^d_t}{A_{t-1} + .5F_t}   $$ where $y^c_t$ interest income and dividends, capital gains $cg_t$ measured as the difference between reported stock across waves, $F_t$ net investment flows, $y^d_t$ payments on debt (in the RAND longitudinal file, the variables were mentioned are all in net terms so this variable was $0$), and $A_{t-1}$ total net wealth at beginning of previous period.
-%%%%%%%%%%
+
 
 \begin{figure}[htbp]
 \centering

@@ -1,0 +1,196 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{nyt/global//global/global/global}
+\preamble{%
+\providecommand{\noopsort}[1]{} \providecommand{\singleletter}[1]{#1}
+}
+
+  \entry{jbpglg2016}{article}{}{}
+    \name{author}{3}{}{%
+      {{hash=BJV}{%
+         family={Butler},
+         familyi={B\bibinitperiod},
+         given={Jeffrey\bibnamedelima V},
+         giveni={J\bibinitperiod\bibinitdelim V\bibinitperiod},
+      }}%
+      {{hash=GP}{%
+         family={Giuliano},
+         familyi={G\bibinitperiod},
+         given={Paola},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=GL}{%
+         family={Guiso},
+         familyi={G\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Oxford University Press}%
+    }
+    \strng{namehash}{BJVGPGL1}
+    \strng{fullhash}{BJVGPGL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2016}
+    \field{labeldatesource}{}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \field{number}{5}
+    \field{pages}{1155\bibrangedash 1180}
+    \field{title}{The right amount of trust}
+    \field{volume}{14}
+    \field{journaltitle}{Journal of the European Economic Association}
+    \field{year}{2016}
+  \endentry
+
+  \entry{Daminato2024}{unpublished}{}{}
+    \name{author}{2}{}{%
+      {{hash=DC}{%
+         family={Daminato},
+         familyi={D\bibinitperiod},
+         given={Claudio},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=PL}{%
+         family={Pistaferri},
+         familyi={P\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{DCPL1}
+    \strng{fullhash}{DCPL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2024}
+    \field{labeldatesource}{}
+    \field{sortinit}{D}
+    \field{sortinithash}{D}
+    \field{abstract}{%
+    A recent literature argues that persistent heterogeneity in wealth returns
+  (``type dependence'') as well as a positive association with wealth levels
+  (``scale dependence'') play an important role for explaining features of the
+  wealth distribution, especially its extreme concentration at the top. In
+  contrast, traditional models of wealth accumulation emphasize the role of
+  persistent differences in labor earnings. Using panel data from the PSID, we
+  first document that a common unobserved component (which we interpret as the
+  endowment of cognitive and non-cognitive skills of an individual) drives
+  persistent heterogeneity in both wealth returns and labor earnings. We embed
+  these features of the joint wealth return-earnings process in a life-cycle
+  model of consumer behavior and show that ignoring them would dramatically
+  understate average returns for people at the top of the wealth distribution
+  as well as the level and rise of consumption inequality over the life cycle.%
+    }
+    \verb{doi}
+    \verb 10.3386/w32490
+    \endverb
+    \field{number}{32490}
+    \field{series}{Working Paper Series}
+    \field{title}{{Returns Heterogeneity and Consumption Inequality Over the
+  Life Cycle}}
+    \verb{url}
+    \verb http://www.nber.org/papers/w32490
+    \endverb
+    \list{institution}{1}{%
+      {National Bureau of Economic Research}%
+    }
+    \verb{file}
+    \verb All-Papers/D/Daminato-and-Pistaferri-2024-Returns-Heterogeneity-and-C
+    \verb onsumption-Inequality-Over-the-Life-Cycle.pdf
+    \endverb
+    \field{month}{05}
+    \field{year}{2024}
+  \endentry
+
+  \entry{aflgdmlp20}{article}{}{}
+    \name{author}{4}{}{%
+      {{hash=FA}{%
+         family={Fagereng},
+         familyi={F\bibinitperiod},
+         given={Andreas},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=GL}{%
+         family={Guiso},
+         familyi={G\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=MD}{%
+         family={Malacrino},
+         familyi={M\bibinitperiod},
+         given={Davide},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=PL}{%
+         family={Pistaferri},
+         familyi={P\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+    }
+    \keyw{Wealth inequality, returns to wealth, financial wealth, net worth,
+  heterogeneity, intergenerational mobility}
+    \strng{namehash}{FA+1}
+    \strng{fullhash}{FAGLMDPL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2020}
+    \field{labeldatesource}{}
+    \field{sortinit}{F}
+    \field{sortinithash}{F}
+    \field{abstract}{%
+    We provide a systematic analysis of the properties of individual returns to
+  wealth using 12 years of population data from Norway's administrative tax
+  records. We document a number of novel results. First, individuals earn
+  markedly different average returns on their net worth (a standard deviation
+  of 22.1\%) and on its components. Second, heterogeneity in returns does not
+  arise merely from differences in the allocation of wealth between safe and
+  risky assets: returns are heterogeneous even within narrow asset classes.
+  Third, returns are positively correlated with wealth: moving from the 10th to
+  the 90th percentile of the net worth distribution increases the return by 18
+  percentage points (and 10 percentage points if looking at net-of-tax
+  returns). Fourth, individual wealth returns exhibit substantial persistence
+  over time. We argue that while this persistence partly arises from stable
+  differences in risk exposure and assets scale, it also reflects heterogeneity
+  in sophistication and financial information, as well as entrepreneurial
+  talent. Finally, wealth returns are correlated across generations. We discuss
+  the implications of these findings for several strands of the wealth
+  inequality debate.%
+    }
+    \verb{doi}
+    \verb https://doi.org/10.3982/ECTA14835
+    \endverb
+    \verb{eprint}
+    \verb https://onlinelibrary.wiley.com/doi/pdf/10.3982/ECTA14835
+    \endverb
+    \field{number}{1}
+    \field{pages}{115\bibrangedash 170}
+    \field{title}{Heterogeneity and Persistence in Returns to Wealth}
+    \verb{url}
+    \verb https://onlinelibrary.wiley.com/doi/abs/10.3982/ECTA14835
+    \endverb
+    \field{volume}{88}
+    \field{journaltitle}{Econometrica}
+    \field{year}{2020}
+  \endentry
+\enddatalist
+\endinput

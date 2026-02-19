@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_des
 > criptive_income.log
   log type:  text
- opened on:  17 Feb 2026, 16:19:08
+ opened on:  19 Feb 2026, 13:49:12
 
 . 
 . * Load processed data
@@ -109,7 +109,7 @@ gross_wealth_2000 gross_wealth_2002 ... gross_wealth_2022->gross_wealth_
 
 . postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max usin
 > g "`income_stats'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000003 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000003 not
     found)
 
 . 
@@ -852,7 +852,7 @@ file /Volumes/SSD
 . tempfile growth_means
 
 . postfile handle double year double g_lab g_tot using "`growth_means'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000g not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g not
     found)
 
 . 
@@ -913,7 +913,7 @@ file /Volumes/SSD
 
 . postfile handle str32 varname double obs mean sd p1 p5 p50 p95 p99 min max usin
 > g "`growth_stats'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000i not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000i not
     found)
 
 . foreach v of varlist ln_lab_inc_final_growth_* ln_tot_inc_final_growth_* {
@@ -1268,5 +1268,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/06_des
 > criptive_income.log
   log type:  text
- closed on:  17 Feb 2026, 16:21:01
+ closed on:  19 Feb 2026, 13:50:07
 ---------------------------------------------------------------------------------
