@@ -1,0 +1,40 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Average Returns to net wealth (avg) on General trust (2020) (raw)}
+\label{tab:returns_r5_trust_general_avg}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+General trust       &        0.01         &        0.08\sym{***}&        0.01         &        0.06\sym{**} \\
+                    &      (0.01)         &      (0.02)         &      (0.01)         &      (0.03)         \\
+(General)$^2$       &                     &       -0.01\sym{***}&                     &       -0.00\sym{*}  \\
+                    &                     &      (0.00)         &                     &      (0.00)         \\
+Female              &                     &                     &       -0.03         &       -0.02         \\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Years of education  &                     &                     &        0.01         &        0.00         \\
+                    &                     &                     &      (0.01)         &      (0.01)         \\
+Married             &                     &                     &       -0.08\sym{*}  &       -0.08\sym{*}  \\
+                    &                     &                     &      (0.05)         &      (0.05)         \\
+Born in U.S.        &                     &                     &        0.07         &        0.07         \\
+                    &                     &                     &      (0.06)         &      (0.06)         \\
+NH Black            &                     &                     &        0.02         &        0.02         \\
+                    &                     &                     &      (0.07)         &      (0.07)         \\
+Hispanic            &                     &                     &        0.01         &        0.01         \\
+                    &                     &                     &      (0.08)         &      (0.08)         \\
+NH Other            &                     &                     &        0.09         &        0.09         \\
+                    &                     &                     &      (0.14)         &      (0.14)         \\
+In labor force      &                     &                     &        0.06         &        0.06         \\
+                    &                     &                     &      (0.06)         &      (0.06)         \\
+\_cons              &        0.21\sym{***}&        0.08         &        0.15         &        0.17         \\
+                    &      (0.05)         &      (0.07)         &      (0.13)         &      (0.13)         \\
+\midrule
+Observations        &      751.00         &      751.00         &      594.00         &      594.00         \\
+Adj. R-squared      &        0.00         &        0.01         &        0.06         &        0.07         \\
+Joint test: Trust p-value&                     &        0.00         &                     &        0.13         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

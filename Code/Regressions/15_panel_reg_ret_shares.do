@@ -106,7 +106,7 @@ foreach ret in r1 r4 r5 {
     if "`ret'" == "r4" {
         local yvar "`r4_raw'"
         local ctrl "`ctrl_r4'"
-        local ret_label "returns to core+IRA"
+        local ret_label "returns to ${LATEX_CORE_IRA}"
     }
     if "`ret'" == "r5" {
         local yvar "`r5_raw'"
@@ -202,15 +202,15 @@ foreach ret in r1 r4 r5 {
     * Stats: scope-specific share joint tests (one per asset class)
     if "`ret'" == "r1" {
         local stats_share "p_joint_share_core"
-        local labels_share `" "Joint test: Share core×year p-value""'
+        local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value""'
     }
     if "`ret'" == "r4" {
         local stats_share "p_joint_share_core p_joint_share_ira"
-        local labels_share `" "Joint test: Share core×year p-value" "Joint test: Share IRA×year p-value""'
+        local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value""'
     }
     if "`ret'" == "r5" {
         local stats_share "p_joint_share_core p_joint_share_ira p_joint_share_res p_joint_share_debt_long p_joint_share_debt_other"
-        local labels_share `" "Joint test: Share core×year p-value" "Joint test: Share IRA×year p-value" "Joint test: Share res×year p-value" "Joint test: Share debt long×year p-value" "Joint test: Share debt other×year p-value""'
+        local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value" "Joint test: Share res${LATEX_X_YEAR} p-value" "Joint test: Share debt long${LATEX_X_YEAR} p-value" "Joint test: Share debt other${LATEX_X_YEAR} p-value""'
     }
     esttab m1 m2 m3 using "`outfile'", replace ///
         booktabs ///
@@ -219,9 +219,9 @@ foreach ret in r1 r4 r5 {
         keep(`keep_list') ///
         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²" share_core "Share core" share_ira "Share IRA" share_res "Share residential" share_debt_long "Share long-term debt" share_debt_other "Share other debt") ///
         stats(N r2_a p_joint_trust `stats_share', labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value" `labels_share')) ///
-        title("Panel Spec 2: `ret_label' (raw, share×year)") ///
-        addnotes("Cluster-robust SE in parentheses. Spec 2: share×year controls for risk exposure. Age bins, wealth deciles, region dummies, year dummies, and share×year omitted from table but included in regressions.") ///
-        alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
+        title("Panel Spec 2: `ret_label' (raw, ${LATEX_SHARE_YEAR})") ///
+        addnotes("Cluster-robust SE in parentheses. Spec 2: ${LATEX_SHARE_YEAR} controls for risk exposure." "Age bins, wealth deciles, region dummies, year dummies," "and ${LATEX_SHARE_YEAR} omitted from table but included in regressions.") ///
+        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
 
     di as txt "Wrote: `outfile'"
 }
@@ -241,7 +241,7 @@ foreach ret in r1 r4 r5 {
     if "`ret'" == "r4" {
         local yvar "r4_annual_w5"
         local ctrl "`ctrl_r4'"
-        local ret_label "returns to core+IRA"
+        local ret_label "returns to ${LATEX_CORE_IRA}"
     }
     if "`ret'" == "r5" {
         local yvar "r5_annual_w5"
@@ -340,15 +340,15 @@ foreach ret in r1 r4 r5 {
     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_spec2_win.tex"
     if "`ret'" == "r1" {
         local stats_share "p_joint_share_core"
-        local labels_share `" "Joint test: Share core×year p-value""'
+        local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value""'
     }
     if "`ret'" == "r4" {
         local stats_share "p_joint_share_core p_joint_share_ira"
-        local labels_share `" "Joint test: Share core×year p-value" "Joint test: Share IRA×year p-value""'
+        local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value""'
     }
     if "`ret'" == "r5" {
         local stats_share "p_joint_share_core p_joint_share_ira p_joint_share_res p_joint_share_debt_long p_joint_share_debt_other"
-        local labels_share `" "Joint test: Share core×year p-value" "Joint test: Share IRA×year p-value" "Joint test: Share res×year p-value" "Joint test: Share debt long×year p-value" "Joint test: Share debt other×year p-value""'
+        local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value" "Joint test: Share res${LATEX_X_YEAR} p-value" "Joint test: Share debt long${LATEX_X_YEAR} p-value" "Joint test: Share debt other${LATEX_X_YEAR} p-value""'
     }
     esttab m1 m2 m3 using "`outfile'", replace ///
         booktabs ///
@@ -357,9 +357,9 @@ foreach ret in r1 r4 r5 {
         keep(`keep_list') ///
         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²" share_core "Share core" share_ira "Share IRA" share_res "Share residential" share_debt_long "Share long-term debt" share_debt_other "Share other debt") ///
         stats(N r2_a p_joint_trust `stats_share', labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value" `labels_share')) ///
-        title("Panel Spec 2: `ret_label' (5% winsorized, share×year)") ///
-        addnotes("Cluster-robust SE in parentheses. Spec 2: share×year controls for risk exposure. Age bins, wealth deciles, region dummies, year dummies, and share×year omitted from table but included in regressions.") ///
-        alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
+        title("Panel Spec 2: `ret_label' (${LATEX_WIN_SHORT}, ${LATEX_SHARE_YEAR})") ///
+        addnotes("Cluster-robust SE in parentheses. Spec 2: ${LATEX_SHARE_YEAR} controls for risk exposure." "Age bins, wealth deciles, region dummies, year dummies," "and ${LATEX_SHARE_YEAR} omitted from table but included in regressions.") ///
+        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
 
     di as txt "Wrote: `outfile'"
 }

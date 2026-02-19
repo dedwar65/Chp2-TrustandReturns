@@ -160,6 +160,31 @@ foreach y of local years {
 display "Tabstat deflated income after winsorization"
 tabstat `labrealwin' `totrealwin', statistics(n mean sd p1 p5 p50 p95 p99 min max)
 
+* Average deflated winsorized income (row mean of levels across waves 2002–2022)
+capture drop lab_inc_defl_win_avg tot_inc_defl_win_avg
+egen double lab_inc_defl_win_avg = rowmean(lab_inc_defl_win_2002 lab_inc_defl_win_2004 lab_inc_defl_win_2006 lab_inc_defl_win_2008 lab_inc_defl_win_2010 lab_inc_defl_win_2012 lab_inc_defl_win_2014 lab_inc_defl_win_2016 lab_inc_defl_win_2018 lab_inc_defl_win_2020 lab_inc_defl_win_2022)
+egen double tot_inc_defl_win_avg = rowmean(tot_inc_defl_win_2002 tot_inc_defl_win_2004 tot_inc_defl_win_2006 tot_inc_defl_win_2008 tot_inc_defl_win_2010 tot_inc_defl_win_2012 tot_inc_defl_win_2014 tot_inc_defl_win_2016 tot_inc_defl_win_2018 tot_inc_defl_win_2020 tot_inc_defl_win_2022)
+
+* IHS of average (asinh(avg / median): deflate wins avg, then IHS)
+capture drop ihs_lab_inc_defl_win_avg ihs_tot_inc_defl_win_avg
+gen double ihs_lab_inc_defl_win_avg = .
+gen double ihs_tot_inc_defl_win_avg = .
+quietly summarize lab_inc_defl_win_avg if lab_inc_defl_win_avg > 0, detail
+if r(N) > 0 {
+    local med_lab_avg = r(p50)
+    if `med_lab_avg' > 0 replace ihs_lab_inc_defl_win_avg = asinh(lab_inc_defl_win_avg / `med_lab_avg') if !missing(lab_inc_defl_win_avg)
+}
+quietly summarize tot_inc_defl_win_avg if tot_inc_defl_win_avg > 0, detail
+if r(N) > 0 {
+    local med_tot_avg = r(p50)
+    if `med_tot_avg' > 0 replace ihs_tot_inc_defl_win_avg = asinh(tot_inc_defl_win_avg / `med_tot_avg') if !missing(tot_inc_defl_win_avg)
+}
+
+* Average IHS income (row mean of scaled asinh across waves 2002–2022)
+capture drop ihs_lab_inc_defl_win_s_avg ihs_tot_inc_defl_win_s_avg
+egen double ihs_lab_inc_defl_win_s_avg = rowmean(ihs_lab_inc_defl_win_s_2002 ihs_lab_inc_defl_win_s_2004 ihs_lab_inc_defl_win_s_2006 ihs_lab_inc_defl_win_s_2008 ihs_lab_inc_defl_win_s_2010 ihs_lab_inc_defl_win_s_2012 ihs_lab_inc_defl_win_s_2014 ihs_lab_inc_defl_win_s_2016 ihs_lab_inc_defl_win_s_2018 ihs_lab_inc_defl_win_s_2020 ihs_lab_inc_defl_win_s_2022)
+egen double ihs_tot_inc_defl_win_s_avg = rowmean(ihs_tot_inc_defl_win_s_2002 ihs_tot_inc_defl_win_s_2004 ihs_tot_inc_defl_win_s_2006 ihs_tot_inc_defl_win_s_2008 ihs_tot_inc_defl_win_s_2010 ihs_tot_inc_defl_win_s_2012 ihs_tot_inc_defl_win_s_2014 ihs_tot_inc_defl_win_s_2016 ihs_tot_inc_defl_win_s_2018 ihs_tot_inc_defl_win_s_2020 ihs_tot_inc_defl_win_s_2022)
+
 * ---------------------------------------------------------------------
 * Log income (separate toggle on original series)
 * ---------------------------------------------------------------------

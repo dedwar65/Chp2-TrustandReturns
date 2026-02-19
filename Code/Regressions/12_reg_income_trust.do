@@ -4,7 +4,7 @@
 * For each (trust var, spec): four columns — ln_lab no ctrl | ln_tot no ctrl | ln_lab with ctrl | ln_tot with ctrl.
 * Age: 5-yr bins (omitted from table display in columns 3–4).
 * Standard errors: vce(robust). Log: Notes/Logs/12_reg_income_trust.log.
-* Output: Regressions/Income/Spec1/income_trust_<stub>.tex, Regressions/Income/Spec2/income_trust_<stub>.tex.
+* Output: Regressions/Income/Labor/, Income/Total/ — income_trust_<stub>_log.tex, income_trust_<stub>_ihs.tex.
 
 clear
 set more off
@@ -129,12 +129,16 @@ foreach pair of local trust_list {
             eststo clear
             * 1. Trust only
             eststo lab_lin_raw: regress `inc_lab' c.`trust_var' if !missing(`inc_lab') & !missing(`trust_var'), vce(robust)
-            * 2. Trust + trust^2
+            * 2. Trust + trust^2 (both linear and quadratic terms)
             eststo lab_quad_raw: regress `inc_lab' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`inc_lab') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : lab_quad_raw
             * 3. Trust + controls
             eststo lab_lin_ctl: regress `inc_lab' c.`trust_var' `full_ctrl' if !missing(`inc_lab') & !missing(`trust_var'), vce(robust)
-            * 4. Trust + trust^2 + controls
+            * 4. Trust + trust^2 + controls (both linear and quadratic terms)
             eststo lab_quad_ctl: regress `inc_lab' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ctrl' if !missing(`inc_lab') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : lab_quad_ctl
 
             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -163,8 +167,8 @@ foreach pair of local trust_list {
                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
                 title("Labor income (2020) on `capt_stub' trust (2020)") ///
                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
-                alignment(D{.}{.}{-1}) width(0.85\hsize) ///
-                stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+                alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+                stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
                 nonumbers
 
             * Insert \label after \caption
@@ -203,12 +207,16 @@ foreach pair of local trust_list {
             eststo clear
             * 1. Trust only
             eststo tot_lin_raw: regress `inc_tot' c.`trust_var' if !missing(`inc_tot') & !missing(`trust_var'), vce(robust)
-            * 2. Trust + trust^2
+            * 2. Trust + trust^2 (both linear and quadratic terms)
             eststo tot_quad_raw: regress `inc_tot' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`inc_tot') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : tot_quad_raw
             * 3. Trust + controls
             eststo tot_lin_ctl: regress `inc_tot' c.`trust_var' `full_ctrl' if !missing(`inc_tot') & !missing(`trust_var'), vce(robust)
-            * 4. Trust + trust^2 + controls
+            * 4. Trust + trust^2 + controls (both linear and quadratic terms)
             eststo tot_quad_ctl: regress `inc_tot' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ctrl' if !missing(`inc_tot') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : tot_quad_ctl
 
             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -237,8 +245,8 @@ foreach pair of local trust_list {
                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
                 title("Total income (2020) on `capt_stub' trust (2020)") ///
                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
-                alignment(D{.}{.}{-1}) width(0.85\hsize) ///
-                stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+                alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+                stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
                 nonumbers
 
             * Insert \label after \caption
@@ -278,8 +286,12 @@ foreach pair of local trust_list {
             eststo clear
             eststo lab_lin_raw: regress `inc_lab_ihs' c.`trust_var' if !missing(`inc_lab_ihs') & !missing(`trust_var'), vce(robust)
             eststo lab_quad_raw: regress `inc_lab_ihs' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`inc_lab_ihs') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : lab_quad_raw
             eststo lab_lin_ctl: regress `inc_lab_ihs' c.`trust_var' `full_ctrl' if !missing(`inc_lab_ihs') & !missing(`trust_var'), vce(robust)
             eststo lab_quad_ctl: regress `inc_lab_ihs' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ctrl' if !missing(`inc_lab_ihs') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : lab_quad_ctl
 
             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -308,8 +320,8 @@ foreach pair of local trust_list {
                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
                 title("Labor income (2020) on `capt_stub' trust (2020), scaled asinh") ///
                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
-                alignment(D{.}{.}{-1}) width(0.85\hsize) ///
-                stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+                alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+                stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
                 nonumbers
 
             tempfile tmpf_lab_ihs
@@ -348,8 +360,12 @@ foreach pair of local trust_list {
             eststo clear
             eststo tot_lin_raw: regress `inc_tot_ihs' c.`trust_var' if !missing(`inc_tot_ihs') & !missing(`trust_var'), vce(robust)
             eststo tot_quad_raw: regress `inc_tot_ihs' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`inc_tot_ihs') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : tot_quad_raw
             eststo tot_lin_ctl: regress `inc_tot_ihs' c.`trust_var' `full_ctrl' if !missing(`inc_tot_ihs') & !missing(`trust_var'), vce(robust)
             eststo tot_quad_ctl: regress `inc_tot_ihs' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ctrl' if !missing(`inc_tot_ihs') & !missing(`trust_var'), vce(robust)
+            quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+            estadd scalar p_joint_trust = r(p) : tot_quad_ctl
 
             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -378,8 +394,8 @@ foreach pair of local trust_list {
                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
                 title("Total income (2020) on `capt_stub' trust (2020), scaled asinh") ///
                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
-                alignment(D{.}{.}{-1}) width(0.85\hsize) ///
-                stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+                alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+                stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
                 nonumbers
 
             tempfile tmpf_tot_ihs

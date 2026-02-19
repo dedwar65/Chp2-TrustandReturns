@@ -1,9 +1,8 @@
 % Define a few objec6;32M65;56;32Mts that are unique to the BST paper
 %\input{\ResourcesDir/owner} % Owned by llorracc (draft) or econ-ark (published) ?
 
-\usepackage{footmisc,datetime2,refcount,xr-hyper,hhline,rotating,makecell,subfiles}
+\usepackage{footmisc,datetime2,refcount,hhline,rotating,makecell,subfiles}
 \usepackage{subfiles}
-\usepackage{hyperref}
 
 
 % Allow different actions depending on whether document is being processed as
@@ -47,6 +46,13 @@
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{afterpage}
+\usepackage[bookmarks=false]{hyperref}
+
+% --- Fix: prevent \protected@file@percent from poisoning .aux on reread ---
+\makeatletter
+\providecommand\protected@file@percent{}
+\gdef\protected@file@percent{}
+\makeatother
 
 %% added commands
 \newcommand{\myred}[1]{\textcolor{red}{#1}}

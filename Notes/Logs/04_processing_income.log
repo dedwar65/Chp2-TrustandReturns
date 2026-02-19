@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_pro
 > cessing_income.log
   log type:  text
- opened on:  17 Feb 2026, 16:11:08
+ opened on:  18 Feb 2026, 18:19:52
 
 . 
 . use "${PROCESSED}/analysis_ready.dta", clear
@@ -91,9 +91,9 @@
 . rename CPIAUCSL cpi
 
 . save "`cpi'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000002 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000002 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 saved as
     .dta format
 
 . 
@@ -637,6 +637,69 @@ Tabstat deflated income after winsorization
      Min |         0         0         0
      Max |  457547.8    450438    423789
 ----------------------------------------
+
+. 
+. * Average deflated winsorized income (row mean of levels across waves 2002–2022
+> )
+. capture drop lab_inc_defl_win_avg tot_inc_defl_win_avg
+
+. egen double lab_inc_defl_win_avg = rowmean(lab_inc_defl_win_2002 lab_inc_defl_w
+> in_2004 lab_inc_defl_win_2006 lab_inc_defl_win_2008 lab_inc_defl_win_2010 lab_i
+> nc_defl_win_2012 lab_inc_defl_win_2014 lab_inc_defl_win_2016 lab_inc_defl_win_2
+> 018 lab_inc_defl_win_2020 lab_inc_defl_win_2022)
+(7,734 missing values generated)
+
+. egen double tot_inc_defl_win_avg = rowmean(tot_inc_defl_win_2002 tot_inc_defl_w
+> in_2004 tot_inc_defl_win_2006 tot_inc_defl_win_2008 tot_inc_defl_win_2010 tot_i
+> nc_defl_win_2012 tot_inc_defl_win_2014 tot_inc_defl_win_2016 tot_inc_defl_win_2
+> 018 tot_inc_defl_win_2020 tot_inc_defl_win_2022)
+(7,734 missing values generated)
+
+. 
+. * IHS of average (asinh(avg / median): deflate wins avg, then IHS)
+. capture drop ihs_lab_inc_defl_win_avg ihs_tot_inc_defl_win_avg
+
+. gen double ihs_lab_inc_defl_win_avg = .
+(45,234 missing values generated)
+
+. gen double ihs_tot_inc_defl_win_avg = .
+(45,234 missing values generated)
+
+. quietly summarize lab_inc_defl_win_avg if lab_inc_defl_win_avg > 0, detail
+
+. if r(N) > 0 {
+.     local med_lab_avg = r(p50)
+.     if `med_lab_avg' > 0 replace ihs_lab_inc_defl_win_avg = asinh(lab_inc_defl_
+> win_avg / `med_lab_avg') if !missing(lab_inc_defl_win_avg)
+(37,500 real changes made)
+. }
+
+. quietly summarize tot_inc_defl_win_avg if tot_inc_defl_win_avg > 0, detail
+
+. if r(N) > 0 {
+.     local med_tot_avg = r(p50)
+.     if `med_tot_avg' > 0 replace ihs_tot_inc_defl_win_avg = asinh(tot_inc_defl_
+> win_avg / `med_tot_avg') if !missing(tot_inc_defl_win_avg)
+(37,500 real changes made)
+. }
+
+. 
+. * Average IHS income (row mean of scaled asinh across waves 2002–2022)
+. capture drop ihs_lab_inc_defl_win_s_avg ihs_tot_inc_defl_win_s_avg
+
+. egen double ihs_lab_inc_defl_win_s_avg = rowmean(ihs_lab_inc_defl_win_s_2002 ih
+> s_lab_inc_defl_win_s_2004 ihs_lab_inc_defl_win_s_2006 ihs_lab_inc_defl_win_s_20
+> 08 ihs_lab_inc_defl_win_s_2010 ihs_lab_inc_defl_win_s_2012 ihs_lab_inc_defl_win
+> _s_2014 ihs_lab_inc_defl_win_s_2016 ihs_lab_inc_defl_win_s_2018 ihs_lab_inc_def
+> l_win_s_2020 ihs_lab_inc_defl_win_s_2022)
+(7,734 missing values generated)
+
+. egen double ihs_tot_inc_defl_win_s_avg = rowmean(ihs_tot_inc_defl_win_s_2002 ih
+> s_tot_inc_defl_win_s_2004 ihs_tot_inc_defl_win_s_2006 ihs_tot_inc_defl_win_s_20
+> 08 ihs_tot_inc_defl_win_s_2010 ihs_tot_inc_defl_win_s_2012 ihs_tot_inc_defl_win
+> _s_2014 ihs_tot_inc_defl_win_s_2016 ihs_tot_inc_defl_win_s_2018 ihs_tot_inc_def
+> l_win_s_2020 ihs_tot_inc_defl_win_s_2022)
+(7,734 missing values generated)
 
 . 
 . * ---------------------------------------------------------------------
@@ -1618,5 +1681,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_pro
 > cessing_income.log
   log type:  text
- closed on:  17 Feb 2026, 16:11:16
+ closed on:  18 Feb 2026, 18:19:57
 ---------------------------------------------------------------------------------

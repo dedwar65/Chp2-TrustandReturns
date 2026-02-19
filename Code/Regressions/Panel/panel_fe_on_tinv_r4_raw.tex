@@ -1,0 +1,35 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption[]{Second-stage: FE from returns to core and IRA (raw) on time-invariant vars}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+\midrule
+Years of education  &       -0.04\sym{***}&       -0.07\sym{***}&       -0.07\sym{***}\\
+                    &      (0.00)         &      (0.01)         &      (0.01)         \\
+Female              &        0.01         &        0.02         &        0.02         \\
+                    &      (0.01)         &      (0.05)         &      (0.05)         \\
+NH Black            &        0.35\sym{***}&        0.21\sym{***}&        0.21\sym{***}\\
+                    &      (0.02)         &      (0.08)         &      (0.08)         \\
+Hispanic            &        0.21\sym{***}&        0.45\sym{***}&        0.45\sym{***}\\
+                    &      (0.02)         &      (0.13)         &      (0.13)         \\
+NH Other            &        0.06\sym{*}  &        0.03         &        0.03         \\
+                    &      (0.03)         &      (0.09)         &      (0.09)         \\
+Born in U.S.        &       -0.01         &        0.04         &        0.04         \\
+                    &      (0.02)         &      (0.09)         &      (0.09)         \\
+Trust               &                     &       -0.01         &       -0.03         \\
+                    &                     &      (0.01)         &      (0.04)         \\
+Trust²              &                     &                     &        0.00         \\
+                    &                     &                     &      (0.00)         \\
+\_cons              &        0.65\sym{***}&        1.06\sym{***}&        1.09\sym{***}\\
+                    &      (0.04)         &      (0.19)         &      (0.20)         \\
+\midrule
+Observations        &    14368.00         &      403.00         &      403.00         \\
+Adj. R-squared      &        0.05         &        0.12         &        0.12         \\
+Joint test: Trust+Trust² p-value&                     &                     &        0.76         \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize \label{tab:panel_fe_on_tinv_r4_raw} Robust SE. FE from Panel Spec 3 returns to core and IRA regression (raw).}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

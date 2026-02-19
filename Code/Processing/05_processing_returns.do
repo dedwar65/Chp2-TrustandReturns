@@ -125,6 +125,21 @@ foreach y of local years {
     }
 }
 
+* 5% winsorization for average returns (r1, r4, r5)
+foreach stub in r1_annual r4_annual r5_annual {
+    local v `stub'_avg
+    capture confirm variable `v'
+    if !_rc {
+        quietly summarize `v', detail
+        local p5  = r(p5)
+        local p95 = r(p95)
+        capture drop `stub'_avg_w5
+        gen double `stub'_avg_w5 = `v'
+        replace `stub'_avg_w5 = `p5'  if `stub'_avg_w5 < `p5'  & !missing(`stub'_avg_w5)
+        replace `stub'_avg_w5 = `p95' if `stub'_avg_w5 > `p95' & !missing(`stub'_avg_w5)
+    }
+}
+
 save "${PROCESSED}/analysis_ready_processed.dta", replace
 display "05_processing_returns: Saved ${PROCESSED}/analysis_ready_processed.dta"
 

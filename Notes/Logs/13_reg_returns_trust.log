@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/13_reg
 > _returns_trust.log
   log type:  text
- opened on:  17 Feb 2026, 16:42:37
+ opened on:  18 Feb 2026, 18:41:54
 
 . 
 . capture which esttab
@@ -109,13 +109,6 @@
 . * For each (return, win/trimming): 4 columns = trust, trust^2,
 . * trust+controls, trust^2+controls.
 . * ----------------------------------------------------------------------
-. capture mkdir "${REGRESSIONS}/Returns/r1"
-
-. capture mkdir "${REGRESSIONS}/Returns/r4"
-
-. capture mkdir "${REGRESSIONS}/Returns/r5"
-
-. 
 . foreach pair of local trust_list {
   2.     * Robust split of var:stub so filenames never contain colons
 .     local pos = strpos("`pair'", ":")
@@ -155,7 +148,7 @@
  32.         if "`ret'" == "r4" {
  33.             local y_un  "r4_annual_2022"
  34.             local y_win "r4_annual_2022_w5"
- 35.             local ret_label "Returns to core+IRA (2022)"
+ 35.             local ret_label "Returns to ${LATEX_CORE_IRA} (2022)"
  36.             local outdir    "${REGRESSIONS}/Returns/Core+res"
  37.             forvalues d = 2/10 {
  38.                 capture confirm variable wealth_coreira_d`d'_2020
@@ -195,7 +188,7 @@
  68.             else {
  69.                 local y "`y_win'"
  70.                 local file_suffix "_win"
- 71.                 local win_label " (5% winsorized)"
+ 71.                 local win_label "${LATEX_WIN}"
  72.             }
  73. 
 .             capture confirm variable `y'
@@ -297,7 +290,7 @@
 > ) ///
 >                 addnotes("Robust standard errors in parentheses. Age bins (5-yr
 > ) and wealth deciles included in columns 3–4.") ///
->                 alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
+>                 alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
 127. 
 .             * Insert \label after \caption
 .             tempfile tmpf
@@ -462,7 +455,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000002 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000002 not
     found)
 
 Linear regression                               Number of obs     =        442
@@ -606,7 +599,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_general_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000003 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000003 not
     found)
 
 Linear regression                               Number of obs     =        210
@@ -748,7 +741,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000004 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000004 not
     found)
 Skipping r4_win for general: return var r4_annual_2022_w5 not found.
 
@@ -887,7 +880,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000005 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000005 not
     found)
 
 Linear regression                               Number of obs     =        497
@@ -1025,7 +1018,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_general_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000006 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000006 not
     found)
 
 Linear regression                               Number of obs     =        531
@@ -1169,7 +1162,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000007 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000007 not
     found)
 
 Linear regression                               Number of obs     =        531
@@ -1313,7 +1306,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_social_security_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000008 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000008 not
     found)
 
 Linear regression                               Number of obs     =        253
@@ -1455,7 +1448,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000009 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000009 not
     found)
 Skipping r4_win for social_security: return var r4_annual_2022_w5 not found.
 
@@ -1596,7 +1589,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000a not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000a not
     found)
 
 Linear regression                               Number of obs     =        574
@@ -1736,7 +1729,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_social_security_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000b not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000b not
     found)
 
 Linear regression                               Number of obs     =        547
@@ -1880,7 +1873,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000c not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000c not
     found)
 
 Linear regression                               Number of obs     =        547
@@ -2024,7 +2017,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_medicare_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000d not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000d not
     found)
 
 Linear regression                               Number of obs     =        257
@@ -2166,7 +2159,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000e not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000e not
     found)
 Skipping r4_win for medicare: return var r4_annual_2022_w5 not found.
 
@@ -2307,7 +2300,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000f not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000f not
     found)
 
 Linear regression                               Number of obs     =        586
@@ -2447,7 +2440,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_medicare_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000g not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000g not
     found)
 
 Linear regression                               Number of obs     =        515
@@ -2591,7 +2584,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000h not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000h not
     found)
 
 Linear regression                               Number of obs     =        515
@@ -2735,7 +2728,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_banks_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000i not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000i not
     found)
 
 Linear regression                               Number of obs     =        242
@@ -2877,7 +2870,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000j not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000j not
     found)
 Skipping r4_win for banks: return var r4_annual_2022_w5 not found.
 
@@ -3018,7 +3011,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000k not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000k not
     found)
 
 Linear regression                               Number of obs     =        557
@@ -3158,7 +3151,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_banks_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000l not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000l not
     found)
 
 Linear regression                               Number of obs     =        562
@@ -3302,7 +3295,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000m not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000m not
     found)
 
 Linear regression                               Number of obs     =        562
@@ -3446,7 +3439,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_advisors_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000n not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000n not
     found)
 
 Linear regression                               Number of obs     =        264
@@ -3588,7 +3581,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000o not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000o not
     found)
 Skipping r4_win for advisors: return var r4_annual_2022_w5 not found.
 
@@ -3729,7 +3722,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000p not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000p not
     found)
 
 Linear regression                               Number of obs     =        607
@@ -3869,7 +3862,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_advisors_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000q not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000q not
     found)
 
 Linear regression                               Number of obs     =        558
@@ -4013,7 +4006,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000r not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000r not
     found)
 
 Linear regression                               Number of obs     =        558
@@ -4157,7 +4150,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_mutual_funds_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000s not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000s not
     found)
 
 Linear regression                               Number of obs     =        255
@@ -4299,7 +4292,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000t not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000t not
     found)
 Skipping r4_win for mutual_funds: return var r4_annual_2022_w5 not found.
 
@@ -4440,7 +4433,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000u not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000u not
     found)
 
 Linear regression                               Number of obs     =        607
@@ -4580,7 +4573,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_mutual_funds_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000v not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000v not
     found)
 
 Linear regression                               Number of obs     =        631
@@ -4724,7 +4717,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000w not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000w not
     found)
 
 Linear regression                               Number of obs     =        631
@@ -4868,7 +4861,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_insurance_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00000x not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.00000x not
     found)
 
 Linear regression                               Number of obs     =        308
@@ -5010,7 +5003,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000010 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000010 not
     found)
 Skipping r4_win for insurance: return var r4_annual_2022_w5 not found.
 
@@ -5151,7 +5144,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000011 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000011 not
     found)
 
 Linear regression                               Number of obs     =        675
@@ -5291,7 +5284,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_insurance_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000012 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000012 not
     found)
 
 Linear regression                               Number of obs     =        684
@@ -5435,7 +5428,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000013 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000013 not
     found)
 
 Linear regression                               Number of obs     =        684
@@ -5579,7 +5572,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core/returns_r1_trust_media_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000014 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000014 not
     found)
 
 Linear regression                               Number of obs     =        344
@@ -5721,7 +5714,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Core+res/returns_r4_trust_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000015 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000015 not
     found)
 Skipping r4_win for media: return var r4_annual_2022_w5 not found.
 
@@ -5862,7 +5855,7 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000016 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000016 not
     found)
 
 Linear regression                               Number of obs     =        736
@@ -6002,1366 +5995,10 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Ret
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
 > sions/Returns/Net wealth/returns_r5_trust_media_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000017 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_94024.000017 not
     found)
-
-Linear regression                               Number of obs     =        248
-                                                F(1, 246)         =       0.91
-                                                Prob > F          =     0.3423
-                                                R-squared         =     0.0035
-                                                Root MSE          =      2.221
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |  -.0819229   .0860943    -0.95   0.342    -.2514989    .0876531
-       _cons |    .595099   .1507751     3.95   0.000     .2981243    .8920738
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        248
-                                                F(2, 245)         =       0.63
-                                                Prob > F          =     0.5313
-                                                R-squared         =     0.0037
-                                                Root MSE          =     2.2254
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |  -.0794704   .0935132    -0.85   0.396    -.2636629     .104722
-             |
- c.trust_pc1#|
- c.trust_pc1 |  -.0054789   .0338694    -0.16   0.872    -.0721913    .0612335
-             |
-       _cons |   .6090561    .171118     3.56   0.000      .272006    .9461062
-------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(23, 221)        =       1.32
-                                                Prob > F          =     0.1570
-                                                R-squared         =     0.1292
-                                                Root MSE          =     2.1886
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |  -.0567017   .0911316    -0.62   0.534       -.2363    .1228965
-               |
-       age_bin |
-           50  |   1.408482    .789171     1.78   0.076    -.1467813    2.963746
-           55  |   1.606104   .7907699     2.03   0.043     .0476895    3.164519
-           60  |   1.806882   .9428326     1.92   0.057    -.0512108    3.664976
-           65  |   1.931827   .9051536     2.13   0.034     .1479897    3.715664
-           70  |   1.624746   .8362379     1.94   0.053    -.0232754    3.272767
-           75  |   1.618308   .8011054     2.02   0.045     .0395241    3.197091
-           80  |    1.72653   .8671254     1.99   0.048     .0176375    3.435423
-           85  |   1.992008   1.024436     1.94   0.053     -.026905    4.010921
-               |
-      2.gender |   .1956915   .2488451     0.79   0.432    -.2947217    .6861046
-      educ_yrs |   .1449566   .0658507     2.20   0.029     .0151809    .2747323
-  married_2020 |   .5006145   .3373481     1.48   0.139    -.1642162    1.165445
-       born_us |   .3324242   .4151092     0.80   0.424    -.4856548    1.150503
-               |
-      race_eth |
-            2  |  -.5339209   .3463004    -1.54   0.125    -1.216395    .1485527
-            3  |  -.2131195   .6785942    -0.31   0.754    -1.550463    1.124224
-            4  |   -.053285   .6761162    -0.08   0.937    -1.385745    1.279175
-               |
-   inlbrf_2020 |   .4793667   .3021123     1.59   0.114     -.116023    1.074756
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   1.851771     .57493     3.22   0.001     .7187242    2.984818
-weal~e_d5_2020 |   2.293772   .9239865     2.48   0.014       .47282    4.114725
-weal~e_d6_2020 |   1.107735   .3886356     2.85   0.005     .3418292    1.873641
-weal~e_d7_2020 |   .9844387   .3298749     2.98   0.003     .3343357    1.634542
-weal~e_d8_2020 |   .9962811   .5567146     1.79   0.075    -.1008677     2.09343
-weal~e_d9_2020 |   .3225178   .2214565     1.46   0.147     -.113919    .7589547
-wea~e_d10_2020 |          0  (omitted)
-         _cons |  -4.994475   1.925554    -2.59   0.010    -8.789273   -1.199677
---------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(24, 220)        =       1.25
-                                                Prob > F          =     0.2030
-                                                R-squared         =     0.1298
-                                                Root MSE          =     2.1928
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |  -.0533093   .0967495    -0.55   0.582    -.2439839    .1373652
-               |
-   c.trust_pc1#|
-   c.trust_pc1 |  -.0128845   .0390845    -0.33   0.742    -.0899125    .0641434
-               |
-       age_bin |
-           50  |   1.420044   .7956598     1.78   0.076    -.1480468    2.988135
-           55  |   1.631669   .8057476     2.03   0.044     .0436968     3.21964
-           60  |   1.832498   .9473706     1.93   0.054    -.0345856    3.699581
-           65  |   1.958942   .9214343     2.13   0.035     .1429745     3.77491
-           70  |   1.676281    .850211     1.97   0.050     .0006804    3.351881
-           75  |   1.648937   .8075535     2.04   0.042     .0574056    3.240468
-           80  |    1.76914   .8837494     2.00   0.047     .0274421    3.510838
-           85  |   2.052838   1.065743     1.93   0.055     -.047534    4.153209
-               |
-      2.gender |    .209695   .2663175     0.79   0.432    -.3151651    .7345551
-      educ_yrs |   .1444093   .0651848     2.22   0.028     .0159428    .2728758
-  married_2020 |   .4994323   .3377397     1.48   0.141    -.1661869    1.165052
-       born_us |   .3299983   .4161501     0.79   0.429    -.4901526    1.150149
-               |
-      race_eth |
-            2  |  -.5340444   .3470422    -1.54   0.125    -1.217997    .1499084
-            3  |  -.2064426   .6801538    -0.30   0.762    -1.546893    1.134008
-            4  |  -.0511921   .6806432    -0.08   0.940    -1.392607    1.290223
-               |
-   inlbrf_2020 |   .4824304   .3028311     1.59   0.113    -.1143908    1.079252
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   1.879101   .6009747     3.13   0.002     .6946963    3.063505
-weal~e_d5_2020 |   2.303699    .931039     2.47   0.014     .4688023    4.138596
-weal~e_d6_2020 |   1.106744   .3883375     2.85   0.005     .3414061    1.872082
-weal~e_d7_2020 |   .9824183   .3317739     2.96   0.003     .3285564     1.63628
-weal~e_d8_2020 |   1.001189   .5562611     1.80   0.073    -.0950934    2.097471
-weal~e_d9_2020 |   .3295918   .2249928     1.46   0.144    -.1138252    .7730089
-wea~e_d10_2020 |          0  (omitted)
-         _cons |  -4.999087   1.926222    -2.60   0.010    -8.795297   -1.202878
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Core/returns_r1_trust_pc1.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Core/returns_r1_trust_pc1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000018 not
-    found)
-
-Linear regression                               Number of obs     =        248
-                                                F(1, 246)         =       0.35
-                                                Prob > F          =     0.5559
-                                                R-squared         =     0.0017
-                                                Root MSE          =     1.0203
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |   .0259418     .04399     0.59   0.556    -.0607034     .112587
-       _cons |   .2955669   .0656988     4.50   0.000      .166163    .4249708
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        248
-                                                F(2, 245)         =       0.21
-                                                Prob > F          =     0.8086
-                                                R-squared         =     0.0018
-                                                Root MSE          =     1.0223
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |    .027223   .0432523     0.63   0.530    -.0579709    .1124169
-             |
- c.trust_pc1#|
- c.trust_pc1 |  -.0028622   .0177682    -0.16   0.872    -.0378601    .0321357
-             |
-       _cons |   .3028581   .0772226     3.92   0.000     .1507532     .454963
-------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(23, 221)        =       2.41
-                                                Prob > F          =     0.0005
-                                                R-squared         =     0.1376
-                                                Root MSE          =     .99769
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |   .0418596   .0476813     0.88   0.381    -.0521087    .1358279
-               |
-       age_bin |
-           50  |    1.06058   .5794129     1.83   0.069    -.0813019    2.202462
-           55  |   .7335061   .4980362     1.47   0.142    -.2480019    1.715014
-           60  |    .637178   .4835705     1.32   0.189    -.3158217    1.590178
-           65  |   .8567561   .4953366     1.73   0.085    -.1194317    1.832944
-           70  |   .7195463   .4982615     1.44   0.150    -.2624058    1.701498
-           75  |     .74772   .4942715     1.51   0.132    -.2263686    1.721809
-           80  |   .7197619   .5405774     1.33   0.184    -.3455845    1.785108
-           85  |   .6783118   .5506216     1.23   0.219    -.4068292    1.763453
-               |
-      2.gender |  -.0691827   .1337401    -0.52   0.605    -.3327517    .1943864
-      educ_yrs |   .0451364   .0271015     1.67   0.097    -.0082742    .0985469
-  married_2020 |   .1381717   .1531602     0.90   0.368    -.1636698    .4400132
-       born_us |   .0598619   .1930401     0.31   0.757    -.3205732    .4402969
-               |
-      race_eth |
-            2  |  -.3920365   .1618877    -2.42   0.016    -.7110776   -.0729954
-            3  |  -.4515665   .2525998    -1.79   0.075    -.9493791    .0462461
-            4  |  -.2547261   .2589734    -0.98   0.326    -.7650995    .2556473
-               |
-   inlbrf_2020 |   .1681099   .1517624     1.11   0.269    -.1309768    .4671966
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   .9420863   .2669213     3.53   0.001     .4160495    1.468123
-weal~e_d5_2020 |   1.086654   .2788276     3.90   0.000     .5371531    1.636156
-weal~e_d6_2020 |   .5792487   .2008624     2.88   0.004      .183398    .9750995
-weal~e_d7_2020 |   .5606168   .1798646     3.12   0.002     .2061476     .915086
-weal~e_d8_2020 |   .4001932   .2187993     1.83   0.069    -.0310068    .8313933
-weal~e_d9_2020 |   .0373262   .1336056     0.28   0.780    -.2259778    .3006302
-wea~e_d10_2020 |          0  (omitted)
-         _cons |    -1.6126   .7415464    -2.17   0.031    -3.074007   -.1511928
---------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(24, 220)        =       2.30
-                                                Prob > F          =     0.0009
-                                                R-squared         =     0.1378
-                                                Root MSE          =     .99987
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |   .0426388   .0483437     0.88   0.379    -.0526373    .1379148
-               |
-   c.trust_pc1#|
-   c.trust_pc1 |  -.0029594   .0185973    -0.16   0.874    -.0396111    .0336923
-               |
-       age_bin |
-           50  |   1.063235   .5810542     1.83   0.069    -.0819094     2.20838
-           55  |   .7393779   .4998848     1.48   0.141    -.2457979    1.724554
-           60  |   .6430615   .4847337     1.33   0.186    -.3122544    1.598377
-           65  |   .8629842   .4985799     1.73   0.085    -.1196198    1.845588
-           70  |   .7313834   .5005846     1.46   0.145    -.2551715    1.717938
-           75  |   .7547551    .495015     1.52   0.129    -.2208232    1.730333
-           80  |   .7295489   .5453794     1.34   0.182    -.3452879    1.804386
-           85  |   .6922837    .561858     1.23   0.219    -.4150292    1.799597
-               |
-      2.gender |  -.0659662   .1366946    -0.48   0.630    -.3353647    .2034323
-      educ_yrs |   .0450107   .0269971     1.67   0.097    -.0081954    .0982168
-  married_2020 |   .1379001   .1533292     0.90   0.369    -.1642819    .4400822
-       born_us |   .0593047   .1937876     0.31   0.760    -.3226129    .4412222
-               |
-      race_eth |
-            2  |  -.3920649   .1623953    -2.41   0.017    -.7121143   -.0720154
-            3  |  -.4500329   .2540443    -1.77   0.078    -.9507048     .050639
-            4  |  -.2542454   .2599553    -0.98   0.329    -.7665668     .258076
-               |
-   inlbrf_2020 |   .1688136    .152193     1.11   0.269    -.1311292    .4687564
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   .9483636   .2717165     3.49   0.001     .4128631    1.483864
-weal~e_d5_2020 |   1.088934   .2795271     3.90   0.000     .5380409    1.639828
-weal~e_d6_2020 |    .579021   .2012128     2.88   0.004     .1824697    .9755723
-weal~e_d7_2020 |   .5601527   .1807954     3.10   0.002     .2038402    .9164653
-weal~e_d8_2020 |   .4013205    .219282     1.83   0.069    -.0308417    .8334827
-weal~e_d9_2020 |    .038951   .1349144     0.29   0.773     -.226939     .304841
-wea~e_d10_2020 |          0  (omitted)
-         _cons |  -1.613659   .7421939    -2.17   0.031    -3.076379   -.1509394
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Core/returns_r1_trust_pc1_win.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Core/returns_r1_trust_pc1_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.000019 not
-    found)
-
-Linear regression                               Number of obs     =        110
-                                                F(1, 108)         =       0.12
-                                                Prob > F          =     0.7337
-                                                R-squared         =     0.0009
-                                                Root MSE          =     .55566
-
-------------------------------------------------------------------------------
-             |               Robust
-r4_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |   .0108252   .0317351     0.34   0.734    -.0520793    .0737297
-       _cons |   .1654698     .05374     3.08   0.003     .0589478    .2719917
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        110
-                                                F(2, 107)         =       0.30
-                                                Prob > F          =     0.7425
-                                                R-squared         =     0.0052
-                                                Root MSE          =     .55705
-
-------------------------------------------------------------------------------
-             |               Robust
-r4_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |   .0034243   .0280862     0.12   0.903    -.0522533    .0591018
-             |
- c.trust_pc1#|
- c.trust_pc1 |   .0093112   .0120698     0.77   0.442    -.0146158    .0332383
-             |
-       _cons |   .1459422   .0648074     2.25   0.026     .0174691    .2744152
-------------------------------------------------------------------------------
-note: wealth_coreira_d2_2020 omitted because of collinearity.
-note: wealth_coreira_d3_2020 omitted because of collinearity.
-note: wealth_coreira_d4_2020 omitted because of collinearity.
-note: wealth_coreira_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        109
-                                                F(20, 87)         =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.2717
-                                                Root MSE          =     .52178
-
---------------------------------------------------------------------------------
-               |               Robust
-r4_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |   .0646804   .0325407     1.99   0.050     2.30e-06    .1293585
-               |
-       age_bin |
-           55  |  -.8183302   .4412617    -1.85   0.067    -1.695386    .0587252
-           60  |  -.7747125   .4244722    -1.83   0.071    -1.618397    .0689719
-           65  |  -.7902217   .4379595    -1.80   0.075    -1.660714    .0802703
-           70  |  -.8862493    .443076    -2.00   0.049    -1.766911   -.0055878
-           75  |  -.9193998   .4569246    -2.01   0.047    -1.827587   -.0112126
-           80  |   -.862821   .4731348    -1.82   0.072    -1.803228    .0775856
-           85  |  -1.105396   .4703413    -2.35   0.021     -2.04025    -.170542
-               |
-      2.gender |  -.1758389   .0974894    -1.80   0.075    -.3696096    .0179319
-      educ_yrs |   .0195772   .0266775     0.73   0.465    -.0334472    .0726015
-  married_2020 |   .0432084   .1376188     0.31   0.754     -.230324    .3167407
-       born_us |   .0823379   .1497768     0.55   0.584    -.2153597    .3800354
-               |
-      race_eth |
-            2  |  -.1207114   .1176328    -1.03   0.308    -.3545193    .1130965
-            3  |  -.4063654    .362209    -1.12   0.265    -1.126295    .3135642
-            4  |  -.0220974   .1685448    -0.13   0.896    -.3570984    .3129036
-               |
-   inlbrf_2020 |  -.0411697   .1321495    -0.31   0.756    -.3038312    .2214917
-w~eira_d2_2020 |          0  (omitted)
-w~eira_d3_2020 |          0  (omitted)
-w~eira_d4_2020 |          0  (omitted)
-w~eira_d5_2020 |  -.4750466   .1721214    -2.76   0.007    -.8171565   -.1329366
-w~eira_d6_2020 |   .3939523   .2607668     1.51   0.134    -.1243501    .9122546
-w~eira_d7_2020 |   .5889121   .2077329     2.83   0.006     .1760204    1.001804
-w~eira_d8_2020 |   .1697814   .1096756     1.55   0.125    -.0482108    .3877735
-w~eira_d9_2020 |  -.0383016   .1090955    -0.35   0.726    -.2551407    .1785376
-~eira_d10_2020 |          0  (omitted)
-         _cons |   .5618952   .6248199     0.90   0.371    -.6800021    1.803792
---------------------------------------------------------------------------------
-note: wealth_coreira_d2_2020 omitted because of collinearity.
-note: wealth_coreira_d3_2020 omitted because of collinearity.
-note: wealth_coreira_d4_2020 omitted because of collinearity.
-note: wealth_coreira_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        109
-                                                F(21, 86)         =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.2811
-                                                Root MSE          =     .52139
-
---------------------------------------------------------------------------------
-               |               Robust
-r4_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |   .0562048   .0297495     1.89   0.062    -.0029352    .1153448
-               |
-   c.trust_pc1#|
-   c.trust_pc1 |   .0152012   .0111181     1.37   0.175    -.0069007    .0373032
-               |
-       age_bin |
-           55  |  -.8141598   .4322055    -1.88   0.063    -1.673356    .0450362
-           60  |   -.786144   .4129938    -1.90   0.060    -1.607148    .0348605
-           65  |  -.8164836   .4281075    -1.91   0.060    -1.667533    .0345659
-           70  |  -.9264845   .4340698    -2.13   0.036    -1.789387   -.0635823
-           75  |  -.9328793   .4446606    -2.10   0.039    -1.816835   -.0489232
-           80  |  -.9357344   .4685726    -2.00   0.049    -1.867226   -.0042429
-           85  |   -1.22974   .4736447    -2.60   0.011    -2.171314   -.2881654
-               |
-      2.gender |  -.1867893   .0988239    -1.89   0.062    -.3832448    .0096662
-      educ_yrs |   .0162374   .0280293     0.58   0.564    -.0394829    .0719577
-  married_2020 |    .033148   .1379094     0.24   0.811    -.2410068    .3073028
-       born_us |   .0803334   .1576282     0.51   0.612    -.2330211    .3936879
-               |
-      race_eth |
-            2  |  -.1111259    .119979    -0.93   0.357    -.3496363    .1273845
-            3  |  -.4366774   .3668105    -1.19   0.237    -1.165873    .2925178
-            4  |  -.0325855    .171179    -0.19   0.849    -.3728781    .3077072
-               |
-   inlbrf_2020 |  -.0637284   .1329947    -0.48   0.633    -.3281131    .2006563
-w~eira_d2_2020 |          0  (omitted)
-w~eira_d3_2020 |          0  (omitted)
-w~eira_d4_2020 |          0  (omitted)
-w~eira_d5_2020 |  -.4969605   .1753946    -2.83   0.006    -.8456335   -.1482875
-w~eira_d6_2020 |   .3636351    .270028     1.35   0.182    -.1731628    .9004331
-w~eira_d7_2020 |   .5680089   .2184494     2.60   0.011      .133746    1.002272
-w~eira_d8_2020 |   .1478965   .1005904     1.47   0.145    -.0520706    .3478636
-w~eira_d9_2020 |  -.0413886   .1076858    -0.38   0.702    -.2554609    .1726838
-~eira_d10_2020 |          0  (omitted)
-         _cons |   .6407273   .6474254     0.99   0.325    -.6463118    1.927766
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Core+res/returns_r4_trust_pc1.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Core+res/returns_r4_trust_pc1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001a not
-    found)
-Skipping r4_win for pc1: return var r4_annual_2022_w5 not found.
-
-Linear regression                               Number of obs     =        271
-                                                F(1, 269)         =       2.59
-                                                Prob > F          =     0.1089
-                                                R-squared         =     0.0126
-                                                Root MSE          =     .75165
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |  -.0499683   .0310617    -1.61   0.109    -.1111232    .0111867
-       _cons |    .403763   .0491452     8.22   0.000     .3070049    .5005212
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        271
-                                                F(2, 268)         =       1.45
-                                                Prob > F          =     0.2369
-                                                R-squared         =     0.0155
-                                                Root MSE          =     .75194
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |  -.0550191   .0328948    -1.67   0.096    -.1197841    .0097459
-             |
- c.trust_pc1#|
- c.trust_pc1 |   .0084031   .0091918     0.91   0.361    -.0096943    .0265005
-             |
-       _cons |   .3803851   .0496719     7.66   0.000     .2825883    .4781819
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(25, 193)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3135
-                                                Root MSE          =      .5611
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |   .0066839   .0272965     0.24   0.807    -.0471538    .0605216
-               |
-       age_bin |
-           50  |  -.2798394   .5651127    -0.50   0.621    -1.394429    .8347503
-           55  |   .7722559   .3174256     2.43   0.016     .1461873    1.398325
-           60  |   .7136023   .1745926     4.09   0.000     .3692476    1.057957
-           65  |   .7187258   .1477007     4.87   0.000     .4274111     1.01004
-           70  |   .7022354   .1624906     4.32   0.000     .3817501    1.022721
-           75  |    .661929   .1563622     4.23   0.000     .3535308    .9703271
-           80  |   .7720706   .1877322     4.11   0.000     .4018004    1.142341
-           85  |   .2697578   .2063225     1.31   0.193    -.1371786    .6766943
-               |
-      2.gender |  -.1100708   .0790844    -1.39   0.166    -.2660514    .0459097
-      educ_yrs |   .0143695   .0153764     0.93   0.351    -.0159578    .0446968
-  married_2020 |   .1054096   .0884206     1.19   0.235    -.0689851    .2798043
-       born_us |   .0889032   .0925545     0.96   0.338    -.0936449    .2714513
-               |
-      race_eth |
-            2  |    -.04361    .126607    -0.34   0.731    -.2933211    .2061011
-            3  |  -.2144178   .1172332    -1.83   0.069    -.4456405     .016805
-            4  |  -.0160506   .1618403    -0.10   0.921    -.3352534    .3031521
-               |
-   inlbrf_2020 |   .1380866   .0860102     1.61   0.110    -.0315541    .3077274
-wealth_d2_2020 |   .5043452   .4569034     1.10   0.271      -.39682     1.40551
-wealth_d3_2020 |  -.4132643   .3879272    -1.07   0.288    -1.178385    .3518569
-wealth_d4_2020 |  -.5163483   .4002337    -1.29   0.199    -1.305742    .2730454
-wealth_d5_2020 |   -.706811   .3735254    -1.89   0.060    -1.443527    .0299049
-wealth_d6_2020 |   -.735477   .3620237    -2.03   0.044    -1.449508   -.0214462
-wealth_d7_2020 |  -.9572226   .3551465    -2.70   0.008    -1.657689    -.256756
-wealth_d8_2020 |     -.9567   .3492447    -2.74   0.007    -1.645526   -.2678736
-wealth_d9_2020 |  -1.146496   .3418071    -3.35   0.001    -1.820653   -.4723392
-wealth_d10_~20 |   -1.11556   .3486885    -3.20   0.002    -1.803289   -.4278305
-         _cons |   .1004925   .4951508     0.20   0.839    -.8761091    1.077094
---------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(26, 192)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3185
-                                                Root MSE          =     .56049
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |  -.0005068   .0293202    -0.02   0.986    -.0583378    .0573243
-               |
-   c.trust_pc1#|
-   c.trust_pc1 |   .0091941   .0076774     1.20   0.233    -.0059488    .0243369
-               |
-       age_bin |
-           50  |  -.2121273   .5491408    -0.39   0.700    -1.295251    .8709961
-           55  |   .8065463   .3168129     2.55   0.012     .1816657    1.431427
-           60  |   .7568376   .1875655     4.04   0.000     .3868839    1.126791
-           65  |   .7675085   .1526161     5.03   0.000     .4664891    1.068528
-           70  |   .7376679   .1681385     4.39   0.000      .406032    1.069304
-           75  |   .7013254   .1589317     4.41   0.000     .3878491    1.014802
-           80  |   .8125686   .1906108     4.26   0.000     .4366084    1.188529
-           85  |   .3127648   .2081741     1.50   0.135    -.0978371    .7233668
-               |
-      2.gender |  -.1074799   .0793853    -1.35   0.177    -.2640592    .0490993
-      educ_yrs |   .0158707   .0149061     1.06   0.288      -.01353    .0452715
-  married_2020 |    .112503   .0879161     1.28   0.202    -.0609024    .2859084
-       born_us |   .0896669   .0932309     0.96   0.337    -.0942214    .2735552
-               |
-      race_eth |
-            2  |  -.0413694   .1264426    -0.33   0.744    -.2907644    .2080256
-            3  |  -.2178952   .1188302    -1.83   0.068    -.4522754     .016485
-            4  |  -.0241633   .1682004    -0.14   0.886    -.3559212    .3075947
-               |
-   inlbrf_2020 |   .1390671   .0875745     1.59   0.114    -.0336645    .3117986
-wealth_d2_2020 |    .530588   .4517399     1.17   0.242    -.3604223    1.421598
-wealth_d3_2020 |  -.4006227   .3798322    -1.05   0.293    -1.149802    .3485571
-wealth_d4_2020 |  -.4964237   .3902697    -1.27   0.205     -1.26619    .2733429
-wealth_d5_2020 |  -.6839356    .363387    -1.88   0.061    -1.400679    .0328076
-wealth_d6_2020 |  -.7092856   .3517601    -2.02   0.045    -1.403096   -.0154753
-wealth_d7_2020 |  -.9322891   .3443027    -2.71   0.007    -1.611391   -.2531876
-wealth_d8_2020 |  -.9358357   .3410552    -2.74   0.007    -1.608532   -.2631397
-wealth_d9_2020 |  -1.120021   .3323304    -3.37   0.001    -1.775509   -.4645341
-wealth_d10_~20 |  -1.092902   .3397551    -3.22   0.002    -1.763033     -.42277
-         _cons |  -.0139188   .4535692    -0.03   0.976     -.908537    .8806994
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Net wealth/returns_r5_trust_pc1.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Net wealth/returns_r5_trust_pc1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001b not
-    found)
-
-Linear regression                               Number of obs     =        271
-                                                F(1, 269)         =       1.19
-                                                Prob > F          =     0.2763
-                                                R-squared         =     0.0051
-                                                Root MSE          =     .51992
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |  -.0218493   .0200279    -1.09   0.276    -.0612808    .0175821
-       _cons |   .3415873   .0322017    10.61   0.000      .278188    .4049867
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        271
-                                                F(2, 268)         =       1.07
-                                                Prob > F          =     0.3435
-                                                R-squared         =     0.0074
-                                                Root MSE          =     .52029
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc1 |  -.0249263   .0197628    -1.26   0.208    -.0638365    .0139839
-             |
- c.trust_pc1#|
- c.trust_pc1 |   .0051191   .0066953     0.76   0.445    -.0080629    .0183011
-             |
-       _cons |   .3273456   .0362019     9.04   0.000     .2560693    .3986219
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(25, 193)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3694
-                                                Root MSE          =     .41149
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |   .0129044   .0192595     0.67   0.504    -.0250818    .0508906
-               |
-       age_bin |
-           50  |  -.0287619   .3853509    -0.07   0.941    -.7888016    .7312779
-           55  |   .6330145   .1748272     3.62   0.000     .2881973    .9778317
-           60  |    .655583   .1322963     4.96   0.000     .3946509    .9165152
-           65  |   .6894355   .1137568     6.06   0.000     .4650693    .9138016
-           70  |   .6757885    .133114     5.08   0.000     .4132436    .9383334
-           75  |   .6140281   .1223768     5.02   0.000     .3726605    .8553957
-           80  |   .7254728   .1423914     5.09   0.000     .4446297    1.006316
-           85  |   .3159383   .1459113     2.17   0.032     .0281527    .6037238
-               |
-      2.gender |   -.122958   .0596265    -2.06   0.041    -.2405612   -.0053548
-      educ_yrs |   .0161328   .0102799     1.57   0.118    -.0041427    .0364082
-  married_2020 |   .0810811   .0690379     1.17   0.242    -.0550845    .2172468
-       born_us |   .0691091   .0791971     0.87   0.384    -.0870939    .2253122
-               |
-      race_eth |
-            2  |   -.119361    .084527    -1.41   0.160    -.2860763    .0473542
-            3  |  -.1715225   .0960429    -1.79   0.076    -.3609509     .017906
-            4  |  -.0217897   .1444109    -0.15   0.880    -.3066158    .2630365
-               |
-   inlbrf_2020 |   .0920537   .0671837     1.37   0.172    -.0404548    .2245622
-wealth_d2_2020 |   .6927271   .2336578     2.96   0.003     .2318765    1.153578
-wealth_d3_2020 |   -.098106   .2063263    -0.48   0.635      -.50505    .3088379
-wealth_d4_2020 |  -.2741173   .1973669    -1.39   0.166    -.6633902    .1151557
-wealth_d5_2020 |  -.4096389   .1944324    -2.11   0.036     -.793124   -.0261538
-wealth_d6_2020 |  -.4219706   .1940038    -2.18   0.031    -.8046105   -.0393306
-wealth_d7_2020 |  -.6480815   .2012512    -3.22   0.002    -1.045016   -.2511474
-wealth_d8_2020 |  -.6421496   .1863246    -3.45   0.001    -1.009644   -.2746557
-wealth_d9_2020 |  -.8144929   .1934235    -4.21   0.000    -1.195988   -.4329977
-wealth_d10_~20 |  -.8008274   .1896528    -4.22   0.000    -1.174886   -.4267691
-         _cons |  -.1256236   .2430193    -0.52   0.606    -.6049383    .3536912
---------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(26, 192)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3728
-                                                Root MSE          =     .41142
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc1 |   .0083361   .0194166     0.43   0.668    -.0299611    .0466332
-               |
-   c.trust_pc1#|
-   c.trust_pc1 |   .0058412   .0057025     1.02   0.307    -.0054065    .0170888
-               |
-       age_bin |
-           50  |   .0142569   .3810361     0.04   0.970    -.7372975    .7658112
-           55  |   .6547998   .1751648     3.74   0.000     .3093054    1.000294
-           60  |   .6830512   .1401163     4.87   0.000     .4066863    .9594161
-           65  |    .720428   .1188333     6.06   0.000     .4860415    .9548145
-           70  |   .6982994   .1378912     5.06   0.000     .4263233    .9702755
-           75  |   .6390573   .1262485     5.06   0.000     .3900452    .8880695
-           80  |   .7512019   .1476172     5.09   0.000     .4600423    1.042361
-           85  |   .3432614   .1477786     2.32   0.021     .0517835    .6347393
-               |
-      2.gender |  -.1213119   .0595816    -2.04   0.043    -.2388305   -.0037933
-      educ_yrs |   .0170866   .0102038     1.67   0.096    -.0030393    .0372125
-  married_2020 |   .0855877   .0691786     1.24   0.218    -.0508598    .2220353
-       born_us |   .0695943   .0800292     0.87   0.386    -.0882551    .2274437
-               |
-      race_eth |
-            2  |  -.1179376   .0840764    -1.40   0.162    -.2837695    .0478943
-            3  |  -.1737317    .097541    -1.78   0.076    -.3661212    .0186577
-            4  |  -.0269438   .1486762    -0.18   0.856    -.3201922    .2663047
-               |
-   inlbrf_2020 |   .0926766   .0680586     1.36   0.175    -.0415619    .2269151
-wealth_d2_2020 |   .7093996   .2372695     2.99   0.003     .2414101    1.177389
-wealth_d3_2020 |  -.0900746   .2035071    -0.44   0.659    -.4914713    .3113221
-wealth_d4_2020 |  -.2614588   .1951892    -1.34   0.182    -.6464493    .1235317
-wealth_d5_2020 |  -.3951057   .1928415    -2.05   0.042    -.7754657   -.0147457
-wealth_d6_2020 |  -.4053307   .1940303    -2.09   0.038    -.7880355   -.0226259
-wealth_d7_2020 |  -.6322408   .1989077    -3.18   0.002    -1.024566    -.239916
-wealth_d8_2020 |  -.6288941   .1853909    -3.39   0.001    -.9945585   -.2632297
-wealth_d9_2020 |  -.7976731   .1920018    -4.15   0.000    -1.176377   -.4189694
-wealth_d10_~20 |  -.7864323   .1880565    -4.18   0.000    -1.157354   -.4155103
-         _cons |  -.1983111   .2426126    -0.82   0.415    -.6768393    .2802172
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Net wealth/returns_r5_trust_pc1_win.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Net wealth/returns_r5_trust_pc1_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001c not
-    found)
-
-Linear regression                               Number of obs     =        248
-                                                F(1, 246)         =       0.66
-                                                Prob > F          =     0.4169
-                                                R-squared         =     0.0021
-                                                Root MSE          =     2.2226
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |   .1140656   .1402622     0.81   0.417    -.1622024    .3903336
-       _cons |   .5491995   .1335422     4.11   0.000     .2861675    .8122315
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        248
-                                                F(2, 245)         =       0.33
-                                                Prob > F          =     0.7214
-                                                R-squared         =     0.0022
-                                                Root MSE          =     2.2271
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |   .1131652   .1399344     0.81   0.419    -.1624627    .3887931
-             |
- c.trust_pc2#|
- c.trust_pc2 |   .0107877   .0438593     0.25   0.806    -.0756017    .0971771
-             |
-       _cons |    .540163   .1442727     3.74   0.000       .25599     .824336
-------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(23, 221)        =       1.30
-                                                Prob > F          =     0.1675
-                                                R-squared         =     0.1298
-                                                Root MSE          =     2.1878
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   .1232394   .1287379     0.96   0.339    -.1304716    .3769505
-               |
-       age_bin |
-           50  |   1.333862   .8651106     1.54   0.125    -.3710601    3.038784
-           55  |   1.544806   .8543144     1.81   0.072      -.13884    3.228451
-           60  |   1.787349   .9944161     1.80   0.074    -.1724024    3.747101
-           65  |   1.899085    .953439     1.99   0.048     .0200895    3.778081
-           70  |   1.539967   .8689306     1.77   0.078    -.1724837    3.252417
-           75  |   1.550177   .8400899     1.85   0.066    -.1054352     3.20579
-           80  |   1.678919    .901664     1.86   0.064    -.0980414    3.455879
-           85  |   1.865603   1.015592     1.84   0.068    -.1358821    3.867087
-               |
-      2.gender |   .1378312   .2495041     0.55   0.581    -.3538805    .6295429
-      educ_yrs |   .1386244   .0645548     2.15   0.033     .0114026    .2658462
-  married_2020 |   .4438431   .3098782     1.43   0.153    -.1668513    1.054537
-       born_us |   .2998236   .4094216     0.73   0.465    -.5070467    1.106694
-               |
-      race_eth |
-            2  |  -.5433876   .3459828    -1.57   0.118    -1.225235    .1384601
-            3  |  -.1718711   .6752377    -0.25   0.799      -1.5026    1.158858
-            4  |  -.0774572   .6663724    -0.12   0.908    -1.390715      1.2358
-               |
-   inlbrf_2020 |   .4660103   .2954373     1.58   0.116    -.1162247    1.048245
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   1.899208   .5952992     3.19   0.002     .7260179    3.072397
-weal~e_d5_2020 |   2.341371   .9342138     2.51   0.013     .5002629    4.182478
-weal~e_d6_2020 |     1.1195   .3900275     2.87   0.004     .3508505    1.888149
-weal~e_d7_2020 |   1.000071   .3300805     3.03   0.003     .3495626    1.650579
-weal~e_d8_2020 |   1.039605   .5813961     1.79   0.075    -.1061853    2.185395
-weal~e_d9_2020 |   .2966639   .2101967     1.41   0.160    -.1175826    .7109104
-wea~e_d10_2020 |          0  (omitted)
-         _cons |  -4.812219   1.885522    -2.55   0.011    -8.528124   -1.096315
---------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(24, 220)        =       1.28
-                                                Prob > F          =     0.1779
-                                                R-squared         =     0.1317
-                                                Root MSE          =     2.1905
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   .1153756   .1305539     0.88   0.378    -.1419207    .3726719
-               |
-   c.trust_pc2#|
-   c.trust_pc2 |   .0623703   .0539745     1.16   0.249    -.0440029    .1687435
-               |
-       age_bin |
-           50  |   1.416556   .9285975     1.53   0.129    -.4135296    3.246641
-           55  |   1.665567   .9273112     1.80   0.074     -.161983    3.493117
-           60  |   1.888427   1.060881     1.78   0.076    -.2023636    3.979218
-           65  |   2.040444   1.027916     1.99   0.048     .0146215    4.066267
-           70  |    1.64905    .944826     1.75   0.082    -.2130183    3.511119
-           75  |   1.635179   .9125164     1.79   0.075    -.1632136    3.433571
-           80  |   1.766495   .9735942     1.81   0.071    -.1522698     3.68526
-           85  |   1.988232    1.08788     1.83   0.069    -.1557674    4.132232
-               |
-      2.gender |    .128191   .2494359     0.51   0.608    -.3633988    .6197807
-      educ_yrs |   .1400446   .0648958     2.16   0.032     .0121476    .2679416
-  married_2020 |    .446406   .3104837     1.44   0.152     -.165497    1.058309
-       born_us |   .3625299   .4217064     0.86   0.391    -.4685715    1.193631
-               |
-      race_eth |
-            2  |  -.5430206   .3463218    -1.57   0.118    -1.225553    .1395123
-            3  |  -.1306135   .6751146    -0.19   0.847    -1.461133    1.199906
-            4  |  -.0509962   .6699282    -0.08   0.939    -1.371294    1.269302
-               |
-   inlbrf_2020 |   .4635186    .295089     1.57   0.118    -.1180444    1.045082
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   1.878246   .5963064     3.15   0.002     .7030416     3.05345
-weal~e_d5_2020 |   2.347608   .9372694     2.50   0.013     .5004319    4.194783
-weal~e_d6_2020 |   1.119181   .3888336     2.88   0.004     .3528657    1.885496
-weal~e_d7_2020 |   .9785192   .3289962     2.97   0.003     .3301317    1.626907
-weal~e_d8_2020 |   1.034239   .5825334     1.78   0.077    -.1138205    2.182299
-weal~e_d9_2020 |   .2793821   .2084517     1.34   0.182    -.1314357    .6901999
-wea~e_d10_2020 |          0  (omitted)
-         _cons |  -5.039025   1.964757    -2.56   0.011     -8.91118    -1.16687
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Core/returns_r1_trust_pc2.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Core/returns_r1_trust_pc2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001d not
-    found)
-
-Linear regression                               Number of obs     =        248
-                                                F(1, 246)         =       0.02
-                                                Prob > F          =     0.8925
-                                                R-squared         =     0.0001
-                                                Root MSE          =     1.0211
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |    .009545   .0705386     0.14   0.892    -.1293917    .1484818
-       _cons |   .2984404    .064581     4.62   0.000     .1712381    .4256427
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        248
-                                                F(2, 245)         =       0.13
-                                                Prob > F          =     0.8793
-                                                R-squared         =     0.0008
-                                                Root MSE          =     1.0229
-
-------------------------------------------------------------------------------
-             |               Robust
-r1_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |   .0081432   .0706366     0.12   0.908    -.1309893    .1472757
-             |
- c.trust_pc2#|
- c.trust_pc2 |   .0167954   .0331119     0.51   0.612    -.0484249    .0820157
-             |
-       _cons |   .2843714   .0721335     3.94   0.000     .1422906    .4264523
-------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(23, 221)        =       2.36
-                                                Prob > F          =     0.0007
-                                                R-squared         =     0.1348
-                                                Root MSE          =     .99928
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   .0371409   .0760845     0.49   0.626    -.1128031    .1870849
-               |
-       age_bin |
-           50  |   1.059971   .6146092     1.72   0.086    -.1512739    2.271216
-           55  |    .743771   .5408255     1.38   0.170    -.3220642    1.809606
-           60  |   .6422814   .5252363     1.22   0.223    -.3928313    1.677394
-           65  |   .8987548   .5363976     1.68   0.095    -.1583542    1.955864
-           70  |   .7885518   .5409616     1.46   0.146    -.2775516    1.854655
-           75  |   .8068845   .5378133     1.50   0.135    -.2530145    1.866784
-           80  |   .7910716   .5753097     1.38   0.171    -.3427236    1.924867
-           85  |   .7978017   .5786013     1.38   0.169    -.3424804    1.938084
-               |
-      2.gender |  -.0570452   .1334791    -0.43   0.670    -.3200999    .2060095
-      educ_yrs |   .0452815   .0274368     1.65   0.100    -.0087898    .0993528
-  married_2020 |   .1342809    .154705     0.87   0.386     -.170605    .4391668
-       born_us |   .0591737   .1927238     0.31   0.759     -.320638    .4389853
-               |
-      race_eth |
-            2  |  -.3786164   .1613603    -2.35   0.020    -.6966183   -.0606145
-            3  |  -.4668078   .2514034    -1.86   0.065    -.9622627    .0286471
-            4  |  -.2438235   .2530014    -0.96   0.336    -.7424276    .2547806
-               |
-   inlbrf_2020 |   .1858569   .1502296     1.24   0.217     -.110209    .4819229
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   .9693676   .2765353     3.51   0.001     .4243838    1.514351
-weal~e_d5_2020 |   1.086382   .2828792     3.84   0.000     .5288956    1.643867
-weal~e_d6_2020 |   .5840175   .1982749     2.95   0.004      .193266    .9747689
-weal~e_d7_2020 |   .5770765   .1813057     3.18   0.002     .2197671     .934386
-weal~e_d8_2020 |   .3981276   .2164234     1.84   0.067    -.0283902    .8246453
-weal~e_d9_2020 |   .0583259   .1276279     0.46   0.648    -.1931976    .3098494
-wea~e_d10_2020 |          0  (omitted)
-         _cons |  -1.677353   .7627037    -2.20   0.029    -3.180456   -.1742499
---------------------------------------------------------------------------------
-note: wealth_core_d2_2020 omitted because of collinearity.
-note: wealth_core_d3_2020 omitted because of collinearity.
-note: wealth_core_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        245
-                                                F(24, 220)        =       2.33
-                                                Prob > F          =     0.0007
-                                                R-squared         =     0.1373
-                                                Root MSE          =     1.0001
-
---------------------------------------------------------------------------------
-               |               Robust
-r1_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   .0329481   .0768133     0.43   0.668    -.1184359    .1843322
-               |
-   c.trust_pc2#|
-   c.trust_pc2 |   .0332543   .0339871     0.98   0.329    -.0337277    .1002364
-               |
-       age_bin |
-           50  |   1.104061   .6430416     1.72   0.087    -.1632487    2.371371
-           55  |   .8081581   .5736727     1.41   0.160    -.3224393    1.938756
-           60  |   .6961735    .557247     1.25   0.213     -.402052    1.794399
-           65  |    .974124   .5674099     1.72   0.087    -.1441306    2.092379
-           70  |   .8467123   .5706944     1.48   0.139    -.2780155     1.97144
-           75  |   .8522052   .5706736     1.49   0.137    -.2724816    1.976892
-           80  |   .8377652   .6077432     1.38   0.169    -.3599786    2.035509
-           85  |   .8631848   .6104395     1.41   0.159    -.3398728    2.066243
-               |
-      2.gender |  -.0621851   .1341699    -0.46   0.643     -.326608    .2022378
-      educ_yrs |   .0460388   .0275354     1.67   0.096    -.0082281    .1003056
-  married_2020 |   .1356474   .1549009     0.88   0.382    -.1696322     .440927
-       born_us |   .0926071   .2059869     0.45   0.653     -.313353    .4985673
-               |
-      race_eth |
-            2  |  -.3784207    .161041    -2.35   0.020    -.6958012   -.0610401
-            3  |  -.4448103    .253573    -1.75   0.081    -.9445535    .0549328
-            4  |  -.2297151   .2543927    -0.90   0.368    -.7310737    .2716434
-               |
-   inlbrf_2020 |   .1845284   .1502924     1.23   0.221    -.1116688    .4807256
-weal~e_d2_2020 |          0  (omitted)
-weal~e_d3_2020 |          0  (omitted)
-weal~e_d4_2020 |   .9581912   .2777338     3.45   0.001      .410832    1.505551
-weal~e_d5_2020 |   1.089707   .2840149     3.84   0.000     .5299687    1.649445
-weal~e_d6_2020 |   .5838476   .1976399     2.95   0.003     .1943378    .9733575
-weal~e_d7_2020 |   .5655857   .1815095     3.12   0.002     .2078657    .9233058
-weal~e_d8_2020 |   .3952669   .2178472     1.81   0.071    -.0340676    .8246014
-weal~e_d9_2020 |   .0491117   .1246897     0.39   0.694    -.1966275    .2948509
-wea~e_d10_2020 |          0  (omitted)
-         _cons |   -1.79828   .7988614    -2.25   0.025    -3.372681   -.2238798
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Core/returns_r1_trust_pc2_win.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Core/returns_r1_trust_pc2_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001e not
-    found)
-
-Linear regression                               Number of obs     =        110
-                                                F(1, 108)         =       0.00
-                                                Prob > F          =     0.9609
-                                                R-squared         =     0.0000
-                                                Root MSE          =      .5559
-
-------------------------------------------------------------------------------
-             |               Robust
-r4_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |   .0040487   .0824111     0.05   0.961    -.1593045    .1674018
-       _cons |   .1670201    .054781     3.05   0.003     .0584346    .2756056
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        110
-                                                F(2, 107)         =       2.45
-                                                Prob > F          =     0.0916
-                                                R-squared         =     0.0364
-                                                Root MSE          =     .54822
-
-------------------------------------------------------------------------------
-             |               Robust
-r4_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |  -.0828978   .0644394    -1.29   0.201    -.2106413    .0448458
-             |
- c.trust_pc2#|
- c.trust_pc2 |   .1128145   .0580132     1.94   0.054      -.00219     .227819
-             |
-       _cons |   .1222997   .0641355     1.91   0.059    -.0048414    .2494408
-------------------------------------------------------------------------------
-note: wealth_coreira_d2_2020 omitted because of collinearity.
-note: wealth_coreira_d3_2020 omitted because of collinearity.
-note: wealth_coreira_d4_2020 omitted because of collinearity.
-note: wealth_coreira_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        109
-                                                F(20, 87)         =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.2495
-                                                Root MSE          =     .52966
-
---------------------------------------------------------------------------------
-               |               Robust
-r4_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |  -.0088706   .0705502    -0.13   0.900    -.1490967    .1313554
-               |
-       age_bin |
-           55  |  -.7411553   .4281566    -1.73   0.087    -1.592163    .1098522
-           60  |  -.6848669   .4065667    -1.68   0.096    -1.492962    .1232285
-           65  |  -.7024902    .424701    -1.65   0.102    -1.546629    .1416491
-           70  |  -.7571652   .4238461    -1.79   0.078    -1.599605    .0852749
-           75  |  -.8039537   .4445425    -1.81   0.074     -1.68753    .0796227
-           80  |  -.7474433   .4682554    -1.60   0.114    -1.678152    .1832651
-           85  |  -.7781606   .4391627    -1.77   0.080    -1.651044    .0947229
-               |
-      2.gender |   -.143471   .1004094    -1.43   0.157    -.3430456    .0561036
-      educ_yrs |   .0262445   .0262048     1.00   0.319    -.0258404    .0783293
-  married_2020 |   .0548392   .1475197     0.37   0.711    -.2383722    .3480507
-       born_us |   .0588713   .1596603     0.37   0.713    -.2584709    .3762134
-               |
-      race_eth |
-            2  |  -.1110266   .1200385    -0.92   0.358    -.3496162    .1275629
-            3  |  -.5386433   .3502262    -1.54   0.128    -1.234756    .1574692
-            4  |  -.0106645   .1721381    -0.06   0.951    -.3528075    .3314785
-               |
-   inlbrf_2020 |  -.0144936   .1326842    -0.11   0.913    -.2782177    .2492305
-w~eira_d2_2020 |          0  (omitted)
-w~eira_d3_2020 |          0  (omitted)
-w~eira_d4_2020 |          0  (omitted)
-w~eira_d5_2020 |  -.3909999   .1665692    -2.35   0.021    -.7220742   -.0599256
-w~eira_d6_2020 |   .4377422   .2590649     1.69   0.095    -.0771773    .9526616
-w~eira_d7_2020 |   .6164188   .2085364     2.96   0.004       .20193    1.030908
-w~eira_d8_2020 |    .132857   .1005171     1.32   0.190    -.0669315    .3326456
-w~eira_d9_2020 |  -.0037029   .1093447    -0.03   0.973    -.2210374    .2136316
-~eira_d10_2020 |          0  (omitted)
-         _cons |   .3600582    .595751     0.60   0.547    -.8240614    1.544178
---------------------------------------------------------------------------------
-note: wealth_coreira_d2_2020 omitted because of collinearity.
-note: wealth_coreira_d3_2020 omitted because of collinearity.
-note: wealth_coreira_d4_2020 omitted because of collinearity.
-note: wealth_coreira_d10_2020 omitted because of collinearity.
-
-Linear regression                               Number of obs     =        109
-                                                F(21, 86)         =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.2654
-                                                Root MSE          =     .52705
-
---------------------------------------------------------------------------------
-               |               Robust
-r4_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   -.055946   .0749625    -0.75   0.458    -.2049665    .0930744
-               |
-   c.trust_pc2#|
-   c.trust_pc2 |    .085185   .0600367     1.42   0.160    -.0341641     .204534
-               |
-       age_bin |
-           55  |  -.6055994    .342017    -1.77   0.080    -1.285507    .0743079
-           60  |  -.5098871   .3225369    -1.58   0.118    -1.151069    .1312951
-           65  |  -.5048558   .3481311    -1.45   0.151    -1.196917    .1872059
-           70  |  -.5820115   .3442934    -1.69   0.095    -1.266444    .1024211
-           75  |  -.6750673   .3586366    -1.88   0.063    -1.388013    .0378786
-           80  |  -.5621412   .3950411    -1.42   0.158    -1.347457    .2231745
-           85  |  -.5674399   .3497715    -1.62   0.108    -1.262763    .1278829
-               |
-      2.gender |  -.1494316   .1000003    -1.49   0.139    -.3482255    .0493624
-      educ_yrs |   .0300075   .0265163     1.13   0.261    -.0227051    .0827201
-  married_2020 |   .0711484   .1422497     0.50   0.618    -.2116346    .3539314
-       born_us |   .0518486    .161261     0.32   0.749    -.2687277    .3724249
-               |
-      race_eth |
-            2  |  -.1281502   .1198172    -1.07   0.288     -.366339    .1100385
-            3  |   -.538808   .3695025    -1.46   0.148    -1.273355    .1957386
-            4  |   .0011435   .1754124     0.01   0.995    -.3475648    .3498518
-               |
-   inlbrf_2020 |  -.0153633   .1276061    -0.12   0.904    -.2690359    .2383093
-w~eira_d2_2020 |          0  (omitted)
-w~eira_d3_2020 |          0  (omitted)
-w~eira_d4_2020 |          0  (omitted)
-w~eira_d5_2020 |  -.4462898   .1781008    -2.51   0.014    -.8003425   -.0922372
-w~eira_d6_2020 |   .4659025   .2482271     1.88   0.064    -.0275566    .9593617
-w~eira_d7_2020 |   .6030347   .2156716     2.80   0.006     .1742939    1.031776
-w~eira_d8_2020 |    .131408   .1015041     1.29   0.199    -.0703755    .3331915
-w~eira_d9_2020 |   .0083345   .1069093     0.08   0.938    -.2041942    .2208633
-~eira_d10_2020 |          0  (omitted)
-         _cons |   .0963097   .5478089     0.18   0.861    -.9926984    1.185318
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Core+res/returns_r4_trust_pc2.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Core+res/returns_r4_trust_pc2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001f not
-    found)
-Skipping r4_win for pc2: return var r4_annual_2022_w5 not found.
-
-Linear regression                               Number of obs     =        271
-                                                F(1, 269)         =       0.01
-                                                Prob > F          =     0.9257
-                                                R-squared         =     0.0000
-                                                Root MSE          =     .75643
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |    .004748   .0508783     0.09   0.926    -.0954224    .1049184
-       _cons |   .3909069   .0464182     8.42   0.000     .2995178    .4822959
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        271
-                                                F(2, 268)         =       0.40
-                                                Prob > F          =     0.6701
-                                                R-squared         =     0.0019
-                                                Root MSE          =     .75714
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~l_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |    .009454   .0517803     0.18   0.855    -.0924939    .1114018
-             |
- c.trust_pc2#|
- c.trust_pc2 |   .0195502   .0218673     0.89   0.372    -.0235034    .0626037
-             |
-       _cons |   .3722777   .0496684     7.50   0.000     .2744877    .4700676
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(25, 193)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3136
-                                                Root MSE          =     .56105
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   .0154902   .0418682     0.37   0.712    -.0670878    .0980681
-               |
-       age_bin |
-           50  |  -.2548138   .5810061    -0.44   0.661    -1.400751    .8911229
-           55  |    .781946   .3152458     2.48   0.014     .1601766    1.403715
-           60  |   .7315299   .1693977     4.32   0.000     .3974216    1.065638
-           65  |   .7412106   .1509226     4.91   0.000     .4435411     1.03888
-           70  |   .7329639   .1594762     4.60   0.000     .4184239    1.047504
-           75  |   .6856154   .1700148     4.03   0.000     .3502899    1.020941
-           80  |   .8006604   .2079079     3.85   0.000     .3905971    1.210724
-           85  |   .3017914   .1956114     1.54   0.125    -.0840193    .6876021
-               |
-      2.gender |  -.1077115   .0726753    -1.48   0.140    -.2510514    .0356284
-      educ_yrs |   .0138225   .0154923     0.89   0.373    -.0167335    .0443785
-  married_2020 |   .0978756   .0883213     1.11   0.269    -.0763233    .2720745
-       born_us |   .0845466   .0920364     0.92   0.359    -.0969798     .266073
-               |
-      race_eth |
-            2  |  -.0448774   .1282966    -0.35   0.727    -.2979208    .2081661
-            3  |  -.2151475   .1155787    -1.86   0.064    -.4431071    .0128121
-            4  |  -.0188575   .1600085    -0.12   0.906    -.3344473    .2967323
-               |
-   inlbrf_2020 |   .1428218   .0841411     1.70   0.091    -.0231325     .308776
-wealth_d2_2020 |   .4944783   .4454448     1.11   0.268    -.3840866    1.373043
-wealth_d3_2020 |   -.417662      .3974    -1.05   0.295    -1.201467    .3661426
-wealth_d4_2020 |  -.5146575   .4056036    -1.27   0.206    -1.314642    .2853274
-wealth_d5_2020 |  -.7047785   .3838255    -1.84   0.068     -1.46181    .0522527
-wealth_d6_2020 |  -.7367822   .3701567    -1.99   0.048    -1.466854   -.0067104
-wealth_d7_2020 |  -.9629556    .362415    -2.66   0.009    -1.677758    -.248153
-wealth_d8_2020 |  -.9627167   .3556524    -2.71   0.007    -1.664181   -.2612523
-wealth_d9_2020 |  -1.142465   .3520993    -3.24   0.001    -1.836921   -.4480081
-wealth_d10_~20 |  -1.118795   .3550488    -3.15   0.002    -1.819069   -.4185212
-         _cons |   .0921207   .5225819     0.18   0.860    -.9385841    1.122825
---------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(26, 192)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3141
-                                                Root MSE          =     .56232
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annual_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   .0114573   .0428806     0.27   0.790    -.0731203    .0960348
-               |
-   c.trust_pc2#|
-   c.trust_pc2 |  -.0088936   .0216314    -0.41   0.681    -.0515592    .0337721
-               |
-       age_bin |
-           50  |  -.2465916   .5781052    -0.43   0.670    -1.386844    .8936611
-           55  |   .7902273   .3149282     2.51   0.013     .1690642    1.411391
-           60  |   .7444307   .1739646     4.28   0.000     .4013036    1.087558
-           65  |   .7484512   .1512532     4.95   0.000     .4501199    1.046783
-           70  |   .7465163     .16267     4.59   0.000     .4256665    1.067366
-           75  |   .6983847   .1696591     4.12   0.000     .3637497     1.03302
-           80  |   .8134536   .2081671     3.91   0.000     .4028656    1.224042
-           85  |   .3116664   .1935869     1.61   0.109    -.0701637    .6934964
-               |
-      2.gender |  -.1040369   .0743415    -1.40   0.163    -.2506677    .0425939
-      educ_yrs |   .0136144   .0156184     0.87   0.384    -.0171912    .0444201
-  married_2020 |   .0971987   .0888066     1.09   0.275    -.0779632    .2723606
-       born_us |   .0745934   .0936001     0.80   0.426    -.1100231    .2592099
-               |
-      race_eth |
-            2  |  -.0485839   .1262129    -0.38   0.701    -.2975258     .200358
-            3  |  -.2258698   .1175577    -1.92   0.056    -.4577402    .0060007
-            4  |  -.0233733   .1588371    -0.15   0.883     -.336663    .2899163
-               |
-   inlbrf_2020 |   .1406518   .0832403     1.69   0.093    -.0235311    .3048347
-wealth_d2_2020 |   .4828186    .454794     1.06   0.290    -.4142155    1.379853
-wealth_d3_2020 |  -.4214109   .4014445    -1.05   0.295    -1.213219    .3703968
-wealth_d4_2020 |  -.5150654   .4063337    -1.27   0.206    -1.316517    .2863858
-wealth_d5_2020 |  -.7102839    .389385    -1.82   0.070    -1.478305    .0577377
-wealth_d6_2020 |  -.7390778   .3725782    -1.98   0.049     -1.47395   -.0042059
-wealth_d7_2020 |   -.968932   .3685346    -2.63   0.009    -1.695828   -.2420357
-wealth_d8_2020 |  -.9609347   .3548814    -2.71   0.007    -1.660901   -.2609679
-wealth_d9_2020 |  -1.150083   .3593793    -3.20   0.002    -1.858922   -.4412446
-wealth_d10_~20 |  -1.125683   .3617517    -3.11   0.002    -1.839201   -.4121654
-         _cons |   .1053845   .5330376     0.20   0.843     -.945977    1.156746
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Net wealth/returns_r5_trust_pc2.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Net wealth/returns_r5_trust_pc2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001g not
-    found)
-
-Linear regression                               Number of obs     =        271
-                                                F(1, 269)         =       0.00
-                                                Prob > F          =     0.9613
-                                                R-squared         =     0.0000
-                                                Root MSE          =     .52124
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |   .0017137   .0352491     0.05   0.961    -.0676855    .0711129
-       _cons |   .3360259   .0320056    10.50   0.000     .2730125    .3990392
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        271
-                                                F(2, 268)         =       0.43
-                                                Prob > F          =     0.6500
-                                                R-squared         =     0.0023
-                                                Root MSE          =     .52162
-
-------------------------------------------------------------------------------
-             |               Robust
-r5_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   trust_pc2 |   .0053405   .0359364     0.15   0.882     -.065413    .0760939
-             |
- c.trust_pc2#|
- c.trust_pc2 |   .0150669   .0162227     0.93   0.354    -.0168732     .047007
-             |
-       _cons |   .3216688   .0348033     9.24   0.000      .253146    .3901915
-------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(25, 193)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3680
-                                                Root MSE          =     .41192
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |   .0125999    .035641     0.35   0.724     -.057696    .0828958
-               |
-       age_bin |
-           50  |   .0164394   .3840437     0.04   0.966    -.7410222     .773901
-           55  |   .6530629   .1691971     3.86   0.000     .3193501    .9867757
-           60  |   .6855876   .1285774     5.33   0.000     .4319903     .939185
-           65  |   .7259856   .1090685     6.66   0.000     .5108663    .9411049
-           70  |   .7254145   .1216015     5.97   0.000     .4855761    .9652529
-           75  |   .6548148   .1193895     5.48   0.000     .4193391    .8902905
-           80  |   .7684726   .1449036     5.30   0.000     .4826746     1.05427
-           85  |    .370954   .1336828     2.77   0.006     .1072872    .6346208
-               |
-      2.gender |  -.1159997   .0578763    -2.00   0.046     -.230151   -.0018483
-      educ_yrs |   .0157828    .010361     1.52   0.129    -.0046526    .0362181
-  married_2020 |   .0743561   .0708112     1.05   0.295    -.0653071    .2140193
-       born_us |   .0603315   .0780811     0.77   0.441    -.0936703    .2143334
-               |
-      race_eth |
-            2  |  -.1219287   .0847463    -1.44   0.152    -.2890765     .045219
-            3  |  -.1745804   .0952115    -1.83   0.068    -.3623691    .0132083
-            4  |  -.0276572   .1416015    -0.20   0.845    -.3069424     .251628
-               |
-   inlbrf_2020 |    .098206   .0664743     1.48   0.141    -.0329033    .2293152
-wealth_d2_2020 |   .6780036   .2346533     2.89   0.004     .2151895    1.140818
-wealth_d3_2020 |  -.0955162   .2093632    -0.46   0.649    -.5084499    .3174175
-wealth_d4_2020 |  -.2684495    .197557    -1.36   0.176    -.6580974    .1211983
-wealth_d5_2020 |  -.4024093   .1975712    -2.04   0.043    -.7920852   -.0127334
-wealth_d6_2020 |   -.416972    .194839    -2.14   0.034    -.8012591   -.0326848
-wealth_d7_2020 |  -.6462551    .202859    -3.19   0.002     -1.04636     -.24615
-wealth_d8_2020 |  -.6418484   .1876157    -3.42   0.001    -1.011889   -.2718081
-wealth_d9_2020 |  -.8031327   .1944006    -4.13   0.000    -1.186555   -.4197102
-wealth_d10_~20 |    -.79842   .1908074    -4.18   0.000    -1.174755   -.4220845
-         _cons |  -.1537873   .2421055    -0.64   0.526    -.6312996    .3237251
---------------------------------------------------------------------------------
-
-Linear regression                               Number of obs     =        220
-                                                F(26, 192)        =          .
-                                                Prob > F          =          .
-                                                R-squared         =     0.3680
-                                                Root MSE          =       .413
-
---------------------------------------------------------------------------------
-               |               Robust
-r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-     trust_pc2 |    .012705   .0353124     0.36   0.719    -.0569451    .0823551
-               |
-   c.trust_pc2#|
-   c.trust_pc2 |   .0002317   .0153641     0.02   0.988    -.0300724    .0305358
-               |
-       age_bin |
-           50  |   .0162252   .3849831     0.04   0.966    -.7431141    .7755646
-           55  |   .6528472   .1704419     3.83   0.000     .3166681    .9890262
-           60  |   .6852516   .1322782     5.18   0.000     .4243464    .9461567
-           65  |    .725797   .1118276     6.49   0.000     .5052287    .9463654
-           70  |   .7250614    .128149     5.66   0.000     .4723007    .9778222
-           75  |   .6544822   .1231745     5.31   0.000     .4115333     .897431
-           80  |   .7681393   .1498753     5.13   0.000     .4725259    1.063753
-           85  |   .3706968   .1366426     2.71   0.007     .1011833    .6402102
-               |
-      2.gender |  -.1160954   .0585076    -1.98   0.049    -.2314955   -.0006953
-      educ_yrs |   .0157882   .0104148     1.52   0.131     -.004754    .0363304
-  married_2020 |   .0743737   .0709148     1.05   0.296    -.0654984    .2142458
-       born_us |   .0605908   .0808038     0.75   0.454    -.0987863     .219968
-               |
-      race_eth |
-            2  |  -.1218322   .0848268    -1.44   0.153    -.2891443      .04548
-            3  |  -.1743011   .0956595    -1.82   0.070    -.3629795    .0143773
-            4  |  -.0275396   .1418378    -0.19   0.846    -.3072999    .2522207
-               |
-   inlbrf_2020 |   .0982625   .0664261     1.48   0.141    -.0327561     .229281
-wealth_d2_2020 |   .6783073   .2372073     2.86   0.005     .2104405    1.146174
-wealth_d3_2020 |  -.0954185   .2109295    -0.45   0.652    -.5114551     .320618
-wealth_d4_2020 |  -.2684389   .1981398    -1.35   0.177    -.6592491    .1223713
-wealth_d5_2020 |  -.4022658   .1992548    -2.02   0.045    -.7952752   -.0092564
-wealth_d6_2020 |  -.4169122   .1957023    -2.13   0.034    -.8029147   -.0309096
-wealth_d7_2020 |  -.6460994   .2053181    -3.15   0.002    -1.051068   -.2411307
-wealth_d8_2020 |  -.6418948    .187776    -3.42   0.001    -1.012264    -.271526
-wealth_d9_2020 |  -.8029342   .1968304    -4.08   0.000    -1.191162   -.4147067
-wealth_d10_~20 |  -.7982405   .1930636    -4.13   0.000    -1.179038   -.4174426
-         _cons |  -.1541328   .2445492    -0.63   0.529    -.6364809    .3282153
---------------------------------------------------------------------------------
-Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Retu
-> rns/Net wealth/returns_r5_trust_pc2_win.tex
-(results lin_ctl are active now)
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Returns/Net wealth/returns_r5_trust_pc2_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_30768.00001h not
-    found)
+Skipping trust (not found): trust_pc1
+Skipping trust (not found): trust_pc2
 
 . 
 . eststo clear
@@ -7376,5 +6013,5 @@ Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressi
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/13_reg
 > _returns_trust.log
   log type:  text
- closed on:  17 Feb 2026, 16:42:55
+ closed on:  18 Feb 2026, 18:42:03
 ---------------------------------------------------------------------------------

@@ -5,7 +5,7 @@
 * Controls: age 5-yr bins, gender, educ, inlbrf, married, born_us, race_eth, scope-appropriate wealth deciles.
 * Table: omit age bins and wealth from display; note included. Full regression results in log.
 * vce(robust). Log: Notes/Logs/13_reg_returns_trust.log.
-* Output: Regressions/Returns/Spec1/returns_trust_<trust_stub>.tex, returns_trust_<trust_stub>_win.tex; same for Spec2.
+* Output: Regressions/Returns/Core/, Core+res/, Net wealth/ — returns_<ret>_trust_<stub>.tex (and _win).
 
 clear
 set more off
@@ -30,6 +30,9 @@ if _rc {
 }
 
 capture mkdir "${REGRESSIONS}/Returns"
+capture mkdir "${REGRESSIONS}/Returns/Core"
+capture mkdir "${REGRESSIONS}/Returns/Core+res"
+capture mkdir "${REGRESSIONS}/Returns/Net wealth"
 
 capture log close
 log using "${LOG_DIR}/13_reg_returns_trust.log", replace text
@@ -96,10 +99,6 @@ if !_rc label variable trust_pc2 "Trust PC2"
 * For each (return, win/trimming): 4 columns = trust, trust^2,
 * trust+controls, trust^2+controls.
 * ----------------------------------------------------------------------
-capture mkdir "${REGRESSIONS}/Returns/r1"
-capture mkdir "${REGRESSIONS}/Returns/r4"
-capture mkdir "${REGRESSIONS}/Returns/r5"
-
 foreach pair of local trust_list {
     * Robust split of var:stub so filenames never contain colons
     local pos = strpos("`pair'", ":")
@@ -138,7 +137,7 @@ foreach pair of local trust_list {
         if "`ret'" == "r4" {
             local y_un  "r4_annual_2022"
             local y_win "r4_annual_2022_w5"
-            local ret_label "Returns to core+IRA (2022)"
+            local ret_label "Returns to ${LATEX_CORE_IRA} (2022)"
             local outdir    "${REGRESSIONS}/Returns/Core+res"
             forvalues d = 2/10 {
                 capture confirm variable wealth_coreira_d`d'_2020
@@ -178,7 +177,7 @@ foreach pair of local trust_list {
             else {
                 local y "`y_win'"
                 local file_suffix "_win"
-                local win_label " (5% winsorized)"
+                local win_label "${LATEX_WIN}"
             }
 
             capture confirm variable `y'
@@ -258,7 +257,7 @@ foreach pair of local trust_list {
                 stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
                 title("2022 `ret_label' on `capt_stub' trust (2020)`win_label'") ///
                 addnotes("Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.") ///
-                alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
+                alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
 
             * Insert \label after \caption
             tempfile tmpf

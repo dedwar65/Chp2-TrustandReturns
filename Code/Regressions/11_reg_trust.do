@@ -146,7 +146,7 @@ foreach pair of local outcome_list {
         drop(`drop_11' *.age_bin) ///
         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depression_2020 "Depression" health_cond_2020 "Health conditions" medicare_2020 "Covered by Medicare" medicaid_2020 "Covered by Medicaid" life_ins_2020 "Has life insurance" num_divorce_2020 "Number of reported divorces" num_widow_2020 "Number of reported times being widowed" _cons "Constant") ///
         title("`capt_stub' trust (2020) on controls") ///
-        alignment(D{.}{.}{-1}) width(0.85\hsize) ///
+        alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
         stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
         addnotes("Robust standard errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included; coefficients omitted.") ///
         nonumbers

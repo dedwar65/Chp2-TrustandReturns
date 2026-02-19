@@ -238,6 +238,15 @@ if !_rc {
     rename share_debt_long_ share_debt_long
     rename share_debt_other_ share_debt_other
 }
+* Wealth deciles: drop trailing underscore (wealth_core_d2_ -> wealth_core_d2, etc.)
+forvalues d = 2/10 {
+    capture confirm variable wealth_core_d`d'_
+    if !_rc rename wealth_core_d`d'_ wealth_core_d`d'
+    capture confirm variable wealth_coreira_d`d'_
+    if !_rc rename wealth_coreira_d`d'_ wealth_coreira_d`d'
+    capture confirm variable wealth_d`d'_
+    if !_rc rename wealth_d`d'_ wealth_d`d'
+}
 
 * Post-reshape hard check: raw vars must be r1_annual_nw, r4_annual_nw, r5_annual_nw (required for 14)
 foreach v in r1_annual_nw r4_annual_nw r5_annual_nw {

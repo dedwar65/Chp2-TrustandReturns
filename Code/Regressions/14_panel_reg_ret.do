@@ -108,7 +108,7 @@ foreach ret in r1 r4 r5 {
     if "`ret'" == "r4" {
         local yvar "`r4_raw'"
         local ctrl "`ctrl_r4'"
-        local ret_label "returns to core+IRA"
+        local ret_label "returns to ${LATEX_CORE_IRA}"
     }
     if "`ret'" == "r5" {
         local yvar "`r5_raw'"
@@ -135,8 +135,8 @@ foreach ret in r1 r4 r5 {
         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
         title("Panel: `ret_label' (raw)") ///
-        addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies, and year dummies omitted from table but included in regressions.") ///
-        alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
+        addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies," "and year dummies omitted from table but included in regressions.") ///
+        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
 
     di as txt "Wrote: `outfile'"
 }
@@ -156,7 +156,7 @@ foreach ret in r1 r4 r5 {
     if "`ret'" == "r4" {
         local yvar "r4_annual_w5"
         local ctrl "`ctrl_r4'"
-        local ret_label "returns to core+IRA"
+        local ret_label "returns to ${LATEX_CORE_IRA}"
     }
     if "`ret'" == "r5" {
         local yvar "r5_annual_w5"
@@ -187,9 +187,9 @@ foreach ret in r1 r4 r5 {
         keep(`keep_list') ///
         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
-        title("Panel: `ret_label' (5% winsorized)") ///
-        addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies, and year dummies omitted from table but included in regressions.") ///
-        alignment(D{{.}}{{.}}{{-1}}) width(0.85\hsize) nonumbers
+        title("Panel: `ret_label'${LATEX_WIN}") ///
+        addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies," "and year dummies omitted from table but included in regressions.") ///
+        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
 
     di as txt "Wrote: `outfile'"
 }

@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/10_bui
 > ld_panel.log
   log type:  text
- opened on:  17 Feb 2026, 16:29:23
+ opened on:  18 Feb 2026, 18:41:27
 
 . 
 . * ----------------------------------------------------------------------
@@ -62,9 +62,9 @@
   9.     local n : word count `rawlist'
  10.     display "10_build_panel: `stub'_* present (`n' vars)"
  11. }
-10_build_panel: r1_annual_* present (47 vars)
-10_build_panel: r4_annual_* present (47 vars)
-10_build_panel: r5_annual_* present (47 vars)
+10_build_panel: r1_annual_* present (48 vars)
+10_build_panel: r4_annual_* present (48 vars)
+10_build_panel: r5_annual_* present (48 vars)
 
 . 
 . * ----------------------------------------------------------------------
@@ -279,7 +279,7 @@ Time-invariant vars:  trust_others_2020 trust_social_security_2020 trust_medicar
 Data                               Wide   ->   Long
 -----------------------------------------------------------------------------
 Number of observations           45,234   ->   542,808     
-Number of variables                 982   ->   332         
+Number of variables                 985   ->   335         
 j variable (12 values)                    ->   year
 xij variables:
 r1_annual_2000 r1_annual_2002 ... r1_annual_2022->r1_annual_
@@ -404,6 +404,17 @@ regional_trust_2000 regional_trust_2002 ... regional_trust_2022->regional_trust_
 .     rename share_debt_long_ share_debt_long
 .     rename share_debt_other_ share_debt_other
 . }
+
+. * Wealth deciles: drop trailing underscore (wealth_core_d2_ -> wealth_core_d2, 
+> etc.)
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_core_d`d'_
+  3.     if !_rc rename wealth_core_d`d'_ wealth_core_d`d'
+  4.     capture confirm variable wealth_coreira_d`d'_
+  5.     if !_rc rename wealth_coreira_d`d'_ wealth_coreira_d`d'
+  6.     capture confirm variable wealth_d`d'_
+  7.     if !_rc rename wealth_d`d'_ wealth_d`d'
+  8. }
 
 . 
 . * Post-reshape hard check: raw vars must be r1_annual_nw, r4_annual_nw, r5_annu
@@ -587,5 +598,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/10_bui
 > ld_panel.log
   log type:  text
- closed on:  17 Feb 2026, 16:29:55
+ closed on:  18 Feb 2026, 18:41:46
 ---------------------------------------------------------------------------------

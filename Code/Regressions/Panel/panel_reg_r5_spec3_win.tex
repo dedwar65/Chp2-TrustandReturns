@@ -1,0 +1,40 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption[]{Panel Spec 3: returns to net wealth (5 percent winsorized, share x year)}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{1}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}\\
+\midrule
+Employed            &        0.03\sym{***}\\
+                    &      (0.00)         \\
+Married             &       -0.06\sym{***}\\
+                    &      (0.01)         \\
+Share core          &        0.25\sym{***}\\
+                    &      (0.04)         \\
+Share IRA           &        0.07\sym{*}  \\
+                    &      (0.04)         \\
+Share residential   &        0.13\sym{***}\\
+                    &      (0.04)         \\
+Share long-term debt&       -0.01\sym{**} \\
+                    &      (0.01)         \\
+Share other debt    &       -0.03         \\
+                    &      (0.02)         \\
+\_cons              &       -0.46\sym{***}\\
+                    &      (0.13)         \\
+\midrule
+Observations        &   101605.00         \\
+Within R²           &        0.19         \\
+Rho                 &        0.67         \\
+Sigma u             &        0.47         \\
+Sigma e             &        0.33         \\
+Joint test: Share (core,IRA,res) x year p-value&        0.00         \\
+Joint test: Share (debt long,other) x year p-value&        0.00         \\
+\bottomrule
+\multicolumn{2}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{2}{l}{\footnotesize \label{tab:panel_spec3_r5_win} Cluster-robust SE in parentheses. Individual fixed effects.}\\
+\multicolumn{2}{l}{\footnotesize Age bins, wealth deciles, region dummies, year dummies,}\\
+\multicolumn{2}{l}{\footnotesize share x year interactions included in estimation but omitted from table.}\\
+\multicolumn{2}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{2}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

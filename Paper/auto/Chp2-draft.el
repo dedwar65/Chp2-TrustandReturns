@@ -8,6 +8,7 @@
     "Subfiles/packages"
     "Subfiles/data"
     "Subfiles/results"
+    "Subfiles/extensions"
     "Subfiles/appendix"
     "article"
     "art10"

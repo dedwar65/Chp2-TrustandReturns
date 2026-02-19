@@ -1,7 +1,7 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
-\caption{Panel Spec 2: returns to core+IRA (raw, share×year)}
-\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{{.}}{{.}}{{-1}}}}
+\caption{Panel Spec 2: returns to core and IRA (raw, share x year)}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
 \midrule
@@ -15,13 +15,13 @@ Hispanic            &        0.06\sym{***}&        0.17\sym{*}  &        0.17\sy
                     &      (0.02)         &      (0.10)         &      (0.10)         \\
 NH Other            &       -0.01         &       -0.04         &       -0.04         \\
                     &      (0.02)         &      (0.06)         &      (0.06)         \\
-Employed            &        0.04\sym{***}&        0.02         &        0.02         \\
+Employed            &        0.03\sym{***}&        0.02         &        0.02         \\
                     &      (0.01)         &      (0.03)         &      (0.03)         \\
 Married             &       -0.04\sym{***}&       -0.03         &       -0.03         \\
                     &      (0.01)         &      (0.04)         &      (0.04)         \\
 Born in U.S.        &       -0.01         &       -0.05         &       -0.05         \\
                     &      (0.01)         &      (0.05)         &      (0.05)         \\
-Share core          &        0.42\sym{***}&        0.54\sym{*}  &        0.53\sym{*}  \\
+Share core          &        0.42\sym{***}&        0.53\sym{*}  &        0.53\sym{*}  \\
                     &      (0.04)         &      (0.32)         &      (0.32)         \\
 Share IRA           &        0.17\sym{***}&        0.03         &        0.02         \\
                     &      (0.06)         &      (0.23)         &      (0.23)         \\
@@ -29,17 +29,19 @@ Trust               &                     &       -0.01         &        0.00   
                     &                     &      (0.01)         &      (0.03)         \\
 Trust²              &                     &                     &       -0.00         \\
                     &                     &                     &      (0.00)         \\
-\_cons              &        1.04         &        0.13         &        0.11         \\
-                    &      (1.25)         &      (0.35)         &      (0.35)         \\
+\_cons              &        0.49         &        0.13         &        0.11         \\
+                    &      (0.95)         &      (0.35)         &      (0.35)         \\
 \midrule
-Observations        &    63597.00         &     1990.00         &     1990.00         \\
+Observations        &    63686.00         &     2001.00         &     2001.00         \\
 Adj. R-squared      &        0.06         &        0.07         &        0.07         \\
-Joint test: Trust+Trust² p-value&                     &                     &        0.49         \\
-Joint test: Share core×year p-value&        0.09         &        0.82         &        0.82         \\
-Joint test: Share IRA×year p-value&        0.00         &        0.17         &        0.17         \\
+Joint test: Trust+Trust² p-value&                     &                     &        0.50         \\
+Joint test: Share core x year p-value&        0.09         &        0.83         &        0.83         \\
+Joint test: Share IRA x year p-value&        0.00         &        0.17         &        0.17         \\
 \bottomrule
 \multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{4}{l}{\footnotesize Cluster-robust SE in parentheses. Spec 2: share×year controls for risk exposure. Age bins, wealth deciles, region dummies, year dummies, and share×year omitted from table but included in regressions.}\\
+\multicolumn{4}{l}{\footnotesize Cluster-robust SE in parentheses. Spec 2: share x year controls for risk exposure.}\\
+\multicolumn{4}{l}{\footnotesize Age bins, wealth deciles, region dummies, year dummies,}\\
+\multicolumn{4}{l}{\footnotesize and share x year omitted from table but included in regressions.}\\
 \multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
 \end{tabular*}
 \end{table}

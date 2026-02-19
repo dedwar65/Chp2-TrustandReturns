@@ -1,0 +1,40 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Average total income (avg defl wins) on General trust (2020)}
+\label{tab:income_trust_general_Total_deflwin}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+General trust       &     1956.92\sym{***}&    15073.95\sym{***}&     -279.32         &     2250.53         \\
+                    &    (650.36)         &   (1740.12)         &    (591.07)         &   (1692.75)         \\
+(General)$^2$       &                     &    -1307.95\sym{***}&                     &     -247.95\sym{*}  \\
+                    &                     &    (149.72)         &                     &    (146.30)         \\
+Female              &                     &                     &   -23107.69\sym{***}&   -22926.95\sym{***}\\
+                    &                     &                     &   (3729.69)         &   (3734.04)         \\
+Years of education  &                     &                     &     6337.58\sym{***}&     6208.84\sym{***}\\
+                    &                     &                     &    (576.61)         &    (580.10)         \\
+Married             &                     &                     &    16840.92\sym{***}&    16481.95\sym{***}\\
+                    &                     &                     &   (3511.66)         &   (3521.32)         \\
+Born in U.S.        &                     &                     &    -3787.36         &    -3794.28         \\
+                    &                     &                     &   (5062.25)         &   (5058.62)         \\
+In labor force      &                     &                     &    29329.80\sym{***}&    28895.16\sym{***}\\
+                    &                     &                     &   (4086.50)         &   (4132.34)         \\
+NH Black            &                     &                     &   -22204.77\sym{***}&   -21712.44\sym{***}\\
+                    &                     &                     &   (4440.27)         &   (4457.31)         \\
+Hispanic            &                     &                     &   -21775.63\sym{***}&   -21423.36\sym{***}\\
+                    &                     &                     &   (5468.59)         &   (5475.77)         \\
+NH Other            &                     &                     &   -24020.39\sym{***}&   -24143.89\sym{***}\\
+                    &                     &                     &   (6653.87)         &   (6655.94)         \\
+Constant            &    46289.00\sym{***}&    22534.57\sym{***}&   -51739.13\sym{***}&   -53493.49\sym{***}\\
+                    &   (3831.89)         &   (4406.85)         &  (16938.40)         &  (18518.48)         \\
+\midrule
+Observations        &      900.00         &      900.00         &      890.00         &      890.00         \\
+Adj. R-squared      &        0.01         &        0.04         &        0.32         &        0.32         \\
+Joint test: Trust+Trust² p-value&                     &        0.00         &                     &        0.18         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Age bins (5-yr) included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

@@ -1,7 +1,7 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
-\caption{Panel Spec 2: returns to core+IRA (5% winsorized, share×year)}
-\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{{.}}{{.}}{{-1}}}}
+\caption{Panel Spec 2: returns to core and IRA (5 percent winsorized, share x year)}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
 \midrule
@@ -13,7 +13,7 @@ NH Black            &        0.06\sym{***}&        0.03         &        0.03   
                     &      (0.01)         &      (0.04)         &      (0.04)         \\
 Hispanic            &        0.04\sym{***}&        0.06         &        0.06         \\
                     &      (0.01)         &      (0.06)         &      (0.06)         \\
-NH Other            &        0.00         &       -0.02         &       -0.02         \\
+NH Other            &       -0.00         &       -0.02         &       -0.02         \\
                     &      (0.01)         &      (0.04)         &      (0.04)         \\
 Employed            &        0.03\sym{***}&        0.05\sym{**} &        0.05\sym{**} \\
                     &      (0.00)         &      (0.02)         &      (0.02)         \\
@@ -21,7 +21,7 @@ Married             &       -0.02\sym{***}&       -0.02         &       -0.02   
                     &      (0.00)         &      (0.03)         &      (0.03)         \\
 Born in U.S.        &       -0.01         &       -0.02         &       -0.02         \\
                     &      (0.01)         &      (0.03)         &      (0.03)         \\
-Share core          &        0.31\sym{***}&        0.41\sym{*}  &        0.41\sym{*}  \\
+Share core          &        0.31\sym{***}&        0.40\sym{*}  &        0.40\sym{*}  \\
                     &      (0.02)         &      (0.21)         &      (0.21)         \\
 Share IRA           &        0.09\sym{***}&        0.09         &        0.09         \\
                     &      (0.03)         &      (0.20)         &      (0.20)         \\
@@ -29,17 +29,19 @@ Trust               &                     &       -0.01         &       -0.00   
                     &                     &      (0.01)         &      (0.02)         \\
 Trust²              &                     &                     &       -0.00         \\
                     &                     &                     &      (0.00)         \\
-\_cons              &        0.03         &        0.21         &        0.20         \\
-                    &      (0.40)         &      (0.32)         &      (0.32)         \\
+\_cons              &       -0.11         &        0.21         &        0.20         \\
+                    &      (0.29)         &      (0.32)         &      (0.32)         \\
 \midrule
-Observations        &    63597.00         &     1990.00         &     1990.00         \\
+Observations        &    63686.00         &     2001.00         &     2001.00         \\
 Adj. R-squared      &        0.09         &        0.09         &        0.09         \\
-Joint test: Trust+Trust² p-value&                     &                     &        0.47         \\
-Joint test: Share core×year p-value&        0.00         &        0.96         &        0.96         \\
-Joint test: Share IRA×year p-value&        0.00         &        0.27         &        0.27         \\
+Joint test: Trust+Trust² p-value&                     &                     &        0.48         \\
+Joint test: Share core x year p-value&        0.00         &        0.97         &        0.97         \\
+Joint test: Share IRA x year p-value&        0.00         &        0.27         &        0.27         \\
 \bottomrule
 \multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{4}{l}{\footnotesize Cluster-robust SE in parentheses. Spec 2: share×year controls for risk exposure. Age bins, wealth deciles, region dummies, year dummies, and share×year omitted from table but included in regressions.}\\
+\multicolumn{4}{l}{\footnotesize Cluster-robust SE in parentheses. Spec 2: share x year controls for risk exposure.}\\
+\multicolumn{4}{l}{\footnotesize Age bins, wealth deciles, region dummies, year dummies,}\\
+\multicolumn{4}{l}{\footnotesize and share x year omitted from table but included in regressions.}\\
 \multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
 \end{tabular*}
 \end{table}

@@ -1,0 +1,40 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption[]{Panel Spec 3: returns to net wealth (raw, share x year)}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{1}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}\\
+\midrule
+Employed            &        0.04\sym{***}\\
+                    &      (0.01)         \\
+Married             &       -0.09\sym{***}\\
+                    &      (0.01)         \\
+Share core          &        0.33\sym{***}\\
+                    &      (0.07)         \\
+Share IRA           &        0.14\sym{*}  \\
+                    &      (0.08)         \\
+Share residential   &        0.22\sym{***}\\
+                    &      (0.07)         \\
+Share long-term debt&       -0.01         \\
+                    &      (0.01)         \\
+Share other debt    &       -0.06         \\
+                    &      (0.04)         \\
+\_cons              &       -0.94\sym{***}\\
+                    &      (0.22)         \\
+\midrule
+Observations        &   101605.00         \\
+Within R²           &        0.12         \\
+Rho                 &        0.61         \\
+Sigma u             &        0.73         \\
+Sigma e             &        0.59         \\
+Joint test: Share (core,IRA,res) x year p-value&        0.00         \\
+Joint test: Share (debt long,other) x year p-value&        0.00         \\
+\bottomrule
+\multicolumn{2}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{2}{l}{\footnotesize \label{tab:panel_spec3_r5_raw} Cluster-robust SE in parentheses. Individual fixed effects.}\\
+\multicolumn{2}{l}{\footnotesize Age bins, wealth deciles, region dummies, year dummies,}\\
+\multicolumn{2}{l}{\footnotesize share x year interactions included in estimation but omitted from table.}\\
+\multicolumn{2}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{2}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

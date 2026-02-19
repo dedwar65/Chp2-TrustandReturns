@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/05_pro
 > cessing_returns.log
   log type:  text
- opened on:  17 Feb 2026, 16:11:16
+ opened on:  18 Feb 2026, 18:19:57
 
 . 
 . * Prefer processed dataset (to keep income processing), fallback to analysis_re
@@ -1067,6 +1067,33 @@ Tabstat returns after winsorization
 (459 real changes made)
 
 . 
+. * 5% winsorization for average returns (r1, r4, r5)
+. foreach stub in r1_annual r4_annual r5_annual {
+  2.     local v `stub'_avg
+  3.     capture confirm variable `v'
+  4.     if !_rc {
+  5.         quietly summarize `v', detail
+  6.         local p5  = r(p5)
+  7.         local p95 = r(p95)
+  8.         capture drop `stub'_avg_w5
+  9.         gen double `stub'_avg_w5 = `v'
+ 10.         replace `stub'_avg_w5 = `p5'  if `stub'_avg_w5 < `p5'  & !missing(`s
+> tub'_avg_w5)
+ 11.         replace `stub'_avg_w5 = `p95' if `stub'_avg_w5 > `p95' & !missing(`s
+> tub'_avg_w5)
+ 12.     }
+ 13. }
+(17,450 missing values generated)
+(0 real changes made)
+(1,389 real changes made)
+(30,686 missing values generated)
+(727 real changes made)
+(727 real changes made)
+(16,856 missing values generated)
+(1,419 real changes made)
+(1,418 real changes made)
+
+. 
 . save "${PROCESSED}/analysis_ready_processed.dta", replace
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analysis_ready_proces
@@ -1083,5 +1110,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/05_pro
 > cessing_returns.log
   log type:  text
- closed on:  17 Feb 2026, 16:11:21
+ closed on:  18 Feb 2026, 18:20:00
 ---------------------------------------------------------------------------------
