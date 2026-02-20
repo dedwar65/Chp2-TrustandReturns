@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.16)  20 FEB 2026 11:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.16)  20 FEB 2026 11:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1669,12 +1669,9 @@ nder_win.png  used on input line 107.
 (./Subfiles/../../Code/Descriptive/Tables/bin_counts_population3_2020.tex)
 
 [60]
-(./Subfiles/../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex)
-(./Subfiles/../../Code/Descriptive/Tables/iv_trust_corr.tex)
+(./Subfiles/../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex))
 
-[61])
-
-[62]
+[61]
 Overfull \hbox (8.72075pt too wide) in paragraph at lines 71--71
 \T1/cmtt/m/n/10 0002828041464498$[]\T1/cmr/m/n/10 . \T1/cmr/m/sc/10 url\T1/cmr/
 m/n/10 : []$\T1/cmtt/m/n/10 https : / / www . aeaweb . org / articles ? id = 10
@@ -1683,11 +1680,11 @@ m/n/10 : []$\T1/cmtt/m/n/10 https : / / www . aeaweb . org / articles ? id = 10
 
 
 
-[63
+[62
 
 ] (./Subfiles/appendix.tex
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_security
-_2020.png, id=518, 698.61pt x 419.5675pt>
+_2020.png, id=512, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_sec
 urity_2020.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_secu
@@ -1696,7 +1693,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
 race_eth_social_security_2020.png  used on input line 8.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2020.p
-ng, id=519, 698.61pt x 419.5675pt>
+ng, id=513, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2
 020.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_20
@@ -1705,7 +1702,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
 race_eth_medicare_2020.png  used on input line 16.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.png,
- id=520, 698.61pt x 419.5675pt>
+ id=514, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020
 .png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.
@@ -1715,13 +1712,13 @@ race_eth_banks_2020.png  used on input line 23.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 
 
-[64
+[63
 
  <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_secur
 ity_2020.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth
 _medicare_2020.png>]
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2020.p
-ng, id=529, 698.61pt x 419.5675pt>
+ng, id=523, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2
 020.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_20
@@ -1730,7 +1727,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
 race_eth_advisors_2020.png  used on input line 30.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_funds_20
-20.png, id=530, 698.61pt x 419.5675pt>
+20.png, id=524, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fun
 ds_2020.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fund
@@ -1740,11 +1737,11 @@ race_eth_mutual_funds_2020.png  used on input line 37.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 
 
-[65 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_202
+[64 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_202
 0.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_adviso
 rs_2020.png>]
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2020.
-png, id=537, 698.61pt x 419.5675pt>
+png, id=531, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_
 2020.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2
@@ -1753,7 +1750,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_
 race_eth_insurance_2020.png  used on input line 44.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 <Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.png,
- id=538, 698.61pt x 419.5675pt>
+ id=532, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020
 .png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.
@@ -1763,14 +1760,14 @@ race_eth_media_2020.png  used on input line 51.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 
 
-[66 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fu
+[65 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_fu
 nds_2020.png> <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth
 _insurance_2020.png>]
 (./Subfiles/../../Code/Descriptive/Tables/income_growth_tabstat.tex)
 
-[67 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_202
+[66 <./Subfiles/../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_202
 0.png>]
-<Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png, id=553, 6
+<Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png, id=546, 6
 98.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png Graph
 ic file (type png)
@@ -1780,7 +1777,7 @@ over_time.png  used on input line 66.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 
 
-[68]
+[67]
 (./Subfiles/../../Code/Regressions/Income/Labor/income_trust_general_log.tex
 Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
 [] [] [] [] [] 
@@ -1788,7 +1785,7 @@ Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
 
 )
 
-[69 <./Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png>]
+[68 <./Subfiles/../../Code/Descriptive/Figures/income_growth_over_time.png>]
 (./Subfiles/../../Code/Regressions/Average/Income/Labor/income_trust_general_de
 flwin_log.tex
 Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
@@ -1797,7 +1794,7 @@ Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
 
 )
 
-[70]
+[69]
 (./Subfiles/../../Code/Regressions/Income/Total/income_trust_general_log.tex
 Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
 [] [] [] [] [] 
@@ -1805,7 +1802,7 @@ Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
 
 )
 
-[71]
+[70]
 (./Subfiles/../../Code/Regressions/Average/Income/Total/income_trust_general_de
 flwin_log.tex
 Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
@@ -1814,7 +1811,7 @@ Overfull \hbox (42.1535pt too wide) in alignment at lines 5--39
 
 )
 
-[72]
+[71]
 (./Subfiles/../../Code/Regressions/Returns/Core/returns_r1_trust_general_win.te
 x
 Overfull \hbox (16.67807pt too wide) in alignment at lines 5--39
@@ -1823,17 +1820,17 @@ Overfull \hbox (16.67807pt too wide) in alignment at lines 5--39
 
 )
 
-[73] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r1_win.tex)
+[72] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r1_win.tex)
 
-[74] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r1_spec2_win.tex
+[73] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r1_spec2_win.tex
 Overfull \hbox (4.17723pt too wide) in alignment at lines 4--43
 [] [] [] [] 
  []
 
 )
 
-[75]
-<Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r1_win.png, id=600, 1204
+[74]
+<Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r1_win.png, id=594, 1204
 .5pt x 876.27374pt>
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r1_win.png Graphic 
 file (type png)
@@ -1843,9 +1840,9 @@ r1_win.png  used on input line 108.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[76] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r1_spec3_win.tex)
+[75] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r1_spec3_win.tex)
 
-[77 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r1_win.png>]
+[76 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r1_win.png>]
 (./Subfiles/../../Code/Regressions/Average/Returns/Core/returns_r1_trust_genera
 l_avg_win.tex
 Overfull \hbox (16.67807pt too wide) in alignment at lines 5--39
@@ -1854,9 +1851,9 @@ Overfull \hbox (16.67807pt too wide) in alignment at lines 5--39
 
 )
 
-[78] (./Subfiles/../../Code/Regressions/Panel/panel_fe_on_tinv_r1_win.tex)
+[77] (./Subfiles/../../Code/Regressions/Panel/panel_fe_on_tinv_r1_win.tex)
 
-[79]
+[78]
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png Graphic
  file (type png)
 <use Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png>
@@ -1865,7 +1862,7 @@ ust_win.png  used on input line 130.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[80]
+[79]
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_educ_win.png Graphic 
 file (type png)
 <use Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_educ_win.png>
@@ -1874,7 +1871,7 @@ uc_win.png  used on input line 137.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[81]
+[80]
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_by_race_win.png Graphic 
 file (type png)
 <use Subfiles/../../Code/Regressions/Panel/Figures/fe_by_race_win.png>
@@ -1883,7 +1880,7 @@ ce_win.png  used on input line 144.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[82]
+[81]
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_by_gender_win.png Graphi
 c file (type png)
 <use Subfiles/../../Code/Regressions/Panel/Figures/fe_by_gender_win.png>
@@ -1892,7 +1889,7 @@ nder_win.png  used on input line 151.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[83]
+[82]
 (./Subfiles/../../Code/Regressions/Returns/Core+res/returns_r4_trust_general_wi
 n.tex
 Overfull \hbox (16.67807pt too wide) in alignment at lines 5--38
@@ -1901,17 +1898,17 @@ Overfull \hbox (16.67807pt too wide) in alignment at lines 5--38
 
 )
 
-[84] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r4_win.tex)
+[83] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r4_win.tex)
 
-[85] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r4_spec2_win.tex
+[84] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r4_spec2_win.tex
 Overfull \hbox (4.84373pt too wide) in alignment at lines 4--46
 [] [] [] [] 
  []
 
 )
 
-[86]
-<Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r4_win.png, id=659, 1204
+[85]
+<Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r4_win.png, id=653, 1204
 .5pt x 876.27374pt>
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r4_win.png Graphic 
 file (type png)
@@ -1921,9 +1918,9 @@ r4_win.png  used on input line 173.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[87] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r4_spec3_win.tex)
+[86] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r4_spec3_win.tex)
 
-[88 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r4_win.png>]
+[87 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r4_win.png>]
 (./Subfiles/../../Code/Regressions/Average/Returns/Core+res/returns_r4_trust_ge
 neral_avg_win.tex
 Overfull \hbox (16.67807pt too wide) in alignment at lines 5--39
@@ -1932,16 +1929,16 @@ Overfull \hbox (16.67807pt too wide) in alignment at lines 5--39
 
 )
 
-[89] (./Subfiles/../../Code/Regressions/Panel/panel_fe_on_tinv_r4_win.tex)
+[88] (./Subfiles/../../Code/Regressions/Panel/panel_fe_on_tinv_r4_win.tex)
 
-[90])
+[89])
 
 Package caption Warning: Unused \captionsetup[sub] on input line 46.
 See the caption package documentation for explanation.
 
 
 
-[91] (./Chp2-draft.aux)
+[90] (./Chp2-draft.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-07-11>
@@ -1955,10 +1952,10 @@ Package logreq Info: Writing requests to 'Chp2-draft.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 26538 strings out of 467816
- 527490 string characters out of 5432252
- 1366591 words of memory out of 5000000
- 54312 multiletter control sequences out of 15000+600000
+ 26527 strings out of 467816
+ 527054 string characters out of 5432252
+ 1366560 words of memory out of 5000000
+ 54307 multiletter control sequences out of 15000+600000
  647393 words of font info for 91 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  73i,16n,77p,1907b,1500s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1987,10 +1984,10 @@ ts/type1/public/cm-super/sfrm0900.pfb></usr/local/texlive/2024/texmf-dist/fonts
 ype1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2024/texmf-dist/fonts/typ
 e1/public/cm-super/sfti1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1
 /public/cm-super/sftt1000.pfb>
-Output written on Chp2-draft.pdf (91 pages, 3964260 bytes).
+Output written on Chp2-draft.pdf (90 pages, 3968249 bytes).
 PDF statistics:
- 858 PDF objects out of 1000 (max. 8388607)
- 645 compressed objects within 7 object streams
- 264 named destinations out of 1000 (max. 500000)
+ 851 PDF objects out of 1000 (max. 8388607)
+ 639 compressed objects within 7 object streams
+ 261 named destinations out of 1000 (max. 500000)
  301 words of extra memory for PDF output out of 10000 (max. 10000000)
 
