@@ -27,6 +27,16 @@
 
 \input{Subfiles/packages}
 
+% Keep imported Stata tables close to source order without editing exported .tex files
+\newcommand{\inputtable}[1]{%
+  \begingroup
+  \let\origtable\table
+  \let\endorigtable\endtable
+  \renewenvironment{table}[1][]{\origtable[H]}{\endorigtable}
+  \input{#1}%
+  \endgroup
+}
+
 \title{}
 \author{Decory Edwards\thanks{blank}}
 \date{\today}
@@ -48,7 +58,7 @@
 
 
 %main paper begins here
-
+\subfile{Subfiles/litrev}
 \subfile{Subfiles/data}
 
 \subfile{Subfiles/results}

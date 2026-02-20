@@ -1,5 +1,5 @@
 \onlyinsubfile{\setcounter{section}{2}}
-\section{Data}\notinsubfile{\label{sec:data}}
+\section{Descriptive statistics}\notinsubfile{\label{sec:data}}
 
 \par For the statistical analysis in this paper, I use the RAND Longitudinal version of the Household Retirement Survey (HRS) public data. I focus on the years 2002-2022; as this time horizon was filled with many economically relevant events (GFC, Covid), we can be creative regarding how to assess the accuracy of the data measured here. This is useful because, although there are many sources of income data to compare resuults to, there are less counterparts like this for return measures. The variables of interest fall into the categories: i) income, ii) wealth and portfolio composition, iii) returns, iv) trust, v) demographics, and vi) other controls.
 
@@ -8,7 +8,7 @@
 
 \par First, I use two measures of income: labor and total. Labor income is a narrow measure only capturing earnings and unemployment income. Total income is a more broad measure including retirement and capital income. First, it is clear that mean incomes are relatively flat over the period.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/income_over_time.png}
 \caption{Income over time}
@@ -16,17 +16,17 @@
 \end{figure}
 \FloatBarrier
 
-\input{../../Code/Descriptive/Tables/income_mean_by_year_real_win.tex}
+\inputtable{../../Code/Descriptive/Tables/income_mean_by_year_real_win.tex}
 
 \par In particular, I pooled the observations of the survey together to get a sense of the distribution of incomes measured in the survey. This is captured by the table
 
-\input{../../Code/Descriptive/Tables/income_final_tabstat.tex}
+\inputtable{../../Code/Descriptive/Tables/income_final_tabstat.tex}
 
 \par An important finding in the literature on earnings in the U.S. is that it is generally hump-shaped over the lifecycle. It is a good sign then that the following tables show
 
-\input{../../Code/Descriptive/Tables/income_mean_by_agegroup_real_win_2022.tex}
+\inputtable{../../Code/Descriptive/Tables/income_mean_by_agegroup_real_win_2022.tex}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/income_by_agegroup_2022.png}
 \caption{Income by age group (2022)}
@@ -35,16 +35,16 @@
 
 \par Another empirical finding in the literature on earnings is that on average individuals with more education earn higher income. The trend capture in the table suggests that the earnings data is in line with one would respect regarding earnings for a representative survey in the U.S.\footnote{ Although the HRS oversamples older households, I use the provided the respondent-level weights for this interpretation of the summary statistics of the data.}
 
-\input{../../Code/Descriptive/Tables/income_mean_by_educgroup_real_win.tex}
+\inputtable{../../Code/Descriptive/Tables/income_mean_by_educgroup_real_win.tex}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/labinc_by_age_educ_2022.png}
 \caption{Labor income by age and education (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/totinc_by_age_educ_2022.png}
 \caption{Total income by age and education (2022)}
@@ -61,7 +61,7 @@
 
 \par Capital gains for each asset class are computed as the estimated change in valuation across survey waves. The general trend is that, these changes in valuation tend to move around alot over the period. That said, capital gains are generally higher at the end of the period than at the start of the period for most asset classes. This can be seen for capital gains to busines ownership, in figure
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png}
 \caption{Capital gains: business, by year}
@@ -70,7 +70,7 @@
 
 The opposite is true for the bonds asset class: capital gains have generally fallen on average over the time period. This can be seen in the figure
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png}
 \caption{Capital gains: business, by year}
@@ -79,7 +79,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par Another feature that is apparent by taking a look at capital gains is that, most respondent hold no assets in a particular class. This can be seen by the vertical red line capturing a median of $0$ for each wave of the survey. Residential assets generally are the bulk of individual portfolios, and yet the median is still $0$ here in almost every wave. This is another sign that the data is sensible so far -- large amount of non-participation despite evidence of returns is consistent with the empirically documented equity premium puzzle. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png}
 \caption{Capital gains: residential, by year}
@@ -89,21 +89,21 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 \par Notably, the dip in capital gain leading up to 2010 for primary residences, secondary residences, and real estate is also a good sign regarding how realibly measured the data is.
 
 % Think about moving the rest of these figures to the appendix. 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png}
 \caption{Capital gains: residential, by year}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png}
 \caption{Capital gains: residential, by year}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png}
 \caption{Capital gains: stocks, by year}
@@ -117,7 +117,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par The RAND version of the data offers a number of variables measuring pension and annuity income as well as other forms of retirement income. I use this to construct a measure of returns to retirement assets and to define a broader notion of portfolio returns by considering returns to core and retirement assets. A key assumption is that there are no interest income or dividends earned on residential assets\footnote{Or on any of the asset classes for which capital gains are available for.}. With this assumption, we can consider interest income and dividends on the entire portfolio as the same as interest income and dividends on the portfolio with just core and retirement assets. Thus, to compute a measure of returns to net wealth, I need to add in the remaining available capital gains per asset class (for those that receive no interest income). 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/interest_income_mean_by_year.png}
 \caption{Interest income mean by year}
@@ -130,7 +130,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par With this in mind, I present a figure of net investment flows into the assets available in the dataset. As you can see, the magnitudes for flows into a given class are comparable. I use these flows to construct net investment flows into i) core assets, ii) retirement assets, iii) residential assets, iv) core+residential assets, and v) net wealth.  
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png}
 \caption{Flows by asset, mean by year}
@@ -141,7 +141,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par After defining asset classes, I consider mean wealth within these narrowly defined asset classes for each year of the sample. Interestingly, retirement assets seem to perform the worst in terms of average returns. Core assets seem to offer the best performance, and all asset classes see a downward dive leading up to 2010 -- historically accurate in the context of investment performance during the global financial crisis.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/wealth_mean_by_year_components.png}
 \caption{Wealth mean by year (components)}
@@ -150,7 +150,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par I turn attention to measures of wealth in the sample based on the portfolio definitions: i) net wealth in core assets, ii) net wealth in core and retirement assets, iii) total net wealth.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png}
 \caption{Wealth mean by year (aggregated)}
@@ -159,7 +159,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par I consider the distribution of these measures of income and wealth across respondents of the survey in the following figures. For income, the measure of labor income is significantly more unequally distributed than the measure of total income in the sample. This is likely an artifact of the sampling method of the HRS (older likely overrepresented and are towards the end of their working years).
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/lorenz_income_2022.png}
 \caption{Lorenz: income (2022)}
@@ -168,7 +168,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par For wealth, holdings in core assets and retirement assets are more unequally distributed than holdings in residential assets. This is in line with common knowledge that home ownership is the most common form of asset ownership in the U.S.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png}
 \caption{Lorenz: wealth components (2022)}
@@ -177,7 +177,7 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par Interestingly, the distribution of net wealth become less unequal when it is extended to incorporate retirement assets on top of core assets. this can be seen in the following figure .
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png}
 \caption{Lorenz: wealth aggregated (2022)}
@@ -188,28 +188,28 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par To describe the composition of portfolio during the period, I document mean portfolio shares for the relevant asset classes.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_core_components.png}
 \caption{Mean holdings within Core assets, by year}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_core_res_ret.png}
 \caption{Mean Asset shares, by year}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_core_components.png}
 \caption{Mean holdings within Liabilities, by year}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/share_mean_by_year_debt_long_other.png}
 \caption{Mean Liability shares, by year}
@@ -218,28 +218,28 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par Investment behavior is likely to vary with income and wealth. Asset shares (core, residential, retirement) by percentile of labor income, total income, gross wealth, and net wealth (2022): 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_labor_inc_pct_2022.png}
 \caption{Asset shares by labor income percentile (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_total_inc_pct_2022.png}
 \caption{Asset shares by total income percentile (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_gross_pct_2022.png}
 \caption{Asset shares by gross wealth percentile (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/asset_shares_by_net_pct_2022.png}
 \caption{Asset shares by net wealth percentile (2022)}
@@ -248,28 +248,28 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par We can also look at the same breakdown by income and wealth percentiles but for the ratio of debt to gross assets. This is captured in the following figures .
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
 \caption{Debt shares by labor income percentile (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
 \caption{Debt shares by total income percentile (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
 \caption{Debt shares by gross wealth percentile (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/debt_shares_by_net_pct_2022.png}
 \caption{Debt shares by net wealth percentile (2022)}
@@ -291,20 +291,19 @@ The opposite is true for the bonds asset class: capital gains have generally fal
 
 \par Returns to core assets are given by
 
-$$ r_t = \frac{y^c_{core,t} + cg_{core,t} - F_{core,t}}{A_{core,t-1} + .5F_{core,t}}   $$
+$$ r_{core,t} = \frac{y^c_{core,t} + cg_{core,t} - F_{core,t}}{A_{core,t-1} + .5F_{core,t}}   $$
 
 where $y^c_{core,t}$ is the interest income and dividents on the core assets, $cg_{core,t}$ are the capital gains on the core assets\footnote{where the capital gains for each asset class is $V_{i,t} - V_{i,t-1}$, where $V_{i,t}$ is the value of the asset (business or stock or real estate) for the i-th respondent in the t-th wave of the survey.}, $F_{core,t}$ are the net investment flows on core assets, and importantly, $A_{core,t-1}$ is the total value of the core assets in the previous period.
 
 \par The rest of the return measures are defined similarly. In the HRS data, we can see income on retirement assets as well. This allows us to define a return measure for retirement assets:
 
-
-$$ r_t = \frac{y^c_{ret.,t} + cg_{ret.,t} - F_{ret.,t}}{A_{ret.,t-1} + .5F_{ret.,t}}   $$
+$$ r_{ret.,t} = \frac{y^c_{ret.,t} + cg_{ret.,t} - F_{ret.,t}}{A_{ret.,t-1} + .5F_{ret.,t}}   $$
 
 where $y^c_{ret.,t}$ is the interest income and dividents on the retirement assets, $cg_{ret.,t}$ are the capital gains on the retirement assets, $F_{ret.,t}$ are the net investment flows on retirement assets, and $A_{ret.,t-1}$ is the total value of the retirement assets in the previous period.
 
 \par Based on the modules offered in a given wave of the survey, assume that there are no interest income or dividends to either primary and secondary residential assets, so that the interest income and dividends accrued to residential assets is 0 in a given period $(y^c_{ret.,t})$. With this in mind, returns to residential assets are defined as:
 
-$$ r_t = \frac{cg_{res.,t} - F_{res.,t}}{A_{res.,t-1} + .5F_{res.,t}}   $$
+$$ r_{res.,t} = \frac{cg_{res.,t} - F_{res.,t}}{A_{res.,t-1} + .5F_{res.,t}}   $$
 
 where  $cg_{res.,t}$ are the capital gains on the residential assets, $F_{res.,t}$ are the net investment flows on residential assets (including improvement costs), and $A_{res.,t-1}$ is the total value of the residential assets in the previous period.
 
@@ -312,25 +311,29 @@ where  $cg_{res.,t}$ are the capital gains on the residential assets, $F_{res.,t
 
 \par After defining returns for narrow asset classes (i.e. returns to a single asset), I also define return measure for portfolios (returns on multiple assets). The first is for returns to both core and retirement assets: 
 
-$$ r_t = \frac{y^c_{coret.,t} + cg_{coret.,t} - F_{coret.,t}}{A_{coret.,t-1} + .5F_{coret.,t}}   $$
+$$ r_{coret.,t} = \frac{y^c_{coret.,t} + cg_{coret.,t} - F_{coret.,t}}{A_{coret.,t-1} + .5F_{coret.,t}}   $$
 
 where $y^c_{coret.,t}$ is the interest income and dividends on core and retirement assets, $cg_{coret.,t}$ are the capital gains on the retirement assets, $F_{coret.,t}$ are the net investment flows on retirement assets, and $A_{ret.,t-1}$ is the total value of the retirement assets in the previous period.
 
 \par Returns to net wealth is given by
+
+$$ r_{net,t} = \frac{y^c_{net.,t} + cg_{net.,t} - F_{net.,t}}{A_{net.,t-1} + .5F_{net.,t}}   $$
+
+where $y^c_{net.,t}$ is the interest income and dividends on core and retirement assets, $cg_{net.,t}$ are the capital gains on all available asset classes in the survey, $F_{net.,t}$ are the net investment flows on assets for which it is relevant in the survey (stocks, bonds, business, IRA, residences, and real estate), and $A_{net.,t-1}$ is the total value of the available assets minus liabilities in the previous period\footnote{Mortgages on secondary residences are left out of the list of liabilities since it was an optional question in some waves of the survey.}.
 
 \par I present the means for the return measures in the following figures. I group them by the returns at the asset level (core, retirement, residential) and at the portfolio level (core, core and retirement, net wealth).
 
 %%%%%%%%%%
 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_mean_by_year_components.png}
 \caption{Returns mean by year (components)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_mean_by_year_agg.png}
 \caption{Returns mean by year (aggregated)}
@@ -340,7 +343,7 @@ where $y^c_{coret.,t}$ is the interest income and dividends on core and retireme
 \par The following figures give a better idea of the distribution of the return measures across respondents. 
 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_histogram_agg_2022.png}
 \caption{Returns histogram, aggregated (2022)}
@@ -349,7 +352,7 @@ where $y^c_{coret.,t}$ is the interest income and dividends on core and retireme
 
 \par These are encouraging, as shape of this distribution closely resembles early estimates of the empirical distribution of individual realized returns in the Norwegian population data. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_histogram_components_2022.png}
 \caption{Returns histogram, components (2022)}
@@ -360,7 +363,7 @@ where $y^c_{coret.,t}$ is the interest income and dividends on core and retireme
 
 \par Income and wealth are understood to be positively correlated. To see this play out in the HRS data, I first look at mean labor income by wealth percentile. In ths figure, it is clear that a positive relationship seems to hold. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/labor_income_real_win_p10p90_by_wealthpct_2022.png}
 \caption{Labor income mean/P10-P90 by wealth percentile (2022)}
@@ -369,7 +372,7 @@ where $y^c_{coret.,t}$ is the interest income and dividends on core and retireme
 
 The literature on income and wealth also documents significantly more inequality in the the upper tails of the wealth distribution than in the income distribution. The observations towards to top and bottom of the wealth distribution in the following figure seem to suggest a non-linear relationship between the variables. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/log_labor_income_binscatter_2022.png}
 \caption{Log labor income binscatter (2022)}
@@ -378,14 +381,14 @@ The literature on income and wealth also documents significantly more inequality
 
 I repeat this for the measure of total income and both patterns persist.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/total_income_real_win_iqr_by_wealthpct_2022.png}
 \caption{Total income mean/IQR by wealth percentile (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/log_total_income_binscatter_2022.png}
 \caption{Log total income binscatter (2022)}
@@ -397,21 +400,21 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par A positive relationship between wealth and returns has also been documented, referred to as \textit{scale dependence}. In the next three figures, I show that there does seem to be a positive statistical relationship between the return measure (core, retirement, residential) and wealth. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/core_return_binscatter_2022.png}
 \caption{Core return binscatter (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/ret_return_binscatter_2022.png}
 \caption{Retirement return binscatter (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/res_return_binscatter_2022.png}
 \caption{Residential return binscatter (2022)}
@@ -420,7 +423,7 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par I also show the positive statistical relationship between returns and wealth at the portfolio level, when comprised of core assets and retirement assets. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/coreira_return_binscatter_2022.png}
 \caption{Core+IRA return binscatter (2022)}
@@ -429,7 +432,7 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par Interestingly, the relationship between wealth and returns to total net wealth does not appear positive. In fact, they correlation is slightly downward-sloping.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/netwealth_return_binscatter_2022.png}
 \caption{Net wealth return binscatter (2022)}
@@ -442,17 +445,17 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par I turn my attention to the correlations between the trust variables in figure . There is significant correlation between the trust measures.  
 
-\input{../../Code/Descriptive/Tables/trust_corr.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_corr.tex}
 
 \par From here, I perform a principal component analysis and store the first two components for use in the statistical analysis. The loadings on each of the trust measures is given in figure .
 
-\input{../../Code/Descriptive/Tables/trust_pca_loadings.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_pca_loadings.tex}
 
 \par I am interested in the relationship between trust and economic performance as the literature is, however in my setting the measure of economic performance is the return to assets. If a hump-shaped relationship is reasonable for income, it is even more plausible for returns: there is an inherent (and possibly explicit) level of trust between borrower and lender when forming credit contracts.
 
 \par That said, it is important to understand the nature of the trust measure in the HRS sample. I begin to do this by considering each trust measure conditional on race/ethnicity. There seems to be significant group variation in means.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_others_2020.png}
 \caption{Mean general trust by race/ethnicity (2020)}
@@ -467,7 +470,7 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par In our data, the corresponding scatter of $\log(\text{income})$ versus trust changes markedly because so many observations have exactly zero labor income. Using $\log(1+\text{income})$ retains zeros but imposes an ad hoc curvature near zero and, in our case, does not restore the same qualitative picture.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/dw_lab_trust_2022.png}
 \caption{Labor income measures vs.\ trust (2022)}
@@ -479,7 +482,7 @@ I repeat this for the measure of total income and both patterns persist.
 \par A related point is that the IHS can be sensitive to the units of measurement, which motivates a \emph{scaled} IHS of the form $\operatorname{asinh}(y/\kappa)$ (see discussions in A\"ihounton and Henningsen, \emph{``Units of Measurement and the Inverse Hyperbolic Sine Transformation''}; Norton, \emph{``The Inverse Hyperbolic Sine Transformation''}). In practice, $\kappa$ is chosen as a meaningful scale (e.g., the median positive income), which makes the transformation more comparable across samples and improves interpretability near zero. Empirically, applying the (scaled) IHS to our deflated and winsorized income restores a scatter with trust that is visually well-behaved while retaining the economically important mass at zero labor income. This can be seen for the measure of toal income as well in the following figure .
 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/dw_tot_trust_2022.png}
 \caption{Total income measures vs.\ trust (2022)}
@@ -492,21 +495,21 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par The scatterplots for trust and the measures of returns suggest stronger evidence for this hump shaped relationship. Especially for the smaller portfolio compositions (core, core and retirement), return values are highest in the middle and lower at the lowest and highest trust values.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/r1_annual_2022_vs_trust_2022.png}
 \caption{Returns to core assets vs.\ trust (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/r4_annual_2022_vs_trust_2022.png}
 \caption{Returns to core and retirement assets vs.\ trust (2022)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/r5_annual_2022_win_vs_trust_2022.png}
 \caption{Returns to net wealth vs.\ trust (2022)}
@@ -517,18 +520,18 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par As the HRS oversample older households, I take a quick look at demographic variables that will be important for the statistical analysis later. 
 
-\input{../../Code/Descriptive/Tables/demographics_general.tex}
-\input{../../Code/Descriptive/Tables/demographics_other.tex}
+\inputtable{../../Code/Descriptive/Tables/demographics_general.tex}
+\inputtable{../../Code/Descriptive/Tables/demographics_other.tex}
 
 
 \par Now, I look at the pairwise correlations between general and more specific control variables and the general trust measure in figure. This will be useful, as it will help understand what explains trust in the HRS data.
 
-\input{../../Code/Descriptive/Tables/trust_controls_corr.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_controls_corr.tex}
 \FloatBarrier
 
 \par The literature on trust already documents a signficant statistical relationship between trust and mental health. For that reason, I use the HRS RAND measure for a mental health index and show a clearly negative, linear relationship with trust. 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/depression_vs_trust_binscatter.png}
 \caption{Depression vs.\ trust}

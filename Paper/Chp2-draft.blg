@@ -19,47 +19,52 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: Chp2-draft-blx.bib
 Database file #2: Chp2.bib
+Repeated entry---line 2143 of file Chp2.bib
+ : @article{Daminato2024
+ :                      ,
+I'm skipping whatever remains of this entry
 Biblatex version: 3.21
 Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 4 entries,
+You've used 9 entries,
             6402 wiz_defined-function locations,
-            1236 strings with 12199 characters,
-and the built_in function-call counts, 29568 in all, are:
-= -- 2346
-> -- 493
-< -- 150
-+ -- 900
-- -- 188
-* -- 2050
-:= -- 3452
+            1294 strings with 15970 characters,
+and the built_in function-call counts, 72329 in all, are:
+= -- 5627
+> -- 1303
+< -- 449
++ -- 2143
+- -- 484
+* -- 5087
+:= -- 7811
 add.period$ -- 0
-call.type$ -- 4
-change.case$ -- 93
-chr.to.int$ -- 48
-cite$ -- 6
-duplicate$ -- 3057
-empty$ -- 2466
-format.name$ -- 236
-if$ -- 5993
+call.type$ -- 9
+change.case$ -- 286
+chr.to.int$ -- 72
+cite$ -- 16
+duplicate$ -- 7706
+empty$ -- 6071
+format.name$ -- 627
+if$ -- 14828
 int.to.chr$ -- 0
-int.to.str$ -- 8
+int.to.str$ -- 26
 missing$ -- 0
-newline$ -- 166
-num.names$ -- 188
-pop$ -- 1153
+newline$ -- 406
+num.names$ -- 550
+pop$ -- 2909
 preamble$ -- 2
-purify$ -- 114
+purify$ -- 338
 quote$ -- 0
-skip$ -- 793
+skip$ -- 2155
 stack$ -- 0
-substring$ -- 4170
-swap$ -- 635
-text.length$ -- 114
-text.prefix$ -- 3
+substring$ -- 9668
+swap$ -- 1765
+text.length$ -- 279
+text.prefix$ -- 8
 top$ -- 1
-type$ -- 124
+type$ -- 293
 warning$ -- 0
-while$ -- 453
+while$ -- 1013
 width$ -- 0
-write$ -- 162
+write$ -- 397
+(There was 1 error message)

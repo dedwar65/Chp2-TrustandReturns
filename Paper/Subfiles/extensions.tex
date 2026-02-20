@@ -11,51 +11,51 @@
 
 \par Financial literacy can be an important factor when trying to understand the persistent component of returns. The literature on measuring financial literacy using survey data has agreed up three questions regarding i) interest, ii) inflation, and iii) risk diversification to measure financial literacy for respondents. 
 
-\input{../../Code/Descriptive/Tables/finlit_summary.tex}
+\inputtable{../../Code/Descriptive/Tables/finlit_summary.tex}
 \FloatBarrier
 
 \par Figure shows the cross correlations between the financial literacy measures and the general measure of trust. There is little correlation between trust and any of the financial literacy variables. More worrisome is that there is little correlation amongst the financial literacy variable. If they are all measuring the same thing, there should be some correlation. 
 
-\input{../../Code/Descriptive/Tables/finlit_trust_corr.tex}
+\inputtable{../../Code/Descriptive/Tables/finlit_trust_corr.tex}
 \FloatBarrier
 
 \subsubsection{Instrumental variables}
 
 \par My first attempt at identification of causal effects of trust on returns relied on literature in this direction. Specifically, inherited trust has been used as an instrument for trust before. Though I dont have a measure of inherited trust, I include some variables about the respondents' parents that is available in 2020 as an alternative. The correlations between those variables and general trust is in the figure .
 
-\input{../../Code/Descriptive/Tables/iv_trust_corr.tex}
+\inputtable{../../Code/Descriptive/Tables/iv_trust_corr.tex}
 \FloatBarrier
 
 \par There was also a question in 2020 asking individuals \say{how large is the population of the city, village, or town where you currently live}. I plan to use this, along with the information available on what region respondents live in, to construct average trust in the location individuals live. This neighborhood trust effect may serve as a potential instrument as well.
 
 \par Here is the figure of counts by region in each year. 
 
-\input{../../Code/Descriptive/Tables/region_group_counts_by_year.tex}
+\inputtable{../../Code/Descriptive/Tables/region_group_counts_by_year.tex}
 \FloatBarrier
 
 \par The overlap of region and population is not too sparse. 
 
-\input{../../Code/Descriptive/Tables/bin_counts_regionpop_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/bin_counts_regionpop_2020.tex}
 \FloatBarrier
 
 \par That said, collapsing population into three possible sizes and regrouping makes the bins even more dense. This can be seen in the figure .
 
 
-\input{../../Code/Descriptive/Tables/bin_counts_regionpop3_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/bin_counts_regionpop3_2020.tex}
 \FloatBarrier
 
 \par I consider the group means in each of these respective scenarios in the following figures. 
 
-\input{../../Code/Descriptive/Tables/trust_mean_by_region_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_mean_by_region_2020.tex}
 \FloatBarrier
 
-\input{../../Code/Descriptive/Tables/trust_mean_by_population_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_mean_by_population_2020.tex}
 \FloatBarrier
 
-\input{../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex}
 \FloatBarrier
 
-\input{../../Code/Descriptive/Tables/trust_mean_by_regionpop3_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_mean_by_regionpop3_2020.tex}
 \FloatBarrier
 
 \subsection{Model}

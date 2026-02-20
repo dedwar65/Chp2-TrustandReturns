@@ -21,6 +21,184 @@
 \providecommand{\noopsort}[1]{} \providecommand{\singleletter}[1]{#1}
 }
 
+  \entry{Alesina2000}{report}{}{}
+    \name{author}{2}{}{%
+      {{hash=AA}{%
+         family={Alesina},
+         familyi={A\bibinitperiod},
+         given={Alberto},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=FEL}{%
+         family={Ferrara},
+         familyi={F\bibinitperiod},
+         given={Eliana\bibnamedelima La},
+         giveni={E\bibinitperiod\bibinitdelim L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {National Bureau of Economic Research}%
+    }
+    \strng{namehash}{AAFEL1}
+    \strng{fullhash}{AAFEL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2000}
+    \field{labeldatesource}{}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{abstract}{%
+    Both individual experiences and community characteristics influence how
+  much people trust each other. Using data drawn from US localities we find
+  that the strongest factors that reduce trust are: i) a recent history of
+  traumatic experiences, even though the passage of time reduces this effect
+  fairly rapidly; ii) belonging to a group that historically felt discriminated
+  against, such as minorities (black in particular) and, to a lesser extent,
+  women; iii) being economically unsuccessful in terms of income and education;
+  iv) living in a racially mixed community and/or in one with a high degree of
+  income disparity. Religious beliefs and ethnic origins do not significantly
+  affect trust. The latter result may be an indication that the American
+  melting pot at least up to a point works, in terms of homogenizing attitudes
+  of different cultures, even though racial cleavages leading to low trust are
+  still quite high.%
+    }
+    \verb{doi}
+    \verb 10.3386/w7621
+    \endverb
+    \field{number}{w7621}
+    \field{title}{{The determinants of trust}}
+    \verb{url}
+    \verb http://dx.doi.org/10.3386/w7621
+    \endverb
+    \list{location}{1}{%
+      {Cambridge, MA}%
+    }
+    \list{institution}{1}{%
+      {National Bureau of Economic Research}%
+    }
+    \verb{file}
+    \verb All-Papers/A/Alesina-and-Ferrara-2000-The-determinants-of-trust.pdf
+    \endverb
+    \field{type}{techreport}
+    \field{month}{03}
+    \field{year}{2000}
+  \endentry
+
+  \entry{Algan2010}{article}{}{}
+    \name{author}{2}{}{%
+      {{hash=AY}{%
+         family={Algan},
+         familyi={A\bibinitperiod},
+         given={Yann},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=CP}{%
+         family={Cahuc},
+         familyi={C\bibinitperiod},
+         given={Pierre},
+         giveni={P\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{AYCP1}
+    \strng{fullhash}{AYCP1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2010}
+    \field{labeldatesource}{}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{abstract}{%
+    Inherited Trust and Growth by Yann Algan and Pierre Cahuc. Published in
+  volume 100, issue 5, pages 2060-92 of American Economic Review, December
+  2010, Abstract: This paper develops a new method to uncover the causal effect
+  of trust on economic growth by focusing on the inherited component of trust
+  a...%
+    }
+    \verb{doi}
+    \verb 10.1257/aer.100.5.2060
+    \endverb
+    \field{issn}{0002-8282}
+    \field{number}{5}
+    \field{pages}{2060\bibrangedash 2092}
+    \field{title}{{Inherited Trust and Growth}}
+    \verb{url}
+    \verb https://www.aeaweb.org/articles?id=10.1257/aer.100.5.2060
+    \endverb
+    \field{volume}{100}
+    \verb{file}
+    \verb All-Papers/A/Algan-and-Cahuc-2010-Inherited-Trust-and-Growth.pdf
+    \endverb
+    \field{journaltitle}{Am. Econ. Rev.}
+    \field{month}{12}
+    \field{year}{2010}
+  \endentry
+
+  \entry{Alsan2018}{article}{}{}
+    \name{author}{2}{}{%
+      {{hash=AM}{%
+         family={Alsan},
+         familyi={A\bibinitperiod},
+         given={Marcella},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=WM}{%
+         family={Wanamaker},
+         familyi={W\bibinitperiod},
+         given={Marianne},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \list{publisher}{1}{%
+      {Oxford University Press (OUP)}%
+    }
+    \strng{namehash}{AMWM1}
+    \strng{fullhash}{AMWM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2018}
+    \field{labeldatesource}{}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{abstract}{%
+    JEL Codes: I14, O15 For forty years, the Tuskegee Study of Untreated
+  Syphilis in the Negro Male passively monitored hundreds of adult black males
+  with syphilis despite the availability of effective treatment. The study's
+  methods have become synonymous with exploitation and mistreatment by the
+  medical profession. To identify the study's effects on the behavior and
+  health of older black men, we use an interacted
+  difference-in-difference-in-differences model, comparing older black men to
+  other demographic groups, before and after the Tuskegee revelation, in
+  varying proximity to the study's victims. We find that the disclosure of the
+  study in 1972 is correlated with increases in medical mistrust and mortality
+  and decreases in both outpatient and inpatient physician interactions for
+  older black men. Our estimates imply life expectancy at age 45 for black men
+  fell by up to 1.5 years in response to the disclosure, accounting for
+  approximately 35\% of the 1980 life expectancy gap between black and white
+  men and 25\% of the gap between black men and women.%
+    }
+    \verb{doi}
+    \verb 10.1093/qje/qjx029
+    \endverb
+    \field{issn}{0033-5533,1531-4650}
+    \field{number}{1}
+    \field{pages}{407\bibrangedash 455}
+    \field{title}{{Tuskegee and the health of black men}}
+    \verb{url}
+    \verb http://dx.doi.org/10.1093/qje/qjx029
+    \endverb
+    \field{volume}{133}
+    \verb{file}
+    \verb All-Papers/A/Alsan-and-Wanamaker-2018-Tuskegee-and-the-health-of-blac
+    \verb k-men.pdf
+    \endverb
+    \field{journaltitle}{Q. J. Econ.}
+    \field{month}{02}
+    \field{year}{2018}
+  \endentry
+
   \entry{jbpglg2016}{article}{}{}
     \name{author}{3}{}{%
       {{hash=BJV}{%
@@ -191,6 +369,102 @@
     \field{volume}{88}
     \field{journaltitle}{Econometrica}
     \field{year}{2020}
+  \endentry
+
+  \entry{Guiso2004}{article}{}{}
+    \name{author}{3}{}{%
+      {{hash=GL}{%
+         family={Guiso},
+         familyi={G\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=SP}{%
+         family={Sapienza},
+         familyi={S\bibinitperiod},
+         given={Paola},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=ZL}{%
+         family={Zingales},
+         familyi={Z\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{GLSPZL1}
+    \strng{fullhash}{GLSPZL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2004}
+    \field{labeldatesource}{}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{abstract}{%
+    The Role of Social Capital in Financial Development by Luigi Guiso, Paola
+  Sapienza and Luigi Zingales. Published in volume 94, issue 3, pages 526-556
+  of American Economic Review, June 2004, Abstract: To identify the effect of
+  social capital on financial development, we exploit social capital
+  differe...%
+    }
+    \verb{doi}
+    \verb 10.1257/0002828041464498
+    \endverb
+    \field{issn}{0002-8282}
+    \field{number}{3}
+    \field{pages}{526\bibrangedash 556}
+    \field{title}{{The Role of Social Capital in Financial Development}}
+    \verb{url}
+    \verb https://www.aeaweb.org/articles?id=10.1257/0002828041464498
+    \endverb
+    \field{volume}{94}
+    \verb{file}
+    \verb All-Papers/G/Guiso-et-al.-2004-The-Role-of-Social-Capital-in-Financia
+    \verb l-Development.pdf
+    \endverb
+    \field{journaltitle}{Am. Econ. Rev.}
+    \field{month}{06}
+    \field{year}{2004}
+  \endentry
+
+  \entry{lgpslz2008}{article}{}{}
+    \name{author}{3}{}{%
+      {{hash=GL}{%
+         family={Guiso},
+         familyi={G\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=SP}{%
+         family={Sapienza},
+         familyi={S\bibinitperiod},
+         given={Paola},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=ZL}{%
+         family={Zingales},
+         familyi={Z\bibinitperiod},
+         given={Luigi},
+         giveni={L\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Wiley Online Library}%
+    }
+    \strng{namehash}{GLSPZL1}
+    \strng{fullhash}{GLSPZL1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2008}
+    \field{labeldatesource}{}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{number}{6}
+    \field{pages}{2557\bibrangedash 2600}
+    \field{title}{Trusting the stock market}
+    \field{volume}{63}
+    \field{journaltitle}{the Journal of Finance}
+    \field{year}{2008}
   \endentry
 \enddatalist
 \endinput

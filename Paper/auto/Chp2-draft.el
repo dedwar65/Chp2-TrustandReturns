@@ -6,6 +6,7 @@
    (TeX-run-style-hooks
     "latex2e"
     "Subfiles/packages"
+    "Subfiles/litrev"
     "Subfiles/data"
     "Subfiles/results"
     "Subfiles/extensions"

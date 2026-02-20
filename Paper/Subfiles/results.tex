@@ -6,31 +6,31 @@
 
 \par First, I go beyond correlations between the variables by trying to consider which variables explain the variation in the trust measures.
 
-\input{../../Code/Regressions/Trust/trust_reg_general.tex}  
+\inputtable{../../Code/Regressions/Trust/trust_reg_general.tex}  
 
 \subsection{Income and trust}
 
 \par After understanding the determinants of trust in the HRS data, I wanted to see if the \say{hump-shape} relationship between trust and income found by \cite{jbpglg2016} was present in the HRS data. I use deflated winsorized income in IHS form. First, I consider the statistical relationship for labor income (cross-section 2020 and average over waves).
 
-\input{../../Code/Regressions/Income/Labor/income_trust_general_ihs.tex}
+\inputtable{../../Code/Regressions/Income/Labor/income_trust_general_ihs.tex}
 \FloatBarrier
 
-\input{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_ihs.tex}
+\inputtable{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_ihs.tex}
 \FloatBarrier
 
 \par The pattern seems to be stronger for total income. The cross-section (2020) and average results are given below.
 
-\input{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
+\inputtable{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
 \FloatBarrier
 
-\input{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_ihs.tex}
+\inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_ihs.tex}
 \FloatBarrier
 
 \subsection{Returns and trust}
 
 \par With the hump-shape relationship between earnings and trust present in the HRS, I wanted to see if a similar relationship held for returns. The largest portfolio composition is on net wealth, which includes core assets, retirement assets, residential assets, along with other smaller categories (and debt variables). The regression results for winsorized (5 percent at each tail) annual returns to net wealth for 2022 are given below.
 
-\input{../../Code/Regressions/Returns/Net wealth/returns_r5_trust_general_win.tex}
+\inputtable{../../Code/Regressions/Returns/Net wealth/returns_r5_trust_general_win.tex}
 \FloatBarrier
 
 \subsection{Returns from 2002-2022}
@@ -41,26 +41,26 @@
 
 \par The winsorized returns for returns to net wealth are given in the following table.
 
-\input{../../Code/Regressions/Panel/panel_reg_r5_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r5_win.tex}
 \FloatBarrier
 
 \subsubsection{Controlling for risk exposure}
 
 \par To control for risk exposure, I add full interaction terms between shares invested in given asset classes (core, retirement, residential) and year. As we could see from the descriptive statistics, mean returns surely do not seem constant over the time period (ex.\ Global Financial Crisis). The tables capturing the regression results for the return measures are given below. Notice the effect when we extend the model to allow for linear and quadratic trust.
 
-\input{../../Code/Regressions/Panel/panel_reg_r5_spec2_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r5_spec2_win.tex}
 \FloatBarrier
 
 \subsubsection{Fixed effects and the persistent component of returns}
 
 \par The accompanying panel fixed-effects regressions (Spec 3, winsorized) are given in the table below.
 
-\input{../../Code/Regressions/Panel/panel_reg_r5_spec3_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r5_spec3_win.tex}
 \FloatBarrier
 
 \par The distribution of estimated individual fixed effects from the panel regressions with share $\times$ year interactions (Spec 3) is shown in the following histogram.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_dist_r5_win.png}
 \caption{FE distribution: returns to net wealth (5 percent winsorized)}
@@ -71,40 +71,40 @@
 
 \par Average annual returns (5 percent winsorized) over 2002--2022 on trust for net wealth are given below.
 
-\input{../../Code/Regressions/Average/Returns/Net wealth/returns_r5_trust_general_avg_win.tex}
+\inputtable{../../Code/Regressions/Average/Returns/Net wealth/returns_r5_trust_general_avg_win.tex}
 \FloatBarrier
 
 \subsection{Estimated fixed effects for returns}
 
 \par I regress the estimated fixed effects on time-invariant covariates (education, gender, race, born in U.S., trust). The second-stage results for winsorized returns to net wealth are given in the following table.
 
-\input{../../Code/Regressions/Panel/panel_fe_on_tinv_r5_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_fe_on_tinv_r5_win.tex}
 \FloatBarrier
 
 \par The relationship between estimated fixed effects and trust, education, race, and gender is illustrated in the following figures.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png}
 \caption{FE vs.\ trust (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_vs_educ_win.png}
 \caption{FE vs.\ education (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_by_race_win.png}
 \caption{Mean FE by race/ethnicity (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_by_gender_win.png}
 \caption{Mean FE by gender (5 percent winsorized)}

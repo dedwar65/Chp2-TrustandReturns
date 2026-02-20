@@ -3,7 +3,7 @@
 
 \subsection{Trust and race}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_social_security_2020.png}
 \caption{Mean Social Security trust by race/ethnicity (2020)}
@@ -11,42 +11,42 @@
 \FloatBarrier
 
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_medicare_2020.png}
 \caption{Mean Medicare trust by race/ethnicity (2020)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_banks_2020.png}
 \caption{Mean banks trust by race/ethnicity (2020)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_advisors_2020.png}
 \caption{Mean financial advisors trust by race/ethnicity (2020)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_mutual_funds_2020.png}
 \caption{Mean mutual funds trust by race/ethnicity (2020)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_insurance_2020.png}
 \caption{Mean insurance trust by race/ethnicity (2020)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/trust_mean_by_race_eth_media_2020.png}
 \caption{Mean media trust by race/ethnicity (2020)}
@@ -59,9 +59,9 @@
 
 \par To further capture the point that mean incomes are relatively flat over the period, I consider income growth as well by considering the log difference in income across waves.
 
-\input{../../Code/Descriptive/Tables/income_growth_tabstat.tex}
+\inputtable{../../Code/Descriptive/Tables/income_growth_tabstat.tex}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/income_growth_over_time.png}
 \caption{Income growth over time}
@@ -72,81 +72,81 @@
 
 \par After understanding the determinants of trust in the HRS data, I wanted to see if the \say{hump-shape} relationship between trust and income found by \cite{jbpglg2016} was present in the HRS data. I use deflated winsorized income in IHS form. The cross-section (2020) and average over waves (2002--2022) results for labor income are given below.
 
-\input{../../Code/Regressions/Income/Labor/income_trust_general_ihs.tex}
+\inputtable{../../Code/Regressions/Income/Labor/income_trust_general_ihs.tex}
 \FloatBarrier
 
-\input{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_ihs.tex}
+\inputtable{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_ihs.tex}
 \FloatBarrier
 
 \subsection{Total income regression results}
 
 \par The pattern seems to be stronger for total income. The cross-section (2020) and average over waves results for total income in IHS form are given below.
 
-\input{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
+\inputtable{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
 \FloatBarrier
 
-\input{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_ihs.tex}
+\inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_ihs.tex}
 \FloatBarrier
 
 \subsection{Core return regression results}
 
 \par The smallest portfolio composition is of core assets only. The regression results for winsorized (5 percent at each tail) annual returns for 2022 are given below.
 
-\input{../../Code/Regressions/Returns/Core/returns_r1_trust_general_win.tex}
+\inputtable{../../Code/Regressions/Returns/Core/returns_r1_trust_general_win.tex}
 \FloatBarrier
 
 \par The pooled regression (Spec 1), risk-exposure specification (Spec 2), and fixed-effects specification (Spec 3) for returns to core assets are given below.
 
-\input{../../Code/Regressions/Panel/panel_reg_r1_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r1_win.tex}
 \FloatBarrier
 
-\input{../../Code/Regressions/Panel/panel_reg_r1_spec2_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r1_spec2_win.tex}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_dist_r1_win.png}
 \caption{FE distribution: returns to core (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\input{../../Code/Regressions/Panel/panel_reg_r1_spec3_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r1_spec3_win.tex}
 \FloatBarrier
 
 \par Average annual returns (5 percent winsorized) over 2002--2022 on trust for core assets:
 
-\input{../../Code/Regressions/Average/Returns/Core/returns_r1_trust_general_avg_win.tex}
+\inputtable{../../Code/Regressions/Average/Returns/Core/returns_r1_trust_general_avg_win.tex}
 \FloatBarrier
 
 \par Second-stage regression of estimated fixed effects on time-invariant covariates:
 
-\input{../../Code/Regressions/Panel/panel_fe_on_tinv_r1_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_fe_on_tinv_r1_win.tex}
 \FloatBarrier
 
 \par The relationship between estimated fixed effects and trust, education, race, and gender (using r1 FE):
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png}
 \caption{FE vs.\ trust (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_vs_educ_win.png}
 \caption{FE vs.\ education (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_by_race_win.png}
 \caption{Mean FE by race/ethnicity (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_by_gender_win.png}
 \caption{Mean FE by gender (5 percent winsorized)}
@@ -157,33 +157,33 @@
 
 \par The next portfolio composition includes retirement assets along with those core assets. The regression results for winsorized annual returns for 2022 on these portfolios are given below.
 
-\input{../../Code/Regressions/Returns/Core+res/returns_r4_trust_general_win.tex}
+\inputtable{../../Code/Regressions/Returns/Core+res/returns_r4_trust_general_win.tex}
 \FloatBarrier
 
 \par The pooled regression (Spec 1), risk-exposure specification (Spec 2), and fixed-effects specification (Spec 3) for returns to core and IRA:
 
-\input{../../Code/Regressions/Panel/panel_reg_r4_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r4_win.tex}
 \FloatBarrier
 
-\input{../../Code/Regressions/Panel/panel_reg_r4_spec2_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r4_spec2_win.tex}
 \FloatBarrier
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_dist_r4_win.png}
 \caption{FE distribution: returns to core and IRA (5 percent winsorized)}
 \end{figure}
 \FloatBarrier
 
-\input{../../Code/Regressions/Panel/panel_reg_r4_spec3_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_reg_r4_spec3_win.tex}
 \FloatBarrier
 
 \par Average annual returns (5 percent winsorized) over 2002--2022 on trust for core and IRA:
 
-\input{../../Code/Regressions/Average/Returns/Core+res/returns_r4_trust_general_avg_win.tex}
+\inputtable{../../Code/Regressions/Average/Returns/Core+res/returns_r4_trust_general_avg_win.tex}
 \FloatBarrier
 
 \par Second-stage regression of estimated fixed effects on time-invariant covariates:
 
-\input{../../Code/Regressions/Panel/panel_fe_on_tinv_r4_win.tex}
+\inputtable{../../Code/Regressions/Panel/panel_fe_on_tinv_r4_win.tex}
 \FloatBarrier
