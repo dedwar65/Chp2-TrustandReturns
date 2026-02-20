@@ -165,6 +165,11 @@ capture drop lab_inc_defl_win_avg tot_inc_defl_win_avg
 egen double lab_inc_defl_win_avg = rowmean(lab_inc_defl_win_2002 lab_inc_defl_win_2004 lab_inc_defl_win_2006 lab_inc_defl_win_2008 lab_inc_defl_win_2010 lab_inc_defl_win_2012 lab_inc_defl_win_2014 lab_inc_defl_win_2016 lab_inc_defl_win_2018 lab_inc_defl_win_2020 lab_inc_defl_win_2022)
 egen double tot_inc_defl_win_avg = rowmean(tot_inc_defl_win_2002 tot_inc_defl_win_2004 tot_inc_defl_win_2006 tot_inc_defl_win_2008 tot_inc_defl_win_2010 tot_inc_defl_win_2012 tot_inc_defl_win_2014 tot_inc_defl_win_2016 tot_inc_defl_win_2018 tot_inc_defl_win_2020 tot_inc_defl_win_2022)
 
+* Log of average deflated winsorized income (ln(avg) when avg > 0)
+capture drop ln_lab_inc_defl_win_avg ln_tot_inc_defl_win_avg
+gen double ln_lab_inc_defl_win_avg = ln(lab_inc_defl_win_avg) if lab_inc_defl_win_avg > 0
+gen double ln_tot_inc_defl_win_avg = ln(tot_inc_defl_win_avg) if tot_inc_defl_win_avg > 0
+
 * IHS of average (asinh(avg / median): deflate wins avg, then IHS)
 capture drop ihs_lab_inc_defl_win_avg ihs_tot_inc_defl_win_avg
 gen double ihs_lab_inc_defl_win_avg = .

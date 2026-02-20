@@ -6,21 +6,21 @@ Cross-sectional OLS regressions with **average** income and **average** returns 
 
 | Script | Description |
 |--------|-------------|
-| **17_reg_income_avg_trust.do** | Average income (IHS, row mean across waves) on 2020 general trust + controls |
+| **17_reg_income_avg_trust.do** | Average income (log and IHS, row mean across waves) on 2020 general trust + controls |
 | **18_reg_returns_avg_trust.do** | Average returns (r1, r4, r5 row mean) on 2020 general trust + controls |
 
 ## Upstream Dependencies
 
-- **04_processing_income.do**: Creates `lab_inc_defl_win_avg`, `tot_inc_defl_win_avg` (row mean of deflated winsorized levels); `ihs_lab_inc_defl_win_avg`, `ihs_tot_inc_defl_win_avg` (IHS of that average)
+- **04_processing_income.do**: Creates `lab_inc_defl_win_avg`, `tot_inc_defl_win_avg` (row mean of deflated winsorized levels); `ln_lab_inc_defl_win_avg`, `ln_tot_inc_defl_win_avg` (log); `ihs_lab_inc_defl_win_avg`, `ihs_tot_inc_defl_win_avg` (IHS)
 - **05_processing_returns.do**: Creates `r*_annual_avg`, `r*_annual_avg_w5` (row mean of returns, raw and 5% winsorized)
 
 Run `0_run_pipeline_00_05.do` before 17 and 18.
 
 ## Regressions (17: Average Income)
 
-**LHS:** (1) `lab_inc_defl_win_avg`, `tot_inc_defl_win_avg` (avg defl wins, levels); (2) `ihs_lab_inc_defl_win_avg`, `ihs_tot_inc_defl_win_avg` (avg defl wins, IHS)  
+**LHS:** (1) `ln_lab_inc_defl_win_avg`, `ln_tot_inc_defl_win_avg` (avg defl wins, log); (2) `ihs_lab_inc_defl_win_avg`, `ihs_tot_inc_defl_win_avg` (avg defl wins, IHS)  
 **RHS:** 2020 general trust (`trust_others_2020`)  
-**Specs:** 3 columns — (1) trust only, (2) trust+trust², (3) trust+trust²+controls. Joint test for Trust+Trust² in columns 2 and 3.  
+**Specs:** 4 columns — (1) trust only, (2) trust+trust², (3) trust+controls, (4) trust+trust²+controls. Joint test for Trust+Trust² in columns 2 and 4.  
 **Controls:** Age 5-yr bins, gender, educ, inlbrf, married, born_us, race_eth  
 **SE:** vce(robust)
 
@@ -28,8 +28,8 @@ Run `0_run_pipeline_00_05.do` before 17 and 18.
 
 | Path | Content |
 |------|---------|
-| `Average/Income/Labor/income_trust_general_deflwin.tex` | Labor income (avg defl wins, levels) on general trust |
-| `Average/Income/Total/income_trust_general_deflwin.tex` | Total income (avg defl wins, levels) on general trust |
+| `Average/Income/Labor/income_trust_general_deflwin_log.tex` | Labor income (avg defl wins, log) on general trust |
+| `Average/Income/Total/income_trust_general_deflwin_log.tex` | Total income (avg defl wins, log) on general trust |
 | `Average/Income/Labor/income_trust_general_deflwin_ihs.tex` | Labor income (avg defl wins, IHS) on general trust |
 | `Average/Income/Total/income_trust_general_deflwin_ihs.tex` | Total income (avg defl wins, IHS) on general trust |
 
@@ -56,7 +56,7 @@ Run `0_run_pipeline_00_05.do` before 17 and 18.
 
 | Do file | Tables |
 |---------|--------|
-| 17 | 4 (labor + total × avg_ihs + deflwin_ihs) |
+| 17 | 4 (labor + total × deflwin_log + deflwin_ihs) |
 | 18 | 6 (3 returns × 2 raw/win) |
 | **Total** | **8** |
 

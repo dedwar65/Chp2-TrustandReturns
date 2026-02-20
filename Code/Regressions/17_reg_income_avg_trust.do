@@ -1,7 +1,6 @@
 * 17_reg_income_avg_trust.do
 * Cross-sectional OLS: average income (avg over waves) on 2020 general trust.
-* Four tables: (1) labor income wins defl (levels), (2) total income wins defl (levels),
-* (3) labor income wins defl IHS, (4) total income wins defl IHS.
+* Four tables: (1) labor defl+log+wins, (2) total defl+log+wins, (3) labor defl+ihs+wins, (4) total defl+ihs+wins.
 * Four columns: (1) trust only, (2) trust+trust², (3) trust+controls, (4) trust+trust²+controls.
 * General trust only. vce(robust). Log: Notes/Logs/17_reg_income_avg_trust.log.
 * Output: Regressions/Average/Income/Labor/, Average/Income/Total/.
@@ -72,37 +71,40 @@ label variable born_us "Born in U.S."
 label variable gender "Female"
 label variable race_eth "Race/ethnicity"
 label variable trust_others_2020 "General trust"
-label variable lab_inc_defl_win_avg "Labor income (avg defl wins)"
-label variable tot_inc_defl_win_avg "Total income (avg defl wins)"
+label variable ln_lab_inc_defl_win_avg "Labor income (avg defl wins, log)"
+label variable ln_tot_inc_defl_win_avg "Total income (avg defl wins, log)"
 label variable ihs_lab_inc_defl_win_avg "Labor income (avg defl wins, IHS)"
 label variable ihs_tot_inc_defl_win_avg "Total income (avg defl wins, IHS)"
 
 * ----------------------------------------------------------------------
-* Regressions: average income on trust (2020). Four tables: labor defl win, total defl win, labor defl win IHS, total defl win IHS
+* Regressions: average income on trust (2020). Four tables: labor/total × deflwin_log, deflwin_ihs
 * ----------------------------------------------------------------------
-* Table 1: labor levels. Table 2: total levels. Table 3: labor IHS. Table 4: total IHS
 forvalues meas = 1/4 {
     if `meas' == 1 {
-        local yvar "lab_inc_defl_win_avg"
+        local yvar "ln_lab_inc_defl_win_avg"
         local outdir "Labor"
-        local file_suffix "deflwin"
-        local title_suffix "labor income (avg defl wins)"
+        local label_outdir "labor"
+        local file_suffix "deflwin_log"
+        local title_suffix "labor income (avg defl wins, log)"
     }
     if `meas' == 2 {
-        local yvar "tot_inc_defl_win_avg"
+        local yvar "ln_tot_inc_defl_win_avg"
         local outdir "Total"
-        local file_suffix "deflwin"
-        local title_suffix "total income (avg defl wins)"
+        local label_outdir "total"
+        local file_suffix "deflwin_log"
+        local title_suffix "total income (avg defl wins, log)"
     }
     if `meas' == 3 {
         local yvar "ihs_lab_inc_defl_win_avg"
         local outdir "Labor"
+        local label_outdir "labor"
         local file_suffix "deflwin_ihs"
         local title_suffix "labor income (avg defl wins, IHS)"
     }
     if `meas' == 4 {
         local yvar "ihs_tot_inc_defl_win_avg"
         local outdir "Total"
+        local label_outdir "total"
         local file_suffix "deflwin_ihs"
         local title_suffix "total income (avg defl wins, IHS)"
     }
@@ -179,7 +181,7 @@ foreach pair of local trust_list {
     while r(eof) == 0 {
         file write fout "`line'" _n
         if `lab_inserted' == 0 & regexm(`"`line'"', "\\caption") {
-            file write fout "\label{tab:income_trust_`stub'_`outdir'_`file_suffix'}" _n
+            file write fout "\label{tab:income_trust_`stub'_`label_outdir'_`file_suffix'}" _n
             local lab_inserted 1
         }
         file read fh line

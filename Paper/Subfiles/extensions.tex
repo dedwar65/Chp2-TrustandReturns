@@ -1,13 +1,9 @@
 \onlyinsubfile{\setcounter{section}{4}}
-\section{Extensionss}\notinsubfile{\label{sec:exts}}
+\section{Extensions}\notinsubfile{\label{sec:exts}}
 
 \par In this section, I describe the data and accompanying statistical model used to understand the role of financial literacy and causal effects for trust in the current story of an empirical relationship between trust and returns. 
 
-\subsection{Data: Other controls}
-
-\par The remaining variables will be important for the statistical analysis in the next section. 
-
-\subsubsection{Financial literacy}
+\subsection{Financial literacy}
 
 \par Financial literacy can be an important factor when trying to understand the persistent component of returns. The literature on measuring financial literacy using survey data has agreed up three questions regarding i) interest, ii) inflation, and iii) risk diversification to measure financial literacy for respondents. 
 
@@ -19,43 +15,39 @@
 \inputtable{../../Code/Descriptive/Tables/finlit_trust_corr.tex}
 \FloatBarrier
 
-\subsubsection{Instrumental variables}
+\subsection{Regional trust}
 
-\par My first attempt at identification of causal effects of trust on returns relied on literature in this direction. Specifically, inherited trust has been used as an instrument for trust before. Though I dont have a measure of inherited trust, I include some variables about the respondents' parents that is available in 2020 as an alternative. The correlations between those variables and general trust is in the figure .
-
-\inputtable{../../Code/Descriptive/Tables/iv_trust_corr.tex}
-\FloatBarrier
-
-\par There was also a question in 2020 asking individuals \say{how large is the population of the city, village, or town where you currently live}. I plan to use this, along with the information available on what region respondents live in, to construct average trust in the location individuals live. This neighborhood trust effect may serve as a potential instrument as well.
-
-\par Here is the figure of counts by region in each year. 
+\par There is infomration in the survey about what region the respondent lives in for each wave. This along with the assumption of constant trust allows us create a measure of regional trust that varies over the waves of the survey. How the sample count changes by region can be seen in the table . 
 
 \inputtable{../../Code/Descriptive/Tables/region_group_counts_by_year.tex}
 \FloatBarrier
 
-\par The overlap of region and population is not too sparse. 
+\par The mean trust levels by region can be seen in the table .
 
-\inputtable{../../Code/Descriptive/Tables/bin_counts_regionpop_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/trust_mean_by_censreg_2020.tex}
 \FloatBarrier
 
-\par That said, collapsing population into three possible sizes and regrouping makes the bins even more dense. This can be seen in the figure .
+\subsection{"Hometown" population and trust}
 
+\par There was also a question in 2020 asking individuals \say{how large is the population of the city, village, or town where you currently live}. The trust literature discusses how trust may vary in different communities (small, close-knit towns versus large cities). Counts by population size (6 bins) and by population in 3 bins (small town, small/medium city, large metro) are in the tables . 
 
-\inputtable{../../Code/Descriptive/Tables/bin_counts_regionpop3_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/bin_counts_population_2020.tex}
 \FloatBarrier
 
-\par I consider the group means in each of these respective scenarios in the following figures. 
-
-\inputtable{../../Code/Descriptive/Tables/trust_mean_by_region_2020.tex}
+\inputtable{../../Code/Descriptive/Tables/bin_counts_population3_2020.tex}
 \FloatBarrier
 
-\inputtable{../../Code/Descriptive/Tables/trust_mean_by_population_2020.tex}
-\FloatBarrier
+\par Mean trust by population size are given in the table . 
 
 \inputtable{../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex}
 \FloatBarrier
 
-\inputtable{../../Code/Descriptive/Tables/trust_mean_by_regionpop3_2020.tex}
+
+\subsection{Instrumental variables}
+
+\par My first attempt at identification of causal effects of trust on returns relied on literature in this direction. Specifically, inherited trust has been used as an instrument for trust before. Though I dont have a measure of inherited trust, I include some variables about the respondents' parents that is available in 2020 as an alternative. The correlations between those variables and general trust is in the figure .
+
+\inputtable{../../Code/Descriptive/Tables/iv_trust_corr.tex}
 \FloatBarrier
 
 \subsection{Model}

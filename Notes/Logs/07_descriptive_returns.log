@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_des
 > criptive_returns.log
   log type:  text
- opened on:  19 Feb 2026, 13:50:07
+ opened on:  20 Feb 2026, 10:52:30
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -2011,24 +2011,14 @@ file /Volumes/SSD
  41.     }
  42. }
 (bin=80, start=-1, width=.09837923)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2002.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2002.gph saved
 (bin=80, start=-1, width=.06495191)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2002.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2002.gph saved
 (bin=80, start=-1, width=.03708099)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2002.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2002.gph saved
 (bin=80, start=-.9, width=.06782122)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2002.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2002.gph saved
 (bin=80, start=-.70186644, width=.04180263)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2002.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2002.gph saved
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/returns_hist
@@ -2037,24 +2027,14 @@ file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/returns_hist
     > ogram_agg_2002.png saved as PNG format
 (bin=80, start=-1, width=.10825318)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2022.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2022.gph saved
 (bin=80, start=-1, width=.09089373)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2022.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2022.gph saved
 (bin=80, start=-1, width=.04433351)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2022.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2022.gph saved
 (bin=80, start=-1, width=.08838835)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2022.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2022.gph saved
 (bin=80, start=-.82576699, width=.05444825)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2022.gph not
-    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2022.gph saved
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/returns_hist
@@ -2914,5 +2894,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_des
 > criptive_returns.log
   log type:  text
- closed on:  19 Feb 2026, 13:55:23
+ closed on:  20 Feb 2026, 10:55:48
 ---------------------------------------------------------------------------------

@@ -26,6 +26,11 @@
     "threeparttable"
     "multirow"
     "geometry"
-    "pdflscape"))
+    "pdflscape")
+   (TeX-add-symbols
+    '("inputtable" 1))
+   (LaTeX-add-environments
+    "origtable"
+    '("table" LaTeX-env-args ["argument"] 0)))
  :latex)
 

@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_des
 > criptive_controls.log
   log type:  text
- opened on:  19 Feb 2026, 13:55:23
+ opened on:  20 Feb 2026, 10:55:48
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -253,52 +253,37 @@ num_wid~2020 |     15,723    .2203778    .4492705          0          3
 . display "=== Contextual trust IVs summary ==="
 === Contextual trust IVs summary ===
 
-. summarize townsize_trust_* pop_trust_* regional_trust_* `wopt'
+. summarize pop_trust_* regional_trust_* `wopt'
 
     Variable |        Obs        Mean    Std. dev.       Min        Max
 -------------+---------------------------------------------------------
-townsize_~00 |     45,234    5.220774    .1130603        3.5         10
-townsize_~02 |     45,234    5.240723    .1024772   3.636364         10
-townsize_~04 |     45,234    5.186406    .1029318   3.928571   7.833333
-townsize_~06 |     45,233    5.150312    .1118687          4   8.666667
-townsize_~08 |     45,234    5.154008    .1102435          4   8.666667
--------------+---------------------------------------------------------
-townsize_~10 |     45,234     5.12249    .0932803        4.5        6.6
-townsize_~12 |     45,234    5.119932    .0877161        4.5          7
-townsize_~14 |     45,234    5.159663    .0775808        4.5          7
-townsize_~16 |     45,234     5.28655    .0594688   4.666667          7
-townsize_~18 |     45,233    5.188839    .0667908   4.666667   6.230769
--------------+---------------------------------------------------------
-townsize_~20 |     45,233    5.384855    .0544647   4.666667   6.230769
-townsize_~22 |     45,233    5.362429    .0588273      4.625          6
 pop_tru~2000 |     45,234    5.384718    .0270688   5.102804   5.590164
 pop_tru~2002 |     45,234    5.384718    .0270688   5.102804   5.590164
 pop_tru~2004 |     45,234    5.384718    .0270688   5.102804   5.590164
--------------+---------------------------------------------------------
 pop_tru~2006 |     45,234    5.384718    .0270688   5.102804   5.590164
 pop_tru~2008 |     45,234    5.384718    .0270688   5.102804   5.590164
+-------------+---------------------------------------------------------
 pop_tru~2010 |     45,234    5.384718    .0270688   5.102804   5.590164
 pop_tru~2012 |     45,234    5.384718    .0270688   5.102804   5.590164
 pop_tru~2014 |     45,234    5.384718    .0270688   5.102804   5.590164
--------------+---------------------------------------------------------
 pop_tru~2016 |     45,234    5.384718    .0270688   5.102804   5.590164
 pop_tru~2018 |     45,234    5.384718    .0270688   5.102804   5.590164
+-------------+---------------------------------------------------------
 pop_tru~2020 |     45,234    5.384718    .0270688   5.102804   5.590164
 pop_tru~2022 |     45,234    5.384718    .0270688   5.102804   5.590164
 regiona~2000 |     45,234    5.641948    .6968583          5     6.8125
--------------+---------------------------------------------------------
 regiona~2002 |     45,234    5.567385     .603153          5   6.647059
 regiona~2004 |     45,234    5.445502    .5056923          5   6.521739
+-------------+---------------------------------------------------------
 regiona~2006 |     45,234    5.413115    .5509216          5   6.755556
 regiona~2008 |     45,234    5.383481    .5041052          5   6.622222
 regiona~2010 |     45,234    5.287002     .328685          5   6.083969
--------------+---------------------------------------------------------
 regiona~2012 |     45,234    5.245997    .3370254   4.986784   6.007576
 regiona~2014 |     45,234    5.250104    .2796246   5.048458          6
+-------------+---------------------------------------------------------
 regiona~2016 |     45,234    5.084603    .3524174   4.785714          6
 regiona~2018 |     45,234     4.95366    .4292827   4.633803   5.815789
 regiona~2020 |     15,723    5.413185    .1825532          5    5.72956
--------------+---------------------------------------------------------
 regiona~2022 |     45,234    5.425236    .3572859        3.5        6.7
 
 . 
@@ -315,58 +300,20 @@ popu~on_2020 |      1,114    3.685817    1.400178          1          6
 
     Variable |        Obs        Mean    Std. dev.       Min        Max
 -------------+---------------------------------------------------------
-censreg_2000 |     19,578    2.592604    .9667457          1          5
-censreg_2002 |     18,165    2.603799    .9646225          1          5
-censreg_2004 |     20,129    2.624373    .9763418          1          5
-censreg_2006 |     18,469    2.633873    .9699918          1          5
-censreg_2008 |     17,217    2.641169    .9674999          1          5
+censreg_2000 |     19,538    2.587675    .9615719          1          4
+censreg_2002 |     18,122    2.598113    .9586695          1          4
+censreg_2004 |     20,074    2.617864    .9697162          1          4
+censreg_2006 |     18,400       2.625    .9609049          1          4
+censreg_2008 |     17,147    2.631539    .9576372          1          4
 -------------+---------------------------------------------------------
-censreg_2010 |     22,034    2.683262    .9776351          1          5
-censreg_2012 |     20,554     2.69062    .9770303          1          5
-censreg_2014 |     18,747    2.696645    .9781519          1          5
-censreg_2016 |     20,912    2.730777    .9659269          1          5
-censreg_2018 |     17,146    2.741514    .9629591          1          5
+censreg_2010 |     21,964    2.675879    .9703894          1          4
+censreg_2012 |     20,478    2.682049      .96864          1          4
+censreg_2014 |     18,660    2.685906    .9676722          1          4
+censreg_2016 |     20,831    2.721953    .9573615          1          4
+censreg_2018 |     17,067     2.73106    .9528177          1          4
 -------------+---------------------------------------------------------
-censreg_2020 |     15,723    2.752719     .963808          1          5
-censreg_2022 |     12,883    2.767989     .965542          1          5
-
-. summarize region_pop_group_* `wopt'
-
-    Variable |        Obs        Mean    Std. dev.       Min        Max
--------------+---------------------------------------------------------
-region_pop.. |        310    267.5903    93.22491        101        505
-region_pop.. |        320    268.4438    93.72967        101        505
-region_pop.. |        483    270.9752     99.0455        101        505
-region_pop.. |        489    271.5706    98.64602        101        505
-region_pop.. |        493    271.4462    97.95228        101        505
--------------+---------------------------------------------------------
-region_pop.. |        829    272.9747    98.87384        101        505
-region_pop.. |        842     272.981    99.50531        101        506
-region_pop.. |        838    273.0573    99.43198        101        506
-region_pop.. |      1,077     276.467     98.7665        101        506
-region_pop.. |      1,014     276.858    98.20344        101        506
--------------+---------------------------------------------------------
-region_pop.. |      1,114    276.6661    98.04547        101        506
-region_pop.. |        889    275.5973    98.70103        101        506
-
-. summarize hometown_size_* `wopt'
-
-    Variable |        Obs        Mean    Std. dev.       Min        Max
--------------+---------------------------------------------------------
-hometow~2000 |        310    267.5903    93.22491        101        505
-hometow~2002 |        320    268.4438    93.72967        101        505
-hometow~2004 |        483    270.9752     99.0455        101        505
-hometow~2006 |        489    271.5706    98.64602        101        505
-hometow~2008 |        493    271.4462    97.95228        101        505
--------------+---------------------------------------------------------
-hometow~2010 |        829    272.9747    98.87384        101        505
-hometow~2012 |        842     272.981    99.50531        101        506
-hometow~2014 |        838    273.0573    99.43198        101        506
-hometow~2016 |      1,077     276.467     98.7665        101        506
-hometow~2018 |      1,014     276.858    98.20344        101        506
--------------+---------------------------------------------------------
-hometow~2020 |      1,114    276.6661    98.04547        101        506
-hometow~2022 |        889    275.5973    98.70103        101        506
+censreg_2020 |     15,662    2.743966    .9554038          1          4
+censreg_2022 |     12,823    2.757545    .9556214          1          4
 
 . 
 . * Export label mappings for region and population
@@ -677,8 +624,8 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . keep if year == 2020
 (497,574 observations deleted)
 
-. keep if !missing(trust_others_2020) & !missing(censreg_)
-(44,334 observations deleted)
+. keep if !missing(trust_others_2020) & !missing(censreg_) & censreg_ != 5
+(44,335 observations deleted)
 
 . decode censreg_, gen(region_label)
 
@@ -708,122 +655,16 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . restore
 
 . 
-. display "=== Overlap: trust x region_pop_group (2020 only) ==="
-=== Overlap: trust x region_pop_group (2020 only) ===
-
-. preserve
-
-. keep hhidpn trust_others_2020 censreg_* population_2020
-
-. reshape long censreg_, i(hhidpn) j(year)
-(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
-
-Data                               Wide   ->   Long
------------------------------------------------------------------------------
-Number of observations           45,234   ->   542,808     
-Number of variables                  15   ->   5           
-j variable (12 values)                    ->   year
-xij variables:
-censreg_2000 censreg_2002 ... censreg_2022->   censreg_
------------------------------------------------------------------------------
-
-. keep if year == 2020
-(497,574 observations deleted)
-
-. keep if !missing(trust_others_2020) & !missing(censreg_) & !missing(population_
-> 2020)
-(44,511 observations deleted)
-
-. decode censreg_, gen(region_label)
-
-. decode population_2020, gen(pop_label)
-
-. gen int region_pop_group = censreg_ * 100 + population_2020
-
-. contract year censreg_ region_label population_2020 pop_label region_pop_group,
->  freq(n)
-
-. file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop_groups_2020.tex", wri
-> te replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--po
-> pulation overlap (2020)}" _n "\label{tab:trust_regionpop_groups_2020}" _n "\beg
-> in{tabular}{rrllrr}\toprule" _n "Year & Region (code) & Region & Pop (code) & P
-> opulation size & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local yr_s = string(year[`r'], "%9.0f")
-  3.     local reg_s = string(censreg_[`r'], "%9.0f")
-  4.     local rlab = region_label[`r']
-  5.     local pop_s = string(population_2020[`r'], "%9.0f")
-  6.     local plab = pop_label[`r']
-  7.     local n_s = string(n[`r'], "%9.0f")
-  8.     file write fh "`yr_s' & `reg_s' & `rlab' & `pop_s' & `plab' & `n_s' \\\\
-> " _n
-  9. }
-
-. file write fh "\bottomrule\end{tabular}\end{table}" _n
-
-. file close fh
-
-. restore
-
-. 
-. display "=== Overlap: trust x region_pop3_group (2020 only) ==="
-=== Overlap: trust x region_pop3_group (2020 only) ===
-
-. preserve
-
-. keep hhidpn trust_others_2020 censreg_2020 population_3bin_2020
-
-. keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(populat
-> ion_3bin_2020)
-(44,511 observations deleted)
-
-. label values censreg_2020 region_lbl
-
-. label values population_3bin_2020 pop3_lbl
-
-. decode censreg_2020, gen(region_label)
-
-. decode population_3bin_2020, gen(pop3_label)
-
-. gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
-
-. contract censreg_2020 region_label population_3bin_2020 pop3_label region_pop3_
-> group, freq(n)
-
-. file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop3_groups_2020.tex", wr
-> ite replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region--po
-> pulation (3 bins) overlap (2020)}" _n "\label{tab:trust_regionpop3_groups_2020}
-> " _n "\begin{tabular}{rllrr}\toprule" _n "Region (code) & Region & Pop3 (code) 
-> & Population & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local r_s = string(censreg_2020[`r'], "%9.0f")
-  3.     local rlab = region_label[`r']
-  4.     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
-  5.     local p3lab = pop3_label[`r']
-  6.     local n_s = string(n[`r'], "%9.0f")
-  7.     file write fh "`r_s' & `rlab' & `p3_s' & `p3lab' & `n_s' \\\\" _n
-  8. }
-
-. file write fh "\bottomrule\end{tabular}\end{table}" _n
-
-. file close fh
-
-. restore
-
-. 
-. display "=== Bin counts: region, population, townsize3 (2020 only) ==="
-=== Bin counts: region, population, townsize3 (2020 only) ===
+. display "=== Bin counts: region, population (2020 only) ==="
+=== Bin counts: region, population (2020 only) ===
 
 . preserve
 
 . keep if !missing(trust_others_2020)
 (44,334 observations deleted)
+
+. drop if missing(censreg_2020) | censreg_2020 == 5
+(1 observation deleted)
 
 . label values censreg_2020 region_lbl
 
@@ -861,6 +702,9 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . keep if !missing(trust_others_2020)
 (44,334 observations deleted)
 
+. drop if missing(population_2020)
+(177 observations deleted)
+
 . label values population_2020 pop_lbl
 
 . contract population_2020, freq(n)
@@ -876,11 +720,12 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 > _n
 
 . forvalues r = 1/`=_N' {
-  2.     local p_s = string(population_2020[`r'], "%9.0f")
-  3.     local plab = pop_label[`r']
-  4.     local n_s = string(n[`r'], "%9.0f")
-  5.     file write fh "`p_s' & `plab' & `n_s' \\\\" _n
-  6. }
+  2.     if missing(population_2020[`r']) continue
+  3.     local p_s = string(population_2020[`r'], "%9.0f")
+  4.     local plab = pop_label[`r']
+  5.     local n_s = string(n[`r'], "%9.0f")
+  6.     file write fh "`p_s' & `plab' & `n_s' \\\\" _n
+  7. }
 
 . file write fh "\bottomrule\end{tabular}\end{table}" _n
 
@@ -894,6 +739,9 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . keep if !missing(trust_others_2020)
 (44,334 observations deleted)
 
+. drop if missing(population_3bin_2020)
+(177 observations deleted)
+
 . label values population_3bin_2020 pop3_lbl
 
 . contract population_3bin_2020, freq(n)
@@ -905,95 +753,13 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 
 . file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by popula
 > tion (3 bins, 2020)}" _n "\label{tab:bin_counts_population3_2020}" _n "\begin{t
-> abular}{rlr}\toprule" _n "Pop3 (code) & Population & Obs \\\\ \midrule" _n
+> abular}{lr}\toprule" _n "Population & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
-  2.     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
+  2.     if missing(population_3bin_2020[`r']) continue
   3.     local p3lab = pop3_label[`r']
   4.     local n_s = string(n[`r'], "%9.0f")
-  5.     file write fh "`p3_s' & `p3lab' & `n_s' \\\\" _n
-  6. }
-
-. file write fh "\bottomrule\end{tabular}\end{table}" _n
-
-. file close fh
-
-. restore
-
-. 
-. preserve
-
-. keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(populat
-> ion_2020)
-(44,511 observations deleted)
-
-. label values censreg_2020 region_lbl
-
-. label values population_2020 pop_lbl
-
-. gen int region_pop_group = censreg_2020 * 100 + population_2020
-
-. decode censreg_2020, gen(region_label)
-
-. decode population_2020, gen(pop_label)
-
-. contract censreg_2020 region_label population_2020 pop_label region_pop_group, 
-> freq(n)
-
-. file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop_2020.tex", write
->  replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region
-> --population (2020)}" _n "\label{tab:bin_counts_regionpop_2020}" _n "\begin{tab
-> ular}{llr}\toprule" _n "Region & Population size & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local rlab = region_label[`r']
-  3.     local plab = pop_label[`r']
-  4.     local n_s = string(n[`r'], "%9.0f")
-  5.     file write fh "`rlab' & `plab' & `n_s' \\\\" _n
-  6. }
-
-. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Sample: 2020, 
-> nonmissing general trust, region, and population.} \\\\" _n "\end{tabular}\end{
-> table}" _n
-
-. file close fh
-
-. restore
-
-. 
-. preserve
-
-. keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(populat
-> ion_3bin_2020)
-(44,511 observations deleted)
-
-. label values censreg_2020 region_lbl
-
-. label values population_3bin_2020 pop3_lbl
-
-. gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
-
-. decode censreg_2020, gen(region_label)
-
-. decode population_3bin_2020, gen(pop3_label)
-
-. contract censreg_2020 region_label population_3bin_2020 pop3_label region_pop3_
-> group, freq(n)
-
-. file open fh using "${DESCRIPTIVE}/Tables/bin_counts_regionpop3_2020.tex", writ
-> e replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region
-> --population (3 bins, 2020)}" _n "\label{tab:bin_counts_regionpop3_2020}" _n "\
-> begin{tabular}{llr}\toprule" _n "Region & Population & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local rlab = region_label[`r']
-  3.     local p3lab = pop3_label[`r']
-  4.     local n_s = string(n[`r'], "%9.0f")
-  5.     file write fh "`rlab' & `p3lab' & `n_s' \\\\" _n
+  5.     file write fh "`p3lab' & `n_s' \\\\" _n
   6. }
 
 . file write fh "\bottomrule\end{tabular}\end{table}" _n
@@ -1108,8 +874,9 @@ file /Volumes/SSD
 
 . preserve
 
-. keep if !missing(trust_others_2020) & !missing(censreg_2020)
-(44,334 observations deleted)
+. keep if !missing(trust_others_2020) & !missing(censreg_2020) & censreg_2020 != 
+> 5
+(44,335 observations deleted)
 
 . label values censreg_2020 region_lbl
 
@@ -1260,104 +1027,6 @@ file /Volumes/SSD
 . restore
 
 . 
-. display "=== Mean trust by townsize3 (region x pop3, 2020 only) ==="
-=== Mean trust by townsize3 (region x pop3, 2020 only) ===
-
-. preserve
-
-. keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(populat
-> ion_3bin_2020)
-(44,511 observations deleted)
-
-. label values censreg_2020 region_lbl
-
-. label values population_3bin_2020 pop3_lbl
-
-. gen int region_pop3_group = censreg_2020 * 10 + population_3bin_2020
-
-. collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt'
-> , by(censreg_2020 population_3bin_2020 region_pop3_group)
-
-. decode censreg_2020, gen(region_label)
-
-. decode population_3bin_2020, gen(pop3_label)
-
-. file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_regionpop3_2020.tex", w
-> rite replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region
-> --population (3 bins, 2020)}" _n "\label{tab:trust_mean_by_regionpop3_2020}" _n
->  "\begin{tabular}{rlllrr}\toprule" _n "Region (code) & Region & Pop3 (code) & P
-> opulation & Mean trust & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local r_s = string(censreg_2020[`r'], "%9.0f")
-  3.     local rlab = region_label[`r']
-  4.     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
-  5.     local p3lab = pop3_label[`r']
-  6.     local tm_s = string(trust_mean[`r'], "%9.4f")
-  7.     local n_s = string(n[`r'], "%9.0f")
-  8.     file write fh "`r_s' & `rlab' & `p3_s' & `p3lab' & `tm_s' & `n_s' \\\\" 
-> _n
-  9. }
-
-. file write fh "\bottomrule" _n "\multicolumn{6}{l}{\footnotesize General trust 
-> (2020) by region $\times$ population (3 bins).} \\\\" _n "\end{tabular}\end{tab
-> le}" _n
-
-. file close fh
-
-. restore
-
-. 
-. display "=== Overlap: trust x hometown_size (2020 only) ==="
-=== Overlap: trust x hometown_size (2020 only) ===
-
-. preserve
-
-. keep hhidpn trust_others_2020 hometown_size_* 
-
-. reshape long hometown_size_, i(hhidpn) j(year)
-(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
-
-Data                               Wide   ->   Long
------------------------------------------------------------------------------
-Number of observations           45,234   ->   542,808     
-Number of variables                  14   ->   4           
-j variable (12 values)                    ->   year
-xij variables:
-hometown_size_2000 hometown_size_2002 ... hometown_size_2022->hometown_size_
------------------------------------------------------------------------------
-
-. keep if year == 2020
-(497,574 observations deleted)
-
-. keep if !missing(trust_others_2020) & !missing(hometown_size_)
-(44,511 observations deleted)
-
-. contract year hometown_size_, freq(n)
-
-. file open fh using "${DESCRIPTIVE}/Tables/trust_hometownsize_groups_2020.tex", 
-> write replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and hometown s
-> ize overlap (2020)}" _n "\label{tab:trust_hometownsize_groups_2020}" _n "\begin
-> {tabular}{rrr}\toprule" _n "Year & Hometown size (code) & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local yr_s = string(year[`r'], "%9.0f")
-  3.     local ht_s = string(hometown_size_[`r'], "%9.0f")
-  4.     local n_s = string(n[`r'], "%9.0f")
-  5.     file write fh "`yr_s' & `ht_s' & `n_s' \\\\" _n
-  6. }
-
-. file write fh "\bottomrule\end{tabular}\end{table}" _n
-
-. file close fh
-
-. restore
-
-. 
 . * ---------------------------------------------------------------------
 . * Empty group diagnostics (2020 only)
 . * ---------------------------------------------------------------------
@@ -1383,9 +1052,9 @@ hometown_size_2000 hometown_size_2002 ... hometown_size_2022->hometown_size_
 . tempfile region_all
 
 . save "`region_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000010 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000s not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000010 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000s saved as
     .dta format
 
 . restore
@@ -1407,8 +1076,9 @@ xij variables:
 censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 -----------------------------------------------------------------------------
 
-. keep if year == 2020 & !missing(trust_others_2020) & !missing(censreg_)
-(541,908 observations deleted)
+. keep if year == 2020 & !missing(trust_others_2020) & !missing(censreg_) & censr
+> eg_ != 5
+(541,909 observations deleted)
 
 . contract censreg_, freq(n)
 
@@ -1416,12 +1086,15 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 
     Result                      Number of obs
     -----------------------------------------
-    Not matched                             0
-    Matched                                 5  
+    Not matched                             1
+        from master                         0  
+        from using                          1  
+
+    Matched                                 4  
     -----------------------------------------
 
 . replace n = 0 if missing(n)
-(0 real changes made)
+(1 real change made)
 
 . file open fh using "${DESCRIPTIVE}/Tables/trust_region_groups_2020_with_empty.t
 > ex", write replace
@@ -1431,257 +1104,11 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 > egin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
-  2.     local r_s = string(censreg_[`r'], "%9.0f")
-  3.     local rlab = region_label[`r']
-  4.     local n_s = string(n[`r'], "%9.0f")
-  5.     file write fh "`r_s' & `rlab' & `n_s' \\\\" _n
-  6. }
-
-. file write fh "\bottomrule\end{tabular}\end{table}" _n
-
-. file close fh
-
-. restore
-
-. 
-. * Region-pop groups: expected 30 (5 regions x 6 pop bins)
-. preserve
-
-. clear
-
-. input byte censreg_ str12 region_label
-
-     censreg_  region_label
-  1. 1 "Northeast"
-  2. 2 "Midwest"
-  3. 3 "South"
-  4. 4 "West"
-  5. 5 "Other"
-  6. end
-
-. tempfile region_vals
-
-. save "`region_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000013 not
-    found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000013 saved as
-    .dta format
-
-. restore
-
-. 
-. preserve
-
-. clear
-
-. input byte population_2020 str22 pop_label
-
-     pop~2020               pop_label
-  1. 1 "Less than 1,000"
-  2. 2 "1,000 to 10,000"
-  3. 3 "10,000 to 50,000"
-  4. 4 "50,000 to 100,000"
-  5. 5 "100,000 to 1 million"
-  6. 6 "Greater than 1 million"
-  7. end
-
-. tempfile pop_vals
-
-. save "`pop_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000015 not
-    found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000015 saved as
-    .dta format
-
-. restore
-
-. 
-. preserve
-
-. use "`region_vals'", clear
-
-. cross using "`pop_vals'"
-
-. gen int region_pop_group = censreg_ * 100 + population_2020
-
-. tempfile regionpop_all
-
-. save "`regionpop_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000017 not
-    found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000017 saved as
-    .dta format
-
-. restore
-
-. 
-. preserve
-
-. keep hhidpn trust_others_2020 censreg_* population_2020
-
-. reshape long censreg_, i(hhidpn) j(year)
-(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
-
-Data                               Wide   ->   Long
------------------------------------------------------------------------------
-Number of observations           45,234   ->   542,808     
-Number of variables                  15   ->   5           
-j variable (12 values)                    ->   year
-xij variables:
-censreg_2000 censreg_2002 ... censreg_2022->   censreg_
------------------------------------------------------------------------------
-
-. keep if year == 2020 & !missing(trust_others_2020) & !missing(censreg_) & !miss
-> ing(population_2020)
-(542,085 observations deleted)
-
-. contract censreg_ population_2020, freq(n)
-
-. merge 1:1 censreg_ population_2020 using "`regionpop_all'", nogenerate
-
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                             5
-        from master                         0  
-        from using                          5  
-
-    Matched                                25  
-    -----------------------------------------
-
-. replace n = 0 if missing(n)
-(5 real changes made)
-
-. file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop_groups_2020_with_empt
-> y.tex", write replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population g
-> roups with empty cells (2020)}" _n "\label{tab:trust_regionpop_groups_2020_with
-> _empty}" _n "\begin{tabular}{rllrlr}\toprule" _n "Region (code) & Region & Pop 
-> (code) & Population size & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local r_s = string(censreg_[`r'], "%9.0f")
-  3.     local rlab = region_label[`r']
-  4.     local pop_s = string(population_2020[`r'], "%9.0f")
-  5.     local plab = pop_label[`r']
-  6.     local n_s = string(n[`r'], "%9.0f")
-  7.     file write fh "`r_s' & `rlab' & `pop_s' & `plab' & `n_s' \\\\" _n
-  8. }
-
-. file write fh "\bottomrule\end{tabular}\end{table}" _n
-
-. file close fh
-
-. restore
-
-. 
-. * Region-pop3 groups: expected 12 (4 regions x 3 pop bins)
-. preserve
-
-. clear
-
-. input byte censreg_ str12 region_label
-
-     censreg_  region_label
-  1. 1 "Northeast"
-  2. 2 "Midwest"
-  3. 3 "South"
-  4. 4 "West"
-  5. end
-
-. tempfile region_vals3
-
-. save "`region_vals3'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001a not
-    found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001a saved as
-    .dta format
-
-. restore
-
-. 
-. preserve
-
-. clear
-
-. input byte population_3bin_2020 str30 pop3_label
-
-     pop~2020                      pop3_label
-  1. 1 "Small town (<10k)"
-  2. 2 "Small/med city (10k-100k)"
-  3. 3 "Large metro (100k+)"
-  4. end
-
-. tempfile pop3_vals
-
-. save "`pop3_vals'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001c not
-    found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001c saved as
-    .dta format
-
-. restore
-
-. 
-. preserve
-
-. use "`region_vals3'", clear
-
-. cross using "`pop3_vals'"
-
-. gen int region_pop3_group = censreg_ * 10 + population_3bin_2020
-
-. tempfile regionpop3_all
-
-. save "`regionpop3_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001e not
-    found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001e saved as
-    .dta format
-
-. restore
-
-. 
-. preserve
-
-. keep hhidpn trust_others_2020 censreg_2020 population_3bin_2020
-
-. keep if !missing(trust_others_2020) & !missing(censreg_2020) & !missing(populat
-> ion_3bin_2020)
-(44,511 observations deleted)
-
-. gen byte censreg_ = censreg_2020
-
-. contract censreg_ population_3bin_2020, freq(n)
-
-. merge 1:1 censreg_ population_3bin_2020 using "`regionpop3_all'", nogenerate
-
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                             1
-        from master                         1  
-        from using                          0  
-
-    Matched                                12  
-    -----------------------------------------
-
-. replace n = 0 if missing(n)
-(0 real changes made)
-
-. file open fh using "${DESCRIPTIVE}/Tables/trust_regionpop3_groups_2020_with_emp
-> ty.tex", write replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Region--population (
-> 3 bins) groups with empty cells (2020)}" _n "\label{tab:trust_regionpop3_groups
-> _2020_with_empty}" _n "\begin{tabular}{rllrr}\toprule" _n "Region (code) & Regi
-> on & Pop3 (code) & Obs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local r_s = string(censreg_[`r'], "%9.0f")
-  3.     local rlab = region_label[`r']
-  4.     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
+  2.     if censreg_[`r'] == 5 continue
+  3.     local r_s = string(censreg_[`r'], "%9.0f")
+  4.     local rlab = region_label[`r']
   5.     local n_s = string(n[`r'], "%9.0f")
-  6.     file write fh "`r_s' & `rlab' & `p3_s' & `n_s' \\\\" _n
+  6.     file write fh "`r_s' & `rlab' & `n_s' \\\\" _n
   7. }
 
 . file write fh "\bottomrule\end{tabular}\end{table}" _n
@@ -1690,65 +1117,6 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001e saved as
 
 . restore
 
-. 
-. * Population groups only: expected 6
-. preserve
-
-. use "`pop_vals'", clear
-
-. tempfile pop_all
-
-. save "`pop_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001h not
-    found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001h saved as
-    .dta format
-
-. restore
-
-. 
-. preserve
-
-. keep hhidpn trust_others_2020 population_2020
-
-. keep if !missing(trust_others_2020) & !missing(population_2020)
-(44,511 observations deleted)
-
-. contract population_2020, freq(n)
-
-. merge 1:1 population_2020 using "`pop_all'", nogenerate
-
-    Result                      Number of obs
-    -----------------------------------------
-    Not matched                             0
-    Matched                                 6  
-    -----------------------------------------
-
-. replace n = 0 if missing(n)
-(0 real changes made)
-
-. file open fh using "${DESCRIPTIVE}/Tables/trust_population_groups_2020_with_emp
-> ty.tex", write replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Population groups wi
-> th empty cells (2020)}" _n "\label{tab:trust_population_groups_2020_with_empty}
-> " _n "\begin{tabular}{rlr}\toprule" _n "Population (code) & Population size & O
-> bs \\\\ \midrule" _n
-
-. forvalues r = 1/`=_N' {
-  2.     local p_s = string(population_2020[`r'], "%9.0f")
-  3.     local plab = pop_label[`r']
-  4.     local n_s = string(n[`r'], "%9.0f")
-  5.     file write fh "`p_s' & `plab' & `n_s' \\\\" _n
-  6. }
-
-. file write fh "\bottomrule\end{tabular}\end{table}" _n
-
-. file close fh
-
-. restore
-
-. 
 . 
 . * Reload full dataset for Trust section (portfolio section reduced it with keep
 > )
@@ -2028,7 +1396,7 @@ num_wid~2020 |   1.0000
 
 . postfile handle str32 var1 str32 var2 double corr using "`trustctrlcorr'", repl
 > ace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001k not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000v not
     found)
 
 . correlate `trustvars' `ctrlvars'
@@ -2324,7 +1692,7 @@ Scoring coefficients
 . tempfile pcload
 
 . postfile handle str32 varname double pc1 pc2 using "`pcload'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001n not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000010 not
     found)
 
 . matrix L = e(L)
@@ -2477,11 +1845,10 @@ trust_o~2020 |   0.0061  -0.0349   0.0352   1.0000
 . display "=== IV + trust correlations ==="
 === IV + trust correlations ===
 
-. pwcorr par_citizen_2020 par_loyalty_2020 population_2020 trust_others_2020, sig
->  obs
+. pwcorr par_citizen_2020 par_loyalty_2020 trust_others_2020, sig obs
 
-             | par_ci~0 par_lo~0 popula.. t~othe~0
--------------+------------------------------------
+             | par_ci~0 par_lo~0 t~othe~0
+-------------+---------------------------
 par_cit~2020 |   1.0000 
              |
              |     1028
@@ -2490,13 +1857,9 @@ par_loy~2020 |   0.4476   1.0000
              |   0.0000
              |      851     1019
              |
-popu~on_2020 |   0.0618  -0.0015   1.0000 
-             |   0.0736   0.9651
-             |      840      835     1114
-             |
-trust_o~2020 |   0.0682   0.0606  -0.0346   1.0000 
-             |   0.0712   0.1050   0.3526
-             |      700      716      723      900
+trust_o~2020 |   0.0682   0.0606   1.0000 
+             |   0.0712   0.1050
+             |      700      716      900
              |
 
 . 
@@ -2505,24 +1868,22 @@ trust_o~2020 |   0.0682   0.0606  -0.0346   1.0000
 . tempfile ivcorr
 
 . postfile handle str32 var1 str32 var2 double corr using "`ivcorr'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001q not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000013 not
     found)
 
-. correlate par_citizen_2020 par_loyalty_2020 population_2020 trust_others_2020
-(obs=467)
+. correlate par_citizen_2020 par_loyalty_2020 trust_others_2020
+(obs=603)
 
-             | par_ci~0 par_lo~0 popula.. t~othe~0
--------------+------------------------------------
+             | par_ci~0 par_lo~0 t~othe~0
+-------------+---------------------------
 par_cit~2020 |   1.0000
-par_loy~2020 |   0.4152   1.0000
-popu~on_2020 |   0.0349   0.0284   1.0000
-trust_o~2020 |   0.1096   0.0794  -0.0982   1.0000
+par_loy~2020 |   0.4414   1.0000
+trust_o~2020 |   0.0700   0.0785   1.0000
 
 
 . matrix C = r(C)
 
-. local ivvars "par_citizen_2020 par_loyalty_2020 population_2020 trust_others_20
-> 20"
+. local ivvars "par_citizen_2020 par_loyalty_2020 trust_others_2020"
 
 . local n : word count `ivvars'
 
@@ -2563,8 +1924,8 @@ trust_o~2020 |   0.1096   0.0794  -0.0982   1.0000
 . local nc = `n' + 1
 
 . file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Parent citi
-> zenship, loyalty, population size, and general trust (2020).} \\\\" _n "\end{ta
-> bular}}" _n "\end{table}" _n
+> zenship, loyalty, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end
+> {table}" _n
 
 . file close fh
 
@@ -2780,21 +2141,21 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . label values censreg_ region_lbl
 
 . drop if missing(censreg_)
-(321,251 observations deleted)
+(322,042 observations deleted)
 
 . contract year censreg_, freq(N)
 
 . * Wide table: year x region with N (drop Other)
 . reshape wide N, i(year) j(censreg_)
-(j = 1 2 3 4 5)
+(j = 1 2 3 4)
 
 Data                               Long   ->   Wide
 -----------------------------------------------------------------------------
-Number of observations               60   ->   12          
-Number of variables                   3   ->   6           
-j variable (5 values)          censreg_   ->   (dropped)
+Number of observations               48   ->   12          
+Number of variables                   3   ->   5           
+j variable (4 values)          censreg_   ->   (dropped)
 xij variables:
-                                      N   ->   N1 N2 ... N5
+                                      N   ->   N1 N2 ... N4
 -----------------------------------------------------------------------------
 
 . rename (N1 N2 N3 N4) (Northeast Midwest South West)
@@ -2824,76 +2185,24 @@ xij variables:
 . restore
 
 . 
-. display "=== Group coverage: N by region-population group and year ==="
-=== Group coverage: N by region-population group and year ===
-
-. preserve
-
-. keep hhidpn censreg_* region_pop_group_*
-
-. reshape long censreg_ region_pop_group_, i(hhidpn) j(year)
-(j = 2000 2002 2004 2006 2008 2010 2012 2014 2016 2018 2020 2022)
-
-Data                               Wide   ->   Long
------------------------------------------------------------------------------
-Number of observations           45,234   ->   542,808     
-Number of variables                  25   ->   4           
-j variable (12 values)                    ->   year
-xij variables:
-censreg_2000 censreg_2002 ... censreg_2022->   censreg_
-region_pop_group_2000 region_pop_group_2002 ... region_pop_group_2022->region_pop
-> _group_
------------------------------------------------------------------------------
-
-. contract year region_pop_group_, freq(N)
-
-. drop if missing(region_pop_group_)
-(12 observations deleted)
-
-. rename N obs
-
-. file open fh using "${DESCRIPTIVE}/Tables/regionpop_group_counts_by_year.tex", 
-> write replace
-
-. file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by regi
-> on--population group and year}" _n "\label{tab:regionpop_group_counts_by_year}"
->  _n "\begin{tabular}{lrr}\toprule" _n "Year & Group (code) & Obs \\\\ \midrule"
->  _n
-
-. forvalues r = 1/`=_N' {
-  2.     local yr_s = string(year[`r'], "%9.0f")
-  3.     local rpg_s = string(region_pop_group_[`r'], "%9.0f")
-  4.     local ob_s = string(obs[`r'], "%9.0f")
-  5.     file write fh "`yr_s' & `rpg_s' & `ob_s' \\\\" _n
-  6. }
-
-. file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Region $\times
-> $ population size (6 bins); person-year counts.} \\\\" _n "\end{tabular}\end{ta
-> ble}" _n
-
-. file close fh
-
-. restore
-
-. 
 . * For analysis: treat region 5 (Other) as missing in prepped censreg variables 
 > before saving
 . foreach v of varlist censreg_* {
   2.     capture confirm variable `v'
   3.     if !_rc replace `v' = . if `v' == 5
   4. }
-(40 real changes made, 40 to missing)
-(43 real changes made, 43 to missing)
-(55 real changes made, 55 to missing)
-(69 real changes made, 69 to missing)
-(70 real changes made, 70 to missing)
-(70 real changes made, 70 to missing)
-(76 real changes made, 76 to missing)
-(87 real changes made, 87 to missing)
-(81 real changes made, 81 to missing)
-(79 real changes made, 79 to missing)
-(61 real changes made, 61 to missing)
-(60 real changes made, 60 to missing)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
 
 . 
 . * Save dataset with PCA components (region 5 = missing in saved data)
@@ -3130,5 +2439,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_des
 > criptive_controls.log
   log type:  text
- closed on:  19 Feb 2026, 13:56:02
+ closed on:  20 Feb 2026, 10:56:19
 ---------------------------------------------------------------------------------

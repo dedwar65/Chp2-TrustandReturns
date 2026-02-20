@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_pro
 > cessing_income.log
   log type:  text
- opened on:  19 Feb 2026, 13:47:59
+ opened on:  20 Feb 2026, 11:08:07
 
 . 
 . use "${PROCESSED}/analysis_ready.dta", clear
@@ -654,6 +654,18 @@ Tabstat deflated income after winsorization
 > nc_defl_win_2012 tot_inc_defl_win_2014 tot_inc_defl_win_2016 tot_inc_defl_win_2
 > 018 tot_inc_defl_win_2020 tot_inc_defl_win_2022)
 (7,734 missing values generated)
+
+. 
+. * Log of average deflated winsorized income (ln(avg) when avg > 0)
+. capture drop ln_lab_inc_defl_win_avg ln_tot_inc_defl_win_avg
+
+. gen double ln_lab_inc_defl_win_avg = ln(lab_inc_defl_win_avg) if lab_inc_defl_w
+> in_avg > 0
+(24,297 missing values generated)
+
+. gen double ln_tot_inc_defl_win_avg = ln(tot_inc_defl_win_avg) if tot_inc_defl_w
+> in_avg > 0
+(8,174 missing values generated)
 
 . 
 . * IHS of average (asinh(avg / median): deflate wins avg, then IHS)
@@ -1681,5 +1693,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/04_pro
 > cessing_income.log
   log type:  text
- closed on:  19 Feb 2026, 13:48:05
+ closed on:  20 Feb 2026, 11:08:12
 ---------------------------------------------------------------------------------

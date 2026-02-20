@@ -208,7 +208,7 @@ forvalues w = 5/16 {
     }
 }
 
-* Census region for all waves (censreg_* to avoid ambiguity with region_pop_group, regional_trust); hometown_size from censreg x population
+* Census region for all waves (censreg_*)
 forvalues w = 5/16 {
     local y = 1990 + (2*`w')
     capture confirm variable r`w'cenreg
@@ -216,40 +216,6 @@ forvalues w = 5/16 {
         capture drop censreg_`y'
         gen byte censreg_`y' = r`w'cenreg
         * Region 5 (Other) left as-is here; recoded to missing in 08 before saving analysis_ready_processed.dta
-    }
-    capture confirm variable population_2020
-    if !_rc {
-        capture drop hometown_size_`y'
-        gen int hometown_size_`y' = censreg_`y' * 100 + population_2020 if !missing(censreg_`y') & !missing(population_2020)
-    }
-}
-
-* Contextual trust (group avg of trust by region x town population, all waves)
-capture confirm variable population_2020
-capture confirm variable trust_others_2020
-if !_rc {
-    forvalues w = 5/16 {
-        local y = 1990 + (2*`w')
-        capture confirm variable censreg_`y'
-        if !_rc {
-            capture drop region_pop_group_`y' townsize_trust_`y'
-            gen int region_pop_group_`y' = censreg_`y' * 100 + population_2020 if !missing(censreg_`y') & !missing(population_2020)
-            egen double townsize_trust_`y' = mean(trust_others_2020), by(region_pop_group_`y')
-        }
-    }
-}
-
-capture confirm variable population_3bin_2020
-capture confirm variable trust_others_2020
-if !_rc {
-    forvalues w = 5/16 {
-        local y = 1990 + (2*`w')
-        capture confirm variable censreg_`y'
-        if !_rc {
-            capture drop region_pop3_group_`y' townsize3_trust_`y'
-            gen int region_pop3_group_`y' = censreg_`y' * 10 + population_3bin_2020 if !missing(censreg_`y') & !missing(population_3bin_2020)
-            egen double townsize3_trust_`y' = mean(trust_others_2020), by(region_pop3_group_`y')
-        }
     }
 }
 
@@ -475,8 +441,8 @@ capture unab _retvars : r1_annual_* r2_annual_* r3_annual_* r4_annual_* r5_annua
 capture unab _wealthvars : wealth_total_* gross_wealth_* wealth_decile_* wealth_d*_* wealth_core_* wealth_ira_* wealth_coreira_* wealth_res_*
 capture unab _sharevars : share_pri_res_* share_sec_res_* share_res_* share_re_* share_bus_* share_ira_* share_stk_* share_bond_* share_chck_* share_other_* share_core_* share_fin_* share_debt_long_* share_debt_other_* share_debt_amort_* share_debt_ahmln_*
 capture unab _incvars : labor_income_* total_income_*
-capture unab _ctrlvars : age_* inlbrf_* married_* censreg_* hometown_size_* townsize_trust_* pop_trust_* regional_trust_* region_pop_group_* ///
-    population_3bin_2020 pop3_trust_* townsize3_trust_* region_pop3_group_*
+capture unab _ctrlvars : age_* inlbrf_* married_* censreg_* pop_trust_* regional_trust_* ///
+    population_3bin_2020 pop3_trust_*
 local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
     trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///

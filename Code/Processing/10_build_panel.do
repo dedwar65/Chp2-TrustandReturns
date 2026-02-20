@@ -157,8 +157,8 @@ forvalues d = 2/10 {
 * Core wave-specific controls
 local ctrl_stubs ""
 local ctrl_vars  ""
-* censreg (census region) created in 03; region_pop_group, region_pop3_group, regional_trust no longer cause ambiguity
-foreach s in age age_bin married inlbrf censreg hometown_size region_pop_group region_pop3_group townsize_trust pop_trust regional_trust {
+* censreg (census region) created in 03; pop_trust and regional_trust by pop/region only (no region×pop)
+foreach s in age age_bin married inlbrf censreg pop_trust regional_trust {
     capture unab tmp : `s'_*
     if !_rc {
         local ctrl_stubs "`ctrl_stubs' `s'_"

@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_pre
 > p_controls.log
   log type:  text
- opened on:  19 Feb 2026, 13:44:02
+ opened on:  20 Feb 2026, 09:53:06
 
 . 
 . use "${CLEANED}/all_data_merged.dta", clear
@@ -351,8 +351,7 @@
 (29,418 missing values generated)
 
 . 
-. * Census region for all waves (censreg_* to avoid ambiguity with region_pop_gro
-> up, regional_trust); hometown_size from censreg x population
+. * Census region for all waves (censreg_*)
 . forvalues w = 5/16 {
   2.     local y = 1990 + (2*`w')
   3.     capture confirm variable r`w'cenreg
@@ -362,105 +361,19 @@
   7.         * Region 5 (Other) left as-is here; recoded to missing in 08 before 
 > saving analysis_ready_processed.dta
 .     }
-  8.     capture confirm variable population_2020
-  9.     if !_rc {
- 10.         capture drop hometown_size_`y'
- 11.         gen int hometown_size_`y' = censreg_`y' * 100 + population_2020 if !
-> missing(censreg_`y') & !missing(population_2020)
- 12.     }
- 13. }
+  8. }
 (25,656 missing values generated)
-(44,924 missing values generated)
 (27,069 missing values generated)
-(44,914 missing values generated)
 (25,105 missing values generated)
-(44,751 missing values generated)
 (26,765 missing values generated)
-(44,745 missing values generated)
 (28,017 missing values generated)
-(44,741 missing values generated)
 (23,200 missing values generated)
-(44,405 missing values generated)
 (24,680 missing values generated)
-(44,392 missing values generated)
 (26,487 missing values generated)
-(44,396 missing values generated)
 (24,322 missing values generated)
-(44,157 missing values generated)
 (28,088 missing values generated)
-(44,220 missing values generated)
 (29,511 missing values generated)
-(44,120 missing values generated)
 (32,351 missing values generated)
-(44,345 missing values generated)
-
-. 
-. * Contextual trust (group avg of trust by region x town population, all waves)
-. capture confirm variable population_2020
-
-. capture confirm variable trust_others_2020
-
-. if !_rc {
-.     forvalues w = 5/16 {
-  2.         local y = 1990 + (2*`w')
-  3.         capture confirm variable censreg_`y'
-  4.         if !_rc {
-  5.             capture drop region_pop_group_`y' townsize_trust_`y'
-  6.             gen int region_pop_group_`y' = censreg_`y' * 100 + population_20
-> 20 if !missing(censreg_`y') & !missing(population_2020)
-  7.             egen double townsize_trust_`y' = mean(trust_others_2020), by(reg
-> ion_pop_group_`y')
-  8.         }
-  9.     }
-(44,924 missing values generated)
-(44,914 missing values generated)
-(44,751 missing values generated)
-(44,745 missing values generated)
-(1 missing value generated)
-(44,741 missing values generated)
-(44,405 missing values generated)
-(44,392 missing values generated)
-(44,396 missing values generated)
-(44,157 missing values generated)
-(44,220 missing values generated)
-(1 missing value generated)
-(44,120 missing values generated)
-(1 missing value generated)
-(44,345 missing values generated)
-(1 missing value generated)
-. }
-
-. 
-. capture confirm variable population_3bin_2020
-
-. capture confirm variable trust_others_2020
-
-. if !_rc {
-.     forvalues w = 5/16 {
-  2.         local y = 1990 + (2*`w')
-  3.         capture confirm variable censreg_`y'
-  4.         if !_rc {
-  5.             capture drop region_pop3_group_`y' townsize3_trust_`y'
-  6.             gen int region_pop3_group_`y' = censreg_`y' * 10 + population_3b
-> in_2020 if !missing(censreg_`y') & !missing(population_3bin_2020)
-  7.             egen double townsize3_trust_`y' = mean(trust_others_2020), by(re
-> gion_pop3_group_`y')
-  8.         }
-  9.     }
-(44,924 missing values generated)
-(44,914 missing values generated)
-(44,751 missing values generated)
-(44,745 missing values generated)
-(1 missing value generated)
-(44,741 missing values generated)
-(44,405 missing values generated)
-(44,392 missing values generated)
-(44,396 missing values generated)
-(44,157 missing values generated)
-(44,220 missing values generated)
-(44,120 missing values generated)
-(44,345 missing values generated)
-. }
 
 . 
 . * Contextual trust by population only (all waves)
@@ -1939,9 +1852,9 @@
 
 . capture unab _incvars : labor_income_* total_income_*
 
-. capture unab _ctrlvars : age_* inlbrf_* married_* censreg_* hometown_size_* tow
-> nsize_trust_* pop_trust_* regional_trust_* region_pop_group_* ///
->     population_3bin_2020 pop3_trust_* townsize3_trust_* region_pop3_group_*
+. capture unab _ctrlvars : age_* inlbrf_* married_* censreg_* pop_trust_* regiona
+> l_trust_* ///
+>     population_3bin_2020 pop3_trust_*
 
 . local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
 >     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_bank
@@ -1972,5 +1885,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/03_pre
 > p_controls.log
   log type:  text
- closed on:  19 Feb 2026, 13:47:59
+ closed on:  20 Feb 2026, 09:57:22
 ---------------------------------------------------------------------------------

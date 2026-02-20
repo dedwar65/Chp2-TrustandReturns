@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/10_bui
 > ld_panel.log
   log type:  text
- opened on:  19 Feb 2026, 13:56:08
+ opened on:  20 Feb 2026, 10:11:19
 
 . 
 . * ----------------------------------------------------------------------
@@ -172,10 +172,9 @@
 
 . local ctrl_vars  ""
 
-. * censreg (census region) created in 03; region_pop_group, region_pop3_group, r
-> egional_trust no longer cause ambiguity
-. foreach s in age age_bin married inlbrf censreg hometown_size region_pop_group 
-> region_pop3_group townsize_trust pop_trust regional_trust {
+. * censreg (census region) created in 03; pop_trust and regional_trust by pop/re
+> gion only (no region×pop)
+. foreach s in age age_bin married inlbrf censreg pop_trust regional_trust {
   2.     capture unab tmp : `s'_*
   3.     if !_rc {
   4.         local ctrl_stubs "`ctrl_stubs' `s'_"
@@ -224,8 +223,8 @@ Wealth stubs:   wealth_core_ wealth_ira_ wealth_coreira_ wealth_total_ share_cor
 > _
 
 . display "Control stubs: `ctrl_stubs'"
-Control stubs:  age_ age_bin_ married_ inlbrf_ censreg_ hometown_size_ region_pop
-> _group_ region_pop3_group_ townsize_trust_ pop_trust_ regional_trust_
+Control stubs:  age_ age_bin_ married_ inlbrf_ censreg_ pop_trust_ regional_trust
+> _
 
 . display "Time-invariant vars: `tinv_vars'"
 Time-invariant vars:  trust_others_2020 trust_social_security_2020 trust_medicare
@@ -279,7 +278,7 @@ Time-invariant vars:  trust_others_2020 trust_social_security_2020 trust_medicar
 Data                               Wide   ->   Long
 -----------------------------------------------------------------------------
 Number of observations           45,234   ->   542,808     
-Number of variables                 985   ->   335         
+Number of variables                 937   ->   331         
 j variable (12 values)                    ->   year
 xij variables:
 r1_annual_2000 r1_annual_2002 ... r1_annual_2022->r1_annual_
@@ -352,12 +351,6 @@ age_bin_2000 age_bin_2002 ... age_bin_2022->   age_bin_
 married_2000 married_2002 ... married_2022->   married_
 inlbrf_2000 inlbrf_2002 ... inlbrf_2022   ->   inlbrf_
 censreg_2000 censreg_2002 ... censreg_2022->   censreg_
-hometown_size_2000 hometown_size_2002 ... hometown_size_2022->hometown_size_
-region_pop_group_2000 region_pop_group_2002 ... region_pop_group_2022->region_pop
-> _group_
-region_pop3_group_2000 region_pop3_group_2002 ... region_pop3_group_2022->region_
-> pop3_group_
-townsize_trust_2000 townsize_trust_2002 ... townsize_trust_2022->townsize_trust_
 pop_trust_2000 pop_trust_2002 ... pop_trust_2022->pop_trust_
 regional_trust_2000 regional_trust_2002 ... regional_trust_2022->regional_trust_
 -----------------------------------------------------------------------------
@@ -598,5 +591,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/10_bui
 > ld_panel.log
   log type:  text
- closed on:  19 Feb 2026, 13:56:25
+ closed on:  20 Feb 2026, 10:11:35
 ---------------------------------------------------------------------------------

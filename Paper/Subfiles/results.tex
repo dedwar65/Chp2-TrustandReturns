@@ -15,7 +15,7 @@
 \inputtable{../../Code/Regressions/Income/Labor/income_trust_general_ihs.tex}
 \FloatBarrier
 
-\inputtable{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_ihs.tex}
+\inputtable{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_log.tex}
 \FloatBarrier
 
 \par The pattern seems to be stronger for total income. The cross-section (2020) and average results are given below.
@@ -23,7 +23,7 @@
 \inputtable{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
 \FloatBarrier
 
-\inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_ihs.tex}
+\inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_log.tex}
 \FloatBarrier
 
 \subsection{Returns and trust}
@@ -31,6 +31,11 @@
 \par With the hump-shape relationship between earnings and trust present in the HRS, I wanted to see if a similar relationship held for returns. The largest portfolio composition is on net wealth, which includes core assets, retirement assets, residential assets, along with other smaller categories (and debt variables). The regression results for winsorized (5 percent at each tail) annual returns to net wealth for 2022 are given below.
 
 \inputtable{../../Code/Regressions/Returns/Net wealth/returns_r5_trust_general_win.tex}
+\FloatBarrier
+
+\par Average annual returns (5 percent winsorized) over 2002--2022 on trust for net wealth are given below.
+
+\inputtable{../../Code/Regressions/Average/Returns/Net wealth/returns_r5_trust_general_avg_win.tex}
 \FloatBarrier
 
 \subsection{Returns from 2002-2022}
@@ -65,13 +70,6 @@
 \includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_dist_r5_win.png}
 \caption{FE distribution: returns to net wealth (5 percent winsorized)}
 \end{figure}
-\FloatBarrier
-
-\subsection{Trust and average returns}
-
-\par Average annual returns (5 percent winsorized) over 2002--2022 on trust for net wealth are given below.
-
-\inputtable{../../Code/Regressions/Average/Returns/Net wealth/returns_r5_trust_general_avg_win.tex}
 \FloatBarrier
 
 \subsection{Estimated fixed effects for returns}
