@@ -1,0 +1,24 @@
+# Stata (generated)
+*.dta
+*.gph
+*.smcl
+*.stswp
+*.dta~
+
+# Large data
+*.zip
+
+# LaTeX aux
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.toc
+
+# OS
+.DS_Store
