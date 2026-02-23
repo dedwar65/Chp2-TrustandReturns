@@ -1,0 +1,40 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Cross section: r5 returns (5 percent wins) on financial-institutional trust}
+\label{tab:fin_trust_avg_cross_section}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+\midrule
+Female              &       -0.08\sym{**} &       -0.08\sym{**} &       -0.08\sym{**} \\
+                    &      (0.03)         &      (0.03)         &      (0.03)         \\
+Years education     &        0.02\sym{***}&        0.02\sym{***}&        0.02\sym{***}\\
+                    &      (0.01)         &      (0.01)         &      (0.01)         \\
+In labor force      &        0.09\sym{**} &        0.09\sym{**} &        0.09\sym{**} \\
+                    &      (0.04)         &      (0.04)         &      (0.04)         \\
+Married             &        0.06         &        0.06         &        0.06         \\
+                    &      (0.04)         &      (0.04)         &      (0.04)         \\
+Born in U.S.        &        0.01         &        0.01         &        0.01         \\
+                    &      (0.05)         &      (0.05)         &      (0.05)         \\
+NH Black            &       -0.14\sym{**} &       -0.14\sym{***}&       -0.14\sym{***}\\
+                    &      (0.05)         &      (0.05)         &      (0.05)         \\
+Hispanic            &       -0.13\sym{**} &       -0.13\sym{**} &       -0.12\sym{*}  \\
+                    &      (0.06)         &      (0.06)         &      (0.06)         \\
+NH Other            &        0.07         &        0.07         &        0.07         \\
+                    &      (0.10)         &      (0.10)         &      (0.10)         \\
+Fin. Institutions   &                     &        0.00         &       -0.01         \\
+                    &                     &      (0.01)         &      (0.03)         \\
+(Fin. Institutions)$^2$&                     &                     &        0.00         \\
+                    &                     &                     &      (0.00)         \\
+\_cons              &       -0.34\sym{**} &       -0.34\sym{*}  &       -0.33\sym{*}  \\
+                    &      (0.17)         &      (0.17)         &      (0.18)         \\
+\midrule
+Observations        &      585.00         &      585.00         &      585.00         \\
+Adj. R-squared      &        0.25         &        0.25         &        0.25         \\
+Joint test: Trust p-value&           .         &           .         &        0.94         \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize Robust SE. Age bins (5-yr) and wealth deciles omitted from table but included in regressions.}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

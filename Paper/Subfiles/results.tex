@@ -8,22 +8,16 @@
 
 \inputtable{../../Code/Regressions/Trust/trust_reg_general.tex}  
 
+\par I focus the main text on a subset of specifications. For income, I omit labor income and log specifications; labor income results are not statistically significant, while total income results are robust to both log and IHS. For returns, I omit core and core-plus-retirement portfolio results, which are largely insignificant across specifications. I report only net wealth (r5) returns, which show significant trust effects and are robust to raw returns and different trimming and winsorization choices.
+
 \subsection{Income and trust}
 
-\par After understanding the determinants of trust in the HRS data, I wanted to see if the \say{hump-shape} relationship between trust and income found by \cite{jbpglg2016} was present in the HRS data. I use deflated winsorized income in IHS form. First, I consider the statistical relationship for labor income (cross-section 2020 and average over waves).
-
-\inputtable{../../Code/Regressions/Income/Labor/income_trust_general_ihs.tex}
-\FloatBarrier
-
-\inputtable{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_log.tex}
-\FloatBarrier
-
-\par The pattern seems to be stronger for total income. The cross-section (2020) and average results are given below.
+\par After examining the determinants of trust, I test whether the hump-shaped relationship between trust and income in \cite{jbpglg2016} appears in the HRS. I use deflated winsorized total income in IHS form. Cross-section (2020) and average-over-waves results are below.
 
 \inputtable{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
 \FloatBarrier
 
-\inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_log.tex}
+\inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_ihs.tex}
 \FloatBarrier
 
 \subsection{Returns and trust}
@@ -88,23 +82,3 @@
 \end{figure}
 \FloatBarrier
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_vs_educ_win.png}
-\caption{FE vs.\ education (5 percent winsorized)}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_by_race_win.png}
-\caption{Mean FE by race/ethnicity (5 percent winsorized)}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_by_gender_win.png}
-\caption{Mean FE by gender (5 percent winsorized)}
-\end{figure}
-\FloatBarrier

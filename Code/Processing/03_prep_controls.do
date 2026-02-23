@@ -85,7 +85,7 @@ if !_rc {
     replace population_3bin_2020 = 3 if inlist(population_2020, 5, 6)
 }
 
-* Financial literacy (rename)
+* Financial literacy (rename raw; create binary correct/incorrect)
 capture confirm variable rv565_2020
 if !_rc {
     capture drop interest_2020
@@ -100,6 +100,29 @@ capture confirm variable rv567_2020
 if !_rc {
     capture drop risk_div_2020
     gen risk_div_2020 = rv567_2020
+}
+
+* Binary correct (1) / incorrect (0); DK (8), Refused (9), Web non-response (-8) = missing
+* RV565: 3=correct (more than $102); RV566: 3=correct (less than today); RV567: 5=correct (false)
+capture confirm variable interest_2020
+if !_rc {
+    capture drop finlit_q1 finlit_q2 finlit_q3 finlit_score
+    gen byte _q1 = interest_2020
+    gen byte _q2 = inflation_2020
+    gen byte _q3 = risk_div_2020
+    replace _q1 = . if inlist(_q1, 8, 9, -8)
+    replace _q2 = . if inlist(_q2, 8, 9, -8)
+    replace _q3 = . if inlist(_q3, 8, 9, -8)
+    gen byte finlit_q1 = (_q1 == 3) if !missing(_q1)
+    gen byte finlit_q2 = (_q2 == 3) if !missing(_q2)
+    gen byte finlit_q3 = (_q3 == 5) if !missing(_q3)
+    egen byte finlit_score = rowtotal(finlit_q1 finlit_q2 finlit_q3), missing
+    replace finlit_score = . if missing(finlit_q1) | missing(finlit_q2) | missing(finlit_q3)
+    drop _q1 _q2 _q3
+    label variable finlit_q1 "Fin lit Q1 correct (interest)"
+    label variable finlit_q2 "Fin lit Q2 correct (inflation)"
+    label variable finlit_q3 "Fin lit Q3 correct (risk div)"
+    label variable finlit_score "Fin lit score (0-3)"
 }
 
 * Additional trust regression controls (2020 wave)

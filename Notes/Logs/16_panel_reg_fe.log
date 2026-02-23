@@ -1,9 +1,9 @@
----------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/16_pan
-> el_reg_fe.log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/16_p
+> anel_reg_fe.log
   log type:  text
- opened on:  20 Feb 2026, 10:12:29
+ opened on:  23 Feb 2026, 10:50:48
 
 . 
 . capture which esttab
@@ -27,12 +27,12 @@ Panel variable: hhidpn (strongly balanced)
 
 . 
 . * Require raw returns, winsorized returns, and share vars
-. foreach v in r1_annual_nw r4_annual_nw r5_annual_nw share_core share_ira share_
-> res share_debt_long share_debt_other {
+. foreach v in r1_annual_nw r4_annual_nw r5_annual_nw share_core share_ira shar
+> e_res share_debt_long share_debt_other {
   2.     capture confirm variable `v'
   3.     if _rc {
-  4.         display as error "16_panel_reg_fe: `v' not found. Run 02, 03, 04, 05
-> , 10 in order."
+  4.         display as error "16_panel_reg_fe: `v' not found. Run 02, 03, 04, 
+> 05, 10 in order."
   5.         log close
   6.         exit 198
   7.     }
@@ -41,8 +41,8 @@ Panel variable: hhidpn (strongly balanced)
 . foreach v in r1_annual_w5 r4_annual_w5 r5_annual_w5 {
   2.     capture confirm variable `v'
   3.     if _rc {
-  4.         display as error "16_panel_reg_fe: `v' (winsorized) not found. Run 0
-> 5_processing_returns.do and 10_build_panel.do."
+  4.         display as error "16_panel_reg_fe: `v' (winsorized) not found. Run
+>  05_processing_returns.do and 10_build_panel.do."
   5.         log close
   6.         exit 198
   7.     }
@@ -78,8 +78,8 @@ Panel variable: hhidpn (strongly balanced)
 
 . local ctrl_r4 "`ctrl_r4' c.share_core##i.year c.share_ira##i.year"
 
-. local ctrl_r5 "`ctrl_r5' c.share_core##i.year c.share_ira##i.year c.share_res##
-> i.year c.share_debt_long##i.year c.share_debt_other##i.year"
+. local ctrl_r5 "`ctrl_r5' c.share_core##i.year c.share_ira##i.year c.share_res
+> ##i.year c.share_debt_long##i.year c.share_debt_other##i.year"
 
 . 
 . * Share conditions
@@ -87,14 +87,14 @@ Panel variable: hhidpn (strongly balanced)
 
 . local share_cond_r4 "!missing(share_core) & !missing(share_ira)"
 
-. local share_cond_r5 "!missing(share_core) & !missing(share_ira) & !missing(shar
-> e_res) & !missing(share_debt_long) & !missing(share_debt_other)"
+. local share_cond_r5 "!missing(share_core) & !missing(share_ira) & !missing(sh
+> are_res) & !missing(share_debt_long) & !missing(share_debt_other)"
 
 . 
 . * ----------------------------------------------------------------------
 . * Step A & B: Run FE regressions, save FE, export tables (raw + winsorized)
-. * Reload data before each regression (like old repo reg_fixed_effects.do) to av
-> oid dataset state issues.
+. * Reload data before each regression (like old repo reg_fixed_effects.do) to 
+> avoid dataset state issues.
 . * ----------------------------------------------------------------------
 . tempfile fe_append
 
@@ -113,8 +113,8 @@ Panel variable: hhidpn (strongly balanced)
  10.         if "`ret'" == "r4" local yvar "r4_annual_`y_suffix'"
  11.         if "`ret'" == "r5" local yvar "r5_annual_`y_suffix'"
  12. 
-.         * Reload fresh data before each regression (aligns with old repo reg_fi
-> xed_effects.do)
+.         * Reload fresh data before each regression (aligns with old repo reg_
+> fixed_effects.do)
 .         use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
  13.         xtset hhidpn year
  14. 
@@ -151,12 +151,13 @@ Panel variable: hhidpn (strongly balanced)
  41.             continue
  42.         }
  43. 
-.         * xtreg, fe (same share×year spec as Spec 2; matches old repo reg_fixed
-> _effects.do)
-.         capture xtreg `yvar' `ctrl' if !missing(`yvar') & `share_cond', fe vce(
-> cluster hhidpn)
+.         * xtreg, fe (same share×year spec as Spec 2; matches old repo reg_fix
+> ed_effects.do)
+.         capture xtreg `yvar' `ctrl' if !missing(`yvar') & `share_cond', fe vc
+> e(cluster hhidpn)
  44.         if _rc {
- 45.             di as err "xtreg failed for `ret' `win' (r(" _rc ")). Skipping."
+ 45.             di as err "xtreg failed for `ret' `win' (r(" _rc ")). Skipping
+> ."
  46.             continue
  47.         }
  48.         predict double __fe_resid, e
@@ -174,38 +175,39 @@ Panel variable: hhidpn (strongly balanced)
  58.             estadd scalar p_joint_share_ira = r(p)
  59.         }
  60.         if "`ret'" == "r5" {
- 61.             quietly testparm c.share_core#i.year c.share_ira#i.year c.share_
-> res#i.year
+ 61.             quietly testparm c.share_core#i.year c.share_ira#i.year c.shar
+> e_res#i.year
  62.             estadd scalar p_joint_share_asset = r(p)
- 63.             quietly testparm c.share_debt_long#i.year c.share_debt_other#i.y
-> ear
+ 63.             quietly testparm c.share_debt_long#i.year c.share_debt_other#i
+> .year
  64.             estadd scalar p_joint_share_debt = r(p)
  65.         }
  66. 
-.         * xtreg already stores r2_w, sigma_u, sigma_e, rho — no need to estadd
+.         * xtreg already stores r2_w, sigma_u, sigma_e, rho — no need to estad
+> d
 . 
 .         if "`ret'" == "r1" local stats_share "p_joint_share_core"
- 67.         if "`ret'" == "r1" local labels_share `" "Joint test: Share core${LA
-> TEX_X_YEAR} p-value""'
- 68.         if "`ret'" == "r4" local stats_share "p_joint_share_core p_joint_sha
-> re_ira"
- 69.         if "`ret'" == "r4" local labels_share `" "Joint test: Share core${LA
-> TEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value""'
- 70.         if "`ret'" == "r5" local stats_share "p_joint_share_asset p_joint_sh
-> are_debt"
- 71.         if "`ret'" == "r5" local labels_share `" "Joint test: Share (core,IR
-> A,res)${LATEX_X_YEAR} p-value" "Joint test: Share (debt long,other)${LATEX_X_YE
-> AR} p-value""'
+ 67.         if "`ret'" == "r1" local labels_share `" "Joint test: Share core${
+> LATEX_X_YEAR} p-value""'
+ 68.         if "`ret'" == "r4" local stats_share "p_joint_share_core p_joint_s
+> hare_ira"
+ 69.         if "`ret'" == "r4" local labels_share `" "Joint test: Share core${
+> LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value""'
+ 70.         if "`ret'" == "r5" local stats_share "p_joint_share_asset p_joint_
+> share_debt"
+ 71.         if "`ret'" == "r5" local labels_share `" "Joint test: Share (core,
+> IRA,res)${LATEX_X_YEAR} p-value" "Joint test: Share (debt long,other)${LATEX_
+> X_YEAR} p-value""'
  72.         local stats_line "N r2_w rho sigma_u sigma_e `stats_share'"
- 73.         local labels_line `" "Observations" "Within R²" "Rho" "Sigma u" "Sig
-> ma e" `labels_share'"'
+ 73.         local labels_line `" "Observations" "Within R²" "Rho" "Sigma u" "S
+> igma e" `labels_share'"'
  74. 
 .         eststo fe_`ret'_`win'
  75. 
-.         * Display full regression in log (all coefficients; no keep) — for hist
-> ory of actual results
-.         esttab fe_`ret'_`win', se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) labe
-> l ///
+.         * Display full regression in log (all coefficients; no keep) — for hi
+> story of actual results
+.         esttab fe_`ret'_`win', se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) la
+> bel ///
 >             stats(`stats_line', labels(`labels_line')) ///
 >             nomtitles nonumbers noobs
  76. 
@@ -231,66 +233,68 @@ Panel variable: hhidpn (strongly balanced)
  93.         }
  94.         save `fe_append', replace
  95. 
-.         * Export table — uninteracted share terms, inlbrf, married. Age bins, y
-> ear, wealth, share×year omitted (see note).
+.         * Export table — uninteracted share terms, inlbrf, married. Age bins,
+>  year, wealth, share×year omitted (see note).
 .         * xtreg stores binary vars as inlbrf_, married_ in e(b).
 .         quietly estimates restore fe_`ret'_`win'
- 96.         local keep_list "inlbrf_ married_ share_core share_ira share_res sha
-> re_debt_long share_debt_other _cons"
- 97.         if "`ret'" == "r1" local keep_list "inlbrf_ married_ share_core _con
-> s"
- 98.         if "`ret'" == "r4" local keep_list "inlbrf_ married_ share_core shar
-> e_ira _cons"
- 99.         if "`ret'" == "r5" local keep_list "inlbrf_ married_ share_core shar
-> e_ira share_res share_debt_long share_debt_other _cons"
+ 96.         local keep_list "inlbrf_ married_ share_core share_ira share_res s
+> hare_debt_long share_debt_other _cons"
+ 97.         if "`ret'" == "r1" local keep_list "inlbrf_ married_ share_core _c
+> ons"
+ 98.         if "`ret'" == "r4" local keep_list "inlbrf_ married_ share_core sh
+> are_ira _cons"
+ 99.         if "`ret'" == "r5" local keep_list "inlbrf_ married_ share_core sh
+> are_ira share_res share_debt_long share_debt_other _cons"
 100.         local order_r1 "inlbrf_ married_ share_core _cons"
 101.         local order_r4 "inlbrf_ married_ share_core share_ira _cons"
-102.         local order_r5 "inlbrf_ married_ share_core share_ira share_res shar
-> e_debt_long share_debt_other _cons"
+102.         local order_r5 "inlbrf_ married_ share_core share_ira share_res sh
+> are_debt_long share_debt_other _cons"
 103.         local keep_final ""
 104.         capture confirm matrix e(b)
 105.         if !_rc {
 106.             local bnames : colnames e(b)
 107.             foreach c of local keep_list {
-108.                 if `: list c in bnames' local keep_final "`keep_final' `c'"
+108.                 if `: list c in bnames' local keep_final "`keep_final' `c'
+> "
 109.             }
 110.         }
 111.         if "`keep_final'" == "" local keep_final "_cons"
 112. 
 .         local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_spec3.tex"
-113.         if "`win'" == "win" local outfile "${REGRESSIONS}/Panel/panel_reg_`r
-> et'_spec3_win.tex"
+113.         if "`win'" == "win" local outfile "${REGRESSIONS}/Panel/panel_reg_
+> `ret'_spec3_win.tex"
 114. 
 .         local tablabel "tab:panel_spec3_`ret'_`win'"
-115.         local omit_note1 "Age bins, wealth deciles, region dummies, year dum
-> mies,"
-116.         local omit_note2 "${LATEX_SHARE_YEAR} interactions included in estim
-> ation but omitted from table."
-117.         if `: list inlbrf_ in keep_final' == 0 | `: list married_ in keep_fi
-> nal' == 0 {
-118.             local omit_note2 "`omit_note2' Employed and/or Married omitted (
-> collinear with individual FE)."
+115.         local omit_note1 "Age bins, wealth deciles, region dummies, year d
+> ummies,"
+116.         local omit_note2 "${LATEX_SHARE_YEAR} interactions included in est
+> imation but omitted from table."
+117.         if `: list inlbrf_ in keep_final' == 0 | `: list married_ in keep_
+> final' == 0 {
+118.             local omit_note2 "`omit_note2' Employed and/or Married omitted
+>  (collinear with individual FE)."
 119.         }
-120.         local note1 "\label{`tablabel'} Cluster-robust SE in parentheses. In
-> dividual fixed effects."
+120.         local note1 "\label{`tablabel'} Cluster-robust SE in parentheses. 
+> Individual fixed effects."
 121.         local note2 "`omit_note1'"
 122.         local note3 "`omit_note2'"
-123.         local note4 "\sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<
-> 0.01\)"
+123.         local note4 "\sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(
+> p<0.01\)"
 124.         esttab fe_`ret'_`win' using "`outfile'", replace ///
 >             booktabs ///
 >             mtitles("(1)") ///
 >             se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >             keep(`keep_final') order(`order_`ret'') ///
->             varlabels(inlbrf_ "Employed" married_ "Married" share_core "Share c
-> ore" share_ira "Share IRA" share_res "Share residential" share_debt_long "Share
->  long-term debt" share_debt_other "Share other debt" _cons `"\_cons"') ///
+>             varlabels(inlbrf_ "Employed" married_ "Married" share_core "Share
+>  core" share_ira "Share IRA" share_res "Share residential" share_debt_long "S
+> hare long-term debt" share_debt_other "Share other debt" _cons `"\_cons"') //
+> /
 >             stats(`stats_line', labels(`labels_line')) ///
->             title("Panel Spec 3: `ret_label' (`win_label', ${LATEX_SHARE_YEAR})
-> ") ///
+>             title("Panel Spec 3: `ret_label' (`win_label', ${LATEX_SHARE_YEAR
+> })") ///
 >             addnotes("`note1'" "`note2'" "`note3'" "`note4'") ///
->             alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers substitute("\
-> caption{" "\caption[]{")
+>             alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers substitute(
+> "\caption{" "\caption[]{")
 125. 
 .         di as txt "Wrote: `outfile'"
 126.     }
@@ -478,16 +482,16 @@ Joint test: Share ~-         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (414,589 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved as
-    .dta format
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 not
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 saved
+    as .dta format
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
-    .dta format
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_reg_r1_spec3.tex)
-Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/
-> panel_reg_r1_spec3.tex
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved
+    as .dta format
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_reg_r1_spec3.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
+> l/panel_reg_r1_spec3.tex
 
 Panel variable: hhidpn (strongly balanced)
  Time variable: year, 2000 to 2022, but with gaps
@@ -711,14 +715,14 @@ Joint test: Share ~v         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (420,018 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 saved as
-    .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
-    .dta format
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_reg_r4_spec3.tex)
-Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/
-> panel_reg_r4_spec3.tex
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 saved
+    as .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved
+    as .dta format
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_reg_r4_spec3.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
+> l/panel_reg_r4_spec3.tex
 
 Panel variable: hhidpn (strongly balanced)
  Time variable: year, 2000 to 2022, but with gaps
@@ -1044,14 +1048,14 @@ Joint test: Share ~h         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (441,265 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 saved as
-    .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
-    .dta format
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_reg_r5_spec3.tex)
-Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/
-> panel_reg_r5_spec3.tex
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a saved
+    as .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved
+    as .dta format
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_reg_r5_spec3.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
+> l/panel_reg_r5_spec3.tex
 
 Panel variable: hhidpn (strongly balanced)
  Time variable: year, 2000 to 2022, but with gaps
@@ -1235,14 +1239,14 @@ Joint test: Share ~-         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (414,589 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a saved as
-    .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
-    .dta format
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_reg_r1_spec3_win.tex)
-Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/
-> panel_reg_r1_spec3_win.tex
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000c saved
+    as .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved
+    as .dta format
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_reg_r1_spec3_win.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
+> l/panel_reg_r1_spec3_win.tex
 
 Panel variable: hhidpn (strongly balanced)
  Time variable: year, 2000 to 2022, but with gaps
@@ -1466,14 +1470,14 @@ Joint test: Share ~v         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (420,018 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000c saved as
-    .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
-    .dta format
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_reg_r4_spec3_win.tex)
-Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/
-> panel_reg_r4_spec3_win.tex
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000e saved
+    as .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved
+    as .dta format
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_reg_r4_spec3_win.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
+> l/panel_reg_r4_spec3_win.tex
 
 Panel variable: hhidpn (strongly balanced)
  Time variable: year, 2000 to 2022, but with gaps
@@ -1799,14 +1803,14 @@ Joint test: Share ~h         0.00
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
 (441,265 observations deleted)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000e saved as
-    .dta format
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
-    .dta format
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_reg_r5_spec3_win.tex)
-Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/
-> panel_reg_r5_spec3_win.tex
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g saved
+    as .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved
+    as .dta format
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_reg_r5_spec3_win.tex)
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
+> l/panel_reg_r5_spec3_win.tex
 
 . 
 . * ----------------------------------------------------------------------
@@ -1827,8 +1831,8 @@ Duplicates in terms of hhidpn
 . tempfile tinv
 
 . save `tinv'
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g saved as
-    .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000i saved
+    as .dta format
 
 . restore
 
@@ -1847,8 +1851,8 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g saved as
     -----------------------------------------
 
 . save `fe_append', replace
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
-    .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 saved
+    as .dta format
 
 . 
 . * ----------------------------------------------------------------------
@@ -1869,40 +1873,40 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000002 saved as
 >             title("FE distribution: `ret_label' (`win_label')") ///
 >             xtitle("Estimated fixed effect") ///
 >             scheme(s2color)
- 13.         graph export "${REGRESSIONS}/Panel/Figures/`fname'.png", replace wid
-> th(1200)
+ 13.         graph export "${REGRESSIONS}/Panel/Figures/`fname'.png", replace w
+> idth(1200)
  14.         di as txt "Wrote: `fname'.png"
  15.     }
  16. }
 (bin=2772, start=-2.9357708, width=.01)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
-    > t_r1.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_d
+    > ist_r1.png saved as PNG format
 Wrote: fe_dist_r1.png
 (bin=3148, start=-2.3359342, width=.01)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
-    > t_r4.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_d
+    > ist_r4.png saved as PNG format
 Wrote: fe_dist_r4.png
 (bin=2014, start=-1.3954664, width=.01)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
-    > t_r5.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_d
+    > ist_r5.png saved as PNG format
 Wrote: fe_dist_r5.png
 (bin=625, start=-2.0806712, width=.01)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
-    > t_r1_win.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_d
+    > ist_r1_win.png saved as PNG format
 Wrote: fe_dist_r1_win.png
 (bin=505, start=-1.8611324, width=.01)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
-    > t_r4_win.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_d
+    > ist_r4_win.png saved as PNG format
 Wrote: fe_dist_r4_win.png
 (bin=704, start=-1.1677145, width=.01)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_dis
-    > t_r5_win.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_d
+    > ist_r5_win.png saved as PNG format
 Wrote: fe_dist_r5_win.png
 
 . 
@@ -1923,48 +1927,49 @@ Wrote: fe_dist_r5_win.png
  10.         if "`ret'" == "r5" local ret_label "returns to net wealth"
  11. 
 .         eststo clear
- 12.         eststo m1: regress fe educ_yrs i.gender i.race_eth born_us, vce(robu
-> st)
- 13.         eststo m2: regress fe educ_yrs i.gender i.race_eth born_us trust_oth
-> ers_2020 if !missing(trust_others_2020), vce(robust)
- 14.         eststo m3: regress fe educ_yrs i.gender i.race_eth born_us trust_oth
-> ers_2020 c.trust_others_2020#c.trust_others_2020 if !missing(trust_others_2020)
-> , vce(robust)
- 15.         quietly testparm trust_others_2020 c.trust_others_2020#c.trust_other
-> s_2020
+ 12.         eststo m1: regress fe educ_yrs i.gender i.race_eth born_us, vce(ro
+> bust)
+ 13.         eststo m2: regress fe educ_yrs i.gender i.race_eth born_us trust_o
+> thers_2020 if !missing(trust_others_2020), vce(robust)
+ 14.         eststo m3: regress fe educ_yrs i.gender i.race_eth born_us trust_o
+> thers_2020 c.trust_others_2020#c.trust_others_2020 if !missing(trust_others_2
+> 020), vce(robust)
+ 15.         quietly testparm trust_others_2020 c.trust_others_2020#c.trust_oth
+> ers_2020
  16.         estadd scalar p_joint_trust = r(p) : m3
  17. 
-.         * Display full second-stage in log (all coefficients) — for history of 
-> actual results
-.         esttab m1 m2 m3, se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
+.         * Display full second-stage in log (all coefficients) — for history o
+> f actual results
+.         esttab m1 m2 m3, se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label //
+> /
 >             mtitles("(1)" "(2)" "(3)") ///
->             stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" 
-> "Joint test: Trust+Trust² p-value")) ///
->             title("Second-stage: FE from `ret_label' (`win_label') — full resul
-> ts")
+>             stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared
+> " "Joint test: Trust+Trust² p-value")) ///
+>             title("Second-stage: FE from `ret_label' (`win_label') — full res
+> ults")
  18. 
-.         local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth bor
-> n_us trust_others_2020 c.trust_others_2020#c.trust_others_2020 _cons"
- 19.         local outfile "${REGRESSIONS}/Panel/panel_fe_on_tinv_`ret'_`win'.tex
-> "
+.         local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth b
+> orn_us trust_others_2020 c.trust_others_2020#c.trust_others_2020 _cons"
+ 19.         local outfile "${REGRESSIONS}/Panel/panel_fe_on_tinv_`ret'_`win'.t
+> ex"
  20.         local tablabel "tab:panel_fe_on_tinv_`ret'_`win'"
  21.         esttab m1 m2 m3 using "`outfile'", replace ///
 >             booktabs ///
 >             mtitles("(1)" "(2)" "(3)") ///
 >             se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >             keep(`keep_list') ///
->             varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_et
-> h "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S."
->  trust_others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust²" _co
-> ns `"\_cons"') ///
->             stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" 
-> "Joint test: Trust+Trust² p-value")) ///
->             title("Second-stage: FE from `ret_label' (`win_label') on time-inva
-> riant vars") ///
->             addnotes("\label{`tablabel'} Robust SE. FE from Panel Spec 3 `ret_l
-> abel' regression (`win_label').") ///
->             alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers substitute("\
-> caption{" "\caption[]{")
+>             varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_
+> eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U
+> .S." trust_others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust
+> ²" _cons `"\_cons"') ///
+>             stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared
+> " "Joint test: Trust+Trust² p-value")) ///
+>             title("Second-stage: FE from `ret_label' (`win_label') on time-in
+> variant vars") ///
+>             addnotes("\label{`tablabel'} Robust SE. FE from Panel Spec 3 `ret
+> _label' regression (`win_label').") ///
+>             alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers substitute(
+> "\caption{" "\caption[]{")
  22. 
 .         di as txt "Wrote: panel_fe_on_tinv_`ret'_`win'.tex"
  23.     }
@@ -2000,22 +2005,22 @@ Linear regression                               Number of obs     =        702
                                                 R-squared         =     0.0961
                                                 Root MSE          =     1.4003
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |   -.049205   .0177045    -2.78   0.006    -.0839657   -.0144443
-      2.gender |   .2711917    .103166     2.63   0.009     .0686368    .4737466
-               |
-      race_eth |
-            2  |   .7220925    .161648     4.47   0.000     .4047147     1.03947
-            3  |   .8448657   .1831684     4.61   0.000     .4852351    1.204496
-            4  |   .6834606   .2374832     2.88   0.004     .2171889    1.149732
-               |
-       born_us |   .2993937   .1616427     1.85   0.064    -.0179736     .616761
-trust_oth~2020 |  -.0347052   .0250281    -1.39   0.166    -.0838452    .0144347
-         _cons |    .568203   .2899666     1.96   0.050     -.001114     1.13752
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |   -.049205   .0177045    -2.78   0.006    -.0839657   -.0144443
+    2.gender |   .2711917    .103166     2.63   0.009     .0686368    .4737466
+             |
+    race_eth |
+          2  |   .7220925    .161648     4.47   0.000     .4047147     1.03947
+          3  |   .8448657   .1831684     4.61   0.000     .4852351    1.204496
+          4  |   .6834606   .2374832     2.88   0.004     .2171889    1.149732
+             |
+     born_us |   .2993937   .1616427     1.85   0.064    -.0179736     .616761
+trust_o~2020 |  -.0347052   .0250281    -1.39   0.166    -.0838452    .0144347
+       _cons |    .568203   .2899666     1.96   0.050     -.001114     1.13752
+------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        702
                                                 F(8, 693)         =      12.26
@@ -2023,28 +2028,28 @@ Linear regression                               Number of obs     =        702
                                                 R-squared         =     0.0974
                                                 Root MSE          =     1.4003
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0456476   .0187895    -2.43   0.015    -.0825388   -.0087565
-      2.gender |   .2635047    .102274     2.58   0.010     .0627006    .4643088
-               |
-      race_eth |
-            2  |   .7138177   .1639259     4.35   0.000     .3919666    1.035669
-            3  |   .8448716   .1824476     4.63   0.000     .4866553    1.203088
-            4  |   .6834123   .2376006     2.88   0.004      .216909    1.149916
-               |
-       born_us |   .2994087    .161805     1.85   0.065     -.018278    .6170955
-trust_oth~2020 |  -.1005049    .077861    -1.29   0.197    -.2533765    .0523668
-               |
-            c. |
-trust_oth~2020#|
-            c. |
-trust_oth~2020 |   .0061573   .0061986     0.99   0.321    -.0060131    .0183277
-               |
-         _cons |   .6672544   .3017808     2.21   0.027     .0747401    1.259769
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0456476   .0187895    -2.43   0.015    -.0825388   -.0087565
+    2.gender |   .2635047    .102274     2.58   0.010     .0627006    .4643088
+             |
+    race_eth |
+          2  |   .7138177   .1639259     4.35   0.000     .3919666    1.035669
+          3  |   .8448716   .1824476     4.63   0.000     .4866553    1.203088
+          4  |   .6834123   .2376006     2.88   0.004      .216909    1.149916
+             |
+     born_us |   .2994087    .161805     1.85   0.065     -.018278    .6170955
+trust_o~2020 |  -.1005049    .077861    -1.29   0.197    -.2533765    .0523668
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |   .0061573   .0061986     0.99   0.321    -.0060131    .0183277
+             |
+       _cons |   .6672544   .3017808     2.21   0.027     .0747401    1.259769
+------------------------------------------------------------------------------
 
 Second-stage: FE from returns to core (raw) — full results
 --------------------------------------------------------------------
@@ -2090,8 +2095,8 @@ Joint test: Trust+~e                                         0.32
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_fe_on_tinv_r1_raw.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_fe_on_tinv_r1_raw.tex)
 Wrote: panel_fe_on_tinv_r1_raw.tex
 (139,283 observations deleted)
 (102 observations deleted)
@@ -2124,22 +2129,22 @@ Linear regression                               Number of obs     =        657
                                                 R-squared         =     0.1175
                                                 Root MSE          =     1.0291
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0514442   .0157303    -3.27   0.001    -.0823327   -.0205557
-      2.gender |   .1835465   .0813896     2.26   0.024     .0237278    .3433652
-               |
-      race_eth |
-            2  |   .5336678   .1100803     4.85   0.000     .3175113    .7498243
-            3  |   .8936556   .1626915     5.49   0.000     .5741904    1.213121
-            4  |   .6415116   .2270094     2.83   0.005       .19575    1.087273
-               |
-       born_us |   .3566029   .1322402     2.70   0.007     .0969326    .6162731
-trust_oth~2020 |   .0080333   .0191266     0.42   0.675    -.0295242    .0455909
-         _cons |   .2308176   .2766293     0.83   0.404    -.3123789     .774014
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0514442   .0157303    -3.27   0.001    -.0823327   -.0205557
+    2.gender |   .1835465   .0813896     2.26   0.024     .0237278    .3433652
+             |
+    race_eth |
+          2  |   .5336678   .1100803     4.85   0.000     .3175113    .7498243
+          3  |   .8936556   .1626915     5.49   0.000     .5741904    1.213121
+          4  |   .6415116   .2270094     2.83   0.005       .19575    1.087273
+             |
+     born_us |   .3566029   .1322402     2.70   0.007     .0969326    .6162731
+trust_o~2020 |   .0080333   .0191266     0.42   0.675    -.0295242    .0455909
+       _cons |   .2308176   .2766293     0.83   0.404    -.3123789     .774014
+------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        657
                                                 F(8, 648)         =      13.59
@@ -2147,28 +2152,28 @@ Linear regression                               Number of obs     =        657
                                                 R-squared         =     0.1185
                                                 Root MSE          =     1.0293
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |   -.049634   .0161949    -3.06   0.002    -.0814348   -.0178332
-      2.gender |   .1779686   .0804592     2.21   0.027     .0199763    .3359609
-               |
-      race_eth |
-            2  |   .5249773   .1118135     4.70   0.000     .3054169    .7445378
-            3  |   .8926292   .1623373     5.50   0.000     .5738586      1.2114
-            4  |   .6419002   .2274108     2.82   0.005     .1953491    1.088451
-               |
-       born_us |   .3554061   .1326297     2.68   0.008     .0949701     .615842
-trust_oth~2020 |  -.0345314   .0631185    -0.55   0.585     -.158473    .0894102
-               |
-            c. |
-trust_oth~2020#|
-            c. |
-trust_oth~2020 |   .0039545   .0052123     0.76   0.448    -.0062805    .0141895
-               |
-         _cons |   .3051672   .2908731     1.05   0.295    -.2660004    .8763347
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |   -.049634   .0161949    -3.06   0.002    -.0814348   -.0178332
+    2.gender |   .1779686   .0804592     2.21   0.027     .0199763    .3359609
+             |
+    race_eth |
+          2  |   .5249773   .1118135     4.70   0.000     .3054169    .7445378
+          3  |   .8926292   .1623373     5.50   0.000     .5738586      1.2114
+          4  |   .6419002   .2274108     2.82   0.005     .1953491    1.088451
+             |
+     born_us |   .3554061   .1326297     2.68   0.008     .0949701     .615842
+trust_o~2020 |  -.0345314   .0631185    -0.55   0.585     -.158473    .0894102
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |   .0039545   .0052123     0.76   0.448    -.0062805    .0141895
+             |
+       _cons |   .3051672   .2908731     1.05   0.295    -.2660004    .8763347
+------------------------------------------------------------------------------
 
 Second-stage: FE from returns to core and IRA (raw) — full results
 --------------------------------------------------------------------
@@ -2214,8 +2219,8 @@ Joint test: Trust+~e                                         0.62
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_fe_on_tinv_r4_raw.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_fe_on_tinv_r4_raw.tex)
 Wrote: panel_fe_on_tinv_r4_raw.tex
 (142,997 observations deleted)
 (76 observations deleted)
@@ -2248,22 +2253,22 @@ Linear regression                               Number of obs     =        560
                                                 R-squared         =     0.1480
                                                 Root MSE          =     .62536
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0478349   .0080521    -5.94   0.000    -.0636514   -.0320185
-      2.gender |   .0582244   .0538789     1.08   0.280    -.0476083    .1640571
-               |
-      race_eth |
-            2  |   .4020021   .0712689     5.64   0.000     .2620107    .5419934
-            3  |   .3512105   .0773886     4.54   0.000     .1991983    .5032227
-            4  |   .2772466   .1873299     1.48   0.139      -.09072    .6452131
-               |
-       born_us |   .2103789   .0684972     3.07   0.002     .0758319    .3449259
-trust_oth~2020 |   .0066962    .009535     0.70   0.483    -.0120331    .0254255
-         _cons |   .4095058   .1359532     3.01   0.003     .1424569    .6765547
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0478349   .0080521    -5.94   0.000    -.0636514   -.0320185
+    2.gender |   .0582244   .0538789     1.08   0.280    -.0476083    .1640571
+             |
+    race_eth |
+          2  |   .4020021   .0712689     5.64   0.000     .2620107    .5419934
+          3  |   .3512105   .0773886     4.54   0.000     .1991983    .5032227
+          4  |   .2772466   .1873299     1.48   0.139      -.09072    .6452131
+             |
+     born_us |   .2103789   .0684972     3.07   0.002     .0758319    .3449259
+trust_o~2020 |   .0066962    .009535     0.70   0.483    -.0120331    .0254255
+       _cons |   .4095058   .1359532     3.01   0.003     .1424569    .6765547
+------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        560
                                                 F(8, 551)         =      16.27
@@ -2271,28 +2276,28 @@ Linear regression                               Number of obs     =        560
                                                 R-squared         =     0.1496
                                                 Root MSE          =     .62532
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0501572   .0081955    -6.12   0.000    -.0662554    -.034059
-      2.gender |   .0617441   .0540964     1.14   0.254    -.0445163    .1680045
-               |
-      race_eth |
-            2  |   .4082974   .0716706     5.70   0.000     .2675164    .5490785
-            3  |    .350365    .077342     4.53   0.000     .1984437    .5022863
-            4  |   .2833698   .1870999     1.51   0.130    -.0841465     .650886
-               |
-       born_us |   .2116948   .0685904     3.09   0.002     .0769642    .3464254
-trust_oth~2020 |   .0403671   .0274542     1.47   0.142    -.0135607    .0942948
-               |
-            c. |
-trust_oth~2020#|
-            c. |
-trust_oth~2020 |  -.0030672   .0025528    -1.20   0.230    -.0080817    .0019473
-               |
-         _cons |   .3614943   .1403196     2.58   0.010     .0858675    .6371211
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0501572   .0081955    -6.12   0.000    -.0662554    -.034059
+    2.gender |   .0617441   .0540964     1.14   0.254    -.0445163    .1680045
+             |
+    race_eth |
+          2  |   .4082974   .0716706     5.70   0.000     .2675164    .5490785
+          3  |    .350365    .077342     4.53   0.000     .1984437    .5022863
+          4  |   .2833698   .1870999     1.51   0.130    -.0841465     .650886
+             |
+     born_us |   .2116948   .0685904     3.09   0.002     .0769642    .3464254
+trust_o~2020 |   .0403671   .0274542     1.47   0.142    -.0135607    .0942948
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0030672   .0025528    -1.20   0.230    -.0080817    .0019473
+             |
+       _cons |   .3614943   .1403196     2.58   0.010     .0858675    .6371211
+------------------------------------------------------------------------------
 
 Second-stage: FE from returns to net wealth (raw) — full results
 --------------------------------------------------------------------
@@ -2338,8 +2343,8 @@ Joint test: Trust+~e                                         0.29
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_fe_on_tinv_r5_raw.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_fe_on_tinv_r5_raw.tex)
 Wrote: panel_fe_on_tinv_r5_raw.tex
 (137,999 observations deleted)
 (109 observations deleted)
@@ -2372,22 +2377,22 @@ Linear regression                               Number of obs     =        702
                                                 R-squared         =     0.1171
                                                 Root MSE          =     .72003
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0379691    .010909    -3.48   0.001    -.0593878   -.0165505
-      2.gender |   .1101879   .0568494     1.94   0.053    -.0014296    .2218053
-               |
-      race_eth |
-            2  |   .3829282   .0702514     5.45   0.000     .2449974     .520859
-            3  |   .4788464   .1069851     4.48   0.000     .2687931    .6888997
-            4  |   .3715177   .1267099     2.93   0.003     .1227369    .6202985
-               |
-       born_us |   .1546647   .0937455     1.65   0.099    -.0293941    .3387235
-trust_oth~2020 |  -.0192196   .0130347    -1.47   0.141    -.0448117    .0063725
-         _cons |   .5117306   .1773629     2.89   0.004     .1634984    .8599628
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0379691    .010909    -3.48   0.001    -.0593878   -.0165505
+    2.gender |   .1101879   .0568494     1.94   0.053    -.0014296    .2218053
+             |
+    race_eth |
+          2  |   .3829282   .0702514     5.45   0.000     .2449974     .520859
+          3  |   .4788464   .1069851     4.48   0.000     .2687931    .6888997
+          4  |   .3715177   .1267099     2.93   0.003     .1227369    .6202985
+             |
+     born_us |   .1546647   .0937455     1.65   0.099    -.0293941    .3387235
+trust_o~2020 |  -.0192196   .0130347    -1.47   0.141    -.0448117    .0063725
+       _cons |   .5117306   .1773629     2.89   0.004     .1634984    .8599628
+------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        702
                                                 F(8, 693)         =      14.32
@@ -2395,28 +2400,28 @@ Linear regression                               Number of obs     =        702
                                                 R-squared         =     0.1177
                                                 Root MSE          =     .72032
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0367413   .0115918    -3.17   0.002    -.0595007    -.013982
-      2.gender |   .1075346   .0564006     1.91   0.057    -.0032019    .2182712
-               |
-      race_eth |
-            2  |   .3800721   .0711279     5.34   0.000     .2404202     .519724
-            3  |   .4788484   .1068909     4.48   0.000     .2689795    .6887173
-            4  |   .3715011   .1267484     2.93   0.003     .1226441     .620358
-               |
-       born_us |   .1546699   .0939227     1.65   0.100    -.0297374    .3390771
-trust_oth~2020 |  -.0419308   .0465066    -0.90   0.368    -.1332416      .04938
-               |
-            c. |
-trust_oth~2020#|
-            c. |
-trust_oth~2020 |   .0021252   .0036641     0.58   0.562    -.0050688    .0093192
-               |
-         _cons |   .5459188   .1845215     2.96   0.003     .1836307     .908207
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0367413   .0115918    -3.17   0.002    -.0595007    -.013982
+    2.gender |   .1075346   .0564006     1.91   0.057    -.0032019    .2182712
+             |
+    race_eth |
+          2  |   .3800721   .0711279     5.34   0.000     .2404202     .519724
+          3  |   .4788484   .1068909     4.48   0.000     .2689795    .6887173
+          4  |   .3715011   .1267484     2.93   0.003     .1226441     .620358
+             |
+     born_us |   .1546699   .0939227     1.65   0.100    -.0297374    .3390771
+trust_o~2020 |  -.0419308   .0465066    -0.90   0.368    -.1332416      .04938
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |   .0021252   .0036641     0.58   0.562    -.0050688    .0093192
+             |
+       _cons |   .5459188   .1845215     2.96   0.003     .1836307     .908207
+------------------------------------------------------------------------------
 
 Second-stage: FE from returns to core (5 percent winsorized) — full results
 --------------------------------------------------------------------
@@ -2462,8 +2467,8 @@ Joint test: Trust+~e                                         0.33
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_fe_on_tinv_r1_win.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_fe_on_tinv_r1_win.tex)
 Wrote: panel_fe_on_tinv_r1_win.tex
 (139,283 observations deleted)
 (102 observations deleted)
@@ -2496,22 +2501,22 @@ Linear regression                               Number of obs     =        657
                                                 R-squared         =     0.1185
                                                 Root MSE          =     .71021
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0454706   .0111077    -4.09   0.000    -.0672819   -.0236593
-      2.gender |    .093396   .0563789     1.66   0.098     -.017311    .2041029
-               |
-      race_eth |
-            2  |   .3775507   .0740024     5.10   0.000     .2322378    .5228637
-            3  |   .5618472   .1099506     5.11   0.000     .3459453    .7777491
-            4  |    .397584    .140122     2.84   0.005     .1224368    .6727313
-               |
-       born_us |   .2161304   .0942673     2.29   0.022     .0310247    .4012361
-trust_oth~2020 |   .0154488   .0125923     1.23   0.220    -.0092777    .0401753
-         _cons |   .2718908   .1900463     1.43   0.153    -.1012891    .6450708
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0454706   .0111077    -4.09   0.000    -.0672819   -.0236593
+    2.gender |    .093396   .0563789     1.66   0.098     -.017311    .2041029
+             |
+    race_eth |
+          2  |   .3775507   .0740024     5.10   0.000     .2322378    .5228637
+          3  |   .5618472   .1099506     5.11   0.000     .3459453    .7777491
+          4  |    .397584    .140122     2.84   0.005     .1224368    .6727313
+             |
+     born_us |   .2161304   .0942673     2.29   0.022     .0310247    .4012361
+trust_o~2020 |   .0154488   .0125923     1.23   0.220    -.0092777    .0401753
+       _cons |   .2718908   .1900463     1.43   0.153    -.1012891    .6450708
+------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        657
                                                 F(8, 648)         =      12.03
@@ -2519,31 +2524,31 @@ Linear regression                               Number of obs     =        657
                                                 R-squared         =     0.1185
                                                 Root MSE          =     .71076
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0454221   .0113995    -3.98   0.000    -.0678066   -.0230377
-      2.gender |   .0932466   .0563927     1.65   0.099    -.0174879    .2039812
-               |
-      race_eth |
-            2  |   .3773181   .0744189     5.07   0.000     .2311868    .5234494
-            3  |   .5618197   .1099497     5.11   0.000      .345919    .7777204
-            4  |   .3975944   .1402229     2.84   0.005     .1222483    .6729406
-               |
-       born_us |   .2160984   .0942419     2.29   0.022     .0310421    .4011547
-trust_oth~2020 |   .0143094   .0397578     0.36   0.719    -.0637603     .092379
-               |
-            c. |
-trust_oth~2020#|
-            c. |
-trust_oth~2020 |   .0001059    .003467     0.03   0.976     -.006702    .0069137
-               |
-         _cons |   .2738811   .1926191     1.42   0.156    -.1043519     .652114
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0454221   .0113995    -3.98   0.000    -.0678066   -.0230377
+    2.gender |   .0932466   .0563927     1.65   0.099    -.0174879    .2039812
+             |
+    race_eth |
+          2  |   .3773181   .0744189     5.07   0.000     .2311868    .5234494
+          3  |   .5618197   .1099497     5.11   0.000      .345919    .7777204
+          4  |   .3975944   .1402229     2.84   0.005     .1222483    .6729406
+             |
+     born_us |   .2160984   .0942419     2.29   0.022     .0310421    .4011547
+trust_o~2020 |   .0143094   .0397578     0.36   0.719    -.0637603     .092379
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |   .0001059    .003467     0.03   0.976     -.006702    .0069137
+             |
+       _cons |   .2738811   .1926191     1.42   0.156    -.1043519     .652114
+------------------------------------------------------------------------------
 
-Second-stage: FE from returns to core and IRA (5 percent winsorized) — full resul
-> ts
+Second-stage: FE from returns to core and IRA (5 percent winsorized) — full res
+> ults
 --------------------------------------------------------------------
                               (1)             (2)             (3)   
                               (1)             (2)             (3)   
@@ -2587,8 +2592,8 @@ Joint test: Trust+~e                                         0.47
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_fe_on_tinv_r4_win.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_fe_on_tinv_r4_win.tex)
 Wrote: panel_fe_on_tinv_r4_win.tex
 (142,997 observations deleted)
 (76 observations deleted)
@@ -2621,22 +2626,22 @@ Linear regression                               Number of obs     =        560
                                                 R-squared         =     0.1706
                                                 Root MSE          =     .41601
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |   -.038675   .0058585    -6.60   0.000    -.0501826   -.0271673
-      2.gender |   .0414099   .0356316     1.16   0.246    -.0285801       .1114
-               |
-      race_eth |
-            2  |    .251544   .0460469     5.46   0.000     .1610955    .3419925
-            3  |   .2245667   .0530585     4.23   0.000     .1203454     .328788
-            4  |   .0650181   .0687188     0.95   0.344    -.0699642    .2000004
-               |
-       born_us |   .1315666   .0459618     2.86   0.004     .0412853     .221848
-trust_oth~2020 |   .0003527   .0066327     0.05   0.958    -.0126757    .0133812
-         _cons |   .3984171   .0985368     4.04   0.000      .204864    .5919701
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |   -.038675   .0058585    -6.60   0.000    -.0501826   -.0271673
+    2.gender |   .0414099   .0356316     1.16   0.246    -.0285801       .1114
+             |
+    race_eth |
+          2  |    .251544   .0460469     5.46   0.000     .1610955    .3419925
+          3  |   .2245667   .0530585     4.23   0.000     .1203454     .328788
+          4  |   .0650181   .0687188     0.95   0.344    -.0699642    .2000004
+             |
+     born_us |   .1315666   .0459618     2.86   0.004     .0412853     .221848
+trust_o~2020 |   .0003527   .0066327     0.05   0.958    -.0126757    .0133812
+       _cons |   .3984171   .0985368     4.04   0.000      .204864    .5919701
+------------------------------------------------------------------------------
 
 Linear regression                               Number of obs     =        560
                                                 F(8, 551)         =      17.70
@@ -2644,30 +2649,31 @@ Linear regression                               Number of obs     =        560
                                                 R-squared         =     0.1715
                                                 Root MSE          =     .41615
 
---------------------------------------------------------------------------------
-               |               Robust
-            fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
----------------+----------------------------------------------------------------
-      educ_yrs |  -.0398686   .0060558    -6.58   0.000    -.0517638   -.0279733
-      2.gender |   .0432191   .0358124     1.21   0.228    -.0271265    .1135646
-               |
-      race_eth |
-            2  |   .2547798   .0463709     5.49   0.000     .1636945    .3458651
-            3  |   .2241321   .0531008     4.22   0.000     .1198274    .3284369
-            4  |   .0681653   .0684717     1.00   0.320    -.0663322    .2026629
-               |
-       born_us |    .132243   .0460397     2.87   0.004     .0418083    .2226777
-trust_oth~2020 |   .0176593   .0201821     0.87   0.382     -.021984    .0573025
-               |
-            c. |
-trust_oth~2020#|
-            c. |
-trust_oth~2020 |  -.0015765   .0018049    -0.87   0.383    -.0051218    .0019688
-               |
-         _cons |   .3737396    .100397     3.72   0.000     .1765319    .5709473
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0398686   .0060558    -6.58   0.000    -.0517638   -.0279733
+    2.gender |   .0432191   .0358124     1.21   0.228    -.0271265    .1135646
+             |
+    race_eth |
+          2  |   .2547798   .0463709     5.49   0.000     .1636945    .3458651
+          3  |   .2241321   .0531008     4.22   0.000     .1198274    .3284369
+          4  |   .0681653   .0684717     1.00   0.320    -.0663322    .2026629
+             |
+     born_us |    .132243   .0460397     2.87   0.004     .0418083    .2226777
+trust_o~2020 |   .0176593   .0201821     0.87   0.382     -.021984    .0573025
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0015765   .0018049    -0.87   0.383    -.0051218    .0019688
+             |
+       _cons |   .3737396    .100397     3.72   0.000     .1765319    .5709473
+------------------------------------------------------------------------------
 
-Second-stage: FE from returns to net wealth (5 percent winsorized) — full results
+Second-stage: FE from returns to net wealth (5 percent winsorized) — full resul
+> ts
 --------------------------------------------------------------------
                               (1)             (2)             (3)   
                               (1)             (2)             (3)   
@@ -2711,8 +2717,8 @@ Joint test: Trust+~e                                         0.68
 --------------------------------------------------------------------
 Standard errors in parentheses
 * p<0.10, ** p<0.05, *** p<0.01
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
-> sions/Panel/panel_fe_on_tinv_r5_win.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
+> essions/Panel/panel_fe_on_tinv_r5_win.tex)
 Wrote: panel_fe_on_tinv_r5_win.tex
 
 . 
@@ -2730,22 +2736,22 @@ Wrote: panel_fe_on_tinv_r5_win.tex
   5.     drop if missing(fe) | missing(trust_others_2020)
   6.     if _N < 10 continue
   7.     twoway scatter fe trust_others_2020, msize(tiny) msymbol(circle) ///
->         title("FE vs Trust (`win_label')") xtitle("Trust") ytitle("Estimated FE
-> ") ///
+>         title("FE vs Trust (`win_label')") xtitle("Trust") ytitle("Estimated 
+> FE") ///
 >         scheme(s2color)
-  8.     graph export "${REGRESSIONS}/Panel/Figures/fe_vs_trust_`win'.png", repla
-> ce width(1200)
+  8.     graph export "${REGRESSIONS}/Panel/Figures/fe_vs_trust_`win'.png", rep
+> lace width(1200)
   9.     di as txt "Wrote: fe_vs_trust_`win'.png"
  10. }
 (25,997 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_vs_
-    > trust_raw.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_v
+    > s_trust_raw.png saved as PNG format
 Wrote: fe_vs_trust_raw.png
 (25,997 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_vs_
-    > trust_win.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_v
+    > s_trust_win.png saved as PNG format
 Wrote: fe_vs_trust_win.png
 
 . 
@@ -2757,35 +2763,35 @@ Wrote: fe_vs_trust_win.png
   5.     drop if missing(fe) | missing(educ_yrs)
   6.     if _N < 10 continue
   7.     twoway scatter fe educ_yrs, msize(tiny) msymbol(circle) ///
->         title("FE vs Education (`win_label')") xtitle("Years of education") yti
-> tle("Estimated FE") ///
+>         title("FE vs Education (`win_label')") xtitle("Years of education") y
+> title("Estimated FE") ///
 >         scheme(s2color)
-  8.     graph export "${REGRESSIONS}/Panel/Figures/fe_vs_educ_`win'.png", replac
-> e width(1200)
+  8.     graph export "${REGRESSIONS}/Panel/Figures/fe_vs_educ_`win'.png", repl
+> ace width(1200)
   9.     di as txt "Wrote: fe_vs_educ_`win'.png"
  10. }
 (83 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_vs_
-    > educ_raw.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_v
+    > s_educ_raw.png saved as PNG format
 Wrote: fe_vs_educ_raw.png
 (83 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_vs_
-    > educ_win.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_v
+    > s_educ_win.png saved as PNG format
 Wrote: fe_vs_educ_win.png
 
 . 
-. * FE by race and gender (raw and winsorized) — bar graph: x = category, y = mea
-> n FE
+. * FE by race and gender (raw and winsorized) — bar graph: x = category, y = m
+> ean FE
 . foreach win in raw win {
   2.     local win_label "raw"
   3.     if "`win'" == "win" local win_label "${LATEX_WIN_SHORT}"
   4.     use `fe_append' if ret_type=="r1" & win_type=="`win'", clear
   5.     drop if missing(fe)
   6.     if _N < 5 {
-  7.         di as txt "Skipping fe_by_race/gender for win=`win': no observations
-> ."
+  7.         di as txt "Skipping fe_by_race/gender for win=`win': no observatio
+> ns."
   8.         continue
   9.     }
  10.     local winsuf ""
@@ -2795,13 +2801,13 @@ Wrote: fe_vs_educ_win.png
  13.     if !_rc {
  14.         preserve
  15.         collapse (mean) fe_mean=fe (count) n=fe, by(race_eth)
- 16.         graph bar fe_mean, over(race_eth, relabel(1 "White (NH)" 2 "Black (N
-> H)" 3 "Hispanic" 4 "Other (NH)")) ///
->             title("Mean FE by race/ethnicity (`win_label')") ytitle("Mean estim
-> ated FE") ///
+ 16.         graph bar fe_mean, over(race_eth, relabel(1 "White (NH)" 2 "Black 
+> (NH)" 3 "Hispanic" 4 "Other (NH)")) ///
+>             title("Mean FE by race/ethnicity (`win_label')") ytitle("Mean est
+> imated FE") ///
 >             blabel(total, format(%4.2f)) scheme(s2color)
- 17.         graph export "${REGRESSIONS}/Panel/Figures/fe_by_race`winsuf'.png", 
-> replace width(1200)
+ 17.         graph export "${REGRESSIONS}/Panel/Figures/fe_by_race`winsuf'.png"
+> , replace width(1200)
  18.         di as txt "Wrote: fe_by_race`winsuf'.png"
  19.         restore
  20.     }
@@ -2811,45 +2817,45 @@ Wrote: fe_vs_educ_win.png
  23.         preserve
  24.         collapse (mean) fe_mean=fe (count) n=fe, by(gender)
  25.         graph bar fe_mean, over(gender, relabel(1 "Male" 2 "Female")) ///
->             title("Mean FE by gender (`win_label')") ytitle("Mean estimated FE"
-> ) ///
+>             title("Mean FE by gender (`win_label')") ytitle("Mean estimated F
+> E") ///
 >             blabel(total, format(%4.2f)) scheme(s2color)
- 26.         graph export "${REGRESSIONS}/Panel/Figures/fe_by_gender`winsuf'.png"
-> , replace width(1200)
+ 26.         graph export "${REGRESSIONS}/Panel/Figures/fe_by_gender`winsuf'.pn
+> g", replace width(1200)
  27.         di as txt "Wrote: fe_by_gender`winsuf'.png"
  28.         restore
  29.     }
  30. }
 (0 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_by_
-    > race.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_b
+    > y_race.png saved as PNG format
 Wrote: fe_by_race.png
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_by_
-    > gender.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_b
+    > y_gender.png saved as PNG format
 Wrote: fe_by_gender.png
 (0 observations deleted)
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_by_
-    > race_win.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_b
+    > y_race_win.png saved as PNG format
 Wrote: fe_by_race_win.png
 file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_by_
-    > gender_win.png saved as PNG format
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Panel/Figures/fe_b
+    > y_gender_win.png saved as PNG format
 Wrote: fe_by_gender_win.png
 
 . 
 . eststo clear
 
 . di as txt "Done. Spec 3 tables and figures in ${REGRESSIONS}/Panel/"
-Done. Spec 3 tables and figures in /Volumes/SSD PRO/Github-forks/Chp2-TrustandRet
-> urns/Code/Regressions/Panel/
+Done. Spec 3 tables and figures in /Volumes/SSD PRO/Github-forks/Chp2-TrustandR
+> eturns/Code/Regressions/Panel/
 
 . log close
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/16_pan
-> el_reg_fe.log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/16_p
+> anel_reg_fe.log
   log type:  text
- closed on:  20 Feb 2026, 10:13:42
----------------------------------------------------------------------------------
+ closed on:  23 Feb 2026, 10:52:13
+-------------------------------------------------------------------------------

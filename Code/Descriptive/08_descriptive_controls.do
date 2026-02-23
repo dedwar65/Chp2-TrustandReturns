@@ -84,6 +84,9 @@ program define _vlabel, rclass
     if "`v'"=="interest_2020" return local vlabel "Interest"
     if "`v'"=="inflation_2020" return local vlabel "Inflation"
     if "`v'"=="risk_div_2020" return local vlabel "Risk diversification"
+    if "`v'"=="finlit_q1" return local vlabel "Interest (correct)"
+    if "`v'"=="finlit_q2" return local vlabel "Inflation (correct)"
+    if "`v'"=="finlit_q3" return local vlabel "Risk div. (correct)"
     if "`v'"=="par_citizen_2020" return local vlabel "Parent citizenship"
     if "`v'"=="par_loyalty_2020" return local vlabel "Parent loyalty"
     if "`v'"=="population_2020" return local vlabel "Population size"
@@ -101,8 +104,8 @@ preserve
     file write fh "\begin{table}[htbp]\centering\small" _n ///
         "\caption{Demographics: general controls (2020)}" _n ///
         "\label{tab:demographics_general}" _n ///
-        "\begin{tabular}{lrrr}\toprule" _n ///
-        "Variable & N & Mean & SD \\\\ \midrule" _n
+        "\begin{tabular}{lrr}\toprule" _n ///
+        "Variable & N & Mean \\\\ \midrule" _n
 
     * General controls (2020 sample)
     foreach v in age_2020 female educ_yrs married_2020 immigrant born_us {
@@ -119,8 +122,7 @@ preserve
         if "`v'"=="born_us" local vlab "Born in U.S."
         local n_s = string(r(N), "%9.0f")
         local m_s = string(r(mean), "%9.3f")
-        local s_s = string(r(sd), "%9.3f")
-        file write fh "`vlab' & `n_s' & `m_s' & `s_s' \\\\" _n
+        file write fh "`vlab' & `n_s' & `m_s' \\\\" _n
     }
 
     * Race: one row per category (2020 sample)
@@ -145,8 +147,7 @@ preserve
             local rlab = race_lab[`r']
             local n_r = string(n[`r'], "%9.0f")
             local pct_s = string(pct[`r'], "%9.3f")
-            local sd_s = string(sd_p[`r'], "%9.3f")
-            file write fh "Race: `rlab' & `n_r' & `pct_s' & `sd_s' \\\\" _n
+            file write fh "Race: `rlab' & `n_r' & `pct_s' \\\\" _n
         }
         use "`demog_work'", clear
     }
@@ -157,13 +158,10 @@ preserve
         quietly summarize inlbrf_2020 `wopt'
         local n_s = string(r(N), "%9.0f")
         local m_s = string(r(mean), "%9.3f")
-        local s_s = string(r(sd), "%9.3f")
-        file write fh "Working (in labor force) & `n_s' & `m_s' & `s_s' \\\\" _n
+        file write fh "Working (in labor force) & `n_s' & `m_s' \\\\" _n
     }
 
-    file write fh "\bottomrule" _n ///
-        "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categories mean = proportion (pct). Respondent weights used when available.} \\\\" _n ///
-        "\end{tabular}\end{table}" _n
+    file write fh "\bottomrule" _n "\end{tabular}\end{table}" _n
     file close fh
 restore
 
@@ -244,7 +242,7 @@ preserve
 keep if !missing(age_2020)
 
 file open fh using "${DESCRIPTIVE}/Tables/demographics.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics (2020)}" _n "\label{tab:demographics}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics (2020)}" _n "\label{tab:demographics}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
 
 foreach v in age_2020 gender educ_yrs married_2020 immigrant born_us {
     capture confirm variable `v'
@@ -255,8 +253,7 @@ foreach v in age_2020 gender educ_yrs married_2020 immigrant born_us {
     local vlab `r(vlabel)'
     local n_s = string(r(N), "%9.0f")
     local m_s = string(r(mean), "%9.3f")
-    local s_s = string(r(sd), "%9.3f")
-    file write fh "`vlab' & `n_s' & `m_s' & `s_s' \\\\" _n
+    file write fh "`vlab' & `n_s' & `m_s' \\\\" _n
 }
 
 * Race: one row per category (2020 sample)
@@ -275,8 +272,7 @@ if !_rc {
         local rlab = race_lab[`r']
         local n_r = string(n[`r'], "%9.0f")
         local pct_s = string(pct[`r'], "%9.1f")
-        local sd_s = string(sd_p[`r'], "%9.2f")
-        file write fh "Race: `rlab' & `n_r' & `pct_s' & `sd_s' \\\\" _n
+        file write fh "Race: `rlab' & `n_r' & `pct_s' \\\\" _n
     }
     use "`demog_work'", clear
 }
@@ -290,19 +286,17 @@ if !_rc {
     drop if missing(inlbrf_2020)
     egen long total_n = total(n)
     gen double pct = 100 * n / total_n
-    gen double sd_p = 100 * sqrt((pct/100) * (1 - pct/100))
     forvalues r = 1/`=_N' {
         if inlbrf_2020[`r'] != 1 continue
         local n_r = string(n[`r'], "%9.0f")
         local pct_s = string(pct[`r'], "%9.1f")
-        local sd_s = string(sd_p[`r'], "%9.2f")
-        file write fh "Working & `n_r' & `pct_s' & `sd_s' \\\\" _n
+        file write fh "Working & `n_r' & `pct_s' \\\\" _n
         break
     }
     use "`demog_work'", clear
 }
 
-file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize 2020. Mean and SD; for dummies/categories mean = proportion (pct).} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "\bottomrule" _n "\end{tabular}\end{table}" _n
 file close fh
 restore
 
@@ -310,7 +304,7 @@ restore
 * demographics_other.tex: other controls – same style as finlit (Variable, N, Mean, SD, p50)
 * -----------------------------------------------------------------------
 file open fh using "${DESCRIPTIVE}/Tables/demographics_other.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics: other controls (2020)}" _n "\label{tab:demographics_other}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics: other controls (2020)}" _n "\label{tab:demographics_other}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
 
 foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions" "medicare_2020 Medicare" "medicaid_2020 Medicaid" "life_ins_2020 Life insurance" "num_divorce_2020 Times divorced" "num_widow_2020 Times widowed" {
     tokenize `pair'
@@ -323,31 +317,52 @@ foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions
     if r(N) == 0 continue
     local n_s = string(r(N), "%9.0f")
     local m_s = string(r(mean), "%9.2f")
-    local s_s = string(r(sd), "%9.2f")
-    local p50_s = string(r(p50), "%9.2f")
-    file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
+    file write fh "`vlab' & `n_s' & `m_s' \\\\" _n
 }
 
-file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize 2020. Mean, SD, and median.} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Mean = pct.} \\\\" _n "\end{tabular}\end{table}" _n
 file close fh
 
-* Financial literacy summary (2020): rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversification (HRS 2020)
+* Financial literacy: ensure binary correct (1) / incorrect (0) vars exist (created in 03_prep or on the fly)
+* finlit_q1, finlit_q2, finlit_q3 = 1 if correct, 0 if wrong; DK/RF/-8 = missing
+capture confirm variable finlit_q1
+if _rc {
+    capture confirm variable interest_2020
+    if !_rc {
+        gen byte _q1 = interest_2020
+        replace _q1 = . if inlist(_q1, 8, 9, -8)
+        gen byte finlit_q1 = (_q1 == 3) if !missing(_q1)
+        drop _q1
+    }
+}
+capture confirm variable finlit_q2
+if _rc {
+    capture confirm variable inflation_2020
+    if !_rc {
+        gen byte _q2 = inflation_2020
+        replace _q2 = . if inlist(_q2, 8, 9, -8)
+        gen byte finlit_q2 = (_q2 == 3) if !missing(_q2)
+        drop _q2
+    }
+}
+capture confirm variable finlit_q3
+if _rc {
+    capture confirm variable risk_div_2020
+    if !_rc {
+        gen byte _q3 = risk_div_2020
+        replace _q3 = . if inlist(_q3, 8, 9, -8)
+        gen byte finlit_q3 = (_q3 == 5) if !missing(_q3)
+        drop _q3
+    }
+}
+
+* Financial literacy summary (2020): Mean = proportion correct
 preserve
 capture confirm variable year
 if !_rc keep if year == 2020
-* Use renamed vars if present, else raw rv* (so table works whether 03 prep ran or not)
-foreach v in interest_2020 inflation_2020 risk_div_2020 {
-    capture confirm variable `v'
-    if _rc {
-        if "`v'"=="interest_2020"  capture gen interest_2020  = rv565_2020
-        if "`v'"=="inflation_2020" capture gen inflation_2020 = rv566_2020
-        if "`v'"=="risk_div_2020"  capture gen risk_div_2020  = rv567_2020
-    }
-}
 file open fh using "${DESCRIPTIVE}/Tables/finlit_summary.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy summary (2020)}" _n "\label{tab:finlit_summary}" _n "\begin{tabular}{lrrrr}\toprule" _n "Variable & N & Mean & SD & p50 \\\\ \midrule" _n
-* Fixed mapping: rv565_2020=Interest, rv566_2020=Inflation, rv567_2020=Risk diversification (HRS 2020)
-foreach pair in "interest_2020 Interest" "inflation_2020 Inflation" "risk_div_2020 Risk diversification" {
+file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy summary (2020)}" _n "\label{tab:finlit_summary}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean (prop. correct) \\\\ \midrule" _n
+foreach pair in "finlit_q1 Interest" "finlit_q2 Inflation" "finlit_q3 Risk diversification" {
     tokenize `pair'
     local v "`1'"
     local vlab "`2'"
@@ -357,11 +372,9 @@ foreach pair in "interest_2020 Interest" "inflation_2020 Inflation" "risk_div_20
     if r(N) == 0 continue
     local n_s = string(r(N), "%9.0f")
     local m_s = string(r(mean), "%9.2f")
-    local s_s = string(r(sd), "%9.2f")
-    local p50_s = string(r(p50), "%9.2f")
-    file write fh "`vlab' & `n_s' & `m_s' & `s_s' & `p50_s' \\\\" _n
+    file write fh "`vlab' & `n_s' & `m_s' \\\\" _n
 }
-file write fh "\bottomrule" _n "\multicolumn{5}{l}{\footnotesize HRS 2020: rv565 (interest), rv566 (inflation), rv567 (risk diversification).} \\\\" _n "\end{tabular}\end{table}" _n
+file write fh "\bottomrule" _n "\end{tabular}\end{table}" _n
 file close fh
 restore
 
@@ -765,15 +778,28 @@ screeplot, title("Trust PCA scree plot")
 graph export "${DESCRIPTIVE}/Figures/trust_pca_scree.png", replace
 
 * ---------------------------------------------------------------------
-* Fin lit correlations with trust (matrix layout)
+* Fin lit correlations with trust (matrix layout) — binary correct/incorrect
 * ---------------------------------------------------------------------
 display "=== Fin lit + trust correlations ==="
-pwcorr interest_2020 inflation_2020 risk_div_2020 trust_others_2020, sig obs
+capture confirm variable finlit_q1
+if !_rc {
+    pwcorr finlit_q1 finlit_q2 finlit_q3 trust_others_2020, sig obs
+}
+else {
+    pwcorr interest_2020 inflation_2020 risk_div_2020 trust_others_2020, sig obs
+}
 
 preserve
-correlate interest_2020 inflation_2020 risk_div_2020 trust_others_2020
+capture confirm variable finlit_q1
+if !_rc {
+    correlate finlit_q1 finlit_q2 finlit_q3 trust_others_2020
+    local finvars "finlit_q1 finlit_q2 finlit_q3 trust_others_2020"
+}
+else {
+    correlate interest_2020 inflation_2020 risk_div_2020 trust_others_2020
+    local finvars "interest_2020 inflation_2020 risk_div_2020 trust_others_2020"
+}
 matrix C = r(C)
-local finvars "interest_2020 inflation_2020 risk_div_2020 trust_others_2020"
 local n : word count `finvars'
 
 file open fh using "${DESCRIPTIVE}/Tables/finlit_trust_corr.tex", write replace
@@ -809,7 +835,13 @@ forvalues i = 1/`n' {
 }
 
 local nc = `n' + 1
-file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Interest, inflation, risk diversification, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+capture confirm variable finlit_q1
+if !_rc {
+    file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Binary correct (1) / incorrect (0) for interest, inflation, risk diversification; general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+}
+else {
+    file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Interest, inflation, risk diversification, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+}
 file close fh
 restore
 

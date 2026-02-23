@@ -2,6 +2,7 @@
  "extensions"
  (lambda ()
    (LaTeX-add-labels
-    "sec:exts"))
+    "sec:exts"
+    "fig:fin_trust_scree"))
  :latex)
 

@@ -1,0 +1,49 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Panel Spec 1 (pooled): r5 returns on financial literacy and trust}
+\label{tab:finlit_r5_panel1}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}\\
+\midrule
+Years education     &       -0.00         &       -0.00         &       -0.00         &       -0.00         \\
+                    &      (0.00)         &      (0.00)         &      (0.00)         &      (0.00)         \\
+Female              &       -0.02         &       -0.03         &       -0.03         &       -0.03\sym{*}  \\
+                    &      (0.02)         &      (0.02)         &      (0.02)         &      (0.02)         \\
+NH Black            &        0.04         &        0.04         &        0.05         &        0.05         \\
+                    &      (0.03)         &      (0.03)         &      (0.03)         &      (0.03)         \\
+Hispanic            &        0.01         &        0.01         &        0.02         &        0.01         \\
+                    &      (0.04)         &      (0.04)         &      (0.04)         &      (0.04)         \\
+NH Other            &        0.02         &        0.02         &        0.04         &        0.03         \\
+                    &      (0.04)         &      (0.04)         &      (0.04)         &      (0.04)         \\
+Employed            &        0.04\sym{**} &        0.04\sym{*}  &        0.04\sym{*}  &        0.03\sym{*}  \\
+                    &      (0.02)         &      (0.02)         &      (0.02)         &      (0.02)         \\
+Married             &       -0.07\sym{***}&       -0.07\sym{***}&       -0.07\sym{***}&       -0.07\sym{***}\\
+                    &      (0.02)         &      (0.02)         &      (0.02)         &      (0.02)         \\
+Born in U.S.        &        0.01         &        0.01         &        0.01         &        0.01         \\
+                    &      (0.03)         &      (0.03)         &      (0.03)         &      (0.03)         \\
+Interest            &        0.02         &                     &        0.03         &                     \\
+                    &      (0.02)         &                     &      (0.02)         &                     \\
+Inflation           &       -0.00         &                     &        0.00         &                     \\
+                    &      (0.02)         &                     &      (0.02)         &                     \\
+Risk div            &       -0.01         &                     &       -0.01         &                     \\
+                    &      (0.02)         &                     &      (0.02)         &                     \\
+Literacy score      &                     &        0.00         &                     &        0.00         \\
+                    &                     &      (0.01)         &                     &      (0.01)         \\
+General trust       &                     &                     &        0.02         &        0.01         \\
+                    &                     &                     &      (0.01)         &      (0.01)         \\
+(General trust)$^2$ &                     &                     &       -0.00         &       -0.00         \\
+                    &                     &                     &      (0.00)         &      (0.00)         \\
+\_cons              &       -0.58\sym{***}&       -0.56\sym{***}&       -0.58\sym{***}&       -0.55\sym{***}\\
+                    &      (0.06)         &      (0.06)         &      (0.06)         &      (0.06)         \\
+\midrule
+Observations        &     2134.00         &     2134.00         &     2134.00         &     2134.00         \\
+Adj. R-squared      &        0.02         &        0.02         &        0.02         &        0.02         \\
+Joint test: Trust p-value&           .         &           .         &        0.07         &        0.09         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Cluster-robust SE. Age bins (5-yr), wealth deciles, and region dummies}\\
+\multicolumn{5}{l}{\footnotesize omitted from table but included in regressions.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

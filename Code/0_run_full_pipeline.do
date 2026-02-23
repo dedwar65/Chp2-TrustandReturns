@@ -24,4 +24,4 @@ if _rc {
 do "${BASE_PATH}/Code/Raw data/0_run_pipeline_00_05.do"
 do "${BASE_PATH}/Code/Regressions/2_run_pipeline_10_18.do"
 
-display "0_run_full_pipeline: Completed 00–05 and 10–18."
+display "0_run_full_pipeline: Completed 00–05 and 10–18, 25."

@@ -172,7 +172,7 @@ foreach s in age age_bin married inlbrf censreg pop_trust regional_trust {
 local tinv_vars ""
 foreach v in trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
              trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///
-             interest_2020 inflation_2020 risk_div_2020 ///
+             interest_2020 inflation_2020 risk_div_2020 finlit_q1 finlit_q2 finlit_q3 finlit_score ///
              educ_yrs gender immigrant born_us race_eth ///
              depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 ///
              num_divorce_2020 num_widow_2020 population_2020 population_3bin_2020 {

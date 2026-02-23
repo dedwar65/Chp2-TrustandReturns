@@ -5,44 +5,161 @@
 
 \par Additionally, the literature on trust and social capital is clear on how heterogenity in income, race and other factors related to one's neighborhood can be important for trust. To this end, we consider two additional variables in the survey: respondent \textit{region} and \textit{hometown population size}. 
 
-\subsection{Financial literacy}
+\subsection{Financial literacy and returns}
 
-\par Financial literacy can be an important factor when trying to understand the persistent component of returns. The literature on measuring financial literacy using survey data has agreed up three questions regarding i) interest, ii) inflation, and iii) risk diversification to measure financial literacy for respondents. 
+\par Financial literacy can be an important factor when trying to understand the persistent component of returns. The literature on measuring financial literacy using survey data has agreed on three questions (the ``Big Three'') to measure financial literacy for respondents. The first asks about compound interest: given \$100 in a savings account at 2\% per year, how much would you have after 5 years---less than \$102, exactly \$102, or more than \$102? The second asks about inflation: if the interest rate is 1\% and inflation is 2\%, after one year could you buy more, the same, or less than today? The third asks about risk diversification: whether the statement ``buying a single company's stock usually provides a safer return than a stock mutual fund'' is true or false.
+
+\subsubsection{Descriptive statistics}
+
+\par
 
 \inputtable{../../Code/Descriptive/Tables/finlit_summary.tex}
 \FloatBarrier
 
-\par Figure shows the cross correlations between the financial literacy measures and the general measure of trust. There is little correlation between trust and any of the financial literacy variables. More worrisome is that there is little correlation amongst the financial literacy variable. If they are all measuring the same thing, there should be some correlation. 
+\par 
+
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_freq.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_q2_by_gender.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_q2_by_race_eth.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_q2_by_age.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_q2_by_educ.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_score_by_gender.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_score_by_race_eth.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_score_by_age.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_score_by_educ.tex}
+\FloatBarrier
+ 
+\par Table~\ref{tab:finlit_trust_corr} shows the cross correlations between the financial literacy measures and the general measure of trust. There is little correlation between trust and any of the financial literacy variables. More worrisome is that there is little correlation amongst the financial literacy variables. If they are all measuring the same thing, there should be some correlation. 
 
 \inputtable{../../Code/Descriptive/Tables/finlit_trust_corr.tex}
 \FloatBarrier
 
-\subsection{Regional trust}
+\subsubsection{Results}
 
-\par There is infomration in the survey about what region the respondent lives in for each wave. This along with the assumption of constant trust allows us create a measure of regional trust that varies over the waves of the survey. How the sample count changes by region can be seen in the table . 
+\par
 
-\inputtable{../../Code/Descriptive/Tables/region_group_counts_by_year.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_r5_cross_section.tex}
 \FloatBarrier
 
-\par The mean trust levels by region can be seen in the table .
+\par 
 
-\inputtable{../../Code/Descriptive/Tables/trust_mean_by_censreg_2020.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_r5_average.tex}
 \FloatBarrier
 
-\subsection{"Hometown" population and trust}
+\par 
 
-\par There was also a question in 2020 asking individuals \say{how large is the population of the city, village, or town where you currently live}. The trust literature discusses how trust may vary in different communities (small, close-knit towns versus large cities). Counts by population size (6 bins) and by population in 3 bins (small town, small/medium city, large metro) are in the tables . 
-
-\inputtable{../../Code/Descriptive/Tables/bin_counts_population_2020.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_r5_panel1.tex}
 \FloatBarrier
 
-\inputtable{../../Code/Descriptive/Tables/bin_counts_population3_2020.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_r5_panel2.tex}
 \FloatBarrier
 
-\par Mean trust by population size are given in the table . 
-
-\inputtable{../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex}
+\inputtable{../../Code/Regressions/FinLit/Tables/finlit_r5_panel3.tex}
 \FloatBarrier
+
+\subsection{Trust in financial institutions}
+
+\par 
+
+\subsubsection{Composite trust score}
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_summary.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_avg_cross_section.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_avg_avg.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel1.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel2.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel3.tex}
+\FloatBarrier
+
+\subsubsection{Principal component analysis}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Regressions/Trust/FinInst/Figures/fin_trust_scree.png}
+\caption{Financial-institutional trust PCA: scree plot}
+\label{fig:fin_trust_scree}
+\end{figure}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_loadings.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc1_wgen_cross_section.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc1_wgen_avg.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc1_wgen_panel1.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc1_wgen_panel2.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc1_wgen_panel3.tex}
+\FloatBarrier
+
+\par 
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_cross_section.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_avg.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_panel1.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_panel2.tex}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_panel3.tex}
+\FloatBarrier
+
+% \subsection{Regional and hometown trust}
+
+% \par The literature on trust discusses the role of heterogeneity in community factors (income and race) in determining trust. The HRS RAND product which is publicly available does not have information on geographic location beyond census region. 
+
+% \subsubsection{Desctiptive statistics}
+
+% \par There is information in the survey about what region the respondent lives in for each wave. This along with the assumption of constant trust allows us to create a measure of regional trust. How the sample count changes by region can be seen in the table . 
+
+% \inputtable{../../Code/Descriptive/Tables/region_group_counts_by_year.tex}
+% \FloatBarrier
+
+% \par The mean trust levels by region can be seen in the table .
+
+% \inputtable{../../Code/Descriptive/Tables/trust_mean_by_censreg_2020.tex}
+% \FloatBarrier
+
+% \par There was also a question in 2020 asking individuals \say{how large is the population of the city, village, or town where you currently live}. The trust literature discusses how trust may vary in different communities (small, close-knit towns versus large cities). Counts by population size (6 bins) and by population in 3 bins (small town, small/medium city, large metro) are in the tables . 
+
+% \inputtable{../../Code/Descriptive/Tables/bin_counts_population_2020.tex}
+% \FloatBarrier
+
+% \inputtable{../../Code/Descriptive/Tables/bin_counts_population3_2020.tex}
+% \FloatBarrier
+
+% \par Mean trust by population size are given in the table . 
+
+% \inputtable{../../Code/Descriptive/Tables/trust_mean_by_population3_2020.tex}
+% \FloatBarrier
+
+% \subsubsection{Results}
 
 
 % \subsection{Instrumental variables}
@@ -51,5 +168,3 @@
 
 % \inputtable{../../Code/Descriptive/Tables/iv_trust_corr.tex}
 % \FloatBarrier
-
-\subsection{Model}

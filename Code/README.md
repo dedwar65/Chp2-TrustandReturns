@@ -15,10 +15,15 @@ The workflow for this is repository is the following: i) Raw data,  ii) Cleaned 
 
     * **Output layout:**  
       * `Regressions/Trust/` — tables from trust-on-controls regressions (11).  
+      * `Regressions/Trust/FinInst/` — financial-institutional trust (25): PCA with general trust, r5 regressions.  
       * `Regressions/Income/Spec1/` — income–trust tables with **linear** trust.  
       * `Regressions/Income/Spec2/` — income–trust tables with **quadratic** trust (trust + trust²).  
       * `Regressions/Returns/Spec1/` — returns–trust tables, **linear** trust: **one table per trust variable** (10 tables), each with 6 columns (r1, r4, r5 × no controls | with controls). Filename: `returns_trust_<trust_stub>.tex` (e.g. general, social_security); add `_win` for winsorized (e.g. `returns_trust_general_win.tex`).  
       * `Regressions/Returns/Spec2/` — same: one table per trust variable (10 tables), **trust + trust²** on RHS; same filename convention.  
+
+    * **Pipeline note:** Scripts **09** (Descriptive robustness), **19** (inspect finlit/r5), **21** (inspect panel r1/r4), **23** (inspect trust fin: PCA + avg, r5 regressions), and **24** (inspect trust govt: Medicare + Social Security, PCA + avg, r5 regressions) are *not* in the main pipeline. Run them separately as needed. **25** (fin trust w/ general) runs as the final step of the pipeline.
+
+    * **25** = financial-institutional trust with general: `25_reg_trust_fininst.do` runs PCA on 4 vars (general, banks, advisors, mutual funds), creates aggregated score (mean of 3), exports descriptive stats (incl. loadings by variable per component), and r5 regression tables (cross section, avg returns, panel spec 1–3) for PC1, PC2, and avg. **Output:** `Regressions/Trust/FinInst/fin_trust_summary.tex`, `fin_trust_loadings.tex`, `fin_trust_<pc1_wgen|pc2_wgen|avg>_<cross_section|avg|panel1|panel2|panel3>.tex`. Log: `25_reg_trust_fininst.log`.
 
     * **10** = long-dataset regressions (when added).
 
