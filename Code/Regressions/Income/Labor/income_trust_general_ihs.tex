@@ -1,14 +1,13 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
-\caption{Labor income (2020) on General trust (2020), scaled asinh}
-\label{tab:income_trust_general_labor_ihs}
+\caption{Labor income (2020) on general trust}
 \begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
 \midrule
-General trust       &        0.00         &        0.07\sym{***}&        0.00         &       -0.01         \\
+Trust               &        0.00         &        0.07\sym{***}&        0.00         &       -0.01         \\
                     &      (0.01)         &      (0.02)         &      (0.01)         &      (0.02)         \\
-(General)$^2$       &                     &       -0.01\sym{***}&                     &        0.00         \\
+Trust$^2$           &                     &       -0.01\sym{***}&                     &        0.00         \\
                     &                     &      (0.00)         &                     &      (0.00)         \\
 Female              &                     &                     &       -0.08\sym{**} &       -0.08\sym{**} \\
                     &                     &                     &      (0.03)         &      (0.03)         \\
@@ -31,10 +30,10 @@ Constant            &        0.34\sym{***}&        0.22\sym{***}&       -0.40\sy
 \midrule
 Observations        &      900.00         &      900.00         &      890.00         &      890.00         \\
 Adj. R-squared      &       -0.00         &        0.01         &        0.41         &        0.41         \\
-Joint test: Trust+Trust² p-value&                     &        0.00         &                     &        0.43         \\
+Joint test: Trust p-value&           .         &        0.00         &           .         &        0.43         \\
+Joint test: Age bins p-value&           .         &           .         &        0.00         &        0.00         \\
+Joint test: Race p-value&           .         &           .         &        0.89         &        0.88         \\
 \bottomrule
-\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{5}{l}{\footnotesize Age bins (5-yr) included in columns 3–4.}\\
-\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{5}{l}{\footnotesize .}\\
 \end{tabular*}
 \end{table}

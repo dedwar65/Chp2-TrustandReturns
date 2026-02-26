@@ -1,6 +1,7 @@
 * 17_reg_income_avg_trust.do
 * Cross-sectional OLS: average income (avg over waves) on 2020 general trust.
-* Four tables: (1) labor defl+log+wins, (2) total defl+log+wins, (3) labor defl+ihs+wins, (4) total defl+ihs+wins.
+* Four tables: (1) labor income wins defl (levels), (2) total income wins defl (levels),
+* (3) labor income wins defl IHS, (4) total income wins defl IHS.
 * Four columns: (1) trust only, (2) trust+trust², (3) trust+controls, (4) trust+trust²+controls.
 * General trust only. vce(robust). Log: Notes/Logs/17_reg_income_avg_trust.log.
 * Output: Regressions/Average/Income/Labor/, Average/Income/Total/.
@@ -71,40 +72,37 @@ label variable born_us "Born in U.S."
 label variable gender "Female"
 label variable race_eth "Race/ethnicity"
 label variable trust_others_2020 "General trust"
-label variable ln_lab_inc_defl_win_avg "Labor income (avg defl wins, log)"
-label variable ln_tot_inc_defl_win_avg "Total income (avg defl wins, log)"
+label variable lab_inc_defl_win_avg "Labor income (avg defl wins)"
+label variable tot_inc_defl_win_avg "Total income (avg defl wins)"
 label variable ihs_lab_inc_defl_win_avg "Labor income (avg defl wins, IHS)"
 label variable ihs_tot_inc_defl_win_avg "Total income (avg defl wins, IHS)"
 
 * ----------------------------------------------------------------------
-* Regressions: average income on trust (2020). Four tables: labor/total × deflwin_log, deflwin_ihs
+* Regressions: average income on trust (2020). Four tables: labor defl win, total defl win, labor defl win IHS, total defl win IHS
 * ----------------------------------------------------------------------
+* Table 1: labor levels. Table 2: total levels. Table 3: labor IHS. Table 4: total IHS
 forvalues meas = 1/4 {
     if `meas' == 1 {
-        local yvar "ln_lab_inc_defl_win_avg"
+        local yvar "lab_inc_defl_win_avg"
         local outdir "Labor"
-        local label_outdir "labor"
-        local file_suffix "deflwin_log"
-        local title_suffix "labor income (avg defl wins, log)"
+        local file_suffix "deflwin"
+        local title_suffix "labor income (avg defl wins)"
     }
     if `meas' == 2 {
-        local yvar "ln_tot_inc_defl_win_avg"
+        local yvar "tot_inc_defl_win_avg"
         local outdir "Total"
-        local label_outdir "total"
-        local file_suffix "deflwin_log"
-        local title_suffix "total income (avg defl wins, log)"
+        local file_suffix "deflwin"
+        local title_suffix "total income (avg defl wins)"
     }
     if `meas' == 3 {
         local yvar "ihs_lab_inc_defl_win_avg"
         local outdir "Labor"
-        local label_outdir "labor"
         local file_suffix "deflwin_ihs"
         local title_suffix "labor income (avg defl wins, IHS)"
     }
     if `meas' == 4 {
         local yvar "ihs_tot_inc_defl_win_avg"
         local outdir "Total"
-        local label_outdir "total"
         local file_suffix "deflwin_ihs"
         local title_suffix "total income (avg defl wins, IHS)"
     }
@@ -134,13 +132,51 @@ foreach pair of local trust_list {
     }
     eststo clear
     eststo m1: regress `yvar' c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(robust)
+    estadd scalar p_joint_trust = . : m1
+    estadd scalar p_joint_age_bin = . : m1
+    estadd scalar p_joint_race = . : m1
     eststo m2: regress `yvar' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(robust)
     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
     estadd scalar p_joint_trust = r(p) : m2
+    estadd scalar p_joint_age_bin = . : m2
+    estadd scalar p_joint_race = . : m2
     eststo m3: regress `yvar' c.`trust_var' `full_ctrl' if !missing(`yvar') & !missing(`trust_var'), vce(robust)
+    estadd scalar p_joint_trust = . : m3
+    capture confirm variable age_bin
+    if !_rc {
+        quietly testparm i.age_bin
+        estadd scalar p_joint_age_bin = r(p) : m3
+    }
+    else {
+        estadd scalar p_joint_age_bin = . : m3
+    }
+    capture confirm variable race_eth
+    if !_rc {
+        quietly testparm i.race_eth
+        estadd scalar p_joint_race = r(p) : m3
+    }
+    else {
+        estadd scalar p_joint_race = . : m3
+    }
     eststo m4: regress `yvar' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ctrl' if !missing(`yvar') & !missing(`trust_var'), vce(robust)
     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
     estadd scalar p_joint_trust = r(p) : m4
+    capture confirm variable age_bin
+    if !_rc {
+        quietly testparm i.age_bin
+        estadd scalar p_joint_age_bin = r(p) : m4
+    }
+    else {
+        estadd scalar p_joint_age_bin = . : m4
+    }
+    capture confirm variable race_eth
+    if !_rc {
+        quietly testparm i.race_eth
+        estadd scalar p_joint_race = r(p) : m4
+    }
+    else {
+        estadd scalar p_joint_race = . : m4
+    }
 
     local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
     local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -166,29 +202,13 @@ foreach pair of local trust_list {
         se star(* 0.10 ** 0.05 *** 0.01) ///
         b(2) se(2) label ///
         drop(`drop_12' *.age_bin) ///
-        varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
+        varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
         title("Average `title_suffix' on `capt_stub' trust (2020)") ///
-        addnotes("Age bins (5-yr) included in columns 3–4.") ///
+        addnotes(".") ///
         alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
-        stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
-        nonumbers
+        stats(N r2_a p_joint_trust p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust\$^2\$ p-value" "Joint test: Age bins p-value" "Joint test: Race p-value")) ///
+        nonumbers nonotes
 
-    tempfile tmpf
-    file open fh using "`outfile'", read text
-    file open fout using "`tmpf'", write text replace
-    local lab_inserted 0
-    file read fh line
-    while r(eof) == 0 {
-        file write fout "`line'" _n
-        if `lab_inserted' == 0 & regexm(`"`line'"', "\\caption") {
-            file write fout "\label{tab:income_trust_`stub'_`label_outdir'_`file_suffix'}" _n
-            local lab_inserted 1
-        }
-        file read fh line
-    }
-    file close fh
-    file close fout
-    copy "`tmpf'" "`outfile'", replace
 }
 }
 

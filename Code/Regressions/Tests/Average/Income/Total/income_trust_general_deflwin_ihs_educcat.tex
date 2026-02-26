@@ -1,0 +1,45 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Average total income (scaled asinh) on general trust with education categories}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
+\midrule
+trust\_others\_2020   &        0.03\sym{***}&        0.21\sym{***}&        0.00         &        0.06\sym{***}\\
+                    &      (0.01)         &      (0.02)         &      (0.01)         &      (0.02)         \\
+(General)$^2$       &                     &       -0.02\sym{***}&                     &       -0.01\sym{***}\\
+                    &                     &      (0.00)         &                     &      (0.00)         \\
+Female              &                     &                     &       -0.24\sym{***}&       -0.23\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+HS                  &                     &                     &        0.19\sym{***}&        0.17\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Some college        &                     &                     &        0.36\sym{***}&        0.33\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.05)         \\
+4yr degree          &                     &                     &        0.75\sym{***}&        0.73\sym{***}\\
+                    &                     &                     &      (0.07)         &      (0.07)         \\
+Grad                &                     &                     &        0.96\sym{***}&        0.94\sym{***}\\
+                    &                     &                     &      (0.07)         &      (0.07)         \\
+Married             &                     &                     &        0.18\sym{***}&        0.17\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Born in U.S.        &                     &                     &        0.08         &        0.08         \\
+                    &                     &                     &      (0.06)         &      (0.06)         \\
+In labor force      &                     &                     &        0.35\sym{***}&        0.35\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+NH Black            &                     &                     &       -0.22\sym{***}&       -0.21\sym{***}\\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Hispanic            &                     &                     &       -0.32\sym{***}&       -0.31\sym{***}\\
+                    &                     &                     &      (0.06)         &      (0.06)         \\
+NH Other            &                     &                     &       -0.28\sym{***}&       -0.29\sym{***}\\
+                    &                     &                     &      (0.08)         &      (0.08)         \\
+\_cons              &        0.90\sym{***}&        0.58\sym{***}&        0.02         &       -0.03         \\
+                    &      (0.05)         &      (0.05)         &      (0.09)         &      (0.10)         \\
+\midrule
+Observations        &      900.00         &      900.00         &      890.00         &      890.00         \\
+Adj. R-squared      &        0.01         &        0.07         &        0.48         &        0.48         \\
+Joint test: Trust+Trust² p-value&                     &        0.00         &                     &        0.01         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{5}{l}{\footnotesize Base education group: no hs (<12 years). Age bins included in columns 3-4.}\\
+\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

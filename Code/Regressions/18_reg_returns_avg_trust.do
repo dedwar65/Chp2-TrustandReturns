@@ -3,7 +3,7 @@
 * Mirrors 13_reg_returns_trust.do but LHS = r*_annual_avg, r*_annual_avg_w5.
 * One table per trust variable; each table has 6 columns: r1, r4, r5 x no controls | with controls.
 * Four columns per table: (1) trust only, (2) trust+trust², (3) trust+controls, (4) trust+trust²+controls.
-* Raw and winsorized both computed (in log); only winsorized tables exported.
+* Raw and 5% winsorized in separate tables (6 tables: r1/r4/r5 × raw/win).
 * Controls: age 5-yr bins, gender, educ, inlbrf, married, born_us, race_eth, scope-appropriate wealth deciles.
 * vce(robust). Log: Notes/Logs/18_reg_returns_avg_trust.log.
 * Output: Regressions/Average/Returns/Core/, Core+res/, Net wealth/.
@@ -54,8 +54,8 @@ if !_rc {
     gen int age_bin = floor(age_2020/5)*5
 }
 
-* Trust: same list as 13 (8 items + PC1, PC2)
-local trust_list "trust_others_2020:general trust_social_security_2020:social_security trust_medicare_2020:medicare trust_banks_2020:banks trust_advisors_2020:advisors trust_mutual_funds_2020:mutual_funds trust_insurance_2020:insurance trust_media_2020:media trust_pc1:pc1 trust_pc2:pc2"
+* Trust: general only (for now)
+local trust_list "trust_others_2020:general"
 
 * Return variables: average (row mean across waves). Raw and 5% winsorized (two passes)
 local ret_unwin "r1_annual_avg r4_annual_avg r5_annual_avg"
@@ -81,17 +81,6 @@ label variable gender "Female"
 label variable race_eth "Race/ethnicity"
 label variable inlbrf_2020 "In labor force"
 label variable trust_others_2020 "General trust"
-label variable trust_social_security_2020 "Trust Social Security"
-label variable trust_medicare_2020 "Trust Medicare"
-label variable trust_banks_2020 "Trust banks"
-label variable trust_advisors_2020 "Trust financial advisors"
-label variable trust_mutual_funds_2020 "Trust mutual funds"
-label variable trust_insurance_2020 "Trust insurance"
-label variable trust_media_2020 "Trust media"
-capture confirm variable trust_pc1
-if !_rc label variable trust_pc1 "Trust PC1"
-capture confirm variable trust_pc2
-if !_rc label variable trust_pc2 "Trust PC2"
 
 * ----------------------------------------------------------------------
 * Regressions: per return (r1, r4, r5), per trust var, per winsor-status
@@ -187,82 +176,145 @@ foreach pair of local trust_list {
 
             eststo clear
             eststo lin_raw: regress `y' c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
+            estadd scalar p_joint_trust = . : lin_raw
+            estadd scalar p_joint_age_bin = . : lin_raw
+            estadd scalar p_joint_wealth = . : lin_raw
+            estadd scalar p_joint_race = . : lin_raw
+
             eststo quad_raw: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
             estadd scalar p_joint_trust = r(p) : quad_raw
+            estadd scalar p_joint_age_bin = . : quad_raw
+            estadd scalar p_joint_wealth = . : quad_raw
+            estadd scalar p_joint_race = . : quad_raw
+
             eststo lin_ctl: regress `y' c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
+            estadd scalar p_joint_trust = . : lin_ctl
+            capture confirm variable age_bin
+            if !_rc {
+                quietly testparm i.age_bin
+                estadd scalar p_joint_age_bin = r(p) : lin_ctl
+            }
+            else estadd scalar p_joint_age_bin = . : lin_ctl
+            local wlist ""
+            if "`ret'" == "r1" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_core_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_core_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r4" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_coreira_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_coreira_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r5" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_d`d'_2020"
+                }
+            }
+            if trim("`wlist'") != "" {
+                quietly testparm `wlist'
+                estadd scalar p_joint_wealth = r(p) : lin_ctl
+            }
+            else estadd scalar p_joint_wealth = . : lin_ctl
+            capture confirm variable race_eth
+            if !_rc {
+                quietly testparm i.race_eth
+                estadd scalar p_joint_race = r(p) : lin_ctl
+            }
+            else estadd scalar p_joint_race = . : lin_ctl
+
             eststo quad_ctl: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
             estadd scalar p_joint_trust = r(p) : quad_ctl
-
-            * Export tables only for winsorized (raw kept in log)
-            if `win' == 1 {
-                local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
-                local capt_stub = subinstr("`capt_stub'", "_", " ", .)
-                if "`stub'" == "pc1" local capt_stub "PC1"
-                if "`stub'" == "pc2" local capt_stub "PC2"
-
-                local outfile "`outdir'/returns_`ret'_trust_`stub'_avg`file_suffix'.tex"
-                di as txt "Writing: `outfile'"
-
-                local vlab_trust2 "(`capt_stub')\$^2\$"
-
-                local drop_list "1.gender 1.race_eth"
-                capture confirm variable age_bin
-                if !_rc {
-                    estimates restore lin_ctl
-                    local cnames : colnames e(b)
-                    foreach c of local cnames {
-                        if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.age_bin$") local drop_list "`drop_list' `c'"
-                    }
-                }
-                if "`ret'" == "r1" {
-                    forvalues d = 2/10 {
-                        capture confirm variable wealth_core_d`d'_2020
-                        if !_rc local drop_list "`drop_list' wealth_core_d`d'_2020"
-                    }
-                }
-                if "`ret'" == "r4" {
-                    forvalues d = 2/10 {
-                        capture confirm variable wealth_coreira_d`d'_2020
-                        if !_rc local drop_list "`drop_list' wealth_coreira_d`d'_2020"
-                    }
-                }
-                if "`ret'" == "r5" {
-                    forvalues d = 2/10 {
-                        capture confirm variable wealth_d`d'_2020
-                        if !_rc local drop_list "`drop_list' wealth_d`d'_2020"
-                    }
-                }
-
-                esttab lin_raw quad_raw lin_ctl quad_ctl using "`outfile'", replace ///
-                    booktabs ///
-                    mtitles("1" "2" "3" "4") ///
-                    se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
-                    drop(`drop_list' *.age_bin, relax) ///
-                    varlabels(c.`trust_var'#c.`trust_var' "`vlab_trust2'" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
-                    stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
-                    title("Average `ret_label' on `capt_stub' trust (2020)`win_label'") ///
-                    addnotes("Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.") ///
-                    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-
-                tempfile tmpf
-                file open fh using "`outfile'", read text
-                file open fout using "`tmpf'", write text replace
-                local lab_inserted 0
-                file read fh line
-                while r(eof) == 0 {
-                    file write fout "`line'" _n
-                    if `lab_inserted' == 0 & regexm(`"`line'"', "\\caption") {
-                        file write fout "\label{tab:returns_`ret'_trust_`stub'_avg`file_suffix'}" _n
-                        local lab_inserted 1
-                    }
-                    file read fh line
-                }
-                file close fh
-                file close fout
-                copy "`tmpf'" "`outfile'", replace
+            capture confirm variable age_bin
+            if !_rc {
+                quietly testparm i.age_bin
+                estadd scalar p_joint_age_bin = r(p) : quad_ctl
             }
+            else estadd scalar p_joint_age_bin = . : quad_ctl
+            local wlist ""
+            if "`ret'" == "r1" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_core_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_core_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r4" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_coreira_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_coreira_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r5" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_d`d'_2020"
+                }
+            }
+            if trim("`wlist'") != "" {
+                quietly testparm `wlist'
+                estadd scalar p_joint_wealth = r(p) : quad_ctl
+            }
+            else estadd scalar p_joint_wealth = . : quad_ctl
+            capture confirm variable race_eth
+            if !_rc {
+                quietly testparm i.race_eth
+                estadd scalar p_joint_race = r(p) : quad_ctl
+            }
+            else estadd scalar p_joint_race = . : quad_ctl
+
+            local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
+            local capt_stub = subinstr("`capt_stub'", "_", " ", .)
+            if "`stub'" == "pc1" local capt_stub "PC1"
+            if "`stub'" == "pc2" local capt_stub "PC2"
+
+            local outfile "`outdir'/returns_`ret'_trust_`stub'_avg`file_suffix'.tex"
+            di as txt "Writing: `outfile'"
+
+            local vlab_trust2 "(`capt_stub')\$^2\$"
+
+            local drop_list "1.gender 1.race_eth"
+            capture confirm variable age_bin
+            if !_rc {
+                estimates restore lin_ctl
+                local cnames : colnames e(b)
+                foreach c of local cnames {
+                    if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.age_bin$") local drop_list "`drop_list' `c'"
+                }
+            }
+            if "`ret'" == "r1" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_core_d`d'_2020
+                    if !_rc local drop_list "`drop_list' wealth_core_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r4" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_coreira_d`d'_2020
+                    if !_rc local drop_list "`drop_list' wealth_coreira_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r5" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_d`d'_2020
+                    if !_rc local drop_list "`drop_list' wealth_d`d'_2020"
+                }
+            }
+
+            esttab lin_raw quad_raw lin_ctl quad_ctl using "`outfile'", replace ///
+                booktabs ///
+                mtitles("1" "2" "3" "4") ///
+                se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
+                drop(`drop_list' *.age_bin, relax) ///
+                varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
+                stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value")) ///
+                title("Average `ret_label' on `capt_stub' trust (2020)`win_label'") ///
+                addnotes(".") ///
+                alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
         }
     }
 }

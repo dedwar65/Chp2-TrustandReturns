@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/12_r
 > eg_income_trust.log
   log type:  text
- opened on:  23 Feb 2026, 10:49:52
+ opened on:  25 Feb 2026, 23:07:22
 
 . 
 . capture which esttab
@@ -159,43 +159,82 @@
  23.             * 1. Trust only
 .             eststo lab_lin_raw: regress `inc_lab' c.`trust_var' if !missing(`
 > inc_lab') & !missing(`trust_var'), vce(robust)
- 24.             * 2. Trust + trust^2 (both linear and quadratic terms)
+ 24.             estadd scalar p_joint_trust = . : lab_lin_raw
+ 25.             estadd scalar p_joint_age_bin = . : lab_lin_raw
+ 26.             estadd scalar p_joint_race = . : lab_lin_raw
+ 27.             * 2. Trust + trust^2
 .             eststo lab_quad_raw: regress `inc_lab' c.`trust_var' c.`trust_var
 > '#c.`trust_var' if !missing(`inc_lab') & !missing(`trust_var'), vce(robust)
- 25.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 26.             estadd scalar p_joint_trust = r(p) : lab_quad_raw
- 27.             * 3. Trust + controls
+ 28.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+ 29.             estadd scalar p_joint_trust = r(p) : lab_quad_raw
+ 30.             estadd scalar p_joint_age_bin = . : lab_quad_raw
+ 31.             estadd scalar p_joint_race = . : lab_quad_raw
+ 32.             * 3. Trust + controls
 .             eststo lab_lin_ctl: regress `inc_lab' c.`trust_var' `full_ctrl' i
 > f !missing(`inc_lab') & !missing(`trust_var'), vce(robust)
- 28.             * 4. Trust + trust^2 + controls (both linear and quadratic ter
-> ms)
+ 33.             estadd scalar p_joint_trust = . : lab_lin_ctl
+ 34.             capture confirm variable age_bin
+ 35.             if !_rc {
+ 36.                 quietly testparm i.age_bin
+ 37.                 estadd scalar p_joint_age_bin = r(p) : lab_lin_ctl
+ 38.             }
+ 39.             else {
+ 40.                 estadd scalar p_joint_age_bin = . : lab_lin_ctl
+ 41.             }
+ 42.             capture confirm variable race_eth
+ 43.             if !_rc {
+ 44.                 quietly testparm i.race_eth
+ 45.                 estadd scalar p_joint_race = r(p) : lab_lin_ctl
+ 46.             }
+ 47.             else {
+ 48.                 estadd scalar p_joint_race = . : lab_lin_ctl
+ 49.             }
+ 50.             * 4. Trust + trust^2 + controls
 .             eststo lab_quad_ctl: regress `inc_lab' c.`trust_var' c.`trust_var
 > '#c.`trust_var' `full_ctrl' if !missing(`inc_lab') & !missing(`trust_var'), v
 > ce(robust)
- 29.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 30.             estadd scalar p_joint_trust = r(p) : lab_quad_ctl
- 31. 
+ 51.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+ 52.             estadd scalar p_joint_trust = r(p) : lab_quad_ctl
+ 53.             capture confirm variable age_bin
+ 54.             if !_rc {
+ 55.                 quietly testparm i.age_bin
+ 56.                 estadd scalar p_joint_age_bin = r(p) : lab_quad_ctl
+ 57.             }
+ 58.             else {
+ 59.                 estadd scalar p_joint_age_bin = . : lab_quad_ctl
+ 60.             }
+ 61.             capture confirm variable race_eth
+ 62.             if !_rc {
+ 63.                 quietly testparm i.race_eth
+ 64.                 estadd scalar p_joint_race = r(p) : lab_quad_ctl
+ 65.             }
+ 66.             else {
+ 67.                 estadd scalar p_joint_race = . : lab_quad_ctl
+ 68.             }
+ 69. 
 .             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'
 > ", 2, .)
- 32.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
- 33.             if "`stub'" == "pc1" local capt_stub "PC1"
- 34.             if "`stub'" == "pc2" local capt_stub "PC2"
- 35. 
+ 70.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
+ 71.             if "`stub'" == "pc1" local capt_stub "PC1"
+ 72.             if "`stub'" == "pc2" local capt_stub "PC2"
+ 73.             local trust_part "`capt_stub'"
+ 74.             if "`stub'" == "general" local trust_part "general"
+ 75. 
 .             local outfile_lab "${REGRESSIONS}/Income/Labor/income_trust_`stub
 > '_log.tex"
- 36.             di as txt "Writing (labor, log): `outfile_lab'"
- 37. 
+ 76.             di as txt "Writing (labor, log): `outfile_lab'"
+ 77. 
 .             local drop_12 "1.gender 1.race_eth"
- 38.             capture confirm variable age_bin
- 39.             if !_rc {
- 40.                 estimates restore lab_lin_ctl
- 41.                 local cnames : colnames e(b)
- 42.                 foreach c of local cnames {
- 43.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
+ 78.             capture confirm variable age_bin
+ 79.             if !_rc {
+ 80.                 estimates restore lab_lin_ctl
+ 81.                 local cnames : colnames e(b)
+ 82.                 foreach c of local cnames {
+ 83.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
 > e_bin$") local drop_12 "`drop_12' `c'"
- 44.                 }
- 45.             }
- 46. 
+ 84.                 }
+ 85.             }
+ 86. 
 .             esttab lab_lin_raw lab_quad_raw lab_lin_ctl lab_quad_ctl using "`
 > outfile_lab'", replace ///
 >                 booktabs ///
@@ -203,95 +242,115 @@
 >                 se star(* 0.10 ** 0.05 *** 0.01) ///
 >                 b(2) se(2) label ///
 >                 drop(`drop_12' *.age_bin) ///
->                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2
-> .gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH O
-> ther" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020
->  "Married" born_us "Born in U.S." _cons "Constant") ///
->                 title("Labor income (2020) on `capt_stub' trust (2020)") ///
->                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
+>                 varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Tr
+> ust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.ra
+> ce_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" 
+> married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
+>                 title("Labor income (2020) on `trust_part' trust") ///
+>                 addnotes(".") ///
 >                 alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
->                 stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squ
-> ared" "Joint test: Trust+Trust² p-value")) ///
->                 nonumbers
- 47. 
-.             * Insert \label after \caption
-.             tempfile tmpf_lab
- 48.             file open fh using "`outfile_lab'", read text
- 49.             file open fout using "`tmpf_lab'", write text replace
- 50.             local lab_inserted_lab 0
- 51.             file read fh line
- 52.             while r(eof) == 0 {
- 53.                 file write fout "`line'" _n
- 54.                 if `lab_inserted_lab' == 0 & regexm(`"`line'"', "\\caption
-> ") {
- 55.                     file write fout "\label{tab:income_trust_`stub'_labor_
-> log}" _n
- 56.                     local lab_inserted_lab 1
- 57.                 }
- 58.                 file read fh line
- 59.             }
- 60.             file close fh
- 61.             file close fout
- 62.             copy "`tmpf_lab'" "`outfile_lab'", replace
- 63.         }
- 64.     }
- 65. 
+>                 stats(N r2_a p_joint_trust p_joint_age_bin p_joint_race, labe
+> ls("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: A
+> ge bins p-value" "Joint test: Race p-value")) ///
+>                 nonumbers nonotes
+ 87.         }
+ 88.     }
+ 89. 
 .     * ------------------------------------------------------------------
 .     * Total income (log): ln_tot_inc_final_2020
 .     * ------------------------------------------------------------------
 .     capture confirm variable `inc_tot'
- 66.     if _rc {
- 67.         di as txt "Skipping `stub' total log: ln_tot_inc_final_2020 not fo
+ 90.     if _rc {
+ 91.         di as txt "Skipping `stub' total log: ln_tot_inc_final_2020 not fo
 > und."
- 68.     }
- 69.     else {
- 70.         quietly count if !missing(`inc_tot') & !missing(`trust_var')
- 71.         if r(N) < 50 {
- 72.             di as txt "Skipping `stub' total log: too few obs (N=" r(N) ")
+ 92.     }
+ 93.     else {
+ 94.         quietly count if !missing(`inc_tot') & !missing(`trust_var')
+ 95.         if r(N) < 50 {
+ 96.             di as txt "Skipping `stub' total log: too few obs (N=" r(N) ")
 > ."
- 73.         }
- 74.         else {
- 75.             eststo clear
- 76.             * 1. Trust only
+ 97.         }
+ 98.         else {
+ 99.             eststo clear
+100.             * 1. Trust only
 .             eststo tot_lin_raw: regress `inc_tot' c.`trust_var' if !missing(`
 > inc_tot') & !missing(`trust_var'), vce(robust)
- 77.             * 2. Trust + trust^2 (both linear and quadratic terms)
+101.             estadd scalar p_joint_trust = . : tot_lin_raw
+102.             estadd scalar p_joint_age_bin = . : tot_lin_raw
+103.             estadd scalar p_joint_race = . : tot_lin_raw
+104.             * 2. Trust + trust^2
 .             eststo tot_quad_raw: regress `inc_tot' c.`trust_var' c.`trust_var
 > '#c.`trust_var' if !missing(`inc_tot') & !missing(`trust_var'), vce(robust)
- 78.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 79.             estadd scalar p_joint_trust = r(p) : tot_quad_raw
- 80.             * 3. Trust + controls
+105.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+106.             estadd scalar p_joint_trust = r(p) : tot_quad_raw
+107.             estadd scalar p_joint_age_bin = . : tot_quad_raw
+108.             estadd scalar p_joint_race = . : tot_quad_raw
+109.             * 3. Trust + controls
 .             eststo tot_lin_ctl: regress `inc_tot' c.`trust_var' `full_ctrl' i
 > f !missing(`inc_tot') & !missing(`trust_var'), vce(robust)
- 81.             * 4. Trust + trust^2 + controls (both linear and quadratic ter
-> ms)
+110.             estadd scalar p_joint_trust = . : tot_lin_ctl
+111.             capture confirm variable age_bin
+112.             if !_rc {
+113.                 quietly testparm i.age_bin
+114.                 estadd scalar p_joint_age_bin = r(p) : tot_lin_ctl
+115.             }
+116.             else {
+117.                 estadd scalar p_joint_age_bin = . : tot_lin_ctl
+118.             }
+119.             capture confirm variable race_eth
+120.             if !_rc {
+121.                 quietly testparm i.race_eth
+122.                 estadd scalar p_joint_race = r(p) : tot_lin_ctl
+123.             }
+124.             else {
+125.                 estadd scalar p_joint_race = . : tot_lin_ctl
+126.             }
+127.             * 4. Trust + trust^2 + controls
 .             eststo tot_quad_ctl: regress `inc_tot' c.`trust_var' c.`trust_var
 > '#c.`trust_var' `full_ctrl' if !missing(`inc_tot') & !missing(`trust_var'), v
 > ce(robust)
- 82.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 83.             estadd scalar p_joint_trust = r(p) : tot_quad_ctl
- 84. 
+128.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+129.             estadd scalar p_joint_trust = r(p) : tot_quad_ctl
+130.             capture confirm variable age_bin
+131.             if !_rc {
+132.                 quietly testparm i.age_bin
+133.                 estadd scalar p_joint_age_bin = r(p) : tot_quad_ctl
+134.             }
+135.             else {
+136.                 estadd scalar p_joint_age_bin = . : tot_quad_ctl
+137.             }
+138.             capture confirm variable race_eth
+139.             if !_rc {
+140.                 quietly testparm i.race_eth
+141.                 estadd scalar p_joint_race = r(p) : tot_quad_ctl
+142.             }
+143.             else {
+144.                 estadd scalar p_joint_race = . : tot_quad_ctl
+145.             }
+146. 
 .             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'
 > ", 2, .)
- 85.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
- 86.             if "`stub'" == "pc1" local capt_stub "PC1"
- 87.             if "`stub'" == "pc2" local capt_stub "PC2"
- 88. 
+147.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
+148.             if "`stub'" == "pc1" local capt_stub "PC1"
+149.             if "`stub'" == "pc2" local capt_stub "PC2"
+150.             local trust_part "`capt_stub'"
+151.             if "`stub'" == "general" local trust_part "general"
+152. 
 .             local outfile_tot "${REGRESSIONS}/Income/Total/income_trust_`stub
 > '_log.tex"
- 89.             di as txt "Writing (total, log): `outfile_tot'"
- 90. 
+153.             di as txt "Writing (total, log): `outfile_tot'"
+154. 
 .             local drop_12 "1.gender 1.race_eth"
- 91.             capture confirm variable age_bin
- 92.             if !_rc {
- 93.                 estimates restore tot_lin_ctl
- 94.                 local cnames : colnames e(b)
- 95.                 foreach c of local cnames {
- 96.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
+155.             capture confirm variable age_bin
+156.             if !_rc {
+157.                 estimates restore tot_lin_ctl
+158.                 local cnames : colnames e(b)
+159.                 foreach c of local cnames {
+160.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
 > e_bin$") local drop_12 "`drop_12' `c'"
- 97.                 }
- 98.             }
- 99. 
+161.                 }
+162.             }
+163. 
 .             esttab tot_lin_raw tot_quad_raw tot_lin_ctl tot_quad_ctl using "`
 > outfile_tot'", replace ///
 >                 booktabs ///
@@ -299,92 +358,113 @@
 >                 se star(* 0.10 ** 0.05 *** 0.01) ///
 >                 b(2) se(2) label ///
 >                 drop(`drop_12' *.age_bin) ///
->                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2
-> .gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH O
-> ther" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020
->  "Married" born_us "Born in U.S." _cons "Constant") ///
->                 title("Total income (2020) on `capt_stub' trust (2020)") ///
->                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
+>                 varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Tr
+> ust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.ra
+> ce_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" 
+> married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
+>                 title("Total income (2020) on `trust_part' trust") ///
+>                 addnotes(".") ///
 >                 alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
->                 stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squ
-> ared" "Joint test: Trust+Trust² p-value")) ///
->                 nonumbers
-100. 
-.             * Insert \label after \caption
-.             tempfile tmpf_tot
-101.             file open fh using "`outfile_tot'", read text
-102.             file open fout using "`tmpf_tot'", write text replace
-103.             local lab_inserted_tot 0
-104.             file read fh line
-105.             while r(eof) == 0 {
-106.                 file write fout "`line'" _n
-107.                 if `lab_inserted_tot' == 0 & regexm(`"`line'"', "\\caption
-> ") {
-108.                     file write fout "\label{tab:income_trust_`stub'_total_
-> log}" _n
-109.                     local lab_inserted_tot 1
-110.                 }
-111.                 file read fh line
-112.             }
-113.             file close fh
-114.             file close fout
-115.             copy "`tmpf_tot'" "`outfile_tot'", replace
-116.         }
-117.     }
-118. 
+>                 stats(N r2_a p_joint_trust p_joint_age_bin p_joint_race, labe
+> ls("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: A
+> ge bins p-value" "Joint test: Race p-value")) ///
+>                 nonumbers nonotes
+164.         }
+165.     }
+166. 
 .     * ------------------------------------------------------------------
 .     * Labor income (IHS): ihs_lab_inc_defl_win_s_2020
 .     * ------------------------------------------------------------------
 .     local inc_lab_ihs "ihs_lab_inc_defl_win_s_2020"
-119.     capture confirm variable `inc_lab_ihs'
-120.     if _rc {
-121.         di as txt "Skipping `stub' labor ihs: ihs_lab_inc_defl_win_s_2020 
+167.     capture confirm variable `inc_lab_ihs'
+168.     if _rc {
+169.         di as txt "Skipping `stub' labor ihs: ihs_lab_inc_defl_win_s_2020 
 > not found."
-122.     }
-123.     else {
-124.         quietly count if !missing(`inc_lab_ihs') & !missing(`trust_var')
-125.         if r(N) < 50 {
-126.             di as txt "Skipping `stub' labor ihs: too few obs (N=" r(N) ")
+170.     }
+171.     else {
+172.         quietly count if !missing(`inc_lab_ihs') & !missing(`trust_var')
+173.         if r(N) < 50 {
+174.             di as txt "Skipping `stub' labor ihs: too few obs (N=" r(N) ")
 > ."
-127.         }
-128.         else {
-129.             eststo clear
-130.             eststo lab_lin_raw: regress `inc_lab_ihs' c.`trust_var' if !mi
+175.         }
+176.         else {
+177.             eststo clear
+178.             eststo lab_lin_raw: regress `inc_lab_ihs' c.`trust_var' if !mi
 > ssing(`inc_lab_ihs') & !missing(`trust_var'), vce(robust)
-131.             eststo lab_quad_raw: regress `inc_lab_ihs' c.`trust_var' c.`tr
+179.             estadd scalar p_joint_trust = . : lab_lin_raw
+180.             estadd scalar p_joint_age_bin = . : lab_lin_raw
+181.             estadd scalar p_joint_race = . : lab_lin_raw
+182.             eststo lab_quad_raw: regress `inc_lab_ihs' c.`trust_var' c.`tr
 > ust_var'#c.`trust_var' if !missing(`inc_lab_ihs') & !missing(`trust_var'), vc
 > e(robust)
-132.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
-133.             estadd scalar p_joint_trust = r(p) : lab_quad_raw
-134.             eststo lab_lin_ctl: regress `inc_lab_ihs' c.`trust_var' `full_
+183.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+184.             estadd scalar p_joint_trust = r(p) : lab_quad_raw
+185.             estadd scalar p_joint_age_bin = . : lab_quad_raw
+186.             estadd scalar p_joint_race = . : lab_quad_raw
+187.             eststo lab_lin_ctl: regress `inc_lab_ihs' c.`trust_var' `full_
 > ctrl' if !missing(`inc_lab_ihs') & !missing(`trust_var'), vce(robust)
-135.             eststo lab_quad_ctl: regress `inc_lab_ihs' c.`trust_var' c.`tr
+188.             estadd scalar p_joint_trust = . : lab_lin_ctl
+189.             capture confirm variable age_bin
+190.             if !_rc {
+191.                 quietly testparm i.age_bin
+192.                 estadd scalar p_joint_age_bin = r(p) : lab_lin_ctl
+193.             }
+194.             else {
+195.                 estadd scalar p_joint_age_bin = . : lab_lin_ctl
+196.             }
+197.             capture confirm variable race_eth
+198.             if !_rc {
+199.                 quietly testparm i.race_eth
+200.                 estadd scalar p_joint_race = r(p) : lab_lin_ctl
+201.             }
+202.             else {
+203.                 estadd scalar p_joint_race = . : lab_lin_ctl
+204.             }
+205.             eststo lab_quad_ctl: regress `inc_lab_ihs' c.`trust_var' c.`tr
 > ust_var'#c.`trust_var' `full_ctrl' if !missing(`inc_lab_ihs') & !missing(`tru
 > st_var'), vce(robust)
-136.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
-137.             estadd scalar p_joint_trust = r(p) : lab_quad_ctl
-138. 
+206.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+207.             estadd scalar p_joint_trust = r(p) : lab_quad_ctl
+208.             capture confirm variable age_bin
+209.             if !_rc {
+210.                 quietly testparm i.age_bin
+211.                 estadd scalar p_joint_age_bin = r(p) : lab_quad_ctl
+212.             }
+213.             else {
+214.                 estadd scalar p_joint_age_bin = . : lab_quad_ctl
+215.             }
+216.             capture confirm variable race_eth
+217.             if !_rc {
+218.                 quietly testparm i.race_eth
+219.                 estadd scalar p_joint_race = r(p) : lab_quad_ctl
+220.             }
+221.             else {
+222.                 estadd scalar p_joint_race = . : lab_quad_ctl
+223.             }
+224. 
 .             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'
 > ", 2, .)
-139.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
-140.             if "`stub'" == "pc1" local capt_stub "PC1"
-141.             if "`stub'" == "pc2" local capt_stub "PC2"
-142. 
+225.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
+226.             if "`stub'" == "pc1" local capt_stub "PC1"
+227.             if "`stub'" == "pc2" local capt_stub "PC2"
+228.             local trust_part "`capt_stub'"
+229.             if "`stub'" == "general" local trust_part "general"
+230. 
 .             local outfile_lab_ihs "${REGRESSIONS}/Income/Labor/income_trust_`
 > stub'_ihs.tex"
-143.             di as txt "Writing (labor, ihs): `outfile_lab_ihs'"
-144. 
+231.             di as txt "Writing (labor, ihs): `outfile_lab_ihs'"
+232. 
 .             local drop_12 "1.gender 1.race_eth"
-145.             capture confirm variable age_bin
-146.             if !_rc {
-147.                 estimates restore lab_lin_ctl
-148.                 local cnames : colnames e(b)
-149.                 foreach c of local cnames {
-150.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
+233.             capture confirm variable age_bin
+234.             if !_rc {
+235.                 estimates restore lab_lin_ctl
+236.                 local cnames : colnames e(b)
+237.                 foreach c of local cnames {
+238.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
 > e_bin$") local drop_12 "`drop_12' `c'"
-151.                 }
-152.             }
-153. 
+239.                 }
+240.             }
+241. 
 .             esttab lab_lin_raw lab_quad_raw lab_lin_ctl lab_quad_ctl using "`
 > outfile_lab_ihs'", replace ///
 >                 booktabs ///
@@ -392,92 +472,113 @@
 >                 se star(* 0.10 ** 0.05 *** 0.01) ///
 >                 b(2) se(2) label ///
 >                 drop(`drop_12' *.age_bin) ///
->                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2
-> .gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH O
-> ther" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020
->  "Married" born_us "Born in U.S." _cons "Constant") ///
->                 title("Labor income (2020) on `capt_stub' trust (2020), scale
-> d asinh") ///
->                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
+>                 varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Tr
+> ust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.ra
+> ce_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" 
+> married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
+>                 title("Labor income (2020) on `trust_part' trust") ///
+>                 addnotes(".") ///
 >                 alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
->                 stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squ
-> ared" "Joint test: Trust+Trust² p-value")) ///
->                 nonumbers
-154. 
-.             tempfile tmpf_lab_ihs
-155.             file open fh using "`outfile_lab_ihs'", read text
-156.             file open fout using "`tmpf_lab_ihs'", write text replace
-157.             local lab_inserted_lab_ihs 0
-158.             file read fh line
-159.             while r(eof) == 0 {
-160.                 file write fout "`line'" _n
-161.                 if `lab_inserted_lab_ihs' == 0 & regexm(`"`line'"', "\\cap
-> tion") {
-162.                     file write fout "\label{tab:income_trust_`stub'_labor_
-> ihs}" _n
-163.                     local lab_inserted_lab_ihs 1
-164.                 }
-165.                 file read fh line
-166.             }
-167.             file close fh
-168.             file close fout
-169.             copy "`tmpf_lab_ihs'" "`outfile_lab_ihs'", replace
-170.         }
-171.     }
-172. 
+>                 stats(N r2_a p_joint_trust p_joint_age_bin p_joint_race, labe
+> ls("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: A
+> ge bins p-value" "Joint test: Race p-value")) ///
+>                 nonumbers nonotes
+242.         }
+243.     }
+244. 
 .     * ------------------------------------------------------------------
 .     * Total income (IHS): ihs_tot_inc_defl_win_s_2020
 .     * ------------------------------------------------------------------
 .     local inc_tot_ihs "ihs_tot_inc_defl_win_s_2020"
-173.     capture confirm variable `inc_tot_ihs'
-174.     if _rc {
-175.         di as txt "Skipping `stub' total ihs: ihs_tot_inc_defl_win_s_2020 
+245.     capture confirm variable `inc_tot_ihs'
+246.     if _rc {
+247.         di as txt "Skipping `stub' total ihs: ihs_tot_inc_defl_win_s_2020 
 > not found."
-176.     }
-177.     else {
-178.         quietly count if !missing(`inc_tot_ihs') & !missing(`trust_var')
-179.         if r(N) < 50 {
-180.             di as txt "Skipping `stub' total ihs: too few obs (N=" r(N) ")
+248.     }
+249.     else {
+250.         quietly count if !missing(`inc_tot_ihs') & !missing(`trust_var')
+251.         if r(N) < 50 {
+252.             di as txt "Skipping `stub' total ihs: too few obs (N=" r(N) ")
 > ."
-181.         }
-182.         else {
-183.             eststo clear
-184.             eststo tot_lin_raw: regress `inc_tot_ihs' c.`trust_var' if !mi
+253.         }
+254.         else {
+255.             eststo clear
+256.             eststo tot_lin_raw: regress `inc_tot_ihs' c.`trust_var' if !mi
 > ssing(`inc_tot_ihs') & !missing(`trust_var'), vce(robust)
-185.             eststo tot_quad_raw: regress `inc_tot_ihs' c.`trust_var' c.`tr
+257.             estadd scalar p_joint_trust = . : tot_lin_raw
+258.             estadd scalar p_joint_age_bin = . : tot_lin_raw
+259.             estadd scalar p_joint_race = . : tot_lin_raw
+260.             eststo tot_quad_raw: regress `inc_tot_ihs' c.`trust_var' c.`tr
 > ust_var'#c.`trust_var' if !missing(`inc_tot_ihs') & !missing(`trust_var'), vc
 > e(robust)
-186.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
-187.             estadd scalar p_joint_trust = r(p) : tot_quad_raw
-188.             eststo tot_lin_ctl: regress `inc_tot_ihs' c.`trust_var' `full_
+261.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+262.             estadd scalar p_joint_trust = r(p) : tot_quad_raw
+263.             estadd scalar p_joint_age_bin = . : tot_quad_raw
+264.             estadd scalar p_joint_race = . : tot_quad_raw
+265.             eststo tot_lin_ctl: regress `inc_tot_ihs' c.`trust_var' `full_
 > ctrl' if !missing(`inc_tot_ihs') & !missing(`trust_var'), vce(robust)
-189.             eststo tot_quad_ctl: regress `inc_tot_ihs' c.`trust_var' c.`tr
+266.             estadd scalar p_joint_trust = . : tot_lin_ctl
+267.             capture confirm variable age_bin
+268.             if !_rc {
+269.                 quietly testparm i.age_bin
+270.                 estadd scalar p_joint_age_bin = r(p) : tot_lin_ctl
+271.             }
+272.             else {
+273.                 estadd scalar p_joint_age_bin = . : tot_lin_ctl
+274.             }
+275.             capture confirm variable race_eth
+276.             if !_rc {
+277.                 quietly testparm i.race_eth
+278.                 estadd scalar p_joint_race = r(p) : tot_lin_ctl
+279.             }
+280.             else {
+281.                 estadd scalar p_joint_race = . : tot_lin_ctl
+282.             }
+283.             eststo tot_quad_ctl: regress `inc_tot_ihs' c.`trust_var' c.`tr
 > ust_var'#c.`trust_var' `full_ctrl' if !missing(`inc_tot_ihs') & !missing(`tru
 > st_var'), vce(robust)
-190.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
-191.             estadd scalar p_joint_trust = r(p) : tot_quad_ctl
-192. 
+284.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+285.             estadd scalar p_joint_trust = r(p) : tot_quad_ctl
+286.             capture confirm variable age_bin
+287.             if !_rc {
+288.                 quietly testparm i.age_bin
+289.                 estadd scalar p_joint_age_bin = r(p) : tot_quad_ctl
+290.             }
+291.             else {
+292.                 estadd scalar p_joint_age_bin = . : tot_quad_ctl
+293.             }
+294.             capture confirm variable race_eth
+295.             if !_rc {
+296.                 quietly testparm i.race_eth
+297.                 estadd scalar p_joint_race = r(p) : tot_quad_ctl
+298.             }
+299.             else {
+300.                 estadd scalar p_joint_race = . : tot_quad_ctl
+301.             }
+302. 
 .             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'
 > ", 2, .)
-193.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
-194.             if "`stub'" == "pc1" local capt_stub "PC1"
-195.             if "`stub'" == "pc2" local capt_stub "PC2"
-196. 
+303.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
+304.             if "`stub'" == "pc1" local capt_stub "PC1"
+305.             if "`stub'" == "pc2" local capt_stub "PC2"
+306.             local trust_part "`capt_stub'"
+307.             if "`stub'" == "general" local trust_part "general"
+308. 
 .             local outfile_tot_ihs "${REGRESSIONS}/Income/Total/income_trust_`
 > stub'_ihs.tex"
-197.             di as txt "Writing (total, ihs): `outfile_tot_ihs'"
-198. 
+309.             di as txt "Writing (total, ihs): `outfile_tot_ihs'"
+310. 
 .             local drop_12 "1.gender 1.race_eth"
-199.             capture confirm variable age_bin
-200.             if !_rc {
-201.                 estimates restore tot_lin_ctl
-202.                 local cnames : colnames e(b)
-203.                 foreach c of local cnames {
-204.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
+311.             capture confirm variable age_bin
+312.             if !_rc {
+313.                 estimates restore tot_lin_ctl
+314.                 local cnames : colnames e(b)
+315.                 foreach c of local cnames {
+316.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
 > e_bin$") local drop_12 "`drop_12' `c'"
-205.                 }
-206.             }
-207. 
+317.                 }
+318.             }
+319. 
 .             esttab tot_lin_raw tot_quad_raw tot_lin_ctl tot_quad_ctl using "`
 > outfile_tot_ihs'", replace ///
 >                 booktabs ///
@@ -485,39 +586,20 @@
 >                 se star(* 0.10 ** 0.05 *** 0.01) ///
 >                 b(2) se(2) label ///
 >                 drop(`drop_12' *.age_bin) ///
->                 varlabels(c.`trust_var'#c.`trust_var' "(`capt_stub')\$^2\$" 2
-> .gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH O
-> ther" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020
->  "Married" born_us "Born in U.S." _cons "Constant") ///
->                 title("Total income (2020) on `capt_stub' trust (2020), scale
-> d asinh") ///
->                 addnotes("Age bins (5-yr) included in columns 3–4.") ///
+>                 varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Tr
+> ust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.ra
+> ce_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" 
+> married_2020 "Married" born_us "Born in U.S." _cons "Constant") ///
+>                 title("Total income (2020) on `trust_part' trust") ///
+>                 addnotes(".") ///
 >                 alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
->                 stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squ
-> ared" "Joint test: Trust+Trust² p-value")) ///
->                 nonumbers
-208. 
-.             tempfile tmpf_tot_ihs
-209.             file open fh using "`outfile_tot_ihs'", read text
-210.             file open fout using "`tmpf_tot_ihs'", write text replace
-211.             local lab_inserted_tot_ihs 0
-212.             file read fh line
-213.             while r(eof) == 0 {
-214.                 file write fout "`line'" _n
-215.                 if `lab_inserted_tot_ihs' == 0 & regexm(`"`line'"', "\\cap
-> tion") {
-216.                     file write fout "\label{tab:income_trust_`stub'_total_
-> ihs}" _n
-217.                     local lab_inserted_tot_ihs 1
-218.                 }
-219.                 file read fh line
-220.             }
-221.             file close fh
-222.             file close fout
-223.             copy "`tmpf_tot_ihs'" "`outfile_tot_ihs'", replace
-224.         }
-225.     }
-226. }
+>                 stats(N r2_a p_joint_trust p_joint_age_bin p_joint_race, labe
+> ls("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: A
+> ge bins p-value" "Joint test: Race p-value")) ///
+>                 nonumbers nonotes
+320.         }
+321.     }
+322. }
 
 Linear regression                               Number of obs     =        347
                                                 F(1, 345)         =       0.48
@@ -642,8 +724,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_general_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 not
-    found)
 
 Linear regression                               Number of obs     =        856
                                                 F(1, 854)         =       5.29
@@ -768,8 +848,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_general_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000005 not
-    found)
 
 Linear regression                               Number of obs     =        900
                                                 F(1, 898)         =       0.06
@@ -894,8 +972,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_general_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 not
-    found)
 
 Linear regression                               Number of obs     =        900
                                                 F(1, 898)         =       9.90
@@ -1020,8 +1096,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_general_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000007 not
-    found)
 
 Linear regression                               Number of obs     =        428
                                                 F(1, 426)         =       6.69
@@ -1144,8 +1218,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_social_security_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 not
-    found)
 
 Linear regression                               Number of obs     =        967
                                                 F(1, 965)         =       6.57
@@ -1268,8 +1340,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_social_security_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000009 not
-    found)
 
 Linear regression                               Number of obs     =      1,013
                                                 F(1, 1011)        =      23.33
@@ -1394,8 +1464,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_social_security_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a not
-    found)
 
 Linear regression                               Number of obs     =      1,013
                                                 F(1, 1011)        =       6.31
@@ -1520,8 +1588,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_social_security_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000b not
-    found)
 
 Linear regression                               Number of obs     =        429
                                                 F(1, 427)         =      11.39
@@ -1644,8 +1710,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_medicare_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000c not
-    found)
 
 Linear regression                               Number of obs     =        983
                                                 F(1, 981)         =      17.63
@@ -1768,8 +1832,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_medicare_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000d not
-    found)
 
 Linear regression                               Number of obs     =      1,029
                                                 F(1, 1027)        =      34.45
@@ -1894,8 +1956,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_medicare_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000e not
-    found)
 
 Linear regression                               Number of obs     =      1,029
                                                 F(1, 1027)        =      11.82
@@ -2020,8 +2080,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_medicare_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000f not
-    found)
 
 Linear regression                               Number of obs     =        400
                                                 F(1, 398)         =       0.03
@@ -2144,8 +2202,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_banks_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g not
-    found)
 
 Linear regression                               Number of obs     =        942
                                                 F(1, 940)         =       0.42
@@ -2268,8 +2324,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_banks_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000h not
-    found)
 
 Linear regression                               Number of obs     =        990
                                                 F(1, 988)         =       0.34
@@ -2394,8 +2448,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_banks_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000i not
-    found)
 
 Linear regression                               Number of obs     =        990
                                                 F(1, 988)         =       1.97
@@ -2520,8 +2572,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_banks_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000j not
-    found)
 
 Linear regression                               Number of obs     =        436
                                                 F(1, 434)         =       2.22
@@ -2646,8 +2696,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_advisors_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000k not
-    found)
 
 Linear regression                               Number of obs     =      1,034
                                                 F(1, 1032)        =       8.47
@@ -2772,8 +2820,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_advisors_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000l not
-    found)
 
 Linear regression                               Number of obs     =      1,080
                                                 F(1, 1078)        =       4.57
@@ -2898,8 +2944,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_advisors_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000m not
-    found)
 
 Linear regression                               Number of obs     =      1,080
                                                 F(1, 1078)        =      17.83
@@ -3024,8 +3068,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_advisors_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000n not
-    found)
 
 Linear regression                               Number of obs     =        431
                                                 F(1, 429)         =       6.95
@@ -3150,8 +3192,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_mutual_funds_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000o not
-    found)
 
 Linear regression                               Number of obs     =      1,026
                                                 F(1, 1024)        =      31.17
@@ -3276,8 +3316,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_mutual_funds_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000p not
-    found)
 
 Linear regression                               Number of obs     =      1,072
                                                 F(1, 1070)        =      17.42
@@ -3402,8 +3440,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_mutual_funds_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000q not
-    found)
 
 Linear regression                               Number of obs     =      1,072
                                                 F(1, 1070)        =      47.94
@@ -3528,8 +3564,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_mutual_funds_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000r not
-    found)
 
 Linear regression                               Number of obs     =        467
                                                 F(1, 465)         =       2.80
@@ -3654,8 +3688,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_insurance_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000s not
-    found)
 
 Linear regression                               Number of obs     =      1,095
                                                 F(1, 1093)        =       2.01
@@ -3780,8 +3812,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_insurance_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000t not
-    found)
 
 Linear regression                               Number of obs     =      1,147
                                                 F(1, 1145)        =       0.28
@@ -3906,8 +3936,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_insurance_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000u not
-    found)
 
 Linear regression                               Number of obs     =      1,147
                                                 F(1, 1145)        =       1.57
@@ -4032,8 +4060,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_insurance_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000v not
-    found)
 
 Linear regression                               Number of obs     =        500
                                                 F(1, 498)         =       0.45
@@ -4158,8 +4184,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_media_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000w not
-    found)
 
 Linear regression                               Number of obs     =      1,184
                                                 F(1, 1182)        =       0.13
@@ -4284,8 +4308,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_media_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000x not
-    found)
 
 Linear regression                               Number of obs     =      1,235
                                                 F(1, 1233)        =       0.00
@@ -4410,8 +4432,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_media_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000010 not
-    found)
 
 Linear regression                               Number of obs     =      1,235
                                                 F(1, 1233)        =       0.18
@@ -4536,8 +4556,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_media_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000011 not
-    found)
 
 Linear regression                               Number of obs     =        232
                                                 F(1, 230)         =       0.03
@@ -4656,8 +4674,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_pc1_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000012 not
-    found)
 
 Linear regression                               Number of obs     =        508
                                                 F(1, 506)         =       0.26
@@ -4776,8 +4792,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_pc1_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000013 not
-    found)
 
 Linear regression                               Number of obs     =        536
                                                 F(1, 534)         =       0.06
@@ -4898,8 +4912,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_pc1_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000014 not
-    found)
 
 Linear regression                               Number of obs     =        536
                                                 F(1, 534)         =       1.62
@@ -5020,8 +5032,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_pc1_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000015 not
-    found)
 
 Linear regression                               Number of obs     =        232
                                                 F(1, 230)         =      29.15
@@ -5140,8 +5150,6 @@ Writing (labor, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_pc2_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000016 not
-    found)
 
 Linear regression                               Number of obs     =        508
                                                 F(1, 506)         =      49.82
@@ -5260,8 +5268,6 @@ Writing (total, log): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_pc2_log.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000017 not
-    found)
 
 Linear regression                               Number of obs     =        536
                                                 F(1, 534)         =      54.59
@@ -5382,8 +5388,6 @@ Writing (labor, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results lab_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Labor/income_trust_pc2_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000018 not
-    found)
 
 Linear regression                               Number of obs     =        536
                                                 F(1, 534)         =      56.92
@@ -5504,8 +5508,6 @@ Writing (total, ihs): /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/R
 (results tot_lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Income/Total/income_trust_pc2_ihs.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000019 not
-    found)
 
 . 
 . eststo clear
@@ -5521,5 +5523,5 @@ Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regress
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/12_r
 > eg_income_trust.log
   log type:  text
- closed on:  23 Feb 2026, 10:50:01
+ closed on:  25 Feb 2026, 23:07:34
 -------------------------------------------------------------------------------

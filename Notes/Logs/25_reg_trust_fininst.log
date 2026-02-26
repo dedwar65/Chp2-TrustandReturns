@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/25_r
 > eg_trust_fininst.log
   log type:  text
- opened on:  23 Feb 2026, 11:34:01
+ opened on:  25 Feb 2026, 23:11:00
 
 . 
 . capture which esttab
@@ -240,7 +240,7 @@ Duplicates in terms of hhidpn
 . tempfile fin_trust_wide
 
 . save `fin_trust_wide'
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000005 saved
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_07824.000003 saved
     as .dta format
 
 . restore
@@ -289,51 +289,75 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000005 saved
   8.     eststo clear
   9.     eststo m1: regress r5_annual_w5_2022 `ctrl_r5' if _samp, vce(robust)
  10.     estadd scalar p_joint_trust = . : m1
- 11.     eststo m2: regress r5_annual_w5_2022 `ctrl_r5' c.`trust_agg' if _samp,
+ 11.     quietly testparm i.age_bin
+ 12.     estadd scalar p_joint_age_bin = r(p) : m1
+ 13.     local wlist ""
+ 14.     forvalues d = 2/10 {
+ 15.         capture confirm variable wealth_d`d'_2020
+ 16.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+ 17.     }
+ 18.     if trim("`wlist'") != "" {
+ 19.         quietly testparm `wlist'
+ 20.         estadd scalar p_joint_wealth = r(p) : m1
+ 21.     }
+ 22.     else estadd scalar p_joint_wealth = . : m1
+ 23.     quietly testparm i.race_eth
+ 24.     estadd scalar p_joint_race = r(p) : m1
+ 25.     eststo m2: regress r5_annual_w5_2022 `ctrl_r5' c.`trust_agg' if _samp,
 >  vce(robust)
- 12.     estadd scalar p_joint_trust = . : m2
- 13.     eststo m3: regress r5_annual_w5_2022 `ctrl_r5' c.`trust_agg' c.`trust_
+ 26.     estadd scalar p_joint_trust = . : m2
+ 27.     quietly testparm i.age_bin
+ 28.     estadd scalar p_joint_age_bin = r(p) : m2
+ 29.     local wlist ""
+ 30.     forvalues d = 2/10 {
+ 31.         capture confirm variable wealth_d`d'_2020
+ 32.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+ 33.     }
+ 34.     if trim("`wlist'") != "" {
+ 35.         quietly testparm `wlist'
+ 36.         estadd scalar p_joint_wealth = r(p) : m2
+ 37.     }
+ 38.     else estadd scalar p_joint_wealth = . : m2
+ 39.     quietly testparm i.race_eth
+ 40.     estadd scalar p_joint_race = r(p) : m2
+ 41.     eststo m3: regress r5_annual_w5_2022 `ctrl_r5' c.`trust_agg' c.`trust_
 > agg'#c.`trust_agg' if _samp, vce(robust)
- 14.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
- 15.     estadd scalar p_joint_trust = r(p) : m3
- 16.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_cross_section.te
+ 42.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
+ 43.     estadd scalar p_joint_trust = r(p) : m3
+ 44.     quietly testparm i.age_bin
+ 45.     estadd scalar p_joint_age_bin = r(p) : m3
+ 46.     local wlist ""
+ 47.     forvalues d = 2/10 {
+ 48.         capture confirm variable wealth_d`d'_2020
+ 49.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+ 50.     }
+ 51.     if trim("`wlist'") != "" {
+ 52.         quietly testparm `wlist'
+ 53.         estadd scalar p_joint_wealth = r(p) : m3
+ 54.     }
+ 55.     else estadd scalar p_joint_wealth = . : m3
+ 56.     quietly testparm i.race_eth
+ 57.     estadd scalar p_joint_race = r(p) : m3
+ 58.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_cross_section.te
 > x", replace ///
 >         booktabs mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_cs') ///
->         varlabels(`trust_agg' "`tlab'" c.`trust_agg'#c.`trust_agg' "(`tlab')\
-> $^2\$" ///
+>         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\
+> $" ///
 >             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.r
 > ace_eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" ma
 > rried_2020 "Married" born_us "Born in U.S.") ///
->         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "J
-> oint test: Trust p-value")) ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint 
+> test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Rac
+> e p-value")) ///
 >         title("Cross section: r5 returns (${LATEX_PCT} wins) on financial-ins
 > titutional trust") ///
->         addnotes("Robust SE. Age bins (5-yr) and wealth deciles omitted from 
-> table but included in regressions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
- 17.     tempfile tmpf
- 18.     file open fh using "`FININST_TAB'/fin_trust_`stub'_cross_section.tex",
->  read text
- 19.     file open fout using "`tmpf'", write text replace
- 20.     local lab_ins 0
- 21.     file read fh line
- 22.     while r(eof) == 0 {
- 23.         file write fout "`line'" _n
- 24.         if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
- 25.             file write fout "\label{tab:fin_trust_`stub'_cross_section}" _
-> n
- 26.             local lab_ins 1
- 27.         }
- 28.         file read fh line
- 29.     }
- 30.     file close fh
- 31.     file close fout
- 32.     copy "`tmpf'" "`FININST_TAB'/fin_trust_`stub'_cross_section.tex", repl
-> ace
- 33.     drop _samp
- 34. }
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+ 59.     drop _samp
+ 60. }
   trust_fin_pc1_wgen_2020: N = 329
 
 Linear regression                               Number of obs     =        271
@@ -474,8 +498,6 @@ t~1_wgen_2~0 |   .0022536   .0083543     0.27   0.788    -.0142024    .0187097
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc1_wgen_cross_section.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 not
-    found)
   trust_fin_pc2_wgen_2020: N = 329
 
 Linear regression                               Number of obs     =        271
@@ -616,8 +638,6 @@ t~2_wgen_2~0 |   .0102544   .0231843     0.44   0.659    -.0354136    .0559223
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc2_wgen_cross_section.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000007 not
-    found)
   trust_fin_avg_2020: N = 718
 
 Linear regression                               Number of obs     =        585
@@ -764,8 +784,6 @@ trust~g_2020 |   .0008061   .0023423     0.34   0.731    -.0037947    .0054069
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_avg_cross_section.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 not
-    found)
 
 . 
 . * ----------------------------------------------------------------------
@@ -799,48 +817,75 @@ trust~g_2020 |   .0008061   .0023423     0.34   0.731    -.0037947    .0054069
   8.     eststo clear
   9.     eststo m1: regress r5_annual_avg_w5 `ctrl_r5' if _samp, vce(robust)
  10.     estadd scalar p_joint_trust = . : m1
- 11.     eststo m2: regress r5_annual_avg_w5 `ctrl_r5' c.`trust_agg' if _samp, 
+ 11.     quietly testparm i.age_bin
+ 12.     estadd scalar p_joint_age_bin = r(p) : m1
+ 13.     local wlist ""
+ 14.     forvalues d = 2/10 {
+ 15.         capture confirm variable wealth_d`d'_2020
+ 16.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+ 17.     }
+ 18.     if trim("`wlist'") != "" {
+ 19.         quietly testparm `wlist'
+ 20.         estadd scalar p_joint_wealth = r(p) : m1
+ 21.     }
+ 22.     else estadd scalar p_joint_wealth = . : m1
+ 23.     quietly testparm i.race_eth
+ 24.     estadd scalar p_joint_race = r(p) : m1
+ 25.     eststo m2: regress r5_annual_avg_w5 `ctrl_r5' c.`trust_agg' if _samp, 
 > vce(robust)
- 12.     estadd scalar p_joint_trust = . : m2
- 13.     eststo m3: regress r5_annual_avg_w5 `ctrl_r5' c.`trust_agg' c.`trust_a
+ 26.     estadd scalar p_joint_trust = . : m2
+ 27.     quietly testparm i.age_bin
+ 28.     estadd scalar p_joint_age_bin = r(p) : m2
+ 29.     local wlist ""
+ 30.     forvalues d = 2/10 {
+ 31.         capture confirm variable wealth_d`d'_2020
+ 32.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+ 33.     }
+ 34.     if trim("`wlist'") != "" {
+ 35.         quietly testparm `wlist'
+ 36.         estadd scalar p_joint_wealth = r(p) : m2
+ 37.     }
+ 38.     else estadd scalar p_joint_wealth = . : m2
+ 39.     quietly testparm i.race_eth
+ 40.     estadd scalar p_joint_race = r(p) : m2
+ 41.     eststo m3: regress r5_annual_avg_w5 `ctrl_r5' c.`trust_agg' c.`trust_a
 > gg'#c.`trust_agg' if _samp, vce(robust)
- 14.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
- 15.     estadd scalar p_joint_trust = r(p) : m3
- 16.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_avg.tex", replac
+ 42.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
+ 43.     estadd scalar p_joint_trust = r(p) : m3
+ 44.     quietly testparm i.age_bin
+ 45.     estadd scalar p_joint_age_bin = r(p) : m3
+ 46.     local wlist ""
+ 47.     forvalues d = 2/10 {
+ 48.         capture confirm variable wealth_d`d'_2020
+ 49.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+ 50.     }
+ 51.     if trim("`wlist'") != "" {
+ 52.         quietly testparm `wlist'
+ 53.         estadd scalar p_joint_wealth = r(p) : m3
+ 54.     }
+ 55.     else estadd scalar p_joint_wealth = . : m3
+ 56.     quietly testparm i.race_eth
+ 57.     estadd scalar p_joint_race = r(p) : m3
+ 58.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_avg.tex", replac
 > e ///
 >         booktabs mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_cs') ///
->         varlabels(`trust_agg' "`tlab'" c.`trust_agg'#c.`trust_agg' "(`tlab')\
-> $^2\$" ///
+>         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\
+> $" ///
 >             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.r
 > ace_eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" ma
 > rried_2020 "Married" born_us "Born in U.S.") ///
->         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "J
-> oint test: Trust p-value")) ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint 
+> test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Rac
+> e p-value")) ///
 >         title("Average r5 returns (${LATEX_PCT} wins) on financial-institutio
 > nal trust") ///
->         addnotes("Robust SE. Age bins (5-yr) and wealth deciles omitted from 
-> table but included in regressions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
- 17.     tempfile tmpf
- 18.     file open fh using "`FININST_TAB'/fin_trust_`stub'_avg.tex", read text
- 19.     file open fout using "`tmpf'", write text replace
- 20.     local lab_ins 0
- 21.     file read fh line
- 22.     while r(eof) == 0 {
- 23.         file write fout "`line'" _n
- 24.         if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
- 25.             file write fout "\label{tab:fin_trust_`stub'_avg}" _n
- 26.             local lab_ins 1
- 27.         }
- 28.         file read fh line
- 29.     }
- 30.     file close fh
- 31.     file close fout
- 32.     copy "`tmpf'" "`FININST_TAB'/fin_trust_`stub'_avg.tex", replace
- 33.     drop _samp
- 34. }
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+ 59.     drop _samp
+ 60. }
   trust_fin_pc1_wgen_2020: N = 526
 
 Linear regression                               Number of obs     =        411
@@ -984,8 +1029,6 @@ t~1_wgen_2~0 |  -.0108629   .0050735    -2.14   0.033    -.0208383   -.0008875
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc1_wgen_avg.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000009 not
-    found)
   trust_fin_pc2_wgen_2020: N = 526
 
 Linear regression                               Number of obs     =        411
@@ -1129,8 +1172,6 @@ t~2_wgen_2~0 |   .0026567   .0103948     0.26   0.798    -.0177815    .0230949
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc2_wgen_avg.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a not
-    found)
   trust_fin_avg_2020: N = 1050
 
 Linear regression                               Number of obs     =        833
@@ -1277,8 +1318,6 @@ trust~g_2020 |  -.0018427   .0013714    -1.34   0.179    -.0045347    .0008493
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_avg_avg.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000b not
-    found)
 
 . 
 . * ----------------------------------------------------------------------
@@ -1349,172 +1388,236 @@ Panel variable: hhidpn (strongly balanced)
   9.     eststo m1: regress r5_annual_w5 `base_ctrl' if _samp, vce(cluster hhid
 > pn)
  10.     estadd scalar p_joint_trust = . : m1
- 11.     eststo m2: regress r5_annual_w5 `base_ctrl' c.`trust_agg' if _samp, vc
+ 11.     quietly testparm i.age_bin
+ 12.     estadd scalar p_joint_age_bin = r(p) : m1
+ 13.     local wlist ""
+ 14.     forvalues d = 2/10 {
+ 15.         capture confirm variable wealth_d`d'
+ 16.         if !_rc local wlist "`wlist' wealth_d`d'"
+ 17.     }
+ 18.     if trim("`wlist'") != "" {
+ 19.         quietly testparm `wlist'
+ 20.         estadd scalar p_joint_wealth = r(p) : m1
+ 21.     }
+ 22.     else estadd scalar p_joint_wealth = . : m1
+ 23.     quietly testparm i.race_eth
+ 24.     estadd scalar p_joint_race = r(p) : m1
+ 25.     capture testparm i.censreg
+ 26.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+ 27.     else estadd scalar p_joint_censreg = . : m1
+ 28.     eststo m2: regress r5_annual_w5 `base_ctrl' c.`trust_agg' if _samp, vc
 > e(cluster hhidpn)
- 12.     estadd scalar p_joint_trust = . : m2
- 13.     eststo m3: regress r5_annual_w5 `base_ctrl' c.`trust_agg' c.`trust_agg
+ 29.     estadd scalar p_joint_trust = . : m2
+ 30.     quietly testparm i.age_bin
+ 31.     estadd scalar p_joint_age_bin = r(p) : m2
+ 32.     local wlist ""
+ 33.     forvalues d = 2/10 {
+ 34.         capture confirm variable wealth_d`d'
+ 35.         if !_rc local wlist "`wlist' wealth_d`d'"
+ 36.     }
+ 37.     if trim("`wlist'") != "" {
+ 38.         quietly testparm `wlist'
+ 39.         estadd scalar p_joint_wealth = r(p) : m2
+ 40.     }
+ 41.     else estadd scalar p_joint_wealth = . : m2
+ 42.     quietly testparm i.race_eth
+ 43.     estadd scalar p_joint_race = r(p) : m2
+ 44.     capture testparm i.censreg
+ 45.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+ 46.     else estadd scalar p_joint_censreg = . : m2
+ 47.     eststo m3: regress r5_annual_w5 `base_ctrl' c.`trust_agg' c.`trust_agg
 > '#c.`trust_agg' if _samp, vce(cluster hhidpn)
- 14.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
- 15.     estadd scalar p_joint_trust = r(p) : m3
- 16.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_panel1.tex", rep
+ 48.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
+ 49.     estadd scalar p_joint_trust = r(p) : m3
+ 50.     quietly testparm i.age_bin
+ 51.     estadd scalar p_joint_age_bin = r(p) : m3
+ 52.     local wlist ""
+ 53.     forvalues d = 2/10 {
+ 54.         capture confirm variable wealth_d`d'
+ 55.         if !_rc local wlist "`wlist' wealth_d`d'"
+ 56.     }
+ 57.     if trim("`wlist'") != "" {
+ 58.         quietly testparm `wlist'
+ 59.         estadd scalar p_joint_wealth = r(p) : m3
+ 60.     }
+ 61.     else estadd scalar p_joint_wealth = . : m3
+ 62.     quietly testparm i.race_eth
+ 63.     estadd scalar p_joint_race = r(p) : m3
+ 64.     capture testparm i.censreg
+ 65.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+ 66.     else estadd scalar p_joint_censreg = . : m3
+ 67.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_panel1.tex", rep
 > lace ///
 >         booktabs mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_p') ///
->         varlabels(`trust_agg' "`tlab'" c.`trust_agg'#c.`trust_agg' "(`tlab')\
-> $^2\$" ///
+>         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\
+> $" ///
 >             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.r
-> ace_eth "NH Other" educ_yrs "Years education" inlbrf_ "Employed" married_ "Ma
-> rried" born_us "Born in U.S.") ///
->         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "J
-> oint test: Trust p-value")) ///
+> ace_eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" marrie
+> d_ "Married" born_us "Born in U.S.") ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e p_joint_censreg, labels("Observations" "Adj. R-squared" "Joint test: Trust 
+> p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" 
+> "Joint test: Race p-value" "Joint test: Region p-value")) ///
 >         title("Panel Spec 1 (pooled): r5 returns on financial-institutional t
 > rust") ///
->         addnotes("Cluster-robust SE. Age bins (5-yr), wealth deciles, and reg
-> ion dummies omitted from table but included in regressions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
- 17.     tempfile tmpf
- 18.     file open fh using "`FININST_TAB'/fin_trust_`stub'_panel1.tex", read t
-> ext
- 19.     file open fout using "`tmpf'", write text replace
- 20.     local lab_ins 0
- 21.     file read fh line
- 22.     while r(eof) == 0 {
- 23.         file write fout "`line'" _n
- 24.         if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
- 25.             file write fout "\label{tab:fin_trust_`stub'_panel1}" _n
- 26.             local lab_ins 1
- 27.         }
- 28.         file read fh line
- 29.     }
- 30.     file close fh
- 31.     file close fout
- 32.     copy "`tmpf'" "`FININST_TAB'/fin_trust_`stub'_panel1.tex", replace
- 33. 
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+ 68. 
 .     * Spec 2 (share×year)
 .     eststo clear
- 34.     eststo m1: regress r5_annual_w5 `ctrl_s2' if _samp, vce(cluster hhidpn
+ 69.     eststo m1: regress r5_annual_w5 `ctrl_s2' if _samp, vce(cluster hhidpn
 > )
- 35.     estadd scalar p_joint_trust = . : m1
- 36.     eststo m2: regress r5_annual_w5 `ctrl_s2' c.`trust_agg' if _samp, vce(
+ 70.     estadd scalar p_joint_trust = . : m1
+ 71.     quietly testparm i.age_bin
+ 72.     estadd scalar p_joint_age_bin = r(p) : m1
+ 73.     local wlist ""
+ 74.     forvalues d = 2/10 {
+ 75.         capture confirm variable wealth_d`d'
+ 76.         if !_rc local wlist "`wlist' wealth_d`d'"
+ 77.     }
+ 78.     if trim("`wlist'") != "" {
+ 79.         quietly testparm `wlist'
+ 80.         estadd scalar p_joint_wealth = r(p) : m1
+ 81.     }
+ 82.     else estadd scalar p_joint_wealth = . : m1
+ 83.     quietly testparm i.race_eth
+ 84.     estadd scalar p_joint_race = r(p) : m1
+ 85.     capture testparm i.censreg
+ 86.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+ 87.     else estadd scalar p_joint_censreg = . : m1
+ 88.     quietly testparm i.year
+ 89.     estadd scalar p_joint_year = r(p) : m1
+ 90.     eststo m2: regress r5_annual_w5 `ctrl_s2' c.`trust_agg' if _samp, vce(
 > cluster hhidpn)
- 37.     estadd scalar p_joint_trust = . : m2
- 38.     eststo m3: regress r5_annual_w5 `ctrl_s2' c.`trust_agg' c.`trust_agg'#
+ 91.     estadd scalar p_joint_trust = . : m2
+ 92.     quietly testparm i.age_bin
+ 93.     estadd scalar p_joint_age_bin = r(p) : m2
+ 94.     local wlist ""
+ 95.     forvalues d = 2/10 {
+ 96.         capture confirm variable wealth_d`d'
+ 97.         if !_rc local wlist "`wlist' wealth_d`d'"
+ 98.     }
+ 99.     if trim("`wlist'") != "" {
+100.         quietly testparm `wlist'
+101.         estadd scalar p_joint_wealth = r(p) : m2
+102.     }
+103.     else estadd scalar p_joint_wealth = . : m2
+104.     quietly testparm i.race_eth
+105.     estadd scalar p_joint_race = r(p) : m2
+106.     capture testparm i.censreg
+107.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+108.     else estadd scalar p_joint_censreg = . : m2
+109.     quietly testparm i.year
+110.     estadd scalar p_joint_year = r(p) : m2
+111.     eststo m3: regress r5_annual_w5 `ctrl_s2' c.`trust_agg' c.`trust_agg'#
 > c.`trust_agg' if _samp, vce(cluster hhidpn)
- 39.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
- 40.     estadd scalar p_joint_trust = r(p) : m3
- 41.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_panel2.tex", rep
+112.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
+113.     estadd scalar p_joint_trust = r(p) : m3
+114.     quietly testparm i.age_bin
+115.     estadd scalar p_joint_age_bin = r(p) : m3
+116.     local wlist ""
+117.     forvalues d = 2/10 {
+118.         capture confirm variable wealth_d`d'
+119.         if !_rc local wlist "`wlist' wealth_d`d'"
+120.     }
+121.     if trim("`wlist'") != "" {
+122.         quietly testparm `wlist'
+123.         estadd scalar p_joint_wealth = r(p) : m3
+124.     }
+125.     else estadd scalar p_joint_wealth = . : m3
+126.     quietly testparm i.race_eth
+127.     estadd scalar p_joint_race = r(p) : m3
+128.     capture testparm i.censreg
+129.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+130.     else estadd scalar p_joint_censreg = . : m3
+131.     quietly testparm i.year
+132.     estadd scalar p_joint_year = r(p) : m3
+133.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_panel2.tex", rep
 > lace ///
 >         booktabs mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_p') ///
->         varlabels(`trust_agg' "`tlab'" c.`trust_agg'#c.`trust_agg' "(`tlab')\
-> $^2\$" ///
+>         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\
+> $" ///
 >             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.r
-> ace_eth "NH Other" educ_yrs "Years education" inlbrf_ "Employed" married_ "Ma
-> rried" born_us "Born in U.S.") ///
->         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "J
-> oint test: Trust p-value")) ///
+> ace_eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" marrie
+> d_ "Married" born_us "Born in U.S.") ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e p_joint_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint
+>  test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deci
+> les p-value" "Joint test: Race p-value" "Joint test: Region p-value" "Joint t
+> est: Year p-value")) ///
 >         title("Panel Spec 2 (${LATEX_SHARE_YEAR}): r5 returns on financial-in
 > stitutional trust") ///
->         addnotes("Cluster-robust SE. Age bins (5-yr), wealth deciles, region 
-> dummies," "and share x year interactions omitted from table but included in r
-> egressions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
- 42.     tempfile tmpf
- 43.     file open fh using "`FININST_TAB'/fin_trust_`stub'_panel2.tex", read t
-> ext
- 44.     file open fout using "`tmpf'", write text replace
- 45.     local lab_ins 0
- 46.     file read fh line
- 47.     while r(eof) == 0 {
- 48.         file write fout "`line'" _n
- 49.         if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
- 50.             file write fout "\label{tab:fin_trust_`stub'_panel2}" _n
- 51.             local lab_ins 1
- 52.         }
- 53.         file read fh line
- 54.     }
- 55.     file close fh
- 56.     file close fout
- 57.     copy "`tmpf'" "`FININST_TAB'/fin_trust_`stub'_panel2.tex", replace
- 58. 
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+134. 
 .     * Spec 3 (FE + second stage)
 .     local ctrl_fe "i.age_bin inlbrf married i.year"
- 59.     forvalues d = 2/10 {
- 60.         capture confirm variable wealth_d`d'
- 61.         if !_rc local ctrl_fe "`ctrl_fe' wealth_d`d'"
- 62.     }
- 63.     local ctrl_fe "`ctrl_fe' c.share_core##i.year c.share_ira##i.year c.sh
+135.     forvalues d = 2/10 {
+136.         capture confirm variable wealth_d`d'
+137.         if !_rc local ctrl_fe "`ctrl_fe' wealth_d`d'"
+138.     }
+139.     local ctrl_fe "`ctrl_fe' c.share_core##i.year c.share_ira##i.year c.sh
 > are_res##i.year c.share_debt_long##i.year c.share_debt_other##i.year"
- 64.     gen byte _fe_cond = `share_cond' & !missing(`trust_agg')
- 65.     capture drop _fe_r5 fe_r5
- 66.     quietly xtreg r5_annual_w5 `ctrl_fe' if _fe_cond, fe vce(cluster hhidp
+140.     gen byte _fe_cond = `share_cond' & !missing(`trust_agg')
+141.     capture drop _fe_r5 fe_r5
+142.     quietly xtreg r5_annual_w5 `ctrl_fe' if _fe_cond, fe vce(cluster hhidp
 > n)
- 67.     if _rc {
- 68.         display "  xtreg failed for `trust_agg'"
- 69.         drop _samp _fe_cond
- 70.         continue
- 71.     }
- 72.     predict _fe_r5 if e(sample)
- 73.     bysort hhidpn: egen fe_r5 = mean(_fe_r5)
- 74.     preserve
- 75.     keep if !missing(fe_r5)
- 76.     keep hhidpn fe_r5 educ_yrs gender race_eth born_us `trust_agg'
- 77.     collapse (first) fe_r5 educ_yrs gender race_eth born_us `trust_agg', b
+143.     if _rc {
+144.         display "  xtreg failed for `trust_agg'"
+145.         drop _samp _fe_cond
+146.         continue
+147.     }
+148.     predict _fe_r5 if e(sample)
+149.     bysort hhidpn: egen fe_r5 = mean(_fe_r5)
+150.     preserve
+151.     keep if !missing(fe_r5)
+152.     keep hhidpn fe_r5 educ_yrs gender race_eth born_us `trust_agg'
+153.     collapse (first) fe_r5 educ_yrs gender race_eth born_us `trust_agg', b
 > y(hhidpn)
- 78.     gen byte _fe_samp = !missing(fe_r5) & !missing(`trust_agg')
- 79.     quietly count if _fe_samp
- 80.     display "  N (persons) = " r(N)
- 81.     local keep_p3 "`trust_agg' c.`trust_agg'#c.`trust_agg' educ_yrs 2.gend
+154.     gen byte _fe_samp = !missing(fe_r5) & !missing(`trust_agg')
+155.     quietly count if _fe_samp
+156.     display "  N (persons) = " r(N)
+157.     local keep_p3 "`trust_agg' c.`trust_agg'#c.`trust_agg' educ_yrs 2.gend
 > er 2.race_eth 3.race_eth 4.race_eth born_us _cons"
- 82.     eststo clear
- 83.     eststo m1: regress fe_r5 educ_yrs i.gender i.race_eth born_us if _fe_s
+158.     eststo clear
+159.     eststo m1: regress fe_r5 educ_yrs i.gender i.race_eth born_us if _fe_s
 > amp, vce(robust)
- 84.     estadd scalar p_joint_trust = . : m1
- 85.     eststo m2: regress fe_r5 educ_yrs i.gender i.race_eth born_us c.`trust
+160.     estadd scalar p_joint_trust = . : m1
+161.     quietly testparm i.race_eth
+162.     estadd scalar p_joint_race = r(p) : m1
+163.     eststo m2: regress fe_r5 educ_yrs i.gender i.race_eth born_us c.`trust
 > _agg' if _fe_samp, vce(robust)
- 86.     estadd scalar p_joint_trust = . : m2
- 87.     eststo m3: regress fe_r5 educ_yrs i.gender i.race_eth born_us c.`trust
+164.     estadd scalar p_joint_trust = . : m2
+165.     quietly testparm i.race_eth
+166.     estadd scalar p_joint_race = r(p) : m2
+167.     eststo m3: regress fe_r5 educ_yrs i.gender i.race_eth born_us c.`trust
 > _agg' c.`trust_agg'#c.`trust_agg' if _fe_samp, vce(robust)
- 88.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
- 89.     estadd scalar p_joint_trust = r(p) : m3
- 90.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_panel3.tex", rep
+168.     quietly testparm c.`trust_agg' c.`trust_agg'#c.`trust_agg'
+169.     estadd scalar p_joint_trust = r(p) : m3
+170.     quietly testparm i.race_eth
+171.     estadd scalar p_joint_race = r(p) : m3
+172.     esttab m1 m2 m3 using "`FININST_TAB'/fin_trust_`stub'_panel3.tex", rep
 > lace ///
 >         booktabs mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_p3') ///
->         varlabels(`trust_agg' "`tlab'" c.`trust_agg'#c.`trust_agg' "(`tlab')\
-> $^2\$" ///
+>         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\
+> $" ///
 >             educ_yrs "Years education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S.") ///
->         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "J
-> oint test: Trust p-value")) ///
+>         stats(N r2_a p_joint_trust p_joint_race, labels("Observations" "Adj. 
+> R-squared" "Joint test: Trust p-value" "Joint test: Race p-value")) ///
 >         title("Panel Spec 3 (FE, 2nd stage): r5 returns on financial-institut
 > ional trust") ///
->         addnotes("Second-stage: FE from within regression on time-invariant +
->  trust. Robust SE.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
- 91.     tempfile tmpf
- 92.     file open fh using "`FININST_TAB'/fin_trust_`stub'_panel3.tex", read t
-> ext
- 93.     file open fout using "`tmpf'", write text replace
- 94.     local lab_ins 0
- 95.     file read fh line
- 96.     while r(eof) == 0 {
- 97.         file write fout "`line'" _n
- 98.         if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
- 99.             file write fout "\label{tab:fin_trust_`stub'_panel3}" _n
-100.             local lab_ins 1
-101.         }
-102.         file read fh line
-103.     }
-104.     file close fh
-105.     file close fout
-106.     copy "`tmpf'" "`FININST_TAB'/fin_trust_`stub'_panel3.tex", replace
-107.     restore
-108.     drop _fe_r5 fe_r5 _samp _fe_cond
-109. }
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+173.     restore
+174.     drop _fe_r5 fe_r5 _samp _fe_cond
+175. }
   trust_fin_pc1_wgen_2020: N (obs) = 2703
 
 Linear regression                               Number of obs     =      1,864
@@ -1688,8 +1791,6 @@ t~1_wgen_2~0 |  -.0035029   .0027243    -1.29   0.199    -.0088595    .0018537
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc1_wgen_panel1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000c not
-    found)
 
 Linear regression                               Number of obs     =      1,864
                                                 F(94, 381)        =          .
@@ -2129,8 +2230,6 @@ t~1_wgen_2~0 |  -.0029751   .0028311    -1.05   0.294    -.0085417    .0025914
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc1_wgen_panel2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000d not
-    found)
 (option xb assumed; fitted values)
 (540,920 missing values generated)
 (538,152 missing values generated)
@@ -2212,8 +2311,6 @@ trust_f~2020 |  -.0094289   .0043943    -2.15   0.033    -.0180694   -.0007884
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc1_wgen_panel3.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000f not
-    found)
   trust_fin_pc2_wgen_2020: N (obs) = 2703
 
 Linear regression                               Number of obs     =      1,864
@@ -2387,8 +2484,6 @@ t~2_wgen_2~0 |  -.0016016   .0071942    -0.22   0.824    -.0157468    .0125437
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc2_wgen_panel1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g not
-    found)
 
 Linear regression                               Number of obs     =      1,864
                                                 F(94, 381)        =          .
@@ -2828,8 +2923,6 @@ t~2_wgen_2~0 |   .0033504   .0073576     0.46   0.649    -.0111161     .017817
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc2_wgen_panel2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000h not
-    found)
 (option xb assumed; fitted values)
 (540,920 missing values generated)
 (538,152 missing values generated)
@@ -2911,8 +3004,6 @@ trust_f~2020 |  -.0177193   .0091389    -1.94   0.053    -.0356892    .0002505
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_pc2_wgen_panel3.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000j not
-    found)
   trust_fin_avg_2020: N (obs) = 5931
 
 Linear regression                               Number of obs     =      4,219
@@ -3086,8 +3177,6 @@ trust~g_2020 |  -.0005617   .0007416    -0.76   0.449    -.0020174     .000894
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_avg_panel1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000k not
-    found)
 
 Linear regression                               Number of obs     =      4,219
                                                 F(97, 792)        =     247.41
@@ -3527,8 +3616,6 @@ trust~g_2020 |  -.0003199   .0007644    -0.42   0.676    -.0018204    .0011806
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_avg_panel2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000l not
-    found)
 (option xb assumed; fitted values)
 (538,547 missing values generated)
 (533,184 missing values generated)
@@ -3610,8 +3697,6 @@ trust_f~2020 |  -.0037161    .001293    -2.87   0.004    -.0062543   -.0011779
 ------------------------------------------------------------------------------
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/FinInst/fin_trust_avg_panel3.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000n not
-    found)
 
 . 
 . display _n "Done. Tables saved to `FININST_TAB'"
@@ -3628,5 +3713,5 @@ Log: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/25_reg_trust
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/25_r
 > eg_trust_fininst.log
   log type:  text
- closed on:  23 Feb 2026, 11:34:34
+ closed on:  25 Feb 2026, 23:11:45
 -------------------------------------------------------------------------------

@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/15_p
 > anel_reg_ret_shares.log
   log type:  text
- opened on:  23 Feb 2026, 10:50:22
+ opened on:  25 Feb 2026, 23:08:25
 
 . 
 . capture which esttab
@@ -132,134 +132,299 @@ Panel variable: hhidpn (strongly balanced)
  25.     di as txt _n "--- Raw `ret_label' ---"
  26.     eststo m1: regress `yvar' `ctrl' if !missing(`yvar') & `share_cond', v
 > ce(cluster hhidpn)
- 27.     * Joint tests: share×year per asset class (share_X × year dummies)
-.     if "`ret'" == "r1" {
- 28.         quietly testparm c.share_core#i.year
- 29.         estadd scalar p_joint_share_core = r(p) : m1
- 30.     }
- 31.     if "`ret'" == "r4" {
- 32.         quietly testparm c.share_core#i.year
- 33.         estadd scalar p_joint_share_core = r(p) : m1
- 34.         quietly testparm c.share_ira#i.year
- 35.         estadd scalar p_joint_share_ira = r(p) : m1
+ 27.     estadd scalar p_joint_trust = . : m1
+ 28.     quietly testparm i.age_bin
+ 29.     estadd scalar p_joint_age_bin = r(p) : m1
+ 30.     local wlist ""
+ 31.     if "`ret'" == "r1" {
+ 32.         forvalues d = 2/10 {
+ 33.             capture confirm variable wealth_core_d`d'
+ 34.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+ 35.         }
  36.     }
- 37.     if "`ret'" == "r5" {
- 38.         quietly testparm c.share_core#i.year
- 39.         estadd scalar p_joint_share_core = r(p) : m1
- 40.         quietly testparm c.share_ira#i.year
- 41.         estadd scalar p_joint_share_ira = r(p) : m1
- 42.         quietly testparm c.share_res#i.year
- 43.         estadd scalar p_joint_share_res = r(p) : m1
- 44.         quietly testparm c.share_debt_long#i.year
- 45.         estadd scalar p_joint_share_debt_long = r(p) : m1
- 46.         quietly testparm c.share_debt_other#i.year
- 47.         estadd scalar p_joint_share_debt_other = r(p) : m1
+ 37.     if "`ret'" == "r4" {
+ 38.         forvalues d = 2/10 {
+ 39.             capture confirm variable wealth_coreira_d`d'
+ 40.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+ 41.         }
+ 42.     }
+ 43.     if "`ret'" == "r5" {
+ 44.         forvalues d = 2/10 {
+ 45.             capture confirm variable wealth_d`d'
+ 46.             if !_rc local wlist "`wlist' wealth_d`d'"
+ 47.         }
  48.     }
- 49.     * Keep only main coefficients (age, year, censreg, wealth, share×year 
+ 49.     if trim("`wlist'") != "" {
+ 50.         quietly testparm `wlist'
+ 51.         estadd scalar p_joint_wealth = r(p) : m1
+ 52.     }
+ 53.     else estadd scalar p_joint_wealth = . : m1
+ 54.     quietly testparm i.race_eth
+ 55.     estadd scalar p_joint_race = r(p) : m1
+ 56.     capture testparm i.censreg
+ 57.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+ 58.     else estadd scalar p_joint_censreg = . : m1
+ 59.     quietly testparm i.year
+ 60.     estadd scalar p_joint_year = r(p) : m1
+ 61.     if "`ret'" == "r1" {
+ 62.         capture testparm share_core
+ 63.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m1
+ 64.         else estadd scalar p_joint_share_asset = . : m1
+ 65.         estadd scalar p_joint_share_debt = . : m1
+ 66.     }
+ 67.     if "`ret'" == "r4" {
+ 68.         capture testparm share_core share_ira
+ 69.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m1
+ 70.         else estadd scalar p_joint_share_asset = . : m1
+ 71.         estadd scalar p_joint_share_debt = . : m1
+ 72.     }
+ 73.     if "`ret'" == "r5" {
+ 74.         capture testparm share_core share_ira share_res
+ 75.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m1
+ 76.         else estadd scalar p_joint_share_asset = . : m1
+ 77.         capture testparm share_debt_long share_debt_other
+ 78.         if _rc == 0 estadd scalar p_joint_share_debt = r(p) : m1
+ 79.         else estadd scalar p_joint_share_debt = . : m1
+ 80.     }
+ 81.     * Joint tests: share×year per asset class (share_X × year dummies)
+.     if "`ret'" == "r1" {
+ 82.         quietly testparm c.share_core#i.year
+ 83.         estadd scalar p_joint_share_core = r(p) : m1
+ 84.     }
+ 85.     if "`ret'" == "r4" {
+ 86.         quietly testparm c.share_core#i.year
+ 87.         estadd scalar p_joint_share_core = r(p) : m1
+ 88.         quietly testparm c.share_ira#i.year
+ 89.         estadd scalar p_joint_share_ira = r(p) : m1
+ 90.     }
+ 91.     if "`ret'" == "r5" {
+ 92.         quietly testparm c.share_core#i.year
+ 93.         estadd scalar p_joint_share_core = r(p) : m1
+ 94.         quietly testparm c.share_ira#i.year
+ 95.         estadd scalar p_joint_share_ira = r(p) : m1
+ 96.         quietly testparm c.share_res#i.year
+ 97.         estadd scalar p_joint_share_res = r(p) : m1
+ 98.         quietly testparm c.share_debt_long#i.year
+ 99.         estadd scalar p_joint_share_debt_long = r(p) : m1
+100.         quietly testparm c.share_debt_other#i.year
+101.         estadd scalar p_joint_share_debt_other = r(p) : m1
+102.     }
+103.     * Keep only main coefficients (age, year, censreg, wealth, share×year 
 > omitted)
 .     if "`ret'" == "r1" local keep_list "educ_yrs 2.gender 2.race_eth 3.race_e
 > th 4.race_eth inlbrf_ married_ born_us share_core `trust_var' c.`trust_var'#c
 > .`trust_var' _cons"
- 50.     if "`ret'" == "r4" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
+104.     if "`ret'" == "r4" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
 > e_eth 4.race_eth inlbrf_ married_ born_us share_core share_ira `trust_var' c.
 > `trust_var'#c.`trust_var' _cons"
- 51.     if "`ret'" == "r5" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
+105.     if "`ret'" == "r5" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
 > e_eth 4.race_eth inlbrf_ married_ born_us share_core share_ira share_res shar
 > e_debt_long share_debt_other `trust_var' c.`trust_var'#c.`trust_var' _cons"
- 52.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
+106.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
 > missing(`trust_var') & `share_cond', vce(cluster hhidpn)
- 53.     if "`ret'" == "r1" {
- 54.         quietly testparm c.share_core#i.year
- 55.         estadd scalar p_joint_share_core = r(p) : m2
- 56.     }
- 57.     if "`ret'" == "r4" {
- 58.         quietly testparm c.share_core#i.year
- 59.         estadd scalar p_joint_share_core = r(p) : m2
- 60.         quietly testparm c.share_ira#i.year
- 61.         estadd scalar p_joint_share_ira = r(p) : m2
- 62.     }
- 63.     if "`ret'" == "r5" {
- 64.         quietly testparm c.share_core#i.year
- 65.         estadd scalar p_joint_share_core = r(p) : m2
- 66.         quietly testparm c.share_ira#i.year
- 67.         estadd scalar p_joint_share_ira = r(p) : m2
- 68.         quietly testparm c.share_res#i.year
- 69.         estadd scalar p_joint_share_res = r(p) : m2
- 70.         quietly testparm c.share_debt_long#i.year
- 71.         estadd scalar p_joint_share_debt_long = r(p) : m2
- 72.         quietly testparm c.share_debt_other#i.year
- 73.         estadd scalar p_joint_share_debt_other = r(p) : m2
- 74.     }
- 75.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
+107.     estadd scalar p_joint_trust = . : m2
+108.     quietly testparm i.age_bin
+109.     estadd scalar p_joint_age_bin = r(p) : m2
+110.     local wlist ""
+111.     if "`ret'" == "r1" {
+112.         forvalues d = 2/10 {
+113.             capture confirm variable wealth_core_d`d'
+114.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+115.         }
+116.     }
+117.     if "`ret'" == "r4" {
+118.         forvalues d = 2/10 {
+119.             capture confirm variable wealth_coreira_d`d'
+120.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+121.         }
+122.     }
+123.     if "`ret'" == "r5" {
+124.         forvalues d = 2/10 {
+125.             capture confirm variable wealth_d`d'
+126.             if !_rc local wlist "`wlist' wealth_d`d'"
+127.         }
+128.     }
+129.     if trim("`wlist'") != "" {
+130.         quietly testparm `wlist'
+131.         estadd scalar p_joint_wealth = r(p) : m2
+132.     }
+133.     else estadd scalar p_joint_wealth = . : m2
+134.     quietly testparm i.race_eth
+135.     estadd scalar p_joint_race = r(p) : m2
+136.     capture testparm i.censreg
+137.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+138.     else estadd scalar p_joint_censreg = . : m2
+139.     quietly testparm i.year
+140.     estadd scalar p_joint_year = r(p) : m2
+141.     if "`ret'" == "r1" {
+142.         capture testparm share_core
+143.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m2
+144.         else estadd scalar p_joint_share_asset = . : m2
+145.         estadd scalar p_joint_share_debt = . : m2
+146.     }
+147.     if "`ret'" == "r4" {
+148.         capture testparm share_core share_ira
+149.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m2
+150.         else estadd scalar p_joint_share_asset = . : m2
+151.         estadd scalar p_joint_share_debt = . : m2
+152.     }
+153.     if "`ret'" == "r5" {
+154.         capture testparm share_core share_ira share_res
+155.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m2
+156.         else estadd scalar p_joint_share_asset = . : m2
+157.         capture testparm share_debt_long share_debt_other
+158.         if _rc == 0 estadd scalar p_joint_share_debt = r(p) : m2
+159.         else estadd scalar p_joint_share_debt = . : m2
+160.     }
+161.     if "`ret'" == "r1" {
+162.         quietly testparm c.share_core#i.year
+163.         estadd scalar p_joint_share_core = r(p) : m2
+164.     }
+165.     if "`ret'" == "r4" {
+166.         quietly testparm c.share_core#i.year
+167.         estadd scalar p_joint_share_core = r(p) : m2
+168.         quietly testparm c.share_ira#i.year
+169.         estadd scalar p_joint_share_ira = r(p) : m2
+170.     }
+171.     if "`ret'" == "r5" {
+172.         quietly testparm c.share_core#i.year
+173.         estadd scalar p_joint_share_core = r(p) : m2
+174.         quietly testparm c.share_ira#i.year
+175.         estadd scalar p_joint_share_ira = r(p) : m2
+176.         quietly testparm c.share_res#i.year
+177.         estadd scalar p_joint_share_res = r(p) : m2
+178.         quietly testparm c.share_debt_long#i.year
+179.         estadd scalar p_joint_share_debt_long = r(p) : m2
+180.         quietly testparm c.share_debt_other#i.year
+181.         estadd scalar p_joint_share_debt_other = r(p) : m2
+182.     }
+183.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
 > var' if !missing(`yvar') & !missing(`trust_var') & `share_cond', vce(cluster 
 > hhidpn)
- 76.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 77.     estadd scalar p_joint_trust = r(p) : m3
- 78.     if "`ret'" == "r1" {
- 79.         quietly testparm c.share_core#i.year
- 80.         estadd scalar p_joint_share_core = r(p) : m3
- 81.     }
- 82.     if "`ret'" == "r4" {
- 83.         quietly testparm c.share_core#i.year
- 84.         estadd scalar p_joint_share_core = r(p) : m3
- 85.         quietly testparm c.share_ira#i.year
- 86.         estadd scalar p_joint_share_ira = r(p) : m3
- 87.     }
- 88.     if "`ret'" == "r5" {
- 89.         quietly testparm c.share_core#i.year
- 90.         estadd scalar p_joint_share_core = r(p) : m3
- 91.         quietly testparm c.share_ira#i.year
- 92.         estadd scalar p_joint_share_ira = r(p) : m3
- 93.         quietly testparm c.share_res#i.year
- 94.         estadd scalar p_joint_share_res = r(p) : m3
- 95.         quietly testparm c.share_debt_long#i.year
- 96.         estadd scalar p_joint_share_debt_long = r(p) : m3
- 97.         quietly testparm c.share_debt_other#i.year
- 98.         estadd scalar p_joint_share_debt_other = r(p) : m3
- 99.     }
-100. 
+184.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+185.     estadd scalar p_joint_trust = r(p) : m3
+186.     quietly testparm i.age_bin
+187.     estadd scalar p_joint_age_bin = r(p) : m3
+188.     local wlist ""
+189.     if "`ret'" == "r1" {
+190.         forvalues d = 2/10 {
+191.             capture confirm variable wealth_core_d`d'
+192.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+193.         }
+194.     }
+195.     if "`ret'" == "r4" {
+196.         forvalues d = 2/10 {
+197.             capture confirm variable wealth_coreira_d`d'
+198.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+199.         }
+200.     }
+201.     if "`ret'" == "r5" {
+202.         forvalues d = 2/10 {
+203.             capture confirm variable wealth_d`d'
+204.             if !_rc local wlist "`wlist' wealth_d`d'"
+205.         }
+206.     }
+207.     if trim("`wlist'") != "" {
+208.         quietly testparm `wlist'
+209.         estadd scalar p_joint_wealth = r(p) : m3
+210.     }
+211.     else estadd scalar p_joint_wealth = . : m3
+212.     quietly testparm i.race_eth
+213.     estadd scalar p_joint_race = r(p) : m3
+214.     capture testparm i.censreg
+215.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+216.     else estadd scalar p_joint_censreg = . : m3
+217.     quietly testparm i.year
+218.     estadd scalar p_joint_year = r(p) : m3
+219.     if "`ret'" == "r1" {
+220.         capture testparm share_core
+221.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m3
+222.         else estadd scalar p_joint_share_asset = . : m3
+223.         estadd scalar p_joint_share_debt = . : m3
+224.     }
+225.     if "`ret'" == "r4" {
+226.         capture testparm share_core share_ira
+227.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m3
+228.         else estadd scalar p_joint_share_asset = . : m3
+229.         estadd scalar p_joint_share_debt = . : m3
+230.     }
+231.     if "`ret'" == "r5" {
+232.         capture testparm share_core share_ira share_res
+233.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m3
+234.         else estadd scalar p_joint_share_asset = . : m3
+235.         capture testparm share_debt_long share_debt_other
+236.         if _rc == 0 estadd scalar p_joint_share_debt = r(p) : m3
+237.         else estadd scalar p_joint_share_debt = . : m3
+238.     }
+239.     if "`ret'" == "r1" {
+240.         quietly testparm c.share_core#i.year
+241.         estadd scalar p_joint_share_core = r(p) : m3
+242.     }
+243.     if "`ret'" == "r4" {
+244.         quietly testparm c.share_core#i.year
+245.         estadd scalar p_joint_share_core = r(p) : m3
+246.         quietly testparm c.share_ira#i.year
+247.         estadd scalar p_joint_share_ira = r(p) : m3
+248.     }
+249.     if "`ret'" == "r5" {
+250.         quietly testparm c.share_core#i.year
+251.         estadd scalar p_joint_share_core = r(p) : m3
+252.         quietly testparm c.share_ira#i.year
+253.         estadd scalar p_joint_share_ira = r(p) : m3
+254.         quietly testparm c.share_res#i.year
+255.         estadd scalar p_joint_share_res = r(p) : m3
+256.         quietly testparm c.share_debt_long#i.year
+257.         estadd scalar p_joint_share_debt_long = r(p) : m3
+258.         quietly testparm c.share_debt_other#i.year
+259.         estadd scalar p_joint_share_debt_other = r(p) : m3
+260.     }
+261. 
 .     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_spec2.tex"
-101.     * Stats: scope-specific share joint tests (one per asset class)
+262.     * Stats: scope-specific share joint tests (one per asset class)
 .     if "`ret'" == "r1" {
-102.         local stats_share "p_joint_share_core"
-103.         local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-val
-> ue""'
-104.     }
-105.     if "`ret'" == "r4" {
-106.         local stats_share "p_joint_share_core p_joint_share_ira"
-107.         local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-val
-> ue" "Joint test: Share IRA${LATEX_X_YEAR} p-value""'
-108.     }
-109.     if "`ret'" == "r5" {
-110.         local stats_share "p_joint_share_core p_joint_share_ira p_joint_sh
-> are_res p_joint_share_debt_long p_joint_share_debt_other"
-111.         local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-val
-> ue" "Joint test: Share IRA${LATEX_X_YEAR} p-value" "Joint test: Share res${LA
-> TEX_X_YEAR} p-value" "Joint test: Share debt long${LATEX_X_YEAR} p-value" "Jo
-> int test: Share debt other${LATEX_X_YEAR} p-value""'
-112.     }
-113.     esttab m1 m2 m3 using "`outfile'", replace ///
+263.         local stats_share "p_joint_share_asset p_joint_share_core"
+264.         local labels_share `" "Joint test: Share (core) p-value" "Joint te
+> st: Share core${LATEX_X_YEAR} p-value""'
+265.     }
+266.     if "`ret'" == "r4" {
+267.         local stats_share "p_joint_share_asset p_joint_share_core p_joint_
+> share_ira"
+268.         local labels_share `" "Joint test: Share (core, IRA) p-value" "Joi
+> nt test: Share core${LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_Y
+> EAR} p-value""'
+269.     }
+270.     if "`ret'" == "r5" {
+271.         local stats_share "p_joint_share_asset p_joint_share_debt p_joint_
+> share_core p_joint_share_ira p_joint_share_res p_joint_share_debt_long p_join
+> t_share_debt_other"
+272.         local labels_share `" "Joint test: Share (core, IRA, res) p-value"
+>  "Joint test: Share (debt long, other) p-value" "Joint test: Share core${LATE
+> X_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value" "Joint test
+> : Share res${LATEX_X_YEAR} p-value" "Joint test: Share debt long${LATEX_X_YEA
+> R} p-value" "Joint test: Share debt other${LATEX_X_YEAR} p-value""'
+273.     }
+274.     esttab m1 m2 m3 using "`outfile'", replace ///
 >         booktabs ///
 >         mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_list') ///
 >         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth 
-> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" mar
-> ried_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`t
-> rust_var' "Trust²" share_core "Share core" share_ira "Share IRA" share_res "S
-> hare residential" share_debt_long "Share long-term debt" share_debt_other "Sh
-> are other debt") ///
->         stats(N r2_a p_joint_trust `stats_share', labels("Observations" "Adj.
->  R-squared" "Joint test: Trust+Trust² p-value" `labels_share')) ///
+> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "In labor forc
+> e" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var
+> '#c.`trust_var' "Trust\$^2\$" share_core "Share core" share_ira "Share IRA" s
+> hare_res "Share residential" share_debt_long "Share long-term debt" share_deb
+> t_other "Share other debt") ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e p_joint_censreg p_joint_year `stats_share', labels("Observations" "Adj. R-s
+> quared" "Joint test: Trust+Trust\$^2\$ p-value" "Joint test: Age bins p-value
+> " "Joint test: Wealth deciles p-value" "Joint test: Race p-value" "Joint test
+> : Region p-value" "Joint test: Year p-value" `labels_share')) ///
 >         title("Panel Spec 2: `ret_label' (raw, ${LATEX_SHARE_YEAR})") ///
->         addnotes("Cluster-robust SE in parentheses. Spec 2: ${LATEX_SHARE_YEA
-> R} controls for risk exposure." "Age bins, wealth deciles, region dummies, ye
-> ar dummies," "and ${LATEX_SHARE_YEAR} omitted from table but included in regr
-> essions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-114. 
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+275. 
 .     di as txt "Wrote: `outfile'"
-115. }
+276. }
 
 --- Raw returns to core ---
 
@@ -1322,131 +1487,296 @@ Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
  30.     di as txt _n "--- Winsorized `ret_label' ---"
  31.     eststo m1: regress `yvar' `ctrl' if !missing(`yvar') & `share_cond', v
 > ce(cluster hhidpn)
- 32.     if "`ret'" == "r1" {
- 33.         quietly testparm c.share_core#i.year
- 34.         estadd scalar p_joint_share_core = r(p) : m1
- 35.     }
- 36.     if "`ret'" == "r4" {
- 37.         quietly testparm c.share_core#i.year
- 38.         estadd scalar p_joint_share_core = r(p) : m1
- 39.         quietly testparm c.share_ira#i.year
- 40.         estadd scalar p_joint_share_ira = r(p) : m1
+ 32.     estadd scalar p_joint_trust = . : m1
+ 33.     quietly testparm i.age_bin
+ 34.     estadd scalar p_joint_age_bin = r(p) : m1
+ 35.     local wlist ""
+ 36.     if "`ret'" == "r1" {
+ 37.         forvalues d = 2/10 {
+ 38.             capture confirm variable wealth_core_d`d'
+ 39.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+ 40.         }
  41.     }
- 42.     if "`ret'" == "r5" {
- 43.         quietly testparm c.share_core#i.year
- 44.         estadd scalar p_joint_share_core = r(p) : m1
- 45.         quietly testparm c.share_ira#i.year
- 46.         estadd scalar p_joint_share_ira = r(p) : m1
- 47.         quietly testparm c.share_res#i.year
- 48.         estadd scalar p_joint_share_res = r(p) : m1
- 49.         quietly testparm c.share_debt_long#i.year
- 50.         estadd scalar p_joint_share_debt_long = r(p) : m1
- 51.         quietly testparm c.share_debt_other#i.year
- 52.         estadd scalar p_joint_share_debt_other = r(p) : m1
+ 42.     if "`ret'" == "r4" {
+ 43.         forvalues d = 2/10 {
+ 44.             capture confirm variable wealth_coreira_d`d'
+ 45.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+ 46.         }
+ 47.     }
+ 48.     if "`ret'" == "r5" {
+ 49.         forvalues d = 2/10 {
+ 50.             capture confirm variable wealth_d`d'
+ 51.             if !_rc local wlist "`wlist' wealth_d`d'"
+ 52.         }
  53.     }
- 54.     if "`ret'" == "r1" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
+ 54.     if trim("`wlist'") != "" {
+ 55.         quietly testparm `wlist'
+ 56.         estadd scalar p_joint_wealth = r(p) : m1
+ 57.     }
+ 58.     else estadd scalar p_joint_wealth = . : m1
+ 59.     quietly testparm i.race_eth
+ 60.     estadd scalar p_joint_race = r(p) : m1
+ 61.     capture testparm i.censreg
+ 62.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+ 63.     else estadd scalar p_joint_censreg = . : m1
+ 64.     quietly testparm i.year
+ 65.     estadd scalar p_joint_year = r(p) : m1
+ 66.     if "`ret'" == "r1" {
+ 67.         capture testparm share_core
+ 68.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m1
+ 69.         else estadd scalar p_joint_share_asset = . : m1
+ 70.         estadd scalar p_joint_share_debt = . : m1
+ 71.     }
+ 72.     if "`ret'" == "r4" {
+ 73.         capture testparm share_core share_ira
+ 74.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m1
+ 75.         else estadd scalar p_joint_share_asset = . : m1
+ 76.         estadd scalar p_joint_share_debt = . : m1
+ 77.     }
+ 78.     if "`ret'" == "r5" {
+ 79.         capture testparm share_core share_ira share_res
+ 80.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m1
+ 81.         else estadd scalar p_joint_share_asset = . : m1
+ 82.         capture testparm share_debt_long share_debt_other
+ 83.         if _rc == 0 estadd scalar p_joint_share_debt = r(p) : m1
+ 84.         else estadd scalar p_joint_share_debt = . : m1
+ 85.     }
+ 86.     if "`ret'" == "r1" {
+ 87.         quietly testparm c.share_core#i.year
+ 88.         estadd scalar p_joint_share_core = r(p) : m1
+ 89.     }
+ 90.     if "`ret'" == "r4" {
+ 91.         quietly testparm c.share_core#i.year
+ 92.         estadd scalar p_joint_share_core = r(p) : m1
+ 93.         quietly testparm c.share_ira#i.year
+ 94.         estadd scalar p_joint_share_ira = r(p) : m1
+ 95.     }
+ 96.     if "`ret'" == "r5" {
+ 97.         quietly testparm c.share_core#i.year
+ 98.         estadd scalar p_joint_share_core = r(p) : m1
+ 99.         quietly testparm c.share_ira#i.year
+100.         estadd scalar p_joint_share_ira = r(p) : m1
+101.         quietly testparm c.share_res#i.year
+102.         estadd scalar p_joint_share_res = r(p) : m1
+103.         quietly testparm c.share_debt_long#i.year
+104.         estadd scalar p_joint_share_debt_long = r(p) : m1
+105.         quietly testparm c.share_debt_other#i.year
+106.         estadd scalar p_joint_share_debt_other = r(p) : m1
+107.     }
+108.     if "`ret'" == "r1" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
 > e_eth 4.race_eth inlbrf_ married_ born_us share_core `trust_var' c.`trust_var
 > '#c.`trust_var' _cons"
- 55.     if "`ret'" == "r4" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
+109.     if "`ret'" == "r4" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
 > e_eth 4.race_eth inlbrf_ married_ born_us share_core share_ira `trust_var' c.
 > `trust_var'#c.`trust_var' _cons"
- 56.     if "`ret'" == "r5" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
+110.     if "`ret'" == "r5" local keep_list "educ_yrs 2.gender 2.race_eth 3.rac
 > e_eth 4.race_eth inlbrf_ married_ born_us share_core share_ira share_res shar
 > e_debt_long share_debt_other `trust_var' c.`trust_var'#c.`trust_var' _cons"
- 57.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
+111.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
 > missing(`trust_var') & `share_cond', vce(cluster hhidpn)
- 58.     if "`ret'" == "r1" {
- 59.         quietly testparm c.share_core#i.year
- 60.         estadd scalar p_joint_share_core = r(p) : m2
- 61.     }
- 62.     if "`ret'" == "r4" {
- 63.         quietly testparm c.share_core#i.year
- 64.         estadd scalar p_joint_share_core = r(p) : m2
- 65.         quietly testparm c.share_ira#i.year
- 66.         estadd scalar p_joint_share_ira = r(p) : m2
- 67.     }
- 68.     if "`ret'" == "r5" {
- 69.         quietly testparm c.share_core#i.year
- 70.         estadd scalar p_joint_share_core = r(p) : m2
- 71.         quietly testparm c.share_ira#i.year
- 72.         estadd scalar p_joint_share_ira = r(p) : m2
- 73.         quietly testparm c.share_res#i.year
- 74.         estadd scalar p_joint_share_res = r(p) : m2
- 75.         quietly testparm c.share_debt_long#i.year
- 76.         estadd scalar p_joint_share_debt_long = r(p) : m2
- 77.         quietly testparm c.share_debt_other#i.year
- 78.         estadd scalar p_joint_share_debt_other = r(p) : m2
- 79.     }
- 80.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
+112.     estadd scalar p_joint_trust = . : m2
+113.     quietly testparm i.age_bin
+114.     estadd scalar p_joint_age_bin = r(p) : m2
+115.     local wlist ""
+116.     if "`ret'" == "r1" {
+117.         forvalues d = 2/10 {
+118.             capture confirm variable wealth_core_d`d'
+119.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+120.         }
+121.     }
+122.     if "`ret'" == "r4" {
+123.         forvalues d = 2/10 {
+124.             capture confirm variable wealth_coreira_d`d'
+125.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+126.         }
+127.     }
+128.     if "`ret'" == "r5" {
+129.         forvalues d = 2/10 {
+130.             capture confirm variable wealth_d`d'
+131.             if !_rc local wlist "`wlist' wealth_d`d'"
+132.         }
+133.     }
+134.     if trim("`wlist'") != "" {
+135.         quietly testparm `wlist'
+136.         estadd scalar p_joint_wealth = r(p) : m2
+137.     }
+138.     else estadd scalar p_joint_wealth = . : m2
+139.     quietly testparm i.race_eth
+140.     estadd scalar p_joint_race = r(p) : m2
+141.     capture testparm i.censreg
+142.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+143.     else estadd scalar p_joint_censreg = . : m2
+144.     quietly testparm i.year
+145.     estadd scalar p_joint_year = r(p) : m2
+146.     if "`ret'" == "r1" {
+147.         capture testparm share_core
+148.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m2
+149.         else estadd scalar p_joint_share_asset = . : m2
+150.         estadd scalar p_joint_share_debt = . : m2
+151.     }
+152.     if "`ret'" == "r4" {
+153.         capture testparm share_core share_ira
+154.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m2
+155.         else estadd scalar p_joint_share_asset = . : m2
+156.         estadd scalar p_joint_share_debt = . : m2
+157.     }
+158.     if "`ret'" == "r5" {
+159.         capture testparm share_core share_ira share_res
+160.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m2
+161.         else estadd scalar p_joint_share_asset = . : m2
+162.         capture testparm share_debt_long share_debt_other
+163.         if _rc == 0 estadd scalar p_joint_share_debt = r(p) : m2
+164.         else estadd scalar p_joint_share_debt = . : m2
+165.     }
+166.     if "`ret'" == "r1" {
+167.         quietly testparm c.share_core#i.year
+168.         estadd scalar p_joint_share_core = r(p) : m2
+169.     }
+170.     if "`ret'" == "r4" {
+171.         quietly testparm c.share_core#i.year
+172.         estadd scalar p_joint_share_core = r(p) : m2
+173.         quietly testparm c.share_ira#i.year
+174.         estadd scalar p_joint_share_ira = r(p) : m2
+175.     }
+176.     if "`ret'" == "r5" {
+177.         quietly testparm c.share_core#i.year
+178.         estadd scalar p_joint_share_core = r(p) : m2
+179.         quietly testparm c.share_ira#i.year
+180.         estadd scalar p_joint_share_ira = r(p) : m2
+181.         quietly testparm c.share_res#i.year
+182.         estadd scalar p_joint_share_res = r(p) : m2
+183.         quietly testparm c.share_debt_long#i.year
+184.         estadd scalar p_joint_share_debt_long = r(p) : m2
+185.         quietly testparm c.share_debt_other#i.year
+186.         estadd scalar p_joint_share_debt_other = r(p) : m2
+187.     }
+188.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
 > var' if !missing(`yvar') & !missing(`trust_var') & `share_cond', vce(cluster 
 > hhidpn)
- 81.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 82.     estadd scalar p_joint_trust = r(p) : m3
- 83.     if "`ret'" == "r1" {
- 84.         quietly testparm c.share_core#i.year
- 85.         estadd scalar p_joint_share_core = r(p) : m3
- 86.     }
- 87.     if "`ret'" == "r4" {
- 88.         quietly testparm c.share_core#i.year
- 89.         estadd scalar p_joint_share_core = r(p) : m3
- 90.         quietly testparm c.share_ira#i.year
- 91.         estadd scalar p_joint_share_ira = r(p) : m3
- 92.     }
- 93.     if "`ret'" == "r5" {
- 94.         quietly testparm c.share_core#i.year
- 95.         estadd scalar p_joint_share_core = r(p) : m3
- 96.         quietly testparm c.share_ira#i.year
- 97.         estadd scalar p_joint_share_ira = r(p) : m3
- 98.         quietly testparm c.share_res#i.year
- 99.         estadd scalar p_joint_share_res = r(p) : m3
-100.         quietly testparm c.share_debt_long#i.year
-101.         estadd scalar p_joint_share_debt_long = r(p) : m3
-102.         quietly testparm c.share_debt_other#i.year
-103.         estadd scalar p_joint_share_debt_other = r(p) : m3
-104.     }
-105. 
+189.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+190.     estadd scalar p_joint_trust = r(p) : m3
+191.     quietly testparm i.age_bin
+192.     estadd scalar p_joint_age_bin = r(p) : m3
+193.     local wlist ""
+194.     if "`ret'" == "r1" {
+195.         forvalues d = 2/10 {
+196.             capture confirm variable wealth_core_d`d'
+197.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+198.         }
+199.     }
+200.     if "`ret'" == "r4" {
+201.         forvalues d = 2/10 {
+202.             capture confirm variable wealth_coreira_d`d'
+203.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+204.         }
+205.     }
+206.     if "`ret'" == "r5" {
+207.         forvalues d = 2/10 {
+208.             capture confirm variable wealth_d`d'
+209.             if !_rc local wlist "`wlist' wealth_d`d'"
+210.         }
+211.     }
+212.     if trim("`wlist'") != "" {
+213.         quietly testparm `wlist'
+214.         estadd scalar p_joint_wealth = r(p) : m3
+215.     }
+216.     else estadd scalar p_joint_wealth = . : m3
+217.     quietly testparm i.race_eth
+218.     estadd scalar p_joint_race = r(p) : m3
+219.     capture testparm i.censreg
+220.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+221.     else estadd scalar p_joint_censreg = . : m3
+222.     quietly testparm i.year
+223.     estadd scalar p_joint_year = r(p) : m3
+224.     if "`ret'" == "r1" {
+225.         capture testparm share_core
+226.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m3
+227.         else estadd scalar p_joint_share_asset = . : m3
+228.         estadd scalar p_joint_share_debt = . : m3
+229.     }
+230.     if "`ret'" == "r4" {
+231.         capture testparm share_core share_ira
+232.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m3
+233.         else estadd scalar p_joint_share_asset = . : m3
+234.         estadd scalar p_joint_share_debt = . : m3
+235.     }
+236.     if "`ret'" == "r5" {
+237.         capture testparm share_core share_ira share_res
+238.         if _rc == 0 estadd scalar p_joint_share_asset = r(p) : m3
+239.         else estadd scalar p_joint_share_asset = . : m3
+240.         capture testparm share_debt_long share_debt_other
+241.         if _rc == 0 estadd scalar p_joint_share_debt = r(p) : m3
+242.         else estadd scalar p_joint_share_debt = . : m3
+243.     }
+244.     if "`ret'" == "r1" {
+245.         quietly testparm c.share_core#i.year
+246.         estadd scalar p_joint_share_core = r(p) : m3
+247.     }
+248.     if "`ret'" == "r4" {
+249.         quietly testparm c.share_core#i.year
+250.         estadd scalar p_joint_share_core = r(p) : m3
+251.         quietly testparm c.share_ira#i.year
+252.         estadd scalar p_joint_share_ira = r(p) : m3
+253.     }
+254.     if "`ret'" == "r5" {
+255.         quietly testparm c.share_core#i.year
+256.         estadd scalar p_joint_share_core = r(p) : m3
+257.         quietly testparm c.share_ira#i.year
+258.         estadd scalar p_joint_share_ira = r(p) : m3
+259.         quietly testparm c.share_res#i.year
+260.         estadd scalar p_joint_share_res = r(p) : m3
+261.         quietly testparm c.share_debt_long#i.year
+262.         estadd scalar p_joint_share_debt_long = r(p) : m3
+263.         quietly testparm c.share_debt_other#i.year
+264.         estadd scalar p_joint_share_debt_other = r(p) : m3
+265.     }
+266. 
 .     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_spec2_win.tex"
-106.     if "`ret'" == "r1" {
-107.         local stats_share "p_joint_share_core"
-108.         local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-val
-> ue""'
-109.     }
-110.     if "`ret'" == "r4" {
-111.         local stats_share "p_joint_share_core p_joint_share_ira"
-112.         local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-val
-> ue" "Joint test: Share IRA${LATEX_X_YEAR} p-value""'
-113.     }
-114.     if "`ret'" == "r5" {
-115.         local stats_share "p_joint_share_core p_joint_share_ira p_joint_sh
-> are_res p_joint_share_debt_long p_joint_share_debt_other"
-116.         local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-val
-> ue" "Joint test: Share IRA${LATEX_X_YEAR} p-value" "Joint test: Share res${LA
-> TEX_X_YEAR} p-value" "Joint test: Share debt long${LATEX_X_YEAR} p-value" "Jo
-> int test: Share debt other${LATEX_X_YEAR} p-value""'
-117.     }
-118.     esttab m1 m2 m3 using "`outfile'", replace ///
+267.     if "`ret'" == "r1" {
+268.         local stats_share "p_joint_share_asset p_joint_share_core"
+269.         local labels_share `" "Joint test: Share (core) p-value" "Joint te
+> st: Share core${LATEX_X_YEAR} p-value""'
+270.     }
+271.     if "`ret'" == "r4" {
+272.         local stats_share "p_joint_share_asset p_joint_share_core p_joint_
+> share_ira"
+273.         local labels_share `" "Joint test: Share (core, IRA) p-value" "Joi
+> nt test: Share core${LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_Y
+> EAR} p-value""'
+274.     }
+275.     if "`ret'" == "r5" {
+276.         local stats_share "p_joint_share_asset p_joint_share_debt p_joint_
+> share_core p_joint_share_ira p_joint_share_res p_joint_share_debt_long p_join
+> t_share_debt_other"
+277.         local labels_share `" "Joint test: Share (core, IRA, res) p-value"
+>  "Joint test: Share (debt long, other) p-value" "Joint test: Share core${LATE
+> X_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value" "Joint test
+> : Share res${LATEX_X_YEAR} p-value" "Joint test: Share debt long${LATEX_X_YEA
+> R} p-value" "Joint test: Share debt other${LATEX_X_YEAR} p-value""'
+278.     }
+279.     esttab m1 m2 m3 using "`outfile'", replace ///
 >         booktabs ///
 >         mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_list') ///
 >         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth 
-> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" mar
-> ried_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`t
-> rust_var' "Trust²" share_core "Share core" share_ira "Share IRA" share_res "S
-> hare residential" share_debt_long "Share long-term debt" share_debt_other "Sh
-> are other debt") ///
->         stats(N r2_a p_joint_trust `stats_share', labels("Observations" "Adj.
->  R-squared" "Joint test: Trust+Trust² p-value" `labels_share')) ///
+> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "In labor forc
+> e" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var
+> '#c.`trust_var' "Trust\$^2\$" share_core "Share core" share_ira "Share IRA" s
+> hare_res "Share residential" share_debt_long "Share long-term debt" share_deb
+> t_other "Share other debt") ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e p_joint_censreg p_joint_year `stats_share', labels("Observations" "Adj. R-s
+> quared" "Joint test: Trust+Trust\$^2\$ p-value" "Joint test: Age bins p-value
+> " "Joint test: Wealth deciles p-value" "Joint test: Race p-value" "Joint test
+> : Region p-value" "Joint test: Year p-value" `labels_share')) ///
 >         title("Panel Spec 2: `ret_label' (${LATEX_WIN_SHORT}, ${LATEX_SHARE_Y
 > EAR})") ///
->         addnotes("Cluster-robust SE in parentheses. Spec 2: ${LATEX_SHARE_YEA
-> R} controls for risk exposure." "Age bins, wealth deciles, region dummies, ye
-> ar dummies," "and ${LATEX_SHARE_YEAR} omitted from table but included in regr
-> essions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-119. 
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+280. 
 .     di as txt "Wrote: `outfile'"
-120. }
+281. }
 
 --- Winsorized returns to core ---
 
@@ -2479,5 +2809,5 @@ Done. Spec 2 tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/15_p
 > anel_reg_ret_shares.log
   log type:  text
- closed on:  23 Feb 2026, 10:50:48
+ closed on:  25 Feb 2026, 23:09:22
 -------------------------------------------------------------------------------

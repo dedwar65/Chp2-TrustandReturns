@@ -17,14 +17,17 @@
 \FloatBarrier
 
 \inputtable{../../Code/Descriptive/Tables/income_mean_by_year_real_win.tex}
+\label{tab:income_mean_by_year_real_win}
 
-\par In particular, I pooled the observations of the survey together to get a sense of the distribution of incomes measured in the survey. This is captured by the table
+\par In particular, I pooled the observations of the survey together to get a sense of the distribution of incomes measured in the survey. This is captured by Table~\ref{tab:income_final_tabstat}.
 
 \inputtable{../../Code/Descriptive/Tables/income_final_tabstat.tex}
+\label{tab:income_final_tabstat}
 
-\par An important finding in the literature on earnings in the U.S. is that it is generally hump-shaped over the lifecycle. It is a good sign then that the following tables show
+\par An important finding in the literature on earnings in the U.S. is that it is generally hump-shaped over the lifecycle. It is a good sign then that Table~\ref{tab:income_mean_by_agegroup_real_win_2022} shows
 
 \inputtable{../../Code/Descriptive/Tables/income_mean_by_agegroup_real_win_2022.tex}
+\label{tab:income_mean_by_agegroup_real_win_2022}
 
 \begin{figure}[H]
 \centering
@@ -33,9 +36,10 @@
 \end{figure}
 \FloatBarrier
 
-\par Another empirical finding in the literature on earnings is that on average individuals with more education earn higher income. The trend capture in the table suggests that the earnings data is in line with one would respect regarding earnings for a representative survey in the U.S.\footnote{ Although the HRS oversamples older households, I use the provided the respondent-level weights for this interpretation of the summary statistics of the data.}
+\par Another empirical finding in the literature on earnings is that on average individuals with more education earn higher income. The trend captured in Table~\ref{tab:income_mean_by_educgroup_real_win} suggests that the earnings data is in line with one would respect regarding earnings for a representative survey in the U.S.\footnote{ Although the HRS oversamples older households, I use the provided the respondent-level weights for this interpretation of the summary statistics of the data.}
 
 \inputtable{../../Code/Descriptive/Tables/income_mean_by_educgroup_real_win.tex}
+\label{tab:income_mean_by_educgroup_real_win}
 
 \begin{figure}[H]
 \centering
@@ -443,13 +447,15 @@ I repeat this for the measure of total income and both patterns persist.
 
 \par I turn my attention to the suite of trust questions in \say{Section V: Modules} section of the 2020 HRS data. There are a total of 8 questions, asking respondents to say on a scale of 1-10 \say{how much do you trust people in general?} and of their trust in other features of American life relating to healthcare, finance, and media. These questions were only asked for a single year. Although this is an issue, because the panel structure of the HRS allows me to estimate the persistent component of returns, which is an important object in this literature. That said, in the pooled setting, we can assume that trust, like education, is fixed over time.\footnote{Literature on trust talks about how history of being cheated or treated fairly form individuals' trust over time. If this is true and at some point, one learns enough an forms their trust level, then a sample with an overrepresentation of older household is a reasonable environment to assume constant trust levels.}
 
-\par I turn my attention to the correlations between the trust variables in figure . There is significant correlation between the trust measures.  
+\par I turn my attention to the correlations between the trust variables in Table~\ref{tab:trust_corr}. There is significant correlation between the trust measures.  
 
 \inputtable{../../Code/Descriptive/Tables/trust_corr.tex}
+\label{tab:trust_corr}
 
-\par From here, I perform a principal component analysis and store the first two components for use in the statistical analysis. The loadings on each of the trust measures is given in figure .
+\par From here, I perform a principal component analysis and store the first two components for use in the statistical analysis. The loadings on each of the trust measures is given in Table~\ref{tab:trust_pca_loadings}.
 
 \inputtable{../../Code/Descriptive/Tables/trust_pca_loadings.tex}
+\label{tab:trust_pca_loadings}
 
 \par I am interested in the relationship between trust and economic performance as the literature is, however in my setting the measure of economic performance is the return to assets. If a hump-shaped relationship is reasonable for income, it is even more plausible for returns: there is an inherent (and possibly explicit) level of trust between borrower and lender when forming credit contracts.
 
@@ -521,7 +527,9 @@ I repeat this for the measure of total income and both patterns persist.
 \par As the HRS oversample older households, I take a quick look at demographic variables that will be important for the statistical analysis later. 
 
 \inputtable{../../Code/Descriptive/Tables/demographics_general.tex}
+\label{tab:demographics_general}
 \inputtable{../../Code/Descriptive/Tables/demographics_other.tex}
+\label{tab:demographics_other}
 \par The literature on trust already documents a signficant statistical relationship between trust and mental health. For that reason, I use the HRS RAND measure for a mental health index and show a clearly negative, linear relationship with trust. 
 
 \begin{figure}[H]

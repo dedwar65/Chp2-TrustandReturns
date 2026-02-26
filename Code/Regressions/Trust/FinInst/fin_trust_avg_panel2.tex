@@ -1,7 +1,6 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
 \caption{Panel Spec 2 (share x year): r5 returns on financial-institutional trust}
-\label{tab:fin_trust_avg_panel2}
 \begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
@@ -16,15 +15,15 @@ Hispanic            &        0.02         &        0.02         &        0.02   
                     &      (0.03)         &      (0.03)         &      (0.03)         \\
 NH Other            &        0.03         &        0.03         &        0.03         \\
                     &      (0.03)         &      (0.03)         &      (0.03)         \\
-Employed            &        0.03\sym{**} &        0.03\sym{**} &        0.03\sym{**} \\
+In labor force      &        0.03\sym{**} &        0.03\sym{**} &        0.03\sym{**} \\
                     &      (0.01)         &      (0.01)         &      (0.01)         \\
 Married             &       -0.05\sym{***}&       -0.05\sym{***}&       -0.05\sym{***}\\
                     &      (0.01)         &      (0.01)         &      (0.01)         \\
 Born in U.S.        &        0.01         &        0.01         &        0.01         \\
                     &      (0.02)         &      (0.02)         &      (0.02)         \\
-Fin. Institutions   &                     &       -0.01\sym{**} &       -0.00         \\
+Trust               &                     &       -0.01\sym{**} &       -0.00         \\
                     &                     &      (0.00)         &      (0.01)         \\
-(Fin. Institutions)$^2$&                     &                     &       -0.00         \\
+Trust$^2$           &                     &                     &       -0.00         \\
                     &                     &                     &      (0.00)         \\
 \_cons              &       -0.56\sym{***}&       -0.55\sym{***}&       -0.56\sym{***}\\
                     &      (0.20)         &      (0.20)         &      (0.20)         \\
@@ -32,10 +31,12 @@ Fin. Institutions   &                     &       -0.01\sym{**} &       -0.00   
 Observations        &     4219.00         &     4219.00         &     4219.00         \\
 Adj. R-squared      &        0.07         &        0.07         &        0.07         \\
 Joint test: Trust p-value&           .         &           .         &        0.06         \\
+Joint test: Age bins p-value&        0.00         &        0.00         &        0.00         \\
+Joint test: Wealth deciles p-value&        0.00         &        0.00         &        0.00         \\
+Joint test: Race p-value&        0.19         &        0.25         &        0.26         \\
+Joint test: Region p-value&        0.03         &        0.04         &        0.04         \\
+Joint test: Year p-value&        0.00         &        0.00         &        0.00         \\
 \bottomrule
-\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{4}{l}{\footnotesize Cluster-robust SE. Age bins (5-yr), wealth deciles, region dummies,}\\
-\multicolumn{4}{l}{\footnotesize and share x year interactions omitted from table but included in regressions.}\\
-\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{4}{l}{\footnotesize .}\\
 \end{tabular*}
 \end{table}

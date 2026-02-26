@@ -5,9 +5,10 @@
 
 \subsubsection{Correlations for the general trust measure}
 
-\par I look at the pairwise correlations between general and more specific control variables and the general trust measure in figure. This will be useful, as it will help understand what explains trust in the HRS data.
+\par I look at the pairwise correlations between general and more specific control variables and the general trust measure in Table~\ref{tab:trust_controls_corr}. This will be useful, as it will help understand what explains trust in the HRS data.
 
 \inputtable{../../Code/Descriptive/Tables/trust_controls_corr.tex}
+\label{tab:trust_controls_corr}
 \FloatBarrier
 
 \subsubsection{Estimated fixed effects for returns to net worth}
@@ -93,6 +94,7 @@
 \par To further capture the point that mean incomes are relatively flat over the period, I consider income growth as well by considering the log difference in income across waves.
 
 \inputtable{../../Code/Descriptive/Tables/income_growth_tabstat.tex}
+\label{tab:income_growth_tabstat}
 
 \begin{figure}[H]
 \centering
@@ -103,37 +105,44 @@
 
 \subsection{Labor income regression results}
 
-\par After understanding the determinants of trust in the HRS data, I wanted to see if the \say{hump-shape} relationship between trust and income found by \cite{jbpglg2016} was present in the HRS data. I also check the results for deflated winsorized log income. The cross-section (2020) and average over waves (2002--2022) results for labor income are given below.
+\par After understanding the determinants of trust in the HRS data, I wanted to see if the \say{hump-shape} relationship between trust and income found by \cite{jbpglg2016} was present in the HRS data. I also check the results for deflated winsorized log income. The cross-section (2020) and average over waves (2002--2022) results for labor income are given in Tables~\ref{tab:income_trust_general_labor_log} and~\ref{tab:income_trust_general_labor_deflwin_log}.
 
 \inputtable{../../Code/Regressions/Income/Labor/income_trust_general_log.tex}
+\label{tab:income_trust_general_labor_log}
 \FloatBarrier
 
 \inputtable{../../Code/Regressions/Average/Income/Labor/income_trust_general_deflwin_log.tex}
+\label{tab:income_trust_general_labor_deflwin_log}
 \FloatBarrier
 
 \subsection{Total income regression results}
 
-\par The pattern seems to be stronger for total income. The cross-section (2020) and average over waves results are given .
+\par The pattern seems to be stronger for total income. The cross-section (2020) and average over waves results are given in Tables~\ref{tab:income_trust_general_total_log} and~\ref{tab:income_trust_general_total_deflwin_log}.
 
 \inputtable{../../Code/Regressions/Income/Total/income_trust_general_log.tex}
+\label{tab:income_trust_general_total_log}
 \FloatBarrier
 
 \inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_log.tex}
+\label{tab:income_trust_general_total_deflwin_log}
 \FloatBarrier
 
 \subsection{Core return regression results}
 
-\par The smallest portfolio composition is of core assets only. The regression results for winsorized (5 percent at each tail) annual returns for 2022 are given below.
+\par The smallest portfolio composition is of core assets only. The regression results for winsorized (5 percent at each tail) annual returns for 2022 are given in Table~\ref{tab:returns_r1_trust_general_win}.
 
 \inputtable{../../Code/Regressions/Returns/Core/returns_r1_trust_general_win.tex}
+\label{tab:returns_r1_trust_general_win}
 \FloatBarrier
 
-\par The pooled regression (Spec 1), risk-exposure specification (Spec 2), and fixed-effects specification (Spec 3) for returns to core assets are given below.
+\par The pooled regression (Spec 1), risk-exposure specification (Spec 2), and fixed-effects specification (Spec 3) for returns to core assets are given in Tables~\ref{tab:panel_reg_r1_win},~\ref{tab:panel_reg_r1_spec2_win}, and~\ref{tab:panel_reg_r1_spec3_win}.
 
 \inputtable{../../Code/Regressions/Panel/panel_reg_r1_win.tex}
+\label{tab:panel_reg_r1_win}
 \FloatBarrier
 
 \inputtable{../../Code/Regressions/Panel/panel_reg_r1_spec2_win.tex}
+\label{tab:panel_reg_r1_spec2_win}
 \FloatBarrier
 
 \begin{figure}[H]
@@ -144,16 +153,19 @@
 \FloatBarrier
 
 \inputtable{../../Code/Regressions/Panel/panel_reg_r1_spec3_win.tex}
+\label{tab:panel_reg_r1_spec3_win}
 \FloatBarrier
 
 \par Average annual returns (5 percent winsorized) over 2002--2022 on trust for core assets:
 
 \inputtable{../../Code/Regressions/Average/Returns/Core/returns_r1_trust_general_avg_win.tex}
+\label{tab:returns_r1_trust_general_avg_win}
 \FloatBarrier
 
 \par Second-stage regression of estimated fixed effects on time-invariant covariates:
 
 \inputtable{../../Code/Regressions/Panel/panel_fe_on_tinv_r1_win.tex}
+\label{tab:panel_fe_on_tinv_r1_win}
 \FloatBarrier
 
 \par The relationship between estimated fixed effects and trust, education, race, and gender (using r1 FE):
@@ -188,17 +200,20 @@
 
 \subsection{Core + IRA return regression results}
 
-\par The next portfolio composition includes retirement assets along with those core assets. The regression results for winsorized annual returns for 2022 on these portfolios are given below.
+\par The next portfolio composition includes retirement assets along with those core assets. The regression results for winsorized annual returns for 2022 on these portfolios are given in Table~\ref{tab:returns_r4_trust_general_win}.
 
 \inputtable{../../Code/Regressions/Returns/Core+res/returns_r4_trust_general_win.tex}
+\label{tab:returns_r4_trust_general_win}
 \FloatBarrier
 
-\par The pooled regression (Spec 1), risk-exposure specification (Spec 2), and fixed-effects specification (Spec 3) for returns to core and IRA:
+\par The pooled regression (Spec 1), risk-exposure specification (Spec 2), and fixed-effects specification (Spec 3) for returns to core and IRA are given in Tables~\ref{tab:panel_reg_r4_win},~\ref{tab:panel_reg_r4_spec2_win}, and~\ref{tab:panel_reg_r4_spec3_win}.
 
 \inputtable{../../Code/Regressions/Panel/panel_reg_r4_win.tex}
+\label{tab:panel_reg_r4_win}
 \FloatBarrier
 
 \inputtable{../../Code/Regressions/Panel/panel_reg_r4_spec2_win.tex}
+\label{tab:panel_reg_r4_spec2_win}
 \FloatBarrier
 
 \begin{figure}[H]
@@ -209,14 +224,17 @@
 \FloatBarrier
 
 \inputtable{../../Code/Regressions/Panel/panel_reg_r4_spec3_win.tex}
+\label{tab:panel_reg_r4_spec3_win}
 \FloatBarrier
 
 \par Average annual returns (5 percent winsorized) over 2002--2022 on trust for core and IRA:
 
 \inputtable{../../Code/Regressions/Average/Returns/Core+res/returns_r4_trust_general_avg_win.tex}
+\label{tab:returns_r4_trust_general_avg_win}
 \FloatBarrier
 
 \par Second-stage regression of estimated fixed effects on time-invariant covariates:
 
 \inputtable{../../Code/Regressions/Panel/panel_fe_on_tinv_r4_win.tex}
+\label{tab:panel_fe_on_tinv_r4_win}
 \FloatBarrier

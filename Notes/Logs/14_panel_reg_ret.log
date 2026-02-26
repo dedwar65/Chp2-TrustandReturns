@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/14_p
 > anel_reg_ret.log
   log type:  text
- opened on:  23 Feb 2026, 10:50:12
+ opened on:  25 Feb 2026, 23:07:51
 
 . 
 . capture which esttab
@@ -120,7 +120,7 @@ Panel variable: hhidpn (strongly balanced)
  10.     if "`ret'" == "r4" {
  11.         local yvar "`r4_raw'"
  12.         local ctrl "`ctrl_r4'"
- 13.         local ret_label "returns to ${LATEX_CORE_IRA}"
+ 13.         local ret_label "returns to core and IRA"
  14.     }
  15.     if "`ret'" == "r5" {
  16.         local yvar "`r5_raw'"
@@ -132,37 +132,140 @@ Panel variable: hhidpn (strongly balanced)
  21.     di as txt _n "--- Raw `ret_label' ---"
  22.     eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhid
 > pn)
- 23.     * Keep only main coefficients (explicit list; age, year, censreg, weal
+ 23.     estadd scalar p_joint_trust = . : m1
+ 24.     quietly testparm i.age_bin
+ 25.     estadd scalar p_joint_age_bin = r(p) : m1
+ 26.     local wlist ""
+ 27.     if "`ret'" == "r1" {
+ 28.         forvalues d = 2/10 {
+ 29.             capture confirm variable wealth_core_d`d'
+ 30.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+ 31.         }
+ 32.     }
+ 33.     if "`ret'" == "r4" {
+ 34.         forvalues d = 2/10 {
+ 35.             capture confirm variable wealth_coreira_d`d'
+ 36.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+ 37.         }
+ 38.     }
+ 39.     if "`ret'" == "r5" {
+ 40.         forvalues d = 2/10 {
+ 41.             capture confirm variable wealth_d`d'
+ 42.             if !_rc local wlist "`wlist' wealth_d`d'"
+ 43.         }
+ 44.     }
+ 45.     if trim("`wlist'") != "" {
+ 46.         quietly testparm `wlist'
+ 47.         estadd scalar p_joint_wealth = r(p) : m1
+ 48.     }
+ 49.     else estadd scalar p_joint_wealth = . : m1
+ 50.     quietly testparm i.race_eth
+ 51.     estadd scalar p_joint_race = r(p) : m1
+ 52.     capture testparm i.censreg
+ 53.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+ 54.     else estadd scalar p_joint_censreg = . : m1
+ 55.     quietly testparm i.year
+ 56.     estadd scalar p_joint_year = r(p) : m1
+ 57.     * Keep only main coefficients (explicit list; age, year, censreg, weal
 > th omitted)
 .     local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbr
 > f_ married_ born_us `trust_var' c.`trust_var'#c.`trust_var' _cons"
- 24.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
+ 58.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
 > missing(`trust_var'), vce(cluster hhidpn)
- 25.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
+ 59.     estadd scalar p_joint_trust = . : m2
+ 60.     quietly testparm i.age_bin
+ 61.     estadd scalar p_joint_age_bin = r(p) : m2
+ 62.     local wlist ""
+ 63.     if "`ret'" == "r1" {
+ 64.         forvalues d = 2/10 {
+ 65.             capture confirm variable wealth_core_d`d'
+ 66.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+ 67.         }
+ 68.     }
+ 69.     if "`ret'" == "r4" {
+ 70.         forvalues d = 2/10 {
+ 71.             capture confirm variable wealth_coreira_d`d'
+ 72.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+ 73.         }
+ 74.     }
+ 75.     if "`ret'" == "r5" {
+ 76.         forvalues d = 2/10 {
+ 77.             capture confirm variable wealth_d`d'
+ 78.             if !_rc local wlist "`wlist' wealth_d`d'"
+ 79.         }
+ 80.     }
+ 81.     if trim("`wlist'") != "" {
+ 82.         quietly testparm `wlist'
+ 83.         estadd scalar p_joint_wealth = r(p) : m2
+ 84.     }
+ 85.     else estadd scalar p_joint_wealth = . : m2
+ 86.     quietly testparm i.race_eth
+ 87.     estadd scalar p_joint_race = r(p) : m2
+ 88.     capture testparm i.censreg
+ 89.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+ 90.     else estadd scalar p_joint_censreg = . : m2
+ 91.     quietly testparm i.year
+ 92.     estadd scalar p_joint_year = r(p) : m2
+ 93.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
 > var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
- 26.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 27.     estadd scalar p_joint_trust = r(p) : m3
- 28. 
+ 94.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+ 95.     estadd scalar p_joint_trust = r(p) : m3
+ 96.     quietly testparm i.age_bin
+ 97.     estadd scalar p_joint_age_bin = r(p) : m3
+ 98.     local wlist ""
+ 99.     if "`ret'" == "r1" {
+100.         forvalues d = 2/10 {
+101.             capture confirm variable wealth_core_d`d'
+102.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+103.         }
+104.     }
+105.     if "`ret'" == "r4" {
+106.         forvalues d = 2/10 {
+107.             capture confirm variable wealth_coreira_d`d'
+108.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+109.         }
+110.     }
+111.     if "`ret'" == "r5" {
+112.         forvalues d = 2/10 {
+113.             capture confirm variable wealth_d`d'
+114.             if !_rc local wlist "`wlist' wealth_d`d'"
+115.         }
+116.     }
+117.     if trim("`wlist'") != "" {
+118.         quietly testparm `wlist'
+119.         estadd scalar p_joint_wealth = r(p) : m3
+120.     }
+121.     else estadd scalar p_joint_wealth = . : m3
+122.     quietly testparm i.race_eth
+123.     estadd scalar p_joint_race = r(p) : m3
+124.     capture testparm i.censreg
+125.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+126.     else estadd scalar p_joint_censreg = . : m3
+127.     quietly testparm i.year
+128.     estadd scalar p_joint_year = r(p) : m3
+129. 
 .     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'.tex"
- 29.     esttab m1 m2 m3 using "`outfile'", replace ///
+130.     local tablabel "tab:panel_reg_`ret'"
+131.     esttab m1 m2 m3 using "`outfile'", replace ///
 >         booktabs ///
 >         mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_list') ///
 >         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth 
-> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" mar
-> ried_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`t
-> rust_var' "Trust²") ///
->         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "J
-> oint test: Trust+Trust² p-value")) ///
+> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "In labor forc
+> e" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var
+> '#c.`trust_var' "Trust\$^2\$") ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e p_joint_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint
+>  test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deci
+> les p-value" "Joint test: Race p-value" "Joint test: Region p-value" "Joint t
+> est: Year p-value")) ///
 >         title("Panel: `ret_label' (raw)") ///
->         addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth d
-> eciles, region dummies," "and year dummies omitted from table but included in
->  regressions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
- 30. 
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+132. 
 .     di as txt "Wrote: `outfile'"
- 31. }
+133. }
 
 --- Raw returns to core ---
 
@@ -834,7 +937,7 @@ Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
  10.     if "`ret'" == "r4" {
  11.         local yvar "r4_annual_w5"
  12.         local ctrl "`ctrl_r4'"
- 13.         local ret_label "returns to ${LATEX_CORE_IRA}"
+ 13.         local ret_label "returns to core and IRA"
  14.     }
  15.     if "`ret'" == "r5" {
  16.         local yvar "r5_annual_w5"
@@ -852,35 +955,138 @@ Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Pane
  26.     di as txt _n "--- Winsorized `ret_label' ---"
  27.     eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhid
 > pn)
- 28.     local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth in
+ 28.     estadd scalar p_joint_trust = . : m1
+ 29.     quietly testparm i.age_bin
+ 30.     estadd scalar p_joint_age_bin = r(p) : m1
+ 31.     local wlist ""
+ 32.     if "`ret'" == "r1" {
+ 33.         forvalues d = 2/10 {
+ 34.             capture confirm variable wealth_core_d`d'
+ 35.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+ 36.         }
+ 37.     }
+ 38.     if "`ret'" == "r4" {
+ 39.         forvalues d = 2/10 {
+ 40.             capture confirm variable wealth_coreira_d`d'
+ 41.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+ 42.         }
+ 43.     }
+ 44.     if "`ret'" == "r5" {
+ 45.         forvalues d = 2/10 {
+ 46.             capture confirm variable wealth_d`d'
+ 47.             if !_rc local wlist "`wlist' wealth_d`d'"
+ 48.         }
+ 49.     }
+ 50.     if trim("`wlist'") != "" {
+ 51.         quietly testparm `wlist'
+ 52.         estadd scalar p_joint_wealth = r(p) : m1
+ 53.     }
+ 54.     else estadd scalar p_joint_wealth = . : m1
+ 55.     quietly testparm i.race_eth
+ 56.     estadd scalar p_joint_race = r(p) : m1
+ 57.     capture testparm i.censreg
+ 58.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+ 59.     else estadd scalar p_joint_censreg = . : m1
+ 60.     quietly testparm i.year
+ 61.     estadd scalar p_joint_year = r(p) : m1
+ 62.     local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth in
 > lbrf_ married_ born_us `trust_var' c.`trust_var'#c.`trust_var' _cons"
- 29.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
+ 63.     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !
 > missing(`trust_var'), vce(cluster hhidpn)
- 30.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
+ 64.     estadd scalar p_joint_trust = . : m2
+ 65.     quietly testparm i.age_bin
+ 66.     estadd scalar p_joint_age_bin = r(p) : m2
+ 67.     local wlist ""
+ 68.     if "`ret'" == "r1" {
+ 69.         forvalues d = 2/10 {
+ 70.             capture confirm variable wealth_core_d`d'
+ 71.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+ 72.         }
+ 73.     }
+ 74.     if "`ret'" == "r4" {
+ 75.         forvalues d = 2/10 {
+ 76.             capture confirm variable wealth_coreira_d`d'
+ 77.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+ 78.         }
+ 79.     }
+ 80.     if "`ret'" == "r5" {
+ 81.         forvalues d = 2/10 {
+ 82.             capture confirm variable wealth_d`d'
+ 83.             if !_rc local wlist "`wlist' wealth_d`d'"
+ 84.         }
+ 85.     }
+ 86.     if trim("`wlist'") != "" {
+ 87.         quietly testparm `wlist'
+ 88.         estadd scalar p_joint_wealth = r(p) : m2
+ 89.     }
+ 90.     else estadd scalar p_joint_wealth = . : m2
+ 91.     quietly testparm i.race_eth
+ 92.     estadd scalar p_joint_race = r(p) : m2
+ 93.     capture testparm i.censreg
+ 94.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+ 95.     else estadd scalar p_joint_censreg = . : m2
+ 96.     quietly testparm i.year
+ 97.     estadd scalar p_joint_year = r(p) : m2
+ 98.     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_
 > var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
- 31.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 32.     estadd scalar p_joint_trust = r(p) : m3
- 33. 
+ 99.     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+100.     estadd scalar p_joint_trust = r(p) : m3
+101.     quietly testparm i.age_bin
+102.     estadd scalar p_joint_age_bin = r(p) : m3
+103.     local wlist ""
+104.     if "`ret'" == "r1" {
+105.         forvalues d = 2/10 {
+106.             capture confirm variable wealth_core_d`d'
+107.             if !_rc local wlist "`wlist' wealth_core_d`d'"
+108.         }
+109.     }
+110.     if "`ret'" == "r4" {
+111.         forvalues d = 2/10 {
+112.             capture confirm variable wealth_coreira_d`d'
+113.             if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+114.         }
+115.     }
+116.     if "`ret'" == "r5" {
+117.         forvalues d = 2/10 {
+118.             capture confirm variable wealth_d`d'
+119.             if !_rc local wlist "`wlist' wealth_d`d'"
+120.         }
+121.     }
+122.     if trim("`wlist'") != "" {
+123.         quietly testparm `wlist'
+124.         estadd scalar p_joint_wealth = r(p) : m3
+125.     }
+126.     else estadd scalar p_joint_wealth = . : m3
+127.     quietly testparm i.race_eth
+128.     estadd scalar p_joint_race = r(p) : m3
+129.     capture testparm i.censreg
+130.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+131.     else estadd scalar p_joint_censreg = . : m3
+132.     quietly testparm i.year
+133.     estadd scalar p_joint_year = r(p) : m3
+134. 
 .     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_win.tex"
- 34.     esttab m1 m2 m3 using "`outfile'", replace ///
+135.     local tablabel "tab:panel_reg_`ret'_win"
+136.     esttab m1 m2 m3 using "`outfile'", replace ///
 >         booktabs ///
 >         mtitles("(1)" "(2)" "(3)") ///
 >         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >         keep(`keep_list') ///
 >         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth 
-> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" mar
-> ried_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`t
-> rust_var' "Trust²") ///
->         stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "J
-> oint test: Trust+Trust² p-value")) ///
+> "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "In labor forc
+> e" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var
+> '#c.`trust_var' "Trust\$^2\$") ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_rac
+> e p_joint_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint
+>  test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deci
+> les p-value" "Joint test: Race p-value" "Joint test: Region p-value" "Joint t
+> est: Year p-value")) ///
 >         title("Panel: `ret_label'${LATEX_WIN}") ///
->         addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth d
-> eciles, region dummies," "and year dummies omitted from table but included in
->  regressions.") ///
->         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
- 35. 
+>         addnotes(".") ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+137. 
 .     di as txt "Wrote: `outfile'"
- 36. }
+138. }
 
 --- Winsorized returns to core ---
 
@@ -1547,5 +1753,5 @@ Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regress
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/14_p
 > anel_reg_ret.log
   log type:  text
- closed on:  23 Feb 2026, 10:50:22
+ closed on:  25 Feb 2026, 23:08:25
 -------------------------------------------------------------------------------

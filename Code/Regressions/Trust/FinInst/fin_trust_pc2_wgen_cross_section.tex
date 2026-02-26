@@ -1,7 +1,6 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
 \caption{Cross section: r5 returns (5 percent wins) on financial-institutional trust}
-\label{tab:fin_trust_pc2_wgen_cross_section}
 \begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
@@ -22,9 +21,9 @@ Hispanic            &       -0.13         &       -0.13         &       -0.14   
                     &      (0.11)         &      (0.11)         &      (0.11)         \\
 NH Other            &       -0.01         &       -0.01         &       -0.01         \\
                     &      (0.13)         &      (0.13)         &      (0.13)         \\
-Fin. Inst. PC2      &                     &        0.01         &        0.01         \\
+Trust               &                     &        0.01         &        0.01         \\
                     &                     &      (0.03)         &      (0.03)         \\
-(Fin. Inst. PC2)$^2$&                     &                     &        0.01         \\
+Trust$^2$           &                     &                     &        0.01         \\
                     &                     &                     &      (0.02)         \\
 \_cons              &       -0.40\sym{*}  &       -0.39         &       -0.41\sym{*}  \\
                     &      (0.24)         &      (0.24)         &      (0.25)         \\
@@ -32,9 +31,10 @@ Fin. Inst. PC2      &                     &        0.01         &        0.01   
 Observations        &      271.00         &      271.00         &      271.00         \\
 Adj. R-squared      &        0.28         &        0.28         &        0.28         \\
 Joint test: Trust p-value&           .         &           .         &        0.84         \\
+Joint test: Age bins p-value&        0.00         &        0.00         &        0.00         \\
+Joint test: Wealth deciles p-value&        0.00         &        0.00         &        0.00         \\
+Joint test: Race p-value&        0.23         &        0.25         &        0.25         \\
 \bottomrule
-\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{4}{l}{\footnotesize Robust SE. Age bins (5-yr) and wealth deciles omitted from table but included in regressions.}\\
-\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{4}{l}{\footnotesize .}\\
 \end{tabular*}
 \end{table}

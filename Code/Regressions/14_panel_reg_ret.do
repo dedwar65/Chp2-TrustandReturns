@@ -108,7 +108,7 @@ foreach ret in r1 r4 r5 {
     if "`ret'" == "r4" {
         local yvar "`r4_raw'"
         local ctrl "`ctrl_r4'"
-        local ret_label "returns to ${LATEX_CORE_IRA}"
+        local ret_label "returns to core and IRA"
     }
     if "`ret'" == "r5" {
         local yvar "`r5_raw'"
@@ -119,24 +119,126 @@ foreach ret in r1 r4 r5 {
     eststo clear
     di as txt _n "--- Raw `ret_label' ---"
     eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
+    estadd scalar p_joint_trust = . : m1
+    quietly testparm i.age_bin
+    estadd scalar p_joint_age_bin = r(p) : m1
+    local wlist ""
+    if "`ret'" == "r1" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_core_d`d'
+            if !_rc local wlist "`wlist' wealth_core_d`d'"
+        }
+    }
+    if "`ret'" == "r4" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_coreira_d`d'
+            if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+        }
+    }
+    if "`ret'" == "r5" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_d`d'
+            if !_rc local wlist "`wlist' wealth_d`d'"
+        }
+    }
+    if trim("`wlist'") != "" {
+        quietly testparm `wlist'
+        estadd scalar p_joint_wealth = r(p) : m1
+    }
+    else estadd scalar p_joint_wealth = . : m1
+    quietly testparm i.race_eth
+    estadd scalar p_joint_race = r(p) : m1
+    capture testparm i.censreg
+    if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+    else estadd scalar p_joint_censreg = . : m1
+    quietly testparm i.year
+    estadd scalar p_joint_year = r(p) : m1
     * Keep only main coefficients (explicit list; age, year, censreg, wealth omitted)
     local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbrf_ married_ born_us `trust_var' c.`trust_var'#c.`trust_var' _cons"
     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    estadd scalar p_joint_trust = . : m2
+    quietly testparm i.age_bin
+    estadd scalar p_joint_age_bin = r(p) : m2
+    local wlist ""
+    if "`ret'" == "r1" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_core_d`d'
+            if !_rc local wlist "`wlist' wealth_core_d`d'"
+        }
+    }
+    if "`ret'" == "r4" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_coreira_d`d'
+            if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+        }
+    }
+    if "`ret'" == "r5" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_d`d'
+            if !_rc local wlist "`wlist' wealth_d`d'"
+        }
+    }
+    if trim("`wlist'") != "" {
+        quietly testparm `wlist'
+        estadd scalar p_joint_wealth = r(p) : m2
+    }
+    else estadd scalar p_joint_wealth = . : m2
+    quietly testparm i.race_eth
+    estadd scalar p_joint_race = r(p) : m2
+    capture testparm i.censreg
+    if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+    else estadd scalar p_joint_censreg = . : m2
+    quietly testparm i.year
+    estadd scalar p_joint_year = r(p) : m2
     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
     estadd scalar p_joint_trust = r(p) : m3
+    quietly testparm i.age_bin
+    estadd scalar p_joint_age_bin = r(p) : m3
+    local wlist ""
+    if "`ret'" == "r1" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_core_d`d'
+            if !_rc local wlist "`wlist' wealth_core_d`d'"
+        }
+    }
+    if "`ret'" == "r4" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_coreira_d`d'
+            if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+        }
+    }
+    if "`ret'" == "r5" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_d`d'
+            if !_rc local wlist "`wlist' wealth_d`d'"
+        }
+    }
+    if trim("`wlist'") != "" {
+        quietly testparm `wlist'
+        estadd scalar p_joint_wealth = r(p) : m3
+    }
+    else estadd scalar p_joint_wealth = . : m3
+    quietly testparm i.race_eth
+    estadd scalar p_joint_race = r(p) : m3
+    capture testparm i.censreg
+    if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+    else estadd scalar p_joint_censreg = . : m3
+    quietly testparm i.year
+    estadd scalar p_joint_year = r(p) : m3
 
     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'.tex"
+    local tablabel "tab:panel_reg_`ret'"
     esttab m1 m2 m3 using "`outfile'", replace ///
         booktabs ///
         mtitles("(1)" "(2)" "(3)") ///
         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
         keep(`keep_list') ///
-        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
-        stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
+        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "In labor force" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust\$^2\$") ///
+        stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value" "Joint test: Region p-value" "Joint test: Year p-value")) ///
         title("Panel: `ret_label' (raw)") ///
-        addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies," "and year dummies omitted from table but included in regressions.") ///
-        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+        addnotes(".") ///
+        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
     di as txt "Wrote: `outfile'"
 }
@@ -156,7 +258,7 @@ foreach ret in r1 r4 r5 {
     if "`ret'" == "r4" {
         local yvar "r4_annual_w5"
         local ctrl "`ctrl_r4'"
-        local ret_label "returns to ${LATEX_CORE_IRA}"
+        local ret_label "returns to core and IRA"
     }
     if "`ret'" == "r5" {
         local yvar "r5_annual_w5"
@@ -173,23 +275,125 @@ foreach ret in r1 r4 r5 {
     eststo clear
     di as txt _n "--- Winsorized `ret_label' ---"
     eststo m1: regress `yvar' `ctrl' if !missing(`yvar'), vce(cluster hhidpn)
+    estadd scalar p_joint_trust = . : m1
+    quietly testparm i.age_bin
+    estadd scalar p_joint_age_bin = r(p) : m1
+    local wlist ""
+    if "`ret'" == "r1" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_core_d`d'
+            if !_rc local wlist "`wlist' wealth_core_d`d'"
+        }
+    }
+    if "`ret'" == "r4" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_coreira_d`d'
+            if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+        }
+    }
+    if "`ret'" == "r5" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_d`d'
+            if !_rc local wlist "`wlist' wealth_d`d'"
+        }
+    }
+    if trim("`wlist'") != "" {
+        quietly testparm `wlist'
+        estadd scalar p_joint_wealth = r(p) : m1
+    }
+    else estadd scalar p_joint_wealth = . : m1
+    quietly testparm i.race_eth
+    estadd scalar p_joint_race = r(p) : m1
+    capture testparm i.censreg
+    if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+    else estadd scalar p_joint_censreg = . : m1
+    quietly testparm i.year
+    estadd scalar p_joint_year = r(p) : m1
     local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbrf_ married_ born_us `trust_var' c.`trust_var'#c.`trust_var' _cons"
     eststo m2: regress `yvar' `ctrl' c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
+    estadd scalar p_joint_trust = . : m2
+    quietly testparm i.age_bin
+    estadd scalar p_joint_age_bin = r(p) : m2
+    local wlist ""
+    if "`ret'" == "r1" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_core_d`d'
+            if !_rc local wlist "`wlist' wealth_core_d`d'"
+        }
+    }
+    if "`ret'" == "r4" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_coreira_d`d'
+            if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+        }
+    }
+    if "`ret'" == "r5" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_d`d'
+            if !_rc local wlist "`wlist' wealth_d`d'"
+        }
+    }
+    if trim("`wlist'") != "" {
+        quietly testparm `wlist'
+        estadd scalar p_joint_wealth = r(p) : m2
+    }
+    else estadd scalar p_joint_wealth = . : m2
+    quietly testparm i.race_eth
+    estadd scalar p_joint_race = r(p) : m2
+    capture testparm i.censreg
+    if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+    else estadd scalar p_joint_censreg = . : m2
+    quietly testparm i.year
+    estadd scalar p_joint_year = r(p) : m2
     eststo m3: regress `yvar' `ctrl' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`yvar') & !missing(`trust_var'), vce(cluster hhidpn)
     quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
     estadd scalar p_joint_trust = r(p) : m3
+    quietly testparm i.age_bin
+    estadd scalar p_joint_age_bin = r(p) : m3
+    local wlist ""
+    if "`ret'" == "r1" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_core_d`d'
+            if !_rc local wlist "`wlist' wealth_core_d`d'"
+        }
+    }
+    if "`ret'" == "r4" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_coreira_d`d'
+            if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+        }
+    }
+    if "`ret'" == "r5" {
+        forvalues d = 2/10 {
+            capture confirm variable wealth_d`d'
+            if !_rc local wlist "`wlist' wealth_d`d'"
+        }
+    }
+    if trim("`wlist'") != "" {
+        quietly testparm `wlist'
+        estadd scalar p_joint_wealth = r(p) : m3
+    }
+    else estadd scalar p_joint_wealth = . : m3
+    quietly testparm i.race_eth
+    estadd scalar p_joint_race = r(p) : m3
+    capture testparm i.censreg
+    if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+    else estadd scalar p_joint_censreg = . : m3
+    quietly testparm i.year
+    estadd scalar p_joint_year = r(p) : m3
 
     local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_win.tex"
+    local tablabel "tab:panel_reg_`ret'_win"
     esttab m1 m2 m3 using "`outfile'", replace ///
         booktabs ///
         mtitles("(1)" "(2)" "(3)") ///
         se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
         keep(`keep_list') ///
-        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust²") ///
-        stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
+        varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "In labor force" married_ "Married" born_us "Born in U.S." `trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust\$^2\$") ///
+        stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value" "Joint test: Region p-value" "Joint test: Year p-value")) ///
         title("Panel: `ret_label'${LATEX_WIN}") ///
-        addnotes("Cluster-robust SE in parentheses. Age bins (5-yr), wealth deciles, region dummies," "and year dummies omitted from table but included in regressions.") ///
-        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+        addnotes(".") ///
+        alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
     di as txt "Wrote: `outfile'"
 }

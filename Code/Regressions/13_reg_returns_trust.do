@@ -137,7 +137,7 @@ foreach pair of local trust_list {
         if "`ret'" == "r4" {
             local y_un  "r4_annual_2022"
             local y_win "r4_annual_2022_w5"
-            local ret_label "Returns to ${LATEX_CORE_IRA} (2022)"
+            local ret_label "Returns to core and IRA (2022)"
             local outdir    "${REGRESSIONS}/Returns/Core+res"
             forvalues d = 2/10 {
                 capture confirm variable wealth_coreira_d`d'_2020
@@ -196,16 +196,94 @@ foreach pair of local trust_list {
             * 4 regressions: trust; trust^2; trust+controls; trust^2+controls
             * 1. Trust only (linear — joint test redundant with t-test)
             noisily eststo lin_raw: regress `y' c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
+            estadd scalar p_joint_age_bin = . : lin_raw
+            estadd scalar p_joint_wealth = . : lin_raw
+            estadd scalar p_joint_race = . : lin_raw
             * 2. Trust + trust^2
             noisily eststo quad_raw: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
             estadd scalar p_joint_trust = r(p) : quad_raw
+            estadd scalar p_joint_age_bin = . : quad_raw
+            estadd scalar p_joint_wealth = . : quad_raw
+            estadd scalar p_joint_race = . : quad_raw
             * 3. Trust + controls (linear — joint test redundant with t-test)
             noisily eststo lin_ctl: regress `y' c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
+            capture confirm variable age_bin
+            if !_rc {
+                quietly testparm i.age_bin
+                estadd scalar p_joint_age_bin = r(p) : lin_ctl
+            }
+            else estadd scalar p_joint_age_bin = . : lin_ctl
+            local wlist ""
+            if "`ret'" == "r1" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_core_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_core_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r4" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_coreira_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_coreira_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r5" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_d`d'_2020"
+                }
+            }
+            if trim("`wlist'") != "" {
+                quietly testparm `wlist'
+                estadd scalar p_joint_wealth = r(p) : lin_ctl
+            }
+            else estadd scalar p_joint_wealth = . : lin_ctl
+            capture confirm variable race_eth
+            if !_rc {
+                quietly testparm i.race_eth
+                estadd scalar p_joint_race = r(p) : lin_ctl
+            }
+            else estadd scalar p_joint_race = . : lin_ctl
             * 4. Trust + trust^2 + controls
             noisily eststo quad_ctl: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
             estadd scalar p_joint_trust = r(p) : quad_ctl
+            capture confirm variable age_bin
+            if !_rc {
+                quietly testparm i.age_bin
+                estadd scalar p_joint_age_bin = r(p) : quad_ctl
+            }
+            else estadd scalar p_joint_age_bin = . : quad_ctl
+            local wlist ""
+            if "`ret'" == "r1" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_core_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_core_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r4" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_coreira_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_coreira_d`d'_2020"
+                }
+            }
+            if "`ret'" == "r5" {
+                forvalues d = 2/10 {
+                    capture confirm variable wealth_d`d'_2020
+                    if !_rc local wlist "`wlist' wealth_d`d'_2020"
+                }
+            }
+            if trim("`wlist'") != "" {
+                quietly testparm `wlist'
+                estadd scalar p_joint_wealth = r(p) : quad_ctl
+            }
+            else estadd scalar p_joint_wealth = . : quad_ctl
+            capture confirm variable race_eth
+            if !_rc {
+                quietly testparm i.race_eth
+                estadd scalar p_joint_race = r(p) : quad_ctl
+            }
+            else estadd scalar p_joint_race = . : quad_ctl
 
             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -253,29 +331,13 @@ foreach pair of local trust_list {
                 mtitles("1" "2" "3" "4") ///
                 se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
                 drop(`drop_list' *.age_bin, relax) ///
-                varlabels(c.`trust_var'#c.`trust_var' "`vlab_trust2'" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
-                stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
+                varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
+                stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value")) ///
                 title("2022 `ret_label' on `capt_stub' trust (2020)`win_label'") ///
-                addnotes("Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.") ///
-                alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+                addnotes(".") ///
+                alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
-            * Insert \label after \caption
-            tempfile tmpf
-            file open fh using "`outfile'", read text
-            file open fout using "`tmpf'", write text replace
-            local lab_inserted 0
-            file read fh line
-            while r(eof) == 0 {
-                file write fout "`line'" _n
-                if `lab_inserted' == 0 & regexm(`"`line'"', "\\caption") {
-                    file write fout "\label{tab:returns_`ret'_trust_`stub'`file_suffix'}" _n
-                    local lab_inserted 1
-                }
-                file read fh line
-            }
-            file close fh
-            file close fout
-            copy "`tmpf'" "`outfile'", replace
+            * Keep direct esttab output; labels are handled in LaTeX manuscript files.
         }
     }
 }

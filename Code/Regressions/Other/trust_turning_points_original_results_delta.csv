@@ -1,0 +1,7 @@
+block,spec,depvar,N,tp,tp_se,tp_p,tp_lb,tp_ub,tp_in_support,shape
+income_2020_total_ihs,controls,ihs_tot_inc_defl_win_s_2,890,5.6208944,.81738883,6.1277671e-12,4.0188417,7.2229471,1,concave_max
+income_avg_total_ihs,controls,ihs_tot_inc_defl_win_avg,890,5.332922,.68579102,7.4671994e-15,3.988796,6.6770473,1,concave_max
+returns_2022_r5_win,controls,r5_annual_w5_2022,406,6.8605995,2.8116596,.01468509,1.349848,12.37135,1,concave_max
+returns_avg_r5_win,controls,r5_annual_avg_w5,593,6.9120975,.98321968,2.0643821e-12,4.9850225,8.8391724,1,concave_max
+panel_spec1_r5_win,controls,r5_annual_w5,2899,7.4222045,1.0247281,4.3855401e-13,5.4137745,9.4306345,1,concave_max
+panel_spec2_r5_win,controls,r5_annual_w5,2866,7.3210568,1.0468416,2.6816607e-12,5.2692852,9.3728285,1,concave_max

@@ -1,0 +1,1431 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/27_t
+> urning_points_original_results.log
+  log type:  text
+ opened on:  25 Feb 2026, 23:16:41
+
+. 
+. tempfile tpraw
+
+. postfile tpH str40 block str18 spec str24 depvar str24 trustvar ///
+>     double N b1 b2 tp tp_se tp_p tp_lb tp_ub t_min t_max both_sig p_joint ///
+>     using "`tpraw'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_07824.000002 not
+    found)
+
+. 
+. local tvar "trust_others_2020"
+
+. local sq "c.`tvar'#c.`tvar'"
+
+. local both_alpha 0.10
+
+. 
+. * ------------------------------------------------------------
+. * 1) Cross-section income, total IHS (from 12_reg_income_trust.do)
+. *    m2 (no controls), m4 (controls)
+. * ------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. capture confirm variable age_2020
+
+. if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+
+. 
+. local y "ihs_tot_inc_defl_win_s_2020"
+
+. local ctrl "i.gender educ_yrs married_2020 born_us"
+
+. capture confirm variable age_bin
+
+. if !_rc local ctrl "i.age_bin `ctrl'"
+
+. capture confirm variable inlbrf_2020
+
+. if !_rc local ctrl "`ctrl' inlbrf_2020"
+
+. capture confirm variable race_eth
+
+. if !_rc local ctrl "`ctrl' i.race_eth"
+
+. 
+. foreach s in nocontrol controls {
+  2.     if "`s'" == "nocontrol" regress `y' c.`tvar' `sq' if !missing(`y') & !
+> missing(`tvar'), vce(robust)
+  3.     if "`s'" == "controls"  regress `y' c.`tvar' `sq' `ctrl' if !missing(`
+> y') & !missing(`tvar'), vce(robust)
+  4.     quietly test c.`tvar' = 0
+  5.     local p_b1 = r(p)
+  6.     quietly test `sq' = 0
+  7.     local p_b2 = r(p)
+  8.     local both_sig = (`p_b1' < `both_alpha' & `p_b2' < `both_alpha')
+  9.     quietly testparm c.`tvar' `sq'
+ 10.     local p_joint = r(p)
+ 11.     local b1 = _b[c.`tvar']
+ 12.     local b2 = _b[`sq']
+ 13.     qui sum `tvar' if e(sample), meanonly
+ 14.     local tmin = r(min)
+ 15.     local tmax = r(max)
+ 16.     capture noisily nlcom (tp: -_b[c.`tvar']/(2*_b[`sq']))
+ 17.     if _rc {
+ 18.         local tp = .
+ 19.         local tp_se = .
+ 20.         local tp_p = .
+ 21.         local tp_lb = .
+ 22.         local tp_ub = .
+ 23.     }
+ 24.     else {
+ 25.         matrix T = r(table)
+ 26.         local tp    = T[1,1]
+ 27.         local tp_se = T[2,1]
+ 28.         local tp_p  = T[4,1]
+ 29.         local tp_lb = T[5,1]
+ 30.         local tp_ub = T[6,1]
+ 31.     }
+ 32.     post tpH ("income_2020_total_ihs") ("`s'") ("`y'") ("`tvar'") ///
+>         (e(N)) (`b1') (`b2') (`tp') (`tp_se') (`tp_p') (`tp_lb') (`tp_ub') (`
+> tmin') (`tmax') (`both_sig') (`p_joint')
+ 33. }
+
+Linear regression                               Number of obs     =        900
+                                                F(2, 897)         =      36.16
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0545
+                                                Root MSE          =     .73463
+
+------------------------------------------------------------------------------
+             |               Robust
+ihs_tot~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .1942636   .0228425     8.50   0.000     .1494326    .2390946
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0167015   .0020845    -8.01   0.000    -.0207926   -.0126104
+             |
+       _cons |   .5306631   .0583223     9.10   0.000     .4161991    .6451272
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+ihs_tot~2020 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   5.815763   .2433101    23.90   0.000     5.338883    6.292642
+------------------------------------------------------------------------------
+
+Linear regression                               Number of obs     =        890
+                                                F(21, 867)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.3661
+                                                Root MSE          =     .60884
+
+------------------------------------------------------------------------------
+             |               Robust
+ihs_tot~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |     .04936   .0219953     2.24   0.025     .0061897    .0925304
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0043908   .0019642    -2.24   0.026    -.0082458   -.0005357
+             |
+     age_bin |
+         30  |     .19361   .5903235     0.33   0.743    -.9650202     1.35224
+         35  |   .7385616   .1159425     6.37   0.000     .5110008    .9661223
+         40  |   .6266962    .152378     4.11   0.000     .3276234     .925769
+         45  |   .1138833   .2134451     0.53   0.594    -.3050464    .5328129
+         50  |    .462085     .13366     3.46   0.001       .19975      .72442
+         55  |   .5421928   .1120103     4.84   0.000     .3223497    .7620359
+         60  |   .4762185   .1084087     4.39   0.000     .2634442    .6889927
+         65  |   .6100247   .1087648     5.61   0.000     .3965516    .8234978
+         70  |    .427696   .1123807     3.81   0.000      .207126     .648266
+         75  |    .526034   .1213896     4.33   0.000     .2877822    .7642858
+         80  |   .5619032   .1236443     4.54   0.000      .319226    .8045803
+         85  |   .5926303   .1535415     3.86   0.000     .2912739    .8939867
+             |
+    2.gender |  -.2655384    .044682    -5.94   0.000    -.3532359    -.177841
+    educ_yrs |   .0659683   .0065786    10.03   0.000     .0530565    .0788801
+married_2020 |   .1374891   .0445749     3.08   0.002     .0500018    .2249763
+     born_us |   .0167801   .0658966     0.25   0.799    -.1125554    .1461157
+ inlbrf_2020 |   .4899021   .0496321     9.87   0.000     .3924891    .5873151
+             |
+    race_eth |
+          2  |  -.2283002   .0518879    -4.40   0.000    -.3301408   -.1264596
+          3  |   -.232783   .0676299    -3.44   0.001    -.3655205   -.1000456
+          4  |  -.2684324   .0877179    -3.06   0.002    -.4405967   -.0962682
+             |
+       _cons |  -.5080062   .1557378    -3.26   0.001    -.8136733    -.202339
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+ihs_tot~2020 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   5.620895   .8173888     6.88   0.000     4.018842    7.222947
+------------------------------------------------------------------------------
+
+. 
+. * ------------------------------------------------------------
+. * 2) Average income, total IHS (from 17_reg_income_avg_trust.do)
+. *    m2 (no controls), m4 (controls)
+. * ------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. capture confirm variable age_2020
+
+. if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+
+. 
+. local y "ihs_tot_inc_defl_win_avg"
+
+. local ctrl "i.gender educ_yrs married_2020 born_us"
+
+. capture confirm variable age_bin
+
+. if !_rc local ctrl "i.age_bin `ctrl'"
+
+. capture confirm variable inlbrf_2020
+
+. if !_rc local ctrl "`ctrl' inlbrf_2020"
+
+. capture confirm variable race_eth
+
+. if !_rc local ctrl "`ctrl' i.race_eth"
+
+. 
+. foreach s in nocontrol controls {
+  2.     if "`s'" == "nocontrol" regress `y' c.`tvar' `sq' if !missing(`y') & !
+> missing(`tvar'), vce(robust)
+  3.     if "`s'" == "controls"  regress `y' c.`tvar' `sq' `ctrl' if !missing(`
+> y') & !missing(`tvar'), vce(robust)
+  4.     quietly test c.`tvar' = 0
+  5.     local p_b1 = r(p)
+  6.     quietly test `sq' = 0
+  7.     local p_b2 = r(p)
+  8.     local both_sig = (`p_b1' < `both_alpha' & `p_b2' < `both_alpha')
+  9.     quietly testparm c.`tvar' `sq'
+ 10.     local p_joint = r(p)
+ 11.     local b1 = _b[c.`tvar']
+ 12.     local b2 = _b[`sq']
+ 13.     qui sum `tvar' if e(sample), meanonly
+ 14.     local tmin = r(min)
+ 15.     local tmax = r(max)
+ 16.     capture noisily nlcom (tp: -_b[c.`tvar']/(2*_b[`sq']))
+ 17.     if _rc {
+ 18.         local tp = .
+ 19.         local tp_se = .
+ 20.         local tp_p = .
+ 21.         local tp_lb = .
+ 22.         local tp_ub = .
+ 23.     }
+ 24.     else {
+ 25.         matrix T = r(table)
+ 26.         local tp    = T[1,1]
+ 27.         local tp_se = T[2,1]
+ 28.         local tp_p  = T[4,1]
+ 29.         local tp_lb = T[5,1]
+ 30.         local tp_ub = T[6,1]
+ 31.     }
+ 32.     post tpH ("income_avg_total_ihs") ("`s'") ("`y'") ("`tvar'") ///
+>         (e(N)) (`b1') (`b2') (`tp') (`tp_se') (`tp_p') (`tp_lb') (`tp_ub') (`
+> tmin') (`tmax') (`both_sig') (`p_joint')
+ 33. }
+
+Linear regression                               Number of obs     =        900
+                                                F(2, 897)         =      50.52
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0750
+                                                Root MSE          =     .67741
+
+------------------------------------------------------------------------------
+             |               Robust
+ihs_to~n_avg | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .2118809   .0211068    10.04   0.000     .1704565    .2533053
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0179754   .0019392    -9.27   0.000    -.0217813   -.0141694
+             |
+       _cons |    .575942    .054153    10.64   0.000     .4696607    .6822232
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+ihs_to~n_avg | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   5.893647   .2158681    27.30   0.000     5.470553    6.316741
+------------------------------------------------------------------------------
+
+Linear regression                               Number of obs     =        890
+                                                F(21, 867)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.4404
+                                                Root MSE          =     .53312
+
+------------------------------------------------------------------------------
+             |               Robust
+ihs_to~n_avg | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |    .049371   .0191177     2.58   0.010     .0118487    .0868933
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0046289   .0017291    -2.68   0.008    -.0080225   -.0012352
+             |
+     age_bin |
+         30  |  -.0085632   .4057648    -0.02   0.983    -.8049594    .7878331
+         35  |   .5770512   .1359908     4.24   0.000     .3101415    .8439609
+         40  |   .4302251   .2052735     2.10   0.036      .027334    .8331163
+         45  |   .3224639   .1944888     1.66   0.098    -.0592601    .7041878
+         50  |   .5450527   .1535915     3.55   0.000     .2435981    .8465074
+         55  |   .6611343   .1323687     4.99   0.000     .4013338    .9209348
+         60  |   .6005467   .1312264     4.58   0.000     .3429881    .8581052
+         65  |   .7574711   .1325249     5.72   0.000      .497364    1.017578
+         70  |   .6768735   .1372188     4.93   0.000     .4075536    .9461934
+         75  |   .7222846   .1381376     5.23   0.000     .4511615    .9934078
+         80  |   .7680023   .1397307     5.50   0.000     .4937522    1.042252
+         85  |   .6990692   .1589089     4.40   0.000      .387178     1.01096
+             |
+    2.gender |  -.2479355   .0384229    -6.45   0.000    -.3233482   -.1725228
+    educ_yrs |   .0787911   .0066662    11.82   0.000     .0657073    .0918748
+married_2020 |   .1940409   .0392802     4.94   0.000     .1169455    .2711364
+     born_us |  -.0269297   .0597738    -0.45   0.652    -.1442479    .0903886
+ inlbrf_2020 |   .3665214   .0431669     8.49   0.000     .2817975    .4512453
+             |
+    race_eth |
+          2  |  -.2617763   .0461695    -5.67   0.000    -.3523933   -.1711593
+          3  |  -.2818123   .0617416    -4.56   0.000    -.4029927   -.1606319
+          4  |  -.2856802   .0827923    -3.45   0.001    -.4481769   -.1231834
+             |
+       _cons |  -.6561575   .1690685    -3.88   0.000    -.9879889   -.3243261
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+ihs_to~n_avg | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   5.332922    .685791     7.78   0.000     3.988796    6.677047
+------------------------------------------------------------------------------
+
+. 
+. * ------------------------------------------------------------
+. * 3) Cross-section returns r5 2022 winsorized (from 13_reg_returns_trust.do)
+. *    m2 (no controls), m4 (controls)
+. * ------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. capture confirm variable age_2020
+
+. if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+
+. 
+. local y "r5_annual_w5_2022"
+
+. capture confirm variable `y'
+
+. if _rc local y "r5_annual_2022_w5"
+
+. 
+. local ctrl "i.gender educ_yrs married_2020 born_us"
+
+. capture confirm variable age_bin
+
+. if !_rc local ctrl "i.age_bin `ctrl'"
+
+. capture confirm variable race_eth
+
+. if !_rc local ctrl "`ctrl' i.race_eth"
+
+. capture confirm variable inlbrf_2020
+
+. if !_rc local ctrl "`ctrl' inlbrf_2020"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local ctrl "`ctrl' wealth_d`d'_2020"
+  4. }
+
+. 
+. foreach s in nocontrol controls {
+  2.     if "`s'" == "nocontrol" regress `y' c.`tvar' `sq' if !missing(`y') & !
+> missing(`tvar'), vce(robust)
+  3.     if "`s'" == "controls"  regress `y' c.`tvar' `sq' `ctrl' if !missing(`
+> y') & !missing(`tvar'), vce(robust)
+  4.     quietly test c.`tvar' = 0
+  5.     local p_b1 = r(p)
+  6.     quietly test `sq' = 0
+  7.     local p_b2 = r(p)
+  8.     local both_sig = (`p_b1' < `both_alpha' & `p_b2' < `both_alpha')
+  9.     quietly testparm c.`tvar' `sq'
+ 10.     local p_joint = r(p)
+ 11.     local b1 = _b[c.`tvar']
+ 12.     local b2 = _b[`sq']
+ 13.     qui sum `tvar' if e(sample), meanonly
+ 14.     local tmin = r(min)
+ 15.     local tmax = r(max)
+ 16.     capture noisily nlcom (tp: -_b[c.`tvar']/(2*_b[`sq']))
+ 17.     if _rc {
+ 18.         local tp = .
+ 19.         local tp_se = .
+ 20.         local tp_p = .
+ 21.         local tp_lb = .
+ 22.         local tp_ub = .
+ 23.     }
+ 24.     else {
+ 25.         matrix T = r(table)
+ 26.         local tp    = T[1,1]
+ 27.         local tp_se = T[2,1]
+ 28.         local tp_p  = T[4,1]
+ 29.         local tp_lb = T[5,1]
+ 30.         local tp_ub = T[6,1]
+ 31.     }
+ 32.     post tpH ("returns_2022_r5_win") ("`s'") ("`y'") ("`tvar'") ///
+>         (e(N)) (`b1') (`b2') (`tp') (`tp_se') (`tp_p') (`tp_lb') (`tp_ub') (`
+> tmin') (`tmax') (`both_sig') (`p_joint')
+ 33. }
+
+Linear regression                               Number of obs     =        497
+                                                F(2, 494)         =       3.70
+                                                Prob > F          =     0.0254
+                                                R-squared         =     0.0094
+                                                Root MSE          =     .49972
+
+------------------------------------------------------------------------------
+             |               Robust
+r5_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0612715   .0245646     2.49   0.013     .0130075    .1095355
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0047343   .0024332    -1.95   0.052    -.0095151    .0000465
+             |
+       _cons |   .1341553   .0650267     2.06   0.040     .0063922    .2619184
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+r5_an~5_2022 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   6.471031   1.288273     5.02   0.000     3.946062    8.996001
+------------------------------------------------------------------------------
+
+Linear regression                               Number of obs     =        406
+                                                F(26, 377)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.2873
+                                                Root MSE          =     .41531
+
+------------------------------------------------------------------------------
+             |               Robust
+r5_an~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |    .030865   .0295477     1.04   0.297    -.0272339     .088964
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0022494   .0026059    -0.86   0.389    -.0073733    .0028744
+             |
+     age_bin |
+         45  |   .3668899   .1311731     2.80   0.005     .1089674    .6248124
+         50  |   .1250913   .4230569     0.30   0.768    -.7067556    .9569381
+         55  |    .555088   .1318064     4.21   0.000     .2959203    .8142558
+         60  |   .6328987   .1198611     5.28   0.000     .3972186    .8685788
+         65  |   .6757068   .1058065     6.39   0.000     .4676619    .8837517
+         70  |   .6285335   .1097771     5.73   0.000     .4126813    .8443857
+         75  |    .715641   .1148773     6.23   0.000     .4897606    .9415214
+         80  |   .7259962   .1181651     6.14   0.000     .4936509    .9583415
+         85  |   .7228118    .160683     4.50   0.000     .4068646    1.038759
+             |
+    2.gender |  -.0929186    .044178    -2.10   0.036    -.1797848   -.0060524
+    educ_yrs |     .02358   .0084515     2.79   0.006      .006962     .040198
+married_2020 |   .0773208   .0496578     1.56   0.120    -.0203202    .1749619
+     born_us |   .0310331   .0528633     0.59   0.558    -.0729107     .134977
+             |
+    race_eth |
+          2  |  -.1540328   .0656179    -2.35   0.019    -.2830556   -.0250099
+          3  |  -.1336052   .0746721    -1.79   0.074    -.2804312    .0132208
+          4  |  -.0457807   .1230729    -0.37   0.710     -.287776    .1962146
+             |
+ inlbrf_2020 |   .1292045   .0519451     2.49   0.013     .0270661    .2313428
+wealth_d2~20 |   .4350189   .3662241     1.19   0.236    -.2850789    1.155117
+wealth_d3~20 |   .1333354   .1639929     0.81   0.417    -.1891199    .4557907
+wealth_d4~20 |  -.0597424   .1535654    -0.39   0.697    -.3616944    .2422096
+wealth_d5~20 |  -.3098251   .1489485    -2.08   0.038     -.602699   -.0169511
+wealth_d6~20 |  -.3739253    .144653    -2.58   0.010    -.6583531   -.0894975
+wealth_d7~20 |   -.427971   .1488566    -2.88   0.004    -.7206641   -.1352778
+wealth_d8~20 |  -.5377264   .1436356    -3.74   0.000    -.8201538   -.2552991
+wealth_d9~20 |  -.5838617   .1422066    -4.11   0.000    -.8634791   -.3042443
+w~h_d10_2020 |  -.6948676   .1422131    -4.89   0.000    -.9744979   -.4152374
+       _cons |  -.4737761   .2001087    -2.37   0.018     -.867245   -.0803072
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+r5_an~5_2022 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   6.860599   2.811659     2.44   0.015     1.349848    12.37135
+------------------------------------------------------------------------------
+
+. 
+. * ------------------------------------------------------------
+. * 4) Average returns r5 winsorized (from 18_reg_returns_avg_trust.do)
+. *    m2 (no controls), m4 (controls)
+. * ------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. capture confirm variable age_2020
+
+. if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+
+. 
+. local y "r5_annual_avg_w5"
+
+. local ctrl "i.gender educ_yrs married_2020 born_us"
+
+. capture confirm variable age_bin
+
+. if !_rc local ctrl "i.age_bin `ctrl'"
+
+. capture confirm variable race_eth
+
+. if !_rc local ctrl "`ctrl' i.race_eth"
+
+. capture confirm variable inlbrf_2020
+
+. if !_rc local ctrl "`ctrl' inlbrf_2020"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local ctrl "`ctrl' wealth_d`d'_2020"
+  4. }
+
+. 
+. foreach s in nocontrol controls {
+  2.     if "`s'" == "nocontrol" regress `y' c.`tvar' `sq' if !missing(`y') & !
+> missing(`tvar'), vce(robust)
+  3.     if "`s'" == "controls"  regress `y' c.`tvar' `sq' `ctrl' if !missing(`
+> y') & !missing(`tvar'), vce(robust)
+  4.     quietly test c.`tvar' = 0
+  5.     local p_b1 = r(p)
+  6.     quietly test `sq' = 0
+  7.     local p_b2 = r(p)
+  8.     local both_sig = (`p_b1' < `both_alpha' & `p_b2' < `both_alpha')
+  9.     quietly testparm c.`tvar' `sq'
+ 10.     local p_joint = r(p)
+ 11.     local b1 = _b[c.`tvar']
+ 12.     local b2 = _b[`sq']
+ 13.     qui sum `tvar' if e(sample), meanonly
+ 14.     local tmin = r(min)
+ 15.     local tmax = r(max)
+ 16.     capture noisily nlcom (tp: -_b[c.`tvar']/(2*_b[`sq']))
+ 17.     if _rc {
+ 18.         local tp = .
+ 19.         local tp_se = .
+ 20.         local tp_p = .
+ 21.         local tp_lb = .
+ 22.         local tp_ub = .
+ 23.     }
+ 24.     else {
+ 25.         matrix T = r(table)
+ 26.         local tp    = T[1,1]
+ 27.         local tp_se = T[2,1]
+ 28.         local tp_p  = T[4,1]
+ 29.         local tp_lb = T[5,1]
+ 30.         local tp_ub = T[6,1]
+ 31.     }
+ 32.     post tpH ("returns_avg_r5_win") ("`s'") ("`y'") ("`tvar'") ///
+>         (e(N)) (`b1') (`b2') (`tp') (`tp_se') (`tp_p') (`tp_lb') (`tp_ub') (`
+> tmin') (`tmax') (`both_sig') (`p_joint')
+ 33. }
+
+Linear regression                               Number of obs     =        750
+                                                F(2, 747)         =      12.45
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0322
+                                                Root MSE          =     .32519
+
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual_~5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0667941   .0135016     4.95   0.000     .0402886    .0932996
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0053618   .0012033    -4.46   0.000     -.007724   -.0029997
+             |
+       _cons |   .0400982   .0379426     1.06   0.291    -.0343887     .114585
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+r5_annual_~5 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |    6.22866    .465471    13.38   0.000     5.316354    7.140967
+------------------------------------------------------------------------------
+
+Linear regression                               Number of obs     =        593
+                                                F(27, 563)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1153
+                                                Root MSE          =     .29651
+
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual_~5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0468809   .0167885     2.79   0.005     .0139051    .0798567
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0033912   .0014443    -2.35   0.019    -.0062281   -.0005543
+             |
+     age_bin |
+         40  |   .0154695   .1105386     0.14   0.889    -.2016489     .232588
+         45  |   .1916997   .2254083     0.85   0.395    -.2510442    .6344437
+         50  |  -.2896701   .1194667    -2.42   0.016     -.524325   -.0550151
+         55  |   .0747496   .1106862     0.68   0.500    -.1426588    .2921579
+         60  |  -.0053347   .0734622    -0.07   0.942    -.1496281    .1389587
+         65  |  -.0108305   .0682945    -0.16   0.874    -.1449736    .1233125
+         70  |   .0696882   .0726191     0.96   0.338    -.0729492    .2123256
+         75  |   .0261126   .0696934     0.37   0.708    -.1107783    .1630034
+         80  |  -.0253387   .0697648    -0.36   0.717    -.1623697    .1116924
+         85  |   -.031764   .0763298    -0.42   0.677    -.1816898    .1181619
+             |
+    2.gender |  -.0375975   .0246245    -1.53   0.127    -.0859646    .0107696
+    educ_yrs |    .005123   .0049106     1.04   0.297    -.0045223    .0147682
+married_2020 |   -.010252   .0280345    -0.37   0.715     -.065317     .044813
+     born_us |  -.0197128   .0377068    -0.52   0.601    -.0937761    .0543504
+             |
+    race_eth |
+          2  |   .0257534   .0393746     0.65   0.513    -.0515857    .1030925
+          3  |  -.0524299   .0475254    -1.10   0.270    -.1457786    .0409188
+          4  |   .0277233   .0740932     0.37   0.708    -.1178095    .1732562
+             |
+ inlbrf_2020 |   .0957079    .033741     2.84   0.005     .0294343    .1619815
+wealth_d2~20 |  -.0967607     .09633    -1.00   0.316    -.2859708    .0924494
+wealth_d3~20 |   -.001686   .0719913    -0.02   0.981    -.1430904    .1397184
+wealth_d4~20 |  -.0442069   .0693398    -0.64   0.524    -.1804032    .0919895
+wealth_d5~20 |  -.0257349   .0707105    -0.36   0.716    -.1646235    .1131536
+wealth_d6~20 |  -.0772146   .0665402    -1.16   0.246    -.2079119    .0534828
+wealth_d7~20 |  -.0788249   .0673322    -1.17   0.242     -.211078    .0534281
+wealth_d8~20 |  -.0812907   .0697125    -1.17   0.244    -.2182192    .0556377
+wealth_d9~20 |  -.1321421   .0658148    -2.01   0.045    -.2614146   -.0028695
+w~h_d10_2020 |   -.128291   .0641561    -2.00   0.046    -.2543056   -.0022765
+       _cons |   .0844173   .0951014     0.89   0.375    -.1023796    .2712141
+------------------------------------------------------------------------------
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+r5_annual_~5 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   6.912098   .9832197     7.03   0.000     4.985022    8.839173
+------------------------------------------------------------------------------
+
+. 
+. * ------------------------------------------------------------
+. * 5) Panel spec 1 r5 winsorized (from 14_panel_reg_ret.do) m3
+. * ------------------------------------------------------------
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+
+. local y "r5_annual_w5"
+
+. local ctrl "i.age_bin educ_yrs i.gender i.race_eth inlbrf married born_us i.c
+> ensreg i.year"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local ctrl "`ctrl' wealth_d`d'"
+  4. }
+
+. regress `y' c.`tvar' `sq' `ctrl' if !missing(`y') & !missing(`tvar'), vce(clu
+> ster hhidpn)
+
+Linear regression                               Number of obs     =      2,899
+                                                F(43, 572)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.0543
+                                                Root MSE          =     .39265
+
+                               (Std. err. adjusted for 573 clusters in hhidpn)
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual~5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0278814   .0092692     3.01   0.003     .0096755    .0460872
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0018782   .0007955    -2.36   0.019    -.0034406   -.0003159
+             |
+    age_bin_ |
+         35  |    .765984   .0456668    16.77   0.000     .6762889    .8556791
+         40  |   .3856175   .1917471     2.01   0.045     .0090033    .7622317
+         45  |   .5330412     .11374     4.69   0.000     .3096422    .7564401
+         50  |   .6163311    .093999     6.56   0.000     .4317059    .8009564
+         55  |   .5860962   .0771368     7.60   0.000     .4345903    .7376021
+         60  |   .6123308   .0721466     8.49   0.000     .4706263    .7540353
+         65  |   .6182926   .0717378     8.62   0.000      .477391    .7591942
+         70  |   .5570148   .0739864     7.53   0.000     .4116967    .7023329
+         75  |   .5608399     .07282     7.70   0.000     .4178128     .703867
+         80  |   .4996142   .0790459     6.32   0.000     .3443586    .6548698
+         85  |   .5966617   .0888169     6.72   0.000     .4222146    .7711088
+         90  |   .7571426   .3555328     2.13   0.034     .0588336    1.455452
+             |
+    educ_yrs |  -.0090784   .0029271    -3.10   0.002    -.0148274   -.0033293
+    2.gender |  -.0263736   .0151678    -1.74   0.083    -.0561649    .0034178
+             |
+    race_eth |
+          2  |   .0499594   .0256393     1.95   0.052    -.0003993     .100318
+          3  |  -.0105513   .0311929    -0.34   0.735    -.0718178    .0507152
+          4  |   .0122595   .0356821     0.34   0.731    -.0578244    .0823435
+             |
+     inlbrf_ |   .0296231   .0155697     1.90   0.058    -.0009577    .0602039
+    married_ |  -.0626094   .0187174    -3.34   0.001    -.0993726   -.0258461
+     born_us |   .0294021   .0218463     1.35   0.179    -.0135065    .0723108
+             |
+    censreg_ |
+          2  |   .0056537   .0227544     0.25   0.804    -.0390388    .0503461
+          3  |   .0372442   .0224309     1.66   0.097    -.0068129    .0813012
+          4  |   .0482111   .0268212     1.80   0.073    -.0044689    .1008911
+             |
+        year |
+       2004  |  -.0014423   .0473315    -0.03   0.976     -.094407    .0915224
+       2006  |   .1119936   .0424646     2.64   0.009      .028588    .1953991
+       2008  |  -.0084452   .0433539    -0.19   0.846    -.0935975    .0767071
+       2010  |  -.0354124   .0422517    -0.84   0.402    -.1183998     .047575
+       2012  |   .0051919   .0398246     0.13   0.896    -.0730284    .0834121
+       2014  |   .0609111    .039854     1.53   0.127     -.017367    .1391892
+       2016  |   .0677109   .0425091     1.59   0.112    -.0157821    .1512038
+       2018  |   .0651778   .0384224     1.70   0.090    -.0102884    .1406441
+       2020  |   .0920966   .0387919     2.37   0.018     .0159047    .1682885
+       2022  |   .1921495   .0414285     4.64   0.000     .1107789    .2735201
+             |
+   wealth_d2 |  -.0742468   .0772711    -0.96   0.337    -.2260164    .0775228
+   wealth_d3 |   .0656582   .0628613     1.04   0.297     -.057809    .1891254
+   wealth_d4 |   .0405115   .0593207     0.68   0.495    -.0760016    .1570245
+   wealth_d5 |    .070849   .0577964     1.23   0.221      -.04267    .1843679
+   wealth_d6 |   .0725232   .0579614     1.25   0.211    -.0413201    .1863664
+   wealth_d7 |   .0400996   .0582836     0.69   0.492    -.0743764    .1545756
+   wealth_d8 |   .0507527   .0565606     0.90   0.370    -.0603391    .1618445
+   wealth_d9 |   .1030524   .0566923     1.82   0.070     -.008298    .2144028
+  wealth_d10 |    .112412   .0574052     1.96   0.051    -.0003387    .2251627
+       _cons |  -.5392013   .0610674    -8.83   0.000    -.6591451   -.4192576
+------------------------------------------------------------------------------
+
+. quietly test c.`tvar' = 0
+
+. local p_b1 = r(p)
+
+. quietly test `sq' = 0
+
+. local p_b2 = r(p)
+
+. local both_sig = (`p_b1' < `both_alpha' & `p_b2' < `both_alpha')
+
+. quietly testparm c.`tvar' `sq'
+
+. local p_joint = r(p)
+
+. local b1 = _b[c.`tvar']
+
+. local b2 = _b[`sq']
+
+. qui sum `tvar' if e(sample), meanonly
+
+. local tmin = r(min)
+
+. local tmax = r(max)
+
+. capture noisily nlcom (tp: -_b[c.`tvar']/(2*_b[`sq']))
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+r5_annual~5_ | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   7.422204   1.024728     7.24   0.000     5.413774    9.430635
+------------------------------------------------------------------------------
+
+. if _rc {
+.     local tp = .
+.     local tp_se = .
+.     local tp_p = .
+.     local tp_lb = .
+.     local tp_ub = .
+. }
+
+. else {
+.     matrix T = r(table)
+.     local tp    = T[1,1]
+.     local tp_se = T[2,1]
+.     local tp_p  = T[4,1]
+.     local tp_lb = T[5,1]
+.     local tp_ub = T[6,1]
+. }
+
+. post tpH ("panel_spec1_r5_win") ("controls") ("`y'") ("`tvar'") ///
+>     (e(N)) (`b1') (`b2') (`tp') (`tp_se') (`tp_p') (`tp_lb') (`tp_ub') (`tmin
+> ') (`tmax') (`both_sig') (`p_joint')
+
+. 
+. * ------------------------------------------------------------
+. * 6) Panel spec 2 r5 winsorized (from 15_panel_reg_ret_shares.do) m3
+. * ------------------------------------------------------------
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+
+. local y "r5_annual_w5"
+
+. local ctrl "i.age_bin educ_yrs i.gender i.race_eth inlbrf married born_us i.c
+> ensreg"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local ctrl "`ctrl' wealth_d`d'"
+  4. }
+
+. local ctrl "`ctrl' c.share_core##i.year c.share_ira##i.year c.share_res##i.ye
+> ar c.share_debt_long##i.year c.share_debt_other##i.year"
+
+. local share_cond "!missing(share_core) & !missing(share_ira) & !missing(share
+> _res) & !missing(share_debt_long) & !missing(share_debt_other)"
+
+. 
+. regress `y' c.`tvar' `sq' `ctrl' if !missing(`y') & !missing(`tvar') & `share
+> _cond', vce(cluster hhidpn)
+
+Linear regression                               Number of obs     =      2,866
+                                                F(98, 557)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.0968
+                                                Root MSE          =     .38564
+
+                               (Std. err. adjusted for 558 clusters in hhidpn)
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual~5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0264128   .0096234     2.74   0.006     .0075103    .0453153
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0018039   .0008155    -2.21   0.027    -.0034057   -.0002021
+             |
+    age_bin_ |
+         35  |   .5637015   .1224181     4.60   0.000     .3232438    .8041591
+         40  |   .3507709   .2153589     1.63   0.104     -.072244    .7737858
+         45  |   .4812077   .1786693     2.69   0.007     .1302597    .8321557
+         50  |   .4980007   .1721157     2.89   0.004     .1599255    .8360759
+         55  |   .5050608   .1542901     3.27   0.001     .2019991    .8081225
+         60  |    .519168   .1532256     3.39   0.001     .2181973    .8201386
+         65  |   .5171804   .1545535     3.35   0.001     .2136015    .8207593
+         70  |   .4571264   .1564495     2.92   0.004     .1498234    .7644295
+         75  |   .4697871   .1555085     3.02   0.003     .1643324    .7752418
+         80  |   .3999915   .1567399     2.55   0.011      .092118    .7078651
+         85  |   .5342644   .1644359     3.25   0.001     .2112742    .8572547
+         90  |   .6708416   .3668583     1.83   0.068    -.0497533    1.391437
+             |
+    educ_yrs |  -.0097844   .0029693    -3.30   0.001    -.0156168    -.003952
+    2.gender |   -.020374   .0149582    -1.36   0.174    -.0497553    .0090074
+             |
+    race_eth |
+          2  |   .0402018   .0255684     1.57   0.116    -.0100205    .0904241
+          3  |  -.0098148   .0320976    -0.31   0.760     -.072862    .0532324
+          4  |   .0317422    .037753     0.84   0.401    -.0424134    .1058979
+             |
+     inlbrf_ |   .0222359   .0157218     1.41   0.158    -.0086454    .0531172
+    married_ |  -.0671028   .0184069    -3.65   0.000    -.1032582   -.0309473
+     born_us |   .0222585   .0228895     0.97   0.331    -.0227018    .0672187
+             |
+    censreg_ |
+          2  |   .0013364    .021878     0.06   0.951    -.0416371    .0443099
+          3  |    .039191   .0206802     1.90   0.059    -.0014297    .0798117
+          4  |   .0447818   .0256147     1.75   0.081    -.0055315    .0950951
+             |
+   wealth_d2 |  -.1308844   .0854287    -1.53   0.126    -.2986862    .0369174
+   wealth_d3 |   .0022738   .0667911     0.03   0.973    -.1289194     .133467
+   wealth_d4 |   .0227155   .0635483     0.36   0.721    -.1021082    .1475391
+   wealth_d5 |   .0625561   .0632244     0.99   0.323    -.0616314    .1867435
+   wealth_d6 |   .0604073   .0644671     0.94   0.349    -.0662211    .1870357
+   wealth_d7 |   .0273318   .0654811     0.42   0.677    -.1012882    .1559519
+   wealth_d8 |   .0371622   .0646247     0.58   0.565    -.0897757       .1641
+   wealth_d9 |   .0889329   .0652089     1.36   0.173    -.0391524    .2170183
+  wealth_d10 |   .0907738   .0667394     1.36   0.174    -.0403179    .2218656
+  share_core |   .2545093   .2360164     1.08   0.281    -.2090817    .7181003
+             |
+        year |
+       2004  |  -.1530328   .2282244    -0.67   0.503    -.6013184    .2952529
+       2006  |   .2655509   .2933731     0.91   0.366     -.310702    .8418039
+       2008  |   -.251654   .2439444    -1.03   0.303    -.7308174    .2275093
+       2010  |   .1349491   .2331743     0.58   0.563    -.3230593    .5929574
+       2012  |   .2867557   .2459238     1.17   0.244    -.1962958    .7698072
+       2014  |  -.0172817   .2160905    -0.08   0.936    -.4417336    .4071702
+       2016  |   .2371287   .2465769     0.96   0.337    -.2472055     .721463
+       2018  |   .2877859   .2251122     1.28   0.202    -.1543868    .7299586
+       2020  |   .4841494   .2293873     2.11   0.035     .0335794    .9347194
+       2022  |   .4859201   .2243507     2.17   0.031     .0452432     .926597
+             |
+        year#|
+c.share_core |
+       2004  |   .1134349   .2551265     0.44   0.657    -.3876928    .6145625
+       2006  |  -.2949339   .3426097    -0.86   0.390    -.9678988     .378031
+       2008  |   .1682858   .3067137     0.55   0.583     -.434171    .7707426
+       2010  |  -.3275073   .2898899    -1.13   0.259    -.8969184    .2419037
+       2012  |  -.4929545   .2853331    -1.73   0.085    -1.053415     .067506
+       2014  |  -.0644185   .2762563    -0.23   0.816      -.60705     .478213
+       2016  |  -.2931459    .287061    -1.02   0.308    -.8570002    .2707085
+       2018  |  -.4450133   .2711978    -1.64   0.101    -.9777087     .087682
+       2020  |  -.6282572   .2684547    -2.34   0.020    -1.155565   -.1009498
+       2022  |  -.4706928   .2759352    -1.71   0.089    -1.012693     .071308
+             |
+   share_ira |  -.0828375   .2364728    -0.35   0.726    -.5473249      .38165
+             |
+        year#|
+ c.share_ira |
+       2004  |   .3551271   .3073351     1.16   0.248    -.2485503    .9588046
+       2006  |  -.1244585   .3682665    -0.34   0.736    -.8478194    .5989024
+       2008  |   .4190452   .2812535     1.49   0.137     -.133402    .9714923
+       2010  |   .0474845   .2986696     0.16   0.874    -.5391719     .634141
+       2012  |  -.1323856   .3059152    -0.43   0.665    -.7332741    .4685029
+       2014  |   .1465501   .2620624     0.56   0.576    -.3682012    .6613014
+       2016  |  -.1230996   .2957619    -0.42   0.677    -.7040447    .4578455
+       2018  |  -.1269547   .2708218    -0.47   0.639    -.6589116    .4050022
+       2020  |  -.3133884    .281148    -1.11   0.265    -.8656282    .2388514
+       2022  |  -.2767693   .2781582    -1.00   0.320    -.8231366     .269598
+             |
+   share_res |   .0068967   .2290555     0.03   0.976    -.4430214    .4568149
+             |
+        year#|
+ c.share_res |
+       2004  |   .1750873   .2655125     0.66   0.510    -.3464409    .6966156
+       2006  |  -.1048134   .3274013    -0.32   0.749    -.7479056    .5382787
+       2008  |   .2419767      .2786     0.87   0.385    -.3052584    .7892117
+       2010  |  -.1652848   .2648334    -0.62   0.533    -.6854791    .3549095
+       2012  |  -.2757096   .2825457    -0.98   0.330    -.8306949    .2792757
+       2014  |   .1270031    .251474     0.51   0.614    -.3669502    .6209563
+       2016  |  -.1615819   .2735958    -0.59   0.555    -.6989875    .3758237
+       2018  |  -.1778021    .259924    -0.68   0.494    -.6883532     .332749
+       2020  |  -.4225628   .2642429    -1.60   0.110    -.9415973    .0964717
+       2022  |  -.3035413   .2552589    -1.19   0.235    -.8049291    .1978465
+             |
+share_debt~g |  -.1640153   .2713581    -0.60   0.546    -.6970255     .368995
+             |
+        year#|
+          c. |
+share_debt~g |
+       2004  |     .09933   .2466317     0.40   0.687    -.3851118    .5837719
+       2006  |   .0154438   .2730012     0.06   0.955    -.5207939    .5516816
+       2008  |   .2487833   .2945755     0.84   0.399    -.3298314    .8273979
+       2010  |  -.0202533   .2834436    -0.07   0.943    -.5770023    .5364958
+       2012  |   .0642308   .2721885     0.24   0.814    -.4704105    .5988722
+       2014  |   .1638328   .2864221     0.57   0.568    -.3987667    .7264322
+       2016  |   .1688403   .3375301     0.50   0.617    -.4941472    .8318278
+       2018  |    .091235   .2682665     0.34   0.734    -.4357028    .6181728
+       2020  |   .1061212   .2703381     0.39   0.695    -.4248856    .6371281
+       2022  |   .2293696   .3064445     0.75   0.454    -.3725584    .8312977
+             |
+share_debt~r |   .1427114   .1648594     0.87   0.387    -.1811106    .4665335
+             |
+        year#|
+          c. |
+share_debt~r |
+       2004  |  -.1721983   .1662312    -1.04   0.301    -.4987149    .1543183
+       2006  |    .123622   .3537437     0.35   0.727    -.5712126    .8184567
+       2008  |   .3254359   .2200027     1.48   0.140    -.1067004    .7575722
+       2010  |  -.0931129   .2063754    -0.45   0.652    -.4984821    .3122562
+       2012  |  -.2274656   .1697087    -1.34   0.181     -.560813    .1058818
+       2014  |   -.068551   .2040907    -0.34   0.737    -.4694326    .3323306
+       2016  |  -.2903898   .1970285    -1.47   0.141    -.6773995    .0966199
+       2018  |  -.1969144   .1651379    -1.19   0.234    -.5212836    .1274548
+       2020  |  -.1084607   .1650736    -0.66   0.511    -.4327036    .2157822
+       2022  |  -.1432546   .2018458    -0.71   0.478    -.5397266    .2532174
+             |
+       _cons |  -.4466922   .2238707    -2.00   0.046    -.8864262   -.0069582
+------------------------------------------------------------------------------
+
+. quietly test c.`tvar' = 0
+
+. local p_b1 = r(p)
+
+. quietly test `sq' = 0
+
+. local p_b2 = r(p)
+
+. local both_sig = (`p_b1' < `both_alpha' & `p_b2' < `both_alpha')
+
+. quietly testparm c.`tvar' `sq'
+
+. local p_joint = r(p)
+
+. local b1 = _b[c.`tvar']
+
+. local b2 = _b[`sq']
+
+. qui sum `tvar' if e(sample), meanonly
+
+. local tmin = r(min)
+
+. local tmax = r(max)
+
+. capture noisily nlcom (tp: -_b[c.`tvar']/(2*_b[`sq']))
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+r5_annual~5_ | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   7.321057   1.046842     6.99   0.000     5.269285    9.372829
+------------------------------------------------------------------------------
+
+. if _rc {
+.     local tp = .
+.     local tp_se = .
+.     local tp_p = .
+.     local tp_lb = .
+.     local tp_ub = .
+. }
+
+. else {
+.     matrix T = r(table)
+.     local tp    = T[1,1]
+.     local tp_se = T[2,1]
+.     local tp_p  = T[4,1]
+.     local tp_lb = T[5,1]
+.     local tp_ub = T[6,1]
+. }
+
+. post tpH ("panel_spec2_r5_win") ("controls") ("`y'") ("`tvar'") ///
+>     (e(N)) (`b1') (`b2') (`tp') (`tp_se') (`tp_p') (`tp_lb') (`tp_ub') (`tmin
+> ') (`tmax') (`both_sig') (`p_joint')
+
+. 
+. * ------------------------------------------------------------
+. * 7) FE second-stage r5 winsorized (from 16_panel_reg_fe.do) m3
+. * ------------------------------------------------------------
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+
+. local y "r5_annual_w5"
+
+. local ctrl "i.age_bin inlbrf married i.year"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local ctrl "`ctrl' wealth_d`d'"
+  4. }
+
+. local ctrl "`ctrl' c.share_core##i.year c.share_ira##i.year c.share_res##i.ye
+> ar c.share_debt_long##i.year c.share_debt_other##i.year"
+
+. local share_cond "!missing(share_core) & !missing(share_ira) & !missing(share
+> _res) & !missing(share_debt_long) & !missing(share_debt_other)"
+
+. 
+. quietly xtreg `y' `ctrl' if !missing(`y') & `share_cond', fe vce(cluster hhid
+> pn)
+
+. predict double __hdfe3__, u
+(441,265 missing values generated)
+
+. keep if e(sample)
+(441,265 observations deleted)
+
+. keep hhidpn __hdfe3__
+
+. collapse (first) __hdfe3__, by(hhidpn)
+
+. rename __hdfe3__ fe
+
+. tempfile fe3
+
+. save `fe3'
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_07824.000003 saved
+    as .dta format
+
+. 
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. keep hhidpn educ_yrs gender race_eth born_us trust_others_2020
+
+. duplicates drop hhidpn, force
+
+Duplicates in terms of hhidpn
+
+(497,574 observations deleted)
+
+. merge 1:1 hhidpn using `fe3', nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                        23,529
+        from master                    23,529  
+        from using                          0  
+
+    Matched                            21,705  
+    -----------------------------------------
+
+. 
+. regress fe educ_yrs i.gender i.race_eth born_us c.`tvar' `sq' if !missing(`tv
+> ar'), vce(robust)
+
+Linear regression                               Number of obs     =        560
+                                                F(8, 551)         =      17.70
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1715
+                                                Root MSE          =     .41615
+
+------------------------------------------------------------------------------
+             |               Robust
+          fe | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0398686   .0060558    -6.58   0.000    -.0517638   -.0279733
+    2.gender |   .0432191   .0358124     1.21   0.228    -.0271265    .1135646
+             |
+    race_eth |
+          2  |   .2547798   .0463709     5.49   0.000     .1636945    .3458651
+          3  |   .2241321   .0531008     4.22   0.000     .1198274    .3284369
+          4  |   .0681653   .0684717     1.00   0.320    -.0663322    .2026629
+             |
+     born_us |    .132243   .0460397     2.87   0.004     .0418083    .2226777
+trust_o~2020 |   .0176593   .0201821     0.87   0.382     -.021984    .0573025
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0015765   .0018049    -0.87   0.383    -.0051218    .0019688
+             |
+       _cons |   .3737396    .100397     3.72   0.000     .1765319    .5709473
+------------------------------------------------------------------------------
+
+. quietly test c.`tvar' = 0
+
+. local p_b1 = r(p)
+
+. quietly test `sq' = 0
+
+. local p_b2 = r(p)
+
+. local both_sig = (`p_b1' < `both_alpha' & `p_b2' < `both_alpha')
+
+. quietly testparm c.`tvar' `sq'
+
+. local p_joint = r(p)
+
+. local b1 = _b[c.`tvar']
+
+. local b2 = _b[`sq']
+
+. qui sum `tvar' if e(sample), meanonly
+
+. local tmin = r(min)
+
+. local tmax = r(max)
+
+. capture noisily nlcom (tp: -_b[c.`tvar']/(2*_b[`sq']))
+
+          tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#c.trust_others
+> _2020])
+
+------------------------------------------------------------------------------
+          fe | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          tp |   5.600727   2.123389     2.64   0.008     1.438962    9.762492
+------------------------------------------------------------------------------
+
+. if _rc {
+.     local tp = .
+.     local tp_se = .
+.     local tp_p = .
+.     local tp_lb = .
+.     local tp_ub = .
+. }
+
+. else {
+.     matrix T = r(table)
+.     local tp    = T[1,1]
+.     local tp_se = T[2,1]
+.     local tp_p  = T[4,1]
+.     local tp_lb = T[5,1]
+.     local tp_ub = T[6,1]
+. }
+
+. post tpH ("panel_fe_2nd_r5_win") ("controls") ("fe") ("`tvar'") ///
+>     (e(N)) (`b1') (`b2') (`tp') (`tp_se') (`tp_p') (`tp_lb') (`tp_ub') (`tmin
+> ') (`tmax') (`both_sig') (`p_joint')
+
+. 
+. postclose tpH
+
+. use "`tpraw'", clear
+
+. 
+. drop if spec != "controls"
+(4 observations deleted)
+
+. drop if block == "panel_fe_2nd_r5_win"
+(1 observation deleted)
+
+. gen str14 shape = cond(b2<0, "concave_max", cond(b2>0, "convex_min", "linear"
+> ))
+
+. gen byte tp_in_support = (tp>=t_min & tp<=t_max) if !missing(tp,t_min,t_max)
+
+. order block spec depvar N b1 b2 both_sig p_joint tp tp_se tp_p tp_lb tp_ub t_
+> min t_max tp_in_support shape
+
+. 
+. export delimited using "${REGRESSIONS}/Other/trust_turning_points_original_re
+> sults.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Other/
+> trust_turning_points_original_results.csv saved
+
+. 
+. file open fh using "${REGRESSIONS}/Other/trust_turning_points_original_result
+> s.tex", write replace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Estimated trust \(\textit{Trust}^*\) associated with maximal ec
+> onomic performance}" _n ///
+>     "\label{tab:trust_turning_points_original_results}" _n ///
+>     "\begin{tabular}{llrrrrrr}\toprule" _n ///
+>     "Model & Spec & N & \(\hat\beta_1\) & \(\hat\beta_2\) & Both sig.? & Join
+> t test & \((\textit{Trust})^*\) \\\\ \midrule" _n
+
+. 
+. forvalues i = 1/`=_N' {
+  2.     local b = block[`i']
+  3.     if "`b'" == "income_2020_total_ihs" local b "Total Income (2022)"
+  4.     if "`b'" == "income_avg_total_ihs"  local b "Total Income (Avg.)"
+  5.     if "`b'" == "returns_2022_r5_win"   local b "Returns to net wealth (20
+> 22)"
+  6.     if "`b'" == "returns_avg_r5_win"    local b "Returns to net wealth (Av
+> g.)"
+  7.     if "`b'" == "panel_spec1_r5_win"    local b "Panel specification 1"
+  8.     if "`b'" == "panel_spec2_r5_win"    local b "Panel specification 2"
+  9.     if "`b'" == "panel_fe_2nd_r5_win"   local b "Panel spec. 3 (f.e.)"
+ 10.     local s = spec[`i']
+ 11.     if "`s'" == "controls" local s "Controls"
+ 12.     local N_s  = string(N[`i'], "%9.0fc")
+ 13.     local b1_s = string(b1[`i'], "%9.4f")
+ 14.     local b2_s = string(b2[`i'], "%9.4f")
+ 15.     local bs_s "No"
+ 16.     if both_sig[`i'] == 1 local bs_s "Yes"
+ 17.     local pj_s = string(p_joint[`i'], "%9.4f")
+ 18.     local tp_s = string(tp[`i'], "%9.4f")
+ 19.     file write fh "`b' & `s' & `N_s' & `b1_s' & `b2_s' & `bs_s' & `pj_s' &
+>  `tp_s' \\\\" _n
+ 20. }
+
+. file write fh "\bottomrule" _n ///
+>     "\end{tabular}" _n ///
+>     "\end{table}" _n
+
+. file close fh
+
+. 
+. * Delta-method focused table (reprints T* plus its uncertainty)
+. preserve
+
+. keep block spec depvar N tp tp_se tp_p tp_lb tp_ub tp_in_support shape
+
+. order block spec depvar N tp tp_se tp_p tp_lb tp_ub tp_in_support shape
+
+. export delimited using "${REGRESSIONS}/Other/trust_turning_points_original_re
+> sults_delta.csv", replace
+file /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Other/
+> trust_turning_points_original_results_delta.csv saved
+
+. 
+. file open fd using "${REGRESSIONS}/Other/trust_turning_points_original_result
+> s_delta.tex", write replace
+
+. file write fd "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Delta-method results for trust turning points}" _n ///
+>     "\label{tab:trust_turning_points_original_results_delta}" _n ///
+>     "\begin{tabular}{lrrrrrr}\toprule" _n ///
+>     "Model & N & \((\textit{Trust})^*\) & SE\((\textit{Trust})^*\) & p\((\tex
+> tit{Trust})^*\) & \(\underline{CI}\) & \(\overline{CI}\) \\\\ \midrule" _n
+
+. forvalues i = 1/`=_N' {
+  2.     local b   = block[`i']
+  3.     if "`b'" == "income_2020_total_ihs" local b "Total Income (2022)"
+  4.     if "`b'" == "income_avg_total_ihs"  local b "Total Income (Avg.)"
+  5.     if "`b'" == "returns_2022_r5_win"   local b "Returns to net wealth (20
+> 22)"
+  6.     if "`b'" == "returns_avg_r5_win"    local b "Returns to net wealth (Av
+> g.)"
+  7.     if "`b'" == "panel_spec1_r5_win"    local b "Panel spec. 1"
+  8.     if "`b'" == "panel_spec2_r5_win"    local b "Panel spec. 2"
+  9.     if "`b'" == "panel_fe_2nd_r5_win"   local b "Panel spec. 3 (f.e.)"
+ 10.     local N_s = string(N[`i'], "%9.0fc")
+ 11.     local tp_s = string(tp[`i'], "%9.4f")
+ 12.     local se_s = string(tp_se[`i'], "%9.4f")
+ 13.     local p_s  = string(tp_p[`i'], "%9.4f")
+ 14.     local lb_s = string(tp_lb[`i'], "%9.4f")
+ 15.     local ub_s = string(tp_ub[`i'], "%9.4f")
+ 16.     file write fd "`b' & `N_s' & `tp_s' & `se_s' & `p_s' & `lb_s' & `ub_s'
+>  \\\\" _n
+ 17. }
+
+. file write fd "\bottomrule" _n ///
+>     "\end{tabular}" _n ///
+>     "\end{table}" _n
+
+. file close fd
+
+. restore
+
+. 
+. di as txt _n "=== Turning points: original continuous-education results ==="
+
+=== Turning points: original continuous-education results ===
+
+. list block spec depvar N b1 b2 both_sig p_joint tp tp_se tp_p t_min t_max tp_
+> in_support shape, noobs abbrev(24)
+
+  +--------------------------------------------------------------------+
+  |                 block |     spec |                   depvar |    N |
+  | income_2020_total_ihs | controls | ihs_tot_inc_defl_win_s_2 |  890 |
+  |--------------------------------------------------------------------|
+  |       b1 |        b2 | both_sig |  p_joint |       tp  |    tp_se  |
+  |   .04936 | -.0043908 |        1 | .0765853 | 5.620894  | .8173888  |
+  |----------------------+---------------------------------------------|
+  |      tp_p  |  t_min  |  t_max  |  tp_in_support   |        shape   |
+  |  6.13e-12  |      0  |     10  |              1   |  concave_max   |
+  +--------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------+
+  |                 block |     spec |                   depvar |    N |
+  |  income_avg_total_ihs | controls | ihs_tot_inc_defl_win_avg |  890 |
+  |--------------------------------------------------------------------|
+  |       b1 |        b2 | both_sig |  p_joint |       tp  |    tp_se  |
+  |  .049371 | -.0046289 |        1 | .0277866 | 5.332922  |  .685791  |
+  |----------------------+---------------------------------------------|
+  |      tp_p  |  t_min  |  t_max  |  tp_in_support   |        shape   |
+  |  7.47e-15  |      0  |     10  |              1   |  concave_max   |
+  +--------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------+
+  |                 block |     spec |                   depvar |    N |
+  |   returns_2022_r5_win | controls |        r5_annual_w5_2022 |  406 |
+  |--------------------------------------------------------------------|
+  |       b1 |        b2 | both_sig |  p_joint |       tp  |    tp_se  |
+  |  .030865 | -.0022494 |        0 | .5430901 |   6.8606  |  2.81166  |
+  |----------------------+---------------------------------------------|
+  |      tp_p  |  t_min  |  t_max  |  tp_in_support   |        shape   |
+  |  .0146851  |      0  |     10  |              1   |  concave_max   |
+  +--------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------+
+  |                 block |     spec |                   depvar |    N |
+  |    returns_avg_r5_win | controls |         r5_annual_avg_w5 |  593 |
+  |--------------------------------------------------------------------|
+  |       b1 |        b2 | both_sig |  p_joint |       tp  |    tp_se  |
+  | .0468809 | -.0033912 |        1 | .0133036 | 6.912097  | .9832197  |
+  |----------------------+---------------------------------------------|
+  |      tp_p  |  t_min  |  t_max  |  tp_in_support   |        shape   |
+  |  2.06e-12  |      0  |     10  |              1   |  concave_max   |
+  +--------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------+
+  |                 block |     spec |                   depvar |    N |
+  |    panel_spec1_r5_win | controls |             r5_annual_w5 | 2899 |
+  |--------------------------------------------------------------------|
+  |       b1 |        b2 | both_sig |  p_joint |       tp  |    tp_se  |
+  | .0278814 | -.0018782 |        1 | .0017689 | 7.422204  | 1.024728  |
+  |----------------------+---------------------------------------------|
+  |      tp_p  |  t_min  |  t_max  |  tp_in_support   |        shape   |
+  |  4.39e-13  |      0  |     10  |              1   |  concave_max   |
+  +--------------------------------------------------------------------+
+
+  +--------------------------------------------------------------------+
+  |                 block |     spec |                   depvar |    N |
+  |    panel_spec2_r5_win | controls |             r5_annual_w5 | 2866 |
+  |--------------------------------------------------------------------|
+  |       b1 |        b2 | both_sig |  p_joint |       tp  |    tp_se  |
+  | .0264128 | -.0018039 |        1 | .0073022 | 7.321057  | 1.046842  |
+  |----------------------+---------------------------------------------|
+  |      tp_p  |  t_min  |  t_max  |  tp_in_support   |        shape   |
+  |  2.68e-12  |      0  |     10  |              1   |  concave_max   |
+  +--------------------------------------------------------------------+
+
+. di as txt _n "Wrote: ${REGRESSIONS}/Other/trust_turning_points_original_resul
+> ts.csv"
+
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Othe
+> r/trust_turning_points_original_results.csv
+
+. di as txt "Wrote: ${REGRESSIONS}/Other/trust_turning_points_original_results.
+> tex"
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Othe
+> r/trust_turning_points_original_results.tex
+
+. di as txt "Wrote: ${REGRESSIONS}/Other/trust_turning_points_original_results_
+> delta.csv"
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Othe
+> r/trust_turning_points_original_results_delta.csv
+
+. di as txt "Wrote: ${REGRESSIONS}/Other/trust_turning_points_original_results_
+> delta.tex"
+Wrote: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Othe
+> r/trust_turning_points_original_results_delta.tex
+
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/27_t
+> urning_points_original_results.log
+  log type:  text
+ closed on:  25 Feb 2026, 23:16:55
+-------------------------------------------------------------------------------

@@ -15,7 +15,7 @@ Hispanic            &        0.08\sym{***}&       -0.02         &       -0.02   
                     &      (0.02)         &      (0.05)         &      (0.05)         \\
 NH Other            &        0.04\sym{**} &        0.10         &        0.11         \\
                     &      (0.02)         &      (0.09)         &      (0.09)         \\
-Employed            &        0.03\sym{***}&        0.04         &        0.04         \\
+In labor force      &        0.03\sym{***}&        0.04         &        0.04         \\
                     &      (0.01)         &      (0.03)         &      (0.03)         \\
 Married             &       -0.09\sym{***}&       -0.08\sym{***}&       -0.08\sym{***}\\
                     &      (0.01)         &      (0.03)         &      (0.03)         \\
@@ -33,24 +33,27 @@ Share other debt    &       -0.02\sym{*}  &        0.08         &        0.10   
                     &      (0.01)         &      (0.26)         &      (0.26)         \\
 Trust               &                     &        0.01\sym{**} &        0.04\sym{***}\\
                     &                     &      (0.00)         &      (0.01)         \\
-Trust²              &                     &                     &       -0.00\sym{**} \\
+Trust$^2$           &                     &                     &       -0.00\sym{**} \\
                     &                     &                     &      (0.00)         \\
 \_cons              &        0.19         &       -0.39         &       -0.36         \\
                     &      (0.19)         &      (0.31)         &      (0.31)         \\
 \midrule
 Observations        &   100837.00         &     2866.00         &     2866.00         \\
 Adj. R-squared      &        0.03         &        0.04         &        0.04         \\
-Joint test: Trust+Trust² p-value&                     &                     &        0.00         \\
+Joint test: Trust+Trust$^2$ p-value&           .         &           .         &        0.00         \\
+Joint test: Age bins p-value&        0.00         &        0.00         &        0.00         \\
+Joint test: Wealth deciles p-value&        0.00         &        0.12         &        0.10         \\
+Joint test: Race p-value&        0.00         &        0.14         &        0.10         \\
+Joint test: Region p-value&        0.00         &        0.03         &        0.04         \\
+Joint test: Year p-value&        0.00         &        0.00         &        0.00         \\
+Joint test: Share (core, IRA, res) p-value&        0.00         &        0.31         &        0.31         \\
+Joint test: Share (debt long, other) p-value&        0.03         &        0.84         &        0.79         \\
 Joint test: Share core x year p-value&        0.00         &        0.03         &        0.04         \\
 Joint test: Share IRA x year p-value&        0.00         &        0.07         &        0.07         \\
 Joint test: Share res x year p-value&        0.00         &        0.01         &        0.02         \\
 Joint test: Share debt long x year p-value&        0.00         &        0.34         &        0.34         \\
 Joint test: Share debt other x year p-value&        0.75         &        0.00         &        0.00         \\
 \bottomrule
-\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{4}{l}{\footnotesize Cluster-robust SE in parentheses. Spec 2: share x year controls for risk exposure.}\\
-\multicolumn{4}{l}{\footnotesize Age bins, wealth deciles, region dummies, year dummies,}\\
-\multicolumn{4}{l}{\footnotesize and share x year omitted from table but included in regressions.}\\
-\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{4}{l}{\footnotesize .}\\
 \end{tabular*}
 \end{table}

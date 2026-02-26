@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/11_r
 > eg_trust.log
   log type:  text
- opened on:  23 Feb 2026, 10:49:50
+ opened on:  25 Feb 2026, 23:07:20
 
 . 
 . capture which esttab
@@ -143,30 +143,58 @@
 .     eststo clear
  18.     eststo demog: regress `outvar' `demo_core' `demo_race' if !missing(`ou
 > tvar'), vce(robust)
- 19.     eststo full:  regress `outvar' `full_ctrl' if !missing(`outvar'), vce(
-> robust)
- 20. 
+ 19.     capture confirm variable age_bin
+ 20.     if !_rc {
+ 21.         quietly testparm i.age_bin
+ 22.         estadd scalar p_joint_age_bin = r(p) : demog
+ 23.     }
+ 24.     else estadd scalar p_joint_age_bin = . : demog
+ 25.     capture confirm variable race_eth
+ 26.     if !_rc {
+ 27.         quietly testparm i.race_eth
+ 28.         estadd scalar p_joint_race = r(p) : demog
+ 29.     }
+ 30.     else estadd scalar p_joint_race = . : demog
+ 31. 
+.     eststo full:  regress `outvar' `full_ctrl' if !missing(`outvar'), vce(rob
+> ust)
+ 32.     capture confirm variable age_bin
+ 33.     if !_rc {
+ 34.         quietly testparm i.age_bin
+ 35.         estadd scalar p_joint_age_bin = r(p) : full
+ 36.     }
+ 37.     else estadd scalar p_joint_age_bin = . : full
+ 38.     capture confirm variable race_eth
+ 39.     if !_rc {
+ 40.         quietly testparm i.race_eth
+ 41.         estadd scalar p_joint_race = r(p) : full
+ 42.     }
+ 43.     else estadd scalar p_joint_race = . : full
+ 44. 
 .     * Build drop list from coefs in this regression (avoid dropping coefs tha
 > t don't exist)
 .     local drop_11 "1.gender 1.race_eth"
- 21.     capture confirm variable age_bin
- 22.     if !_rc {
- 23.         estimates restore full
- 24.         local cnames : colnames e(b)
- 25.         foreach c of local cnames {
- 26.             if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.age_bin$")
+ 45.     capture confirm variable age_bin
+ 46.     if !_rc {
+ 47.         estimates restore full
+ 48.         local cnames : colnames e(b)
+ 49.         foreach c of local cnames {
+ 50.             if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.age_bin$")
 >  local drop_11 "`drop_11' `c'"
- 27.         }
- 28.     }
- 29. 
+ 51.         }
+ 52.     }
+ 53. 
 .     local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
- 30.     local capt_stub = subinstr("`capt_stub'", "_", " ", .)
- 31.     if "`stub'" == "pc1" local capt_stub "PC1"
- 32.     if "`stub'" == "pc2" local capt_stub "PC2"
- 33. 
+ 54.     local capt_stub = subinstr("`capt_stub'", "_", " ", .)
+ 55.     if "`stub'" == "pc1" local capt_stub "PC1"
+ 56.     if "`stub'" == "pc2" local capt_stub "PC2"
+ 57.     local tabtitle "Determinants of `capt_stub' trust"
+ 58.     if "`stub'" == "general" local tabtitle "Determinants of general trust
+> "
+ 59. 
 .     local outfile "${REGRESSIONS}/Trust/trust_reg_`stub'.tex"
- 34.     di as txt "Writing: `outfile'"
- 35. 
+ 60.     di as txt "Writing: `outfile'"
+ 61. 
 .     esttab demog full using "`outfile'", replace ///
 >         booktabs no gap ///
 >         mtitles("Demographics" "Full controls") ///
@@ -179,30 +207,13 @@
 > 020 "Covered by Medicare" medicaid_2020 "Covered by Medicaid" life_ins_2020 "
 > Has life insurance" num_divorce_2020 "Number of reported divorces" num_widow_
 > 2020 "Number of reported times being widowed" _cons "Constant") ///
->         title("`capt_stub' trust (2020) on controls") ///
+>         title("`tabtitle'") ///
+>         addnotes(".") ///
 >         alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
->         stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
->         addnotes("Robust standard errors in parentheses. Trust and controls f
-> rom 2020. Age bins (5-yr) included; coefficients omitted.") ///
->         nonumbers
- 36. 
-.     tempfile tmpf
- 37.     file open fh using "`outfile'", read text
- 38.     file open fout using "`tmpf'", write text replace
- 39.     local lab_inserted 0
- 40.     file read fh line
- 41.     while r(eof) == 0 {
- 42.         file write fout "`line'" _n
- 43.         if `lab_inserted' == 0 & regexm(`"`line'"', "\\caption") {
- 44.             file write fout "\label{tab:trust_reg_`stub'}" _n
- 45.             local lab_inserted 1
- 46.         }
- 47.         file read fh line
- 48.     }
- 49.     file close fh
- 50.     file close fout
- 51.     copy "`tmpf'" "`outfile'", replace
- 52. }
+>         stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj
+> . R-squared" "Joint test: Age bins p-value" "Joint test: Race p-value")) ///
+>         nonumbers nonotes
+ 62. }
 
 Linear regression                               Number of obs     =        894
                                                 F(17, 875)        =          .
@@ -291,24 +302,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("General trust (2020) on controls")
+ title("Determinants of general trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -329,8 +338,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 not
-    found)
 
 Linear regression                               Number of obs     =      1,005
                                                 F(15, 986)        =          .
@@ -419,24 +426,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("Social security trust (2020) on controls")
+ title("Determinants of Social security trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -457,8 +462,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000005 not
-    found)
 
 Linear regression                               Number of obs     =      1,020
                                                 F(16, 1001)       =          .
@@ -547,24 +550,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("Medicare trust (2020) on controls")
+ title("Determinants of Medicare trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -585,8 +586,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 not
-    found)
 
 Linear regression                               Number of obs     =        984
                                                 F(16, 965)        =          .
@@ -675,24 +674,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("Banks trust (2020) on controls")
+ title("Determinants of Banks trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -713,8 +710,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000007 not
-    found)
 
 Linear regression                               Number of obs     =      1,073
                                                 F(17, 1054)       =          .
@@ -803,24 +798,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("Advisors trust (2020) on controls")
+ title("Determinants of Advisors trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -841,8 +834,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 not
-    found)
 
 Linear regression                               Number of obs     =      1,065
                                                 F(17, 1046)       =          .
@@ -931,24 +922,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("Mutual funds trust (2020) on controls")
+ title("Determinants of Mutual funds trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -969,8 +958,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000009 not
-    found)
 
 Linear regression                               Number of obs     =      1,139
                                                 F(17, 1120)       =          .
@@ -1059,24 +1046,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("Insurance trust (2020) on controls")
+ title("Determinants of Insurance trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -1097,8 +1082,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a not
-    found)
 
 Linear regression                               Number of obs     =      1,226
                                                 F(17, 1207)       =          .
@@ -1187,24 +1170,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("Media trust (2020) on controls")
+ title("Determinants of Media trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -1225,8 +1206,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000b not
-    found)
 
 Linear regression                               Number of obs     =        532
                                                 F(15, 513)        =          .
@@ -1315,24 +1294,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("PC1 trust (2020) on controls")
+ title("Determinants of PC1 trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -1353,8 +1330,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_pc1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000c not
-    found)
 
 Linear regression                               Number of obs     =        532
                                                 F(15, 513)        =          .
@@ -1443,24 +1418,22 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  drop(1.gender 1.race_eth 30.age_bin 35.age_bin 40.age_bin 45.age_bin 50.age_bi
 > n 55.age_bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bi
 > n *.age_bin)
- stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squar
+> ed" "Joint test: Age bins p-value" "Joint test: Race p-value"))
  starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<
 > @\)"))
  varwidth(20)
  modelwidth(12)
  delimiter(&)
  end(\\)
- title("PC2 trust (2020) on controls")
+ title("Determinants of PC2 trust")
  prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#
 > 1}\)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabco
 > lsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
  posthead("\midrule")
  prefoot("\midrule")
- postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize Standard error
-> s in parentheses}\\"' `"\multicolumn{@span}{l}{\footnotesize Robust standard 
-> errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included
-> ; coefficients omitted.}\\"' `"\multicolumn{@span}{l}{\footnotesize @starlege
-> nd}\\"' `"\end{tabular*}"' `"\end{table}"')
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{
+> tabular*}"' `"\end{table}"')
  label
  varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black
 > " 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depressi
@@ -1481,8 +1454,6 @@ estout demog full using `"/Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
  replace
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Trust/trust_reg_pc2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000d not
-    found)
 
 . 
 . eststo clear
@@ -1496,5 +1467,5 @@ Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regress
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/11_r
 > eg_trust.log
   log type:  text
- closed on:  23 Feb 2026, 10:49:52
+ closed on:  25 Feb 2026, 23:07:22
 -------------------------------------------------------------------------------

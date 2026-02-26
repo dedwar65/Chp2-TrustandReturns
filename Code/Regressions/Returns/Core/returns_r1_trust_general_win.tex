@@ -1,14 +1,13 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
 \caption{2022 Returns to core (2022) on General trust (2020) (5 percent winsorized)}
-\label{tab:returns_r1_trust_general_win}
 \begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
 \midrule
-General trust       &        0.02         &        0.16\sym{**} &        0.02         &        0.14\sym{*}  \\
+Trust               &        0.02         &        0.16\sym{**} &        0.02         &        0.14\sym{*}  \\
                     &      (0.02)         &      (0.07)         &      (0.02)         &      (0.07)         \\
-(General)$^2$       &                     &       -0.01\sym{**} &                     &       -0.01\sym{*}  \\
+Trust$^2$           &                     &       -0.01\sym{**} &                     &       -0.01\sym{*}  \\
                     &                     &      (0.01)         &                     &      (0.01)         \\
 Female              &                     &                     &       -0.08         &       -0.06         \\
                     &                     &                     &      (0.09)         &      (0.10)         \\
@@ -32,9 +31,10 @@ In labor force      &                     &                     &        0.14   
 Observations        &      442.00         &      442.00         &      438.00         &      438.00         \\
 Adj. R-squared      &        0.00         &        0.01         &        0.09         &        0.10         \\
 Joint test: Trust p-value&                     &        0.08         &                     &        0.18         \\
+Joint test: Age bins p-value&           .         &           .         &        0.00         &        0.00         \\
+Joint test: Wealth deciles p-value&           .         &           .         &        0.00         &        0.00         \\
+Joint test: Race p-value&           .         &           .         &        0.01         &        0.02         \\
 \bottomrule
-\multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{5}{l}{\footnotesize Robust standard errors in parentheses. Age bins (5-yr) and wealth deciles included in columns 3–4.}\\
-\multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{5}{l}{\footnotesize .}\\
 \end{tabular*}
 \end{table}

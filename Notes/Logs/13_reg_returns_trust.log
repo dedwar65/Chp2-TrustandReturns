@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/13_r
 > eg_returns_trust.log
   log type:  text
- opened on:  23 Feb 2026, 10:50:01
+ opened on:  25 Feb 2026, 23:07:34
 
 . 
 . capture which esttab
@@ -148,7 +148,7 @@
  32.         if "`ret'" == "r4" {
  33.             local y_un  "r4_annual_2022"
  34.             local y_win "r4_annual_2022_w5"
- 35.             local ret_label "Returns to ${LATEX_CORE_IRA} (2022)"
+ 35.             local ret_label "Returns to core and IRA (2022)"
  36.             local outdir    "${REGRESSIONS}/Returns/Core+res"
  37.             forvalues d = 2/10 {
  38.                 capture confirm variable wealth_coreira_d`d'_2020
@@ -211,109 +211,172 @@
 .             * 1. Trust only (linear — joint test redundant with t-test)
 .             noisily eststo lin_raw: regress `y' c.`trust_var' if !missing(`y'
 > ) & !missing(`trust_var'), vce(robust)
- 85.             * 2. Trust + trust^2
+ 85.             estadd scalar p_joint_age_bin = . : lin_raw
+ 86.             estadd scalar p_joint_wealth = . : lin_raw
+ 87.             estadd scalar p_joint_race = . : lin_raw
+ 88.             * 2. Trust + trust^2
 .             noisily eststo quad_raw: regress `y' c.`trust_var' c.`trust_var'#
 > c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
- 86.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 87.             estadd scalar p_joint_trust = r(p) : quad_raw
- 88.             * 3. Trust + controls (linear — joint test redundant with t-te
+ 89.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+ 90.             estadd scalar p_joint_trust = r(p) : quad_raw
+ 91.             estadd scalar p_joint_age_bin = . : quad_raw
+ 92.             estadd scalar p_joint_wealth = . : quad_raw
+ 93.             estadd scalar p_joint_race = . : quad_raw
+ 94.             * 3. Trust + controls (linear — joint test redundant with t-te
 > st)
 .             noisily eststo lin_ctl: regress `y' c.`trust_var' `full_ret' if !
 > missing(`y') & !missing(`trust_var'), vce(robust)
- 89.             * 4. Trust + trust^2 + controls
+ 95.             capture confirm variable age_bin
+ 96.             if !_rc {
+ 97.                 quietly testparm i.age_bin
+ 98.                 estadd scalar p_joint_age_bin = r(p) : lin_ctl
+ 99.             }
+100.             else estadd scalar p_joint_age_bin = . : lin_ctl
+101.             local wlist ""
+102.             if "`ret'" == "r1" {
+103.                 forvalues d = 2/10 {
+104.                     capture confirm variable wealth_core_d`d'_2020
+105.                     if !_rc local wlist "`wlist' wealth_core_d`d'_2020"
+106.                 }
+107.             }
+108.             if "`ret'" == "r4" {
+109.                 forvalues d = 2/10 {
+110.                     capture confirm variable wealth_coreira_d`d'_2020
+111.                     if !_rc local wlist "`wlist' wealth_coreira_d`d'_2020"
+112.                 }
+113.             }
+114.             if "`ret'" == "r5" {
+115.                 forvalues d = 2/10 {
+116.                     capture confirm variable wealth_d`d'_2020
+117.                     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+118.                 }
+119.             }
+120.             if trim("`wlist'") != "" {
+121.                 quietly testparm `wlist'
+122.                 estadd scalar p_joint_wealth = r(p) : lin_ctl
+123.             }
+124.             else estadd scalar p_joint_wealth = . : lin_ctl
+125.             capture confirm variable race_eth
+126.             if !_rc {
+127.                 quietly testparm i.race_eth
+128.                 estadd scalar p_joint_race = r(p) : lin_ctl
+129.             }
+130.             else estadd scalar p_joint_race = . : lin_ctl
+131.             * 4. Trust + trust^2 + controls
 .             noisily eststo quad_ctl: regress `y' c.`trust_var' c.`trust_var'#
 > c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust
 > )
- 90.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
- 91.             estadd scalar p_joint_trust = r(p) : quad_ctl
- 92. 
+132.             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
+133.             estadd scalar p_joint_trust = r(p) : quad_ctl
+134.             capture confirm variable age_bin
+135.             if !_rc {
+136.                 quietly testparm i.age_bin
+137.                 estadd scalar p_joint_age_bin = r(p) : quad_ctl
+138.             }
+139.             else estadd scalar p_joint_age_bin = . : quad_ctl
+140.             local wlist ""
+141.             if "`ret'" == "r1" {
+142.                 forvalues d = 2/10 {
+143.                     capture confirm variable wealth_core_d`d'_2020
+144.                     if !_rc local wlist "`wlist' wealth_core_d`d'_2020"
+145.                 }
+146.             }
+147.             if "`ret'" == "r4" {
+148.                 forvalues d = 2/10 {
+149.                     capture confirm variable wealth_coreira_d`d'_2020
+150.                     if !_rc local wlist "`wlist' wealth_coreira_d`d'_2020"
+151.                 }
+152.             }
+153.             if "`ret'" == "r5" {
+154.                 forvalues d = 2/10 {
+155.                     capture confirm variable wealth_d`d'_2020
+156.                     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+157.                 }
+158.             }
+159.             if trim("`wlist'") != "" {
+160.                 quietly testparm `wlist'
+161.                 estadd scalar p_joint_wealth = r(p) : quad_ctl
+162.             }
+163.             else estadd scalar p_joint_wealth = . : quad_ctl
+164.             capture confirm variable race_eth
+165.             if !_rc {
+166.                 quietly testparm i.race_eth
+167.                 estadd scalar p_joint_race = r(p) : quad_ctl
+168.             }
+169.             else estadd scalar p_joint_race = . : quad_ctl
+170. 
 .             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'
 > ", 2, .)
- 93.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
- 94.             if "`stub'" == "pc1" local capt_stub "PC1"
- 95.             if "`stub'" == "pc2" local capt_stub "PC2"
- 96. 
+171.             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
+172.             if "`stub'" == "pc1" local capt_stub "PC1"
+173.             if "`stub'" == "pc2" local capt_stub "PC2"
+174. 
 .             local outfile "`outdir'/returns_`ret'_trust_`stub'`file_suffix'.t
 > ex"
- 97.             di as txt "Writing: `outfile'"
- 98. 
+175.             di as txt "Writing: `outfile'"
+176. 
 .             * Label for trust^2 row: (General)$^2$, (Social Security)$^2$, et
 > c. (no "trust" - title has it)
 .             local vlab_trust2 "(`capt_stub')\$^2\$"
- 99. 
+177. 
 .             * Build drop list from coefs in this regression (avoid dropping c
 > oefs that don't exist)
 .             local drop_list "1.gender 1.race_eth"
-100.             capture confirm variable age_bin
-101.             if !_rc {
-102.                 estimates restore lin_ctl
-103.                 local cnames : colnames e(b)
-104.                 foreach c of local cnames {
-105.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
+178.             capture confirm variable age_bin
+179.             if !_rc {
+180.                 estimates restore lin_ctl
+181.                 local cnames : colnames e(b)
+182.                 foreach c of local cnames {
+183.                     if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.ag
 > e_bin$") local drop_list "`drop_list' `c'"
-106.                 }
-107.             }
-108.             * Add wealth deciles
+184.                 }
+185.             }
+186.             * Add wealth deciles
 .             if "`ret'" == "r1" {
-109.                 forvalues d = 2/10 {
-110.                     capture confirm variable wealth_core_d`d'_2020
-111.                     if !_rc local drop_list "`drop_list' wealth_core_d`d'_
+187.                 forvalues d = 2/10 {
+188.                     capture confirm variable wealth_core_d`d'_2020
+189.                     if !_rc local drop_list "`drop_list' wealth_core_d`d'_
 > 2020"
-112.                 }
-113.             }
-114.             if "`ret'" == "r4" {
-115.                 forvalues d = 2/10 {
-116.                     capture confirm variable wealth_coreira_d`d'_2020
-117.                     if !_rc local drop_list "`drop_list' wealth_coreira_d`
+190.                 }
+191.             }
+192.             if "`ret'" == "r4" {
+193.                 forvalues d = 2/10 {
+194.                     capture confirm variable wealth_coreira_d`d'_2020
+195.                     if !_rc local drop_list "`drop_list' wealth_coreira_d`
 > d'_2020"
-118.                 }
-119.             }
-120.             if "`ret'" == "r5" {
-121.                 forvalues d = 2/10 {
-122.                     capture confirm variable wealth_d`d'_2020
-123.                     if !_rc local drop_list "`drop_list' wealth_d`d'_2020"
-124.                 }
-125.             }
-126. 
+196.                 }
+197.             }
+198.             if "`ret'" == "r5" {
+199.                 forvalues d = 2/10 {
+200.                     capture confirm variable wealth_d`d'_2020
+201.                     if !_rc local drop_list "`drop_list' wealth_d`d'_2020"
+202.                 }
+203.             }
+204. 
 .             esttab lin_raw quad_raw lin_ctl quad_ctl using "`outfile'", repla
 > ce ///
 >                 booktabs ///
 >                 mtitles("1" "2" "3" "4") ///
 >                 se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >                 drop(`drop_list' *.age_bin, relax) ///
->                 varlabels(c.`trust_var'#c.`trust_var' "`vlab_trust2'" 2.gende
-> r "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" 
-> educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Marr
-> ied" born_us "Born in U.S.") ///
->                 stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squ
-> ared" "Joint test: Trust p-value")) ///
+>                 varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Tr
+> ust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.ra
+> ce_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" 
+> married_2020 "Married" born_us "Born in U.S.") ///
+>                 stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_j
+> oint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value"
+>  "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint t
+> est: Race p-value")) ///
 >                 title("2022 `ret_label' on `capt_stub' trust (2020)`win_label
 > '") ///
->                 addnotes("Robust standard errors in parentheses. Age bins (5-
-> yr) and wealth deciles included in columns 3–4.") ///
->                 alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-127. 
-.             * Insert \label after \caption
-.             tempfile tmpf
-128.             file open fh using "`outfile'", read text
-129.             file open fout using "`tmpf'", write text replace
-130.             local lab_inserted 0
-131.             file read fh line
-132.             while r(eof) == 0 {
-133.                 file write fout "`line'" _n
-134.                 if `lab_inserted' == 0 & regexm(`"`line'"', "\\caption") {
-135.                     file write fout "\label{tab:returns_`ret'_trust_`stub'
-> `file_suffix'}" _n
-136.                     local lab_inserted 1
-137.                 }
-138.                 file read fh line
-139.             }
-140.             file close fh
-141.             file close fout
-142.             copy "`tmpf'" "`outfile'", replace
-143.         }
-144.     }
-145. }
+>                 addnotes(".") ///
+>                 alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
+205. 
+.             * Keep direct esttab output; labels are handled in LaTeX manuscri
+> pt files.
+.         }
+206.     }
+207. }
 
 Linear regression                               Number of obs     =        442
                                                 F(1, 440)         =       0.46
@@ -456,8 +519,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000004 not
-    found)
 
 Linear regression                               Number of obs     =        442
                                                 F(1, 440)         =       1.08
@@ -600,8 +661,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_general_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000005 not
-    found)
 
 Linear regression                               Number of obs     =        417
                                                 F(1, 415)         =       0.04
@@ -742,8 +801,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000006 not
-    found)
 Skipping r4_win for general: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        497
@@ -881,8 +938,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_general.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000007 not
-    found)
 
 Linear regression                               Number of obs     =        497
                                                 F(1, 495)         =       1.39
@@ -1019,8 +1074,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_general_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000008 not
-    found)
 
 Linear regression                               Number of obs     =        531
                                                 F(1, 529)         =       0.65
@@ -1163,8 +1216,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000009 not
-    found)
 
 Linear regression                               Number of obs     =        531
                                                 F(1, 529)         =       0.01
@@ -1307,8 +1358,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_social_security_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000a not
-    found)
 
 Linear regression                               Number of obs     =        512
                                                 F(1, 510)         =       0.04
@@ -1449,8 +1498,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000b not
-    found)
 Skipping r4_win for social_security: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        574
@@ -1590,8 +1637,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_social_security.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000c not
-    found)
 
 Linear regression                               Number of obs     =        574
                                                 F(1, 572)         =       0.49
@@ -1730,8 +1775,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_social_security_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000d not
-    found)
 
 Linear regression                               Number of obs     =        547
                                                 F(1, 545)         =       0.23
@@ -1874,8 +1917,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000e not
-    found)
 
 Linear regression                               Number of obs     =        547
                                                 F(1, 545)         =       0.24
@@ -2018,8 +2059,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_medicare_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000f not
-    found)
 
 Linear regression                               Number of obs     =        528
                                                 F(1, 526)         =       0.24
@@ -2160,8 +2199,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g not
-    found)
 Skipping r4_win for medicare: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        586
@@ -2301,8 +2338,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_medicare.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000h not
-    found)
 
 Linear regression                               Number of obs     =        586
                                                 F(1, 584)         =       0.26
@@ -2441,8 +2476,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_medicare_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000i not
-    found)
 
 Linear regression                               Number of obs     =        515
                                                 F(1, 513)         =       0.04
@@ -2585,8 +2618,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000j not
-    found)
 
 Linear regression                               Number of obs     =        515
                                                 F(1, 513)         =       0.19
@@ -2729,8 +2760,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_banks_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000k not
-    found)
 
 Linear regression                               Number of obs     =        493
                                                 F(1, 491)         =       0.61
@@ -2871,8 +2900,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000l not
-    found)
 Skipping r4_win for banks: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        556
@@ -3012,8 +3039,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_banks.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000m not
-    found)
 
 Linear regression                               Number of obs     =        556
                                                 F(1, 554)         =       0.65
@@ -3152,8 +3177,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_banks_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000n not
-    found)
 
 Linear regression                               Number of obs     =        562
                                                 F(1, 560)         =       0.37
@@ -3296,8 +3319,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000o not
-    found)
 
 Linear regression                               Number of obs     =        562
                                                 F(1, 560)         =       0.00
@@ -3440,8 +3461,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_advisors_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000p not
-    found)
 
 Linear regression                               Number of obs     =        534
                                                 F(1, 532)         =       5.83
@@ -3582,8 +3601,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000q not
-    found)
 Skipping r4_win for advisors: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        606
@@ -3723,8 +3740,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_advisors.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000r not
-    found)
 
 Linear regression                               Number of obs     =        606
                                                 F(1, 604)         =       5.26
@@ -3863,8 +3878,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_advisors_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000s not
-    found)
 
 Linear regression                               Number of obs     =        558
                                                 F(1, 556)         =       0.85
@@ -4007,8 +4020,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000t not
-    found)
 
 Linear regression                               Number of obs     =        558
                                                 F(1, 556)         =       3.06
@@ -4151,8 +4162,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_mutual_funds_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000u not
-    found)
 
 Linear regression                               Number of obs     =        533
                                                 F(1, 531)         =       0.17
@@ -4293,8 +4302,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000v not
-    found)
 Skipping r4_win for mutual_funds: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        607
@@ -4434,8 +4441,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_mutual_funds.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000w not
-    found)
 
 Linear regression                               Number of obs     =        607
                                                 F(1, 605)         =       2.53
@@ -4574,8 +4579,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_mutual_funds_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000x not
-    found)
 
 Linear regression                               Number of obs     =        631
                                                 F(1, 629)         =       0.19
@@ -4718,8 +4721,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000010 not
-    found)
 
 Linear regression                               Number of obs     =        631
                                                 F(1, 629)         =       1.25
@@ -4862,8 +4863,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_insurance_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000011 not
-    found)
 
 Linear regression                               Number of obs     =        604
                                                 F(1, 602)         =       0.00
@@ -5004,8 +5003,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000012 not
-    found)
 Skipping r4_win for insurance: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        674
@@ -5145,8 +5142,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_insurance.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000013 not
-    found)
 
 Linear regression                               Number of obs     =        674
                                                 F(1, 672)         =       1.24
@@ -5285,8 +5280,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_insurance_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000014 not
-    found)
 
 Linear regression                               Number of obs     =        684
                                                 F(1, 682)         =       0.09
@@ -5429,8 +5422,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000015 not
-    found)
 
 Linear regression                               Number of obs     =        684
                                                 F(1, 682)         =       0.45
@@ -5573,8 +5564,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_media_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000016 not
-    found)
 
 Linear regression                               Number of obs     =        659
                                                 F(1, 657)         =       0.17
@@ -5715,8 +5704,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000017 not
-    found)
 Skipping r4_win for media: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        735
@@ -5856,8 +5843,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_media.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000018 not
-    found)
 
 Linear regression                               Number of obs     =        735
                                                 F(1, 733)         =       0.70
@@ -5996,8 +5981,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_media_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.000019 not
-    found)
 
 Linear regression                               Number of obs     =        248
                                                 F(1, 246)         =       0.91
@@ -6134,8 +6117,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_pc1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001a not
-    found)
 
 Linear regression                               Number of obs     =        248
                                                 F(1, 246)         =       0.35
@@ -6272,8 +6253,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_pc1_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001b not
-    found)
 
 Linear regression                               Number of obs     =        235
                                                 F(1, 233)         =       1.28
@@ -6410,8 +6389,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_pc1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001c not
-    found)
 Skipping r4_win for pc1: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        271
@@ -6543,8 +6520,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_pc1.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001d not
-    found)
 
 Linear regression                               Number of obs     =        271
                                                 F(1, 269)         =       1.19
@@ -6675,8 +6650,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_pc1_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001e not
-    found)
 
 Linear regression                               Number of obs     =        248
                                                 F(1, 246)         =       0.66
@@ -6813,8 +6786,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_pc2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001f not
-    found)
 
 Linear regression                               Number of obs     =        248
                                                 F(1, 246)         =       0.02
@@ -6951,8 +6922,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core/returns_r1_trust_pc2_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001g not
-    found)
 
 Linear regression                               Number of obs     =        235
                                                 F(1, 233)         =       0.38
@@ -7089,8 +7058,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Core+res/returns_r4_trust_pc2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001h not
-    found)
 Skipping r4_win for pc2: return var r4_annual_2022_w5 not found.
 
 Linear regression                               Number of obs     =        271
@@ -7222,8 +7189,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_pc2.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001i not
-    found)
 
 Linear regression                               Number of obs     =        271
                                                 F(1, 269)         =       0.00
@@ -7354,8 +7319,6 @@ Writing: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Re
 (results lin_ctl are active now)
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/Returns/Net wealth/returns_r5_trust_pc2_win.tex)
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00001j not
-    found)
 
 . 
 . eststo clear
@@ -7370,5 +7333,5 @@ Done. Tables in /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regress
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/13_r
 > eg_returns_trust.log
   log type:  text
- closed on:  23 Feb 2026, 10:50:12
+ closed on:  25 Feb 2026, 23:07:51
 -------------------------------------------------------------------------------

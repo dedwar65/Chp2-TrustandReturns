@@ -1,7 +1,6 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
 \caption{Panel Spec 3 (FE, 2nd stage): r5 returns on financial-institutional trust}
-\label{tab:fin_trust_pc1_wgen_panel3}
 \begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{3}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
@@ -18,9 +17,9 @@ NH Other            &       -0.07         &       -0.05         &       -0.05   
                     &      (0.07)         &      (0.07)         &      (0.08)         \\
 Born in U.S.        &       -0.07         &       -0.07         &       -0.08         \\
                     &      (0.06)         &      (0.06)         &      (0.06)         \\
-Fin. Inst. PC1      &                     &        0.04\sym{***}&        0.05\sym{***}\\
+Trust               &                     &        0.04\sym{***}&        0.05\sym{***}\\
                     &                     &      (0.01)         &      (0.01)         \\
-(Fin. Inst. PC1)$^2$&                     &                     &       -0.01\sym{**} \\
+Trust$^2$           &                     &                     &       -0.01\sym{**} \\
                     &                     &                     &      (0.00)         \\
 \_cons              &       -0.03         &       -0.01         &        0.03         \\
                     &      (0.07)         &      (0.07)         &      (0.07)         \\
@@ -28,9 +27,8 @@ Fin. Inst. PC1      &                     &        0.04\sym{***}&        0.05\sy
 Observations        &      384.00         &      384.00         &      384.00         \\
 Adj. R-squared      &        0.17         &        0.20         &        0.21         \\
 Joint test: Trust p-value&           .         &           .         &        0.00         \\
+Joint test: Race p-value&        0.00         &        0.00         &        0.00         \\
 \bottomrule
-\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{4}{l}{\footnotesize Second-stage: FE from within regression on time-invariant + trust. Robust SE.}\\
-\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\multicolumn{4}{l}{\footnotesize .}\\
 \end{tabular*}
 \end{table}

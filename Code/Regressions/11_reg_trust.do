@@ -117,7 +117,32 @@ foreach pair of local outcome_list {
 
     eststo clear
     eststo demog: regress `outvar' `demo_core' `demo_race' if !missing(`outvar'), vce(robust)
+    capture confirm variable age_bin
+    if !_rc {
+        quietly testparm i.age_bin
+        estadd scalar p_joint_age_bin = r(p) : demog
+    }
+    else estadd scalar p_joint_age_bin = . : demog
+    capture confirm variable race_eth
+    if !_rc {
+        quietly testparm i.race_eth
+        estadd scalar p_joint_race = r(p) : demog
+    }
+    else estadd scalar p_joint_race = . : demog
+
     eststo full:  regress `outvar' `full_ctrl' if !missing(`outvar'), vce(robust)
+    capture confirm variable age_bin
+    if !_rc {
+        quietly testparm i.age_bin
+        estadd scalar p_joint_age_bin = r(p) : full
+    }
+    else estadd scalar p_joint_age_bin = . : full
+    capture confirm variable race_eth
+    if !_rc {
+        quietly testparm i.race_eth
+        estadd scalar p_joint_race = r(p) : full
+    }
+    else estadd scalar p_joint_race = . : full
 
     * Build drop list from coefs in this regression (avoid dropping coefs that don't exist)
     local drop_11 "1.gender 1.race_eth"
@@ -134,6 +159,8 @@ foreach pair of local outcome_list {
     local capt_stub = subinstr("`capt_stub'", "_", " ", .)
     if "`stub'" == "pc1" local capt_stub "PC1"
     if "`stub'" == "pc2" local capt_stub "PC2"
+    local tabtitle "Determinants of `capt_stub' trust"
+    if "`stub'" == "general" local tabtitle "Determinants of general trust"
 
     local outfile "${REGRESSIONS}/Trust/trust_reg_`stub'.tex"
     di as txt "Writing: `outfile'"
@@ -145,28 +172,11 @@ foreach pair of local outcome_list {
         b(2) se(2) label ///
         drop(`drop_11' *.age_bin) ///
         varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" married_2020 "Married" depression_2020 "Depression" health_cond_2020 "Health conditions" medicare_2020 "Covered by Medicare" medicaid_2020 "Covered by Medicaid" life_ins_2020 "Has life insurance" num_divorce_2020 "Number of reported divorces" num_widow_2020 "Number of reported times being widowed" _cons "Constant") ///
-        title("`capt_stub' trust (2020) on controls") ///
+        title("`tabtitle'") ///
+        addnotes(".") ///
         alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
-        stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
-        addnotes("Robust standard errors in parentheses. Trust and controls from 2020. Age bins (5-yr) included; coefficients omitted.") ///
-        nonumbers
-
-    tempfile tmpf
-    file open fh using "`outfile'", read text
-    file open fout using "`tmpf'", write text replace
-    local lab_inserted 0
-    file read fh line
-    while r(eof) == 0 {
-        file write fout "`line'" _n
-        if `lab_inserted' == 0 & regexm(`"`line'"', "\\caption") {
-            file write fout "\label{tab:trust_reg_`stub'}" _n
-            local lab_inserted 1
-        }
-        file read fh line
-    }
-    file close fh
-    file close fout
-    copy "`tmpf'" "`outfile'", replace
+        stats(N r2_a p_joint_age_bin p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Age bins p-value" "Joint test: Race p-value")) ///
+        nonumbers nonotes
 }
 
 eststo clear

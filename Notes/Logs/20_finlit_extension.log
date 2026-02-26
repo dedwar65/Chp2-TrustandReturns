@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_f
 > inlit_extension.log
   log type:  text
- opened on:  23 Feb 2026, 10:53:43
+ opened on:  25 Feb 2026, 23:10:41
 
 . 
 . capture which esttab
@@ -502,40 +502,10 @@ Descriptive tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/
 >  test: Trust p-value")) ///
 >     title("Cross section: r5 returns (${LATEX_PCT} wins) on financial literac
 > y and trust") ///
->     addnotes("Robust SE. Age bins (5-yr) and wealth deciles" "omitted from ta
-> ble but included in regressions.") ///
->     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+>     addnotes(".") ///
+>     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/FinLit/Tables/finlit_r5_cross_section.tex)
-
-. 
-. * Insert \label
-. tempfile tmpf
-
-. file open fh using "`FINLIT_TAB'/finlit_r5_cross_section.tex", read text
-
-. file open fout using "`tmpf'", write text replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000d not
-    found)
-
-. local lab_ins 0
-
-. file read fh line
-
-. while r(eof) == 0 {
-  2.     file write fout "`line'" _n
-  3.     if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-  4.         file write fout "\label{tab:finlit_r5_cross_section}" _n
-  5.         local lab_ins 1
-  6.     }
-  7.     file read fh line
-  8. }
-
-. file close fh
-
-. file close fout
-
-. copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_cross_section.tex", replace
 
 . 
 . drop _samp
@@ -589,39 +559,10 @@ Descriptive tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/
 >  test: Trust p-value")) ///
 >     title("Average r5 returns (${LATEX_PCT} wins) on financial literacy and t
 > rust") ///
->     addnotes("Robust SE. Age bins (5-yr) and wealth deciles" "omitted from ta
-> ble but included in regressions.") ///
->     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+>     addnotes(".") ///
+>     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/FinLit/Tables/finlit_r5_average.tex)
-
-. 
-. tempfile tmpf
-
-. file open fh using "`FINLIT_TAB'/finlit_r5_average.tex", read text
-
-. file open fout using "`tmpf'", write text replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000e not
-    found)
-
-. local lab_ins 0
-
-. file read fh line
-
-. while r(eof) == 0 {
-  2.     file write fout "`line'" _n
-  3.     if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-  4.         file write fout "\label{tab:finlit_r5_average}" _n
-  5.         local lab_ins 1
-  6.     }
-  7.     file read fh line
-  8. }
-
-. file close fh
-
-. file close fout
-
-. copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_average.tex", replace
 
 . 
 . drop _samp
@@ -641,7 +582,7 @@ Duplicates in terms of hhidpn
 . tempfile finlit_wide
 
 . save `finlit_wide'
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000g saved
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_07824.00000c saved
     as .dta format
 
 . restore
@@ -700,10 +641,22 @@ Panel variable: hhidpn (strongly balanced)
 
 . estadd scalar p_joint_trust = . : m1
 
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+
+. else estadd scalar p_joint_censreg = . : m1
+
 . eststo m2: quietly regress r5_annual_w5 `base_ctrl' finlit_score if _samp, vc
 > e(cluster hhidpn)
 
 . estadd scalar p_joint_trust = . : m2
+
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+
+. else estadd scalar p_joint_censreg = . : m2
 
 . eststo m3: quietly regress r5_annual_w5 `base_ctrl' finlit_q1 finlit_q2 finli
 > t_q3 `trust_spec_p' if _samp, vce(cluster hhidpn)
@@ -712,12 +665,24 @@ Panel variable: hhidpn (strongly balanced)
 
 . estadd scalar p_joint_trust = r(p) : m3
 
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+
+. else estadd scalar p_joint_censreg = . : m3
+
 . eststo m4: quietly regress r5_annual_w5 `base_ctrl' finlit_score `trust_spec_
 > p' if _samp, vce(cluster hhidpn)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m4
+
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m4
+
+. else estadd scalar p_joint_censreg = . : m4
 
 . 
 . esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel1.tex", replace ///
@@ -729,45 +694,16 @@ Panel variable: hhidpn (strongly balanced)
 >         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_
 > 2020 "(General trust)\$^2\$" ///
 >         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_
-> eth "NH Other" educ_yrs "Years education" inlbrf_ "Employed" married_ "Marrie
-> d" born_us "Born in U.S.") ///
->     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint
->  test: Trust p-value")) ///
+> eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "
+> Married" born_us "Born in U.S.") ///
+>     stats(N r2_a p_joint_trust p_joint_censreg, labels("Observations" "Adj. R
+> -squared" "Joint test: Trust p-value" "Joint test: Region p-value")) ///
 >     title("Panel Spec 1 (pooled): r5 returns on financial literacy and trust"
 > ) ///
->     addnotes("Cluster-robust SE. Age bins (5-yr), wealth deciles, and region 
-> dummies" "omitted from table but included in regressions.") ///
->     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+>     addnotes(".") ///
+>     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/FinLit/Tables/finlit_r5_panel1.tex)
-
-. 
-. tempfile tmpf
-
-. file open fh using "`FINLIT_TAB'/finlit_r5_panel1.tex", read text
-
-. file open fout using "`tmpf'", write text replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000h not
-    found)
-
-. local lab_ins 0
-
-. file read fh line
-
-. while r(eof) == 0 {
-  2.     file write fout "`line'" _n
-  3.     if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-  4.         file write fout "\label{tab:finlit_r5_panel1}" _n
-  5.         local lab_ins 1
-  6.     }
-  7.     file read fh line
-  8. }
-
-. file close fh
-
-. file close fout
-
-. copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_panel1.tex", replace
 
 . 
 . * Panel Spec 2
@@ -782,10 +718,22 @@ Panel variable: hhidpn (strongly balanced)
 
 . estadd scalar p_joint_trust = . : m1
 
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+
+. else estadd scalar p_joint_censreg = . : m1
+
 . eststo m2: quietly regress r5_annual_w5 `ctrl_s2' finlit_score if _samp2, vce
 > (cluster hhidpn)
 
 . estadd scalar p_joint_trust = . : m2
+
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+
+. else estadd scalar p_joint_censreg = . : m2
 
 . eststo m3: quietly regress r5_annual_w5 `ctrl_s2' finlit_q1 finlit_q2 finlit_
 > q3 `trust_spec_p' if _samp2, vce(cluster hhidpn)
@@ -794,12 +742,24 @@ Panel variable: hhidpn (strongly balanced)
 
 . estadd scalar p_joint_trust = r(p) : m3
 
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+
+. else estadd scalar p_joint_censreg = . : m3
+
 . eststo m4: quietly regress r5_annual_w5 `ctrl_s2' finlit_score `trust_spec_p'
 >  if _samp2, vce(cluster hhidpn)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m4
+
+. capture testparm i.censreg
+
+. if _rc == 0 estadd scalar p_joint_censreg = r(p) : m4
+
+. else estadd scalar p_joint_censreg = . : m4
 
 . 
 . esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel2.tex", replace ///
@@ -811,46 +771,16 @@ Panel variable: hhidpn (strongly balanced)
 >         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_
 > 2020 "(General trust)\$^2\$" ///
 >         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_
-> eth "NH Other" educ_yrs "Years education" inlbrf_ "Employed" married_ "Marrie
-> d" born_us "Born in U.S.") ///
->     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint
->  test: Trust p-value")) ///
+> eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "
+> Married" born_us "Born in U.S.") ///
+>     stats(N r2_a p_joint_trust p_joint_censreg, labels("Observations" "Adj. R
+> -squared" "Joint test: Trust p-value" "Joint test: Region p-value")) ///
 >     title("Panel Spec 2 (${LATEX_SHARE_YEAR}): r5 returns on financial litera
 > cy and trust") ///
->     addnotes("Cluster-robust SE. Age bins (5-yr), wealth deciles, region dumm
-> ies," "and share x year interactions omitted from table but included in regre
-> ssions.") ///
->     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+>     addnotes(".") ///
+>     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/FinLit/Tables/finlit_r5_panel2.tex)
-
-. 
-. tempfile tmpf
-
-. file open fh using "`FINLIT_TAB'/finlit_r5_panel2.tex", read text
-
-. file open fout using "`tmpf'", write text replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000i not
-    found)
-
-. local lab_ins 0
-
-. file read fh line
-
-. while r(eof) == 0 {
-  2.     file write fout "`line'" _n
-  3.     if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-  4.         file write fout "\label{tab:finlit_r5_panel2}" _n
-  5.         local lab_ins 1
-  6.     }
-  7.     file read fh line
-  8. }
-
-. file close fh
-
-. file close fout
-
-. copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_panel2.tex", replace
 
 . 
 . * Panel Spec 3: FE + 2nd stage
@@ -1076,39 +1006,10 @@ share_debt~r |
 >  test: Trust p-value")) ///
 >     title("Panel Spec 3 (FE, 2nd stage): r5 returns on financial literacy and
 >  trust") ///
->     addnotes("Second-stage: FE from within regression on time-invariant + fin
-> lit. Robust SE.") ///
->     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
+>     addnotes(".") ///
+>     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 (output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
 > essions/FinLit/Tables/finlit_r5_panel3.tex)
-
-. 
-. tempfile tmpf
-
-. file open fh using "`FINLIT_TAB'/finlit_r5_panel3.tex", read text
-
-. file open fout using "`tmpf'", write text replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_84306.00000j not
-    found)
-
-. local lab_ins 0
-
-. file read fh line
-
-. while r(eof) == 0 {
-  2.     file write fout "`line'" _n
-  3.     if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-  4.         file write fout "\label{tab:finlit_r5_panel3}" _n
-  5.         local lab_ins 1
-  6.     }
-  7.     file read fh line
-  8. }
-
-. file close fh
-
-. file close fout
-
-. copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_panel3.tex", replace
 
 . 
 . display "Regression tables saved to `FINLIT_TAB'"
@@ -1124,5 +1025,5 @@ Done. Log: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_fin
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_f
 > inlit_extension.log
   log type:  text
- closed on:  23 Feb 2026, 10:54:23
+ closed on:  25 Feb 2026, 23:11:00
 -------------------------------------------------------------------------------

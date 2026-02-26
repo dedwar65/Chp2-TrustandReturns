@@ -53,10 +53,10 @@ do "${BASE_PATH}/Code/Regressions/17_reg_income_avg_trust.do"
 * 18: Avg returns on trust
 do "${BASE_PATH}/Code/Regressions/18_reg_returns_avg_trust.do"
 
-* 22: Region and hometown trust (cross-section, log only)
-do "${BASE_PATH}/Code/Regressions/22_region_home_trust.do"
+* 20: Financial literacy extension
+do "${BASE_PATH}/Code/Regressions/20_finlit_extension.do"
 
 * 25: Financial-institutional trust (PCA 4-vars, r5 regressions)
 do "${BASE_PATH}/Code/Regressions/25_reg_trust_fininst.do"
 
-display "2_run_pipeline_10_18: Completed 10–18, 22, 25."
+display "2_run_pipeline_10_18: Completed 10–18, 20, 25."

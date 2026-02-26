@@ -1,7 +1,6 @@
 \begin{table}[htbp]\centering
 \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
-\caption{Average total income (avg defl wins, log) on General trust (2020)}
-\label{tab:income_trust_general_total_deflwin_log}
+\caption{Average total income (avg defl wins, log) on general trust}
 \begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
 \toprule
                     &\multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c}{4}\\
@@ -31,10 +30,12 @@ Constant            &       10.15\sym{***}&        9.67\sym{***}&        7.81\sy
 \midrule
 Observations        &      895.00         &      895.00         &      885.00         &      885.00         \\
 Adj. R-squared      &        0.01         &        0.07         &        0.37         &        0.38         \\
-Joint test: Trust+Trust² p-value&                     &        0.00         &                     &        0.08         \\
+Joint test: Trust p-value&           .         &        0.00         &           .         &        0.08         \\
+Joint test: Age bins p-value&           .         &           .         &        0.00         &        0.00         \\
+Joint test: Race p-value&           .         &           .         &        0.00         &        0.00         \\
 \bottomrule
 \multicolumn{5}{l}{\footnotesize Standard errors in parentheses}\\
-\multicolumn{5}{l}{\footnotesize Age bins (5-yr) included in columns 3–4.}\\
+\multicolumn{5}{l}{\footnotesize .}\\
 \multicolumn{5}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
 \end{tabular*}
 \end{table}

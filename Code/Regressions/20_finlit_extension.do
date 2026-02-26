@@ -330,26 +330,8 @@ esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_cross_section.tex", replace ///
         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
     title("Cross section: r5 returns (${LATEX_PCT} wins) on financial literacy and trust") ///
-    addnotes("Robust SE. Age bins (5-yr) and wealth deciles" "omitted from table but included in regressions.") ///
-    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-
-* Insert \label
-tempfile tmpf
-file open fh using "`FINLIT_TAB'/finlit_r5_cross_section.tex", read text
-file open fout using "`tmpf'", write text replace
-local lab_ins 0
-file read fh line
-while r(eof) == 0 {
-    file write fout "`line'" _n
-    if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-        file write fout "\label{tab:finlit_r5_cross_section}" _n
-        local lab_ins 1
-    }
-    file read fh line
-}
-file close fh
-file close fout
-copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_cross_section.tex", replace
+    addnotes(".") ///
+    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
 drop _samp
 
@@ -377,25 +359,8 @@ esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_average.tex", replace ///
         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
     title("Average r5 returns (${LATEX_PCT} wins) on financial literacy and trust") ///
-    addnotes("Robust SE. Age bins (5-yr) and wealth deciles" "omitted from table but included in regressions.") ///
-    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-
-tempfile tmpf
-file open fh using "`FINLIT_TAB'/finlit_r5_average.tex", read text
-file open fout using "`tmpf'", write text replace
-local lab_ins 0
-file read fh line
-while r(eof) == 0 {
-    file write fout "`line'" _n
-    if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-        file write fout "\label{tab:finlit_r5_average}" _n
-        local lab_ins 1
-    }
-    file read fh line
-}
-file close fh
-file close fout
-copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_average.tex", replace
+    addnotes(".") ///
+    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
 drop _samp
 
@@ -429,14 +394,26 @@ gen byte _samp = !missing(r5_annual_w5) & !missing(finlit_q1) & !missing(finlit_
 eststo clear
 eststo m1: quietly regress r5_annual_w5 `base_ctrl' finlit_q1 finlit_q2 finlit_q3 if _samp, vce(cluster hhidpn)
 estadd scalar p_joint_trust = . : m1
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+else estadd scalar p_joint_censreg = . : m1
 eststo m2: quietly regress r5_annual_w5 `base_ctrl' finlit_score if _samp, vce(cluster hhidpn)
 estadd scalar p_joint_trust = . : m2
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+else estadd scalar p_joint_censreg = . : m2
 eststo m3: quietly regress r5_annual_w5 `base_ctrl' finlit_q1 finlit_q2 finlit_q3 `trust_spec_p' if _samp, vce(cluster hhidpn)
 quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 estadd scalar p_joint_trust = r(p) : m3
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+else estadd scalar p_joint_censreg = . : m3
 eststo m4: quietly regress r5_annual_w5 `base_ctrl' finlit_score `trust_spec_p' if _samp, vce(cluster hhidpn)
 quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 estadd scalar p_joint_trust = r(p) : m4
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m4
+else estadd scalar p_joint_censreg = . : m4
 
 esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel1.tex", replace ///
     booktabs mtitles("(1)" "(2)" "(3)" "(4)") ///
@@ -444,28 +421,11 @@ esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel1.tex", replace ///
     keep(`keep_p') ///
     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div" finlit_score "Literacy score" ///
         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_2020 "(General trust)\$^2\$" ///
-        2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S.") ///
-    stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
+        2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "Married" born_us "Born in U.S.") ///
+    stats(N r2_a p_joint_trust p_joint_censreg, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Region p-value")) ///
     title("Panel Spec 1 (pooled): r5 returns on financial literacy and trust") ///
-    addnotes("Cluster-robust SE. Age bins (5-yr), wealth deciles, and region dummies" "omitted from table but included in regressions.") ///
-    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-
-tempfile tmpf
-file open fh using "`FINLIT_TAB'/finlit_r5_panel1.tex", read text
-file open fout using "`tmpf'", write text replace
-local lab_ins 0
-file read fh line
-while r(eof) == 0 {
-    file write fout "`line'" _n
-    if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-        file write fout "\label{tab:finlit_r5_panel1}" _n
-        local lab_ins 1
-    }
-    file read fh line
-}
-file close fh
-file close fout
-copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_panel1.tex", replace
+    addnotes(".") ///
+    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
 * Panel Spec 2
 gen byte _samp2 = _samp & !missing(share_core) & !missing(share_ira) & !missing(share_res) & !missing(share_debt_long) & !missing(share_debt_other)
@@ -473,14 +433,26 @@ gen byte _samp2 = _samp & !missing(share_core) & !missing(share_ira) & !missing(
 eststo clear
 eststo m1: quietly regress r5_annual_w5 `ctrl_s2' finlit_q1 finlit_q2 finlit_q3 if _samp2, vce(cluster hhidpn)
 estadd scalar p_joint_trust = . : m1
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m1
+else estadd scalar p_joint_censreg = . : m1
 eststo m2: quietly regress r5_annual_w5 `ctrl_s2' finlit_score if _samp2, vce(cluster hhidpn)
 estadd scalar p_joint_trust = . : m2
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m2
+else estadd scalar p_joint_censreg = . : m2
 eststo m3: quietly regress r5_annual_w5 `ctrl_s2' finlit_q1 finlit_q2 finlit_q3 `trust_spec_p' if _samp2, vce(cluster hhidpn)
 quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 estadd scalar p_joint_trust = r(p) : m3
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m3
+else estadd scalar p_joint_censreg = . : m3
 eststo m4: quietly regress r5_annual_w5 `ctrl_s2' finlit_score `trust_spec_p' if _samp2, vce(cluster hhidpn)
 quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 estadd scalar p_joint_trust = r(p) : m4
+capture testparm i.censreg
+if _rc == 0 estadd scalar p_joint_censreg = r(p) : m4
+else estadd scalar p_joint_censreg = . : m4
 
 esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel2.tex", replace ///
     booktabs mtitles("(1)" "(2)" "(3)" "(4)") ///
@@ -488,28 +460,11 @@ esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel2.tex", replace ///
     keep(`keep_p') ///
     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div" finlit_score "Literacy score" ///
         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_2020 "(General trust)\$^2\$" ///
-        2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_ "Employed" married_ "Married" born_us "Born in U.S.") ///
-    stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
+        2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "Married" born_us "Born in U.S.") ///
+    stats(N r2_a p_joint_trust p_joint_censreg, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Region p-value")) ///
     title("Panel Spec 2 (${LATEX_SHARE_YEAR}): r5 returns on financial literacy and trust") ///
-    addnotes("Cluster-robust SE. Age bins (5-yr), wealth deciles, region dummies," "and share x year interactions omitted from table but included in regressions.") ///
-    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-
-tempfile tmpf
-file open fh using "`FINLIT_TAB'/finlit_r5_panel2.tex", read text
-file open fout using "`tmpf'", write text replace
-local lab_ins 0
-file read fh line
-while r(eof) == 0 {
-    file write fout "`line'" _n
-    if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-        file write fout "\label{tab:finlit_r5_panel2}" _n
-        local lab_ins 1
-    }
-    file read fh line
-}
-file close fh
-file close fout
-copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_panel2.tex", replace
+    addnotes(".") ///
+    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
 * Panel Spec 3: FE + 2nd stage
 local ctrl_fe "i.age_bin inlbrf married i.year"
@@ -551,25 +506,8 @@ esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel3.tex", replace ///
         educ_yrs "Years education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S.") ///
     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value")) ///
     title("Panel Spec 3 (FE, 2nd stage): r5 returns on financial literacy and trust") ///
-    addnotes("Second-stage: FE from within regression on time-invariant + finlit. Robust SE.") ///
-    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers
-
-tempfile tmpf
-file open fh using "`FINLIT_TAB'/finlit_r5_panel3.tex", read text
-file open fout using "`tmpf'", write text replace
-local lab_ins 0
-file read fh line
-while r(eof) == 0 {
-    file write fout "`line'" _n
-    if `lab_ins' == 0 & regexm(`"`line'"', "\\caption") {
-        file write fout "\label{tab:finlit_r5_panel3}" _n
-        local lab_ins 1
-    }
-    file read fh line
-}
-file close fh
-file close fout
-copy "`tmpf'" "`FINLIT_TAB'/finlit_r5_panel3.tex", replace
+    addnotes(".") ///
+    alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
 display "Regression tables saved to `FINLIT_TAB'"
 display "Done. Log: ${LOG_DIR}/20_finlit_extension.log"

@@ -66,10 +66,17 @@ local r4_raw "r4_annual_nw"
 local r5_raw "r5_annual_nw"
 local trust_var "trust_others_2020"
 
-* Time-varying controls only (no educ, gender, race, born_us, censreg, trust)
+* Time-varying controls only (no educ, gender, race, born_us, trust)
+* Region (censreg) varies by wave; include if present
 local ctrl_r1 "i.age_bin inlbrf married i.year"
 local ctrl_r4 "i.age_bin inlbrf married i.year"
 local ctrl_r5 "i.age_bin inlbrf married i.year"
+capture confirm variable censreg
+if !_rc {
+    local ctrl_r1 "i.age_bin i.censreg inlbrf married i.year"
+    local ctrl_r4 "i.age_bin i.censreg inlbrf married i.year"
+    local ctrl_r5 "i.age_bin i.censreg inlbrf married i.year"
+}
 forvalues d = 2/10 {
     capture confirm variable wealth_core_d`d'
     if !_rc local ctrl_r1 "`ctrl_r1' wealth_core_d`d'"
@@ -127,7 +134,7 @@ foreach win in raw win {
         if "`ret'" == "r4" {
             local ctrl "`ctrl_r4'"
             local share_cond "`share_cond_r4'"
-            local ret_label "returns to ${LATEX_CORE_IRA}"
+            local ret_label "returns to core and IRA"
         }
         if "`ret'" == "r5" {
             local ctrl "`ctrl_r5'"
@@ -152,41 +159,72 @@ foreach win in raw win {
         predict double __fe_resid, e
         predict double __hdfe1__, u
 
-        * Joint tests: share×year
+        * Joint tests on uninteracted share coefficients
         if "`ret'" == "r1" {
-            quietly testparm c.share_core#i.year
+            quietly testparm share_core
             estadd scalar p_joint_share_core = r(p)
         }
         if "`ret'" == "r4" {
-            quietly testparm c.share_core#i.year
-            estadd scalar p_joint_share_core = r(p)
-            quietly testparm c.share_ira#i.year
-            estadd scalar p_joint_share_ira = r(p)
+            quietly testparm share_core share_ira
+            estadd scalar p_joint_share_asset = r(p)
         }
         if "`ret'" == "r5" {
-            quietly testparm c.share_core#i.year c.share_ira#i.year c.share_res#i.year
+            quietly testparm share_core share_ira share_res
             estadd scalar p_joint_share_asset = r(p)
-            quietly testparm c.share_debt_long#i.year c.share_debt_other#i.year
+            quietly testparm share_debt_long share_debt_other
             estadd scalar p_joint_share_debt = r(p)
         }
+        * Joint tests: age bins, region, wealth deciles, year
+        quietly testparm i.age_bin
+        estadd scalar p_joint_age_bin = r(p)
+        capture testparm i.censreg
+        if _rc == 0 estadd scalar p_joint_censreg = r(p)
+        else estadd scalar p_joint_censreg = .
+        local wlist ""
+        if "`ret'" == "r1" {
+            forvalues d = 2/10 {
+                capture confirm variable wealth_core_d`d'
+                if !_rc local wlist "`wlist' wealth_core_d`d'"
+            }
+        }
+        if "`ret'" == "r4" {
+            forvalues d = 2/10 {
+                capture confirm variable wealth_coreira_d`d'
+                if !_rc local wlist "`wlist' wealth_coreira_d`d'"
+            }
+        }
+        if "`ret'" == "r5" {
+            forvalues d = 2/10 {
+                capture confirm variable wealth_d`d'
+                if !_rc local wlist "`wlist' wealth_d`d'"
+            }
+        }
+        if trim("`wlist'") != "" {
+            quietly testparm `wlist'
+            estadd scalar p_joint_wealth = r(p)
+        }
+        else estadd scalar p_joint_wealth = .
+        quietly testparm i.year
+        estadd scalar p_joint_year = r(p)
 
         * xtreg already stores r2_w, sigma_u, sigma_e, rho — no need to estadd
 
+        * Report joint tests on uninteracted share coefficients (not share x year interactions)
         if "`ret'" == "r1" local stats_share "p_joint_share_core"
-        if "`ret'" == "r1" local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value""'
-        if "`ret'" == "r4" local stats_share "p_joint_share_core p_joint_share_ira"
-        if "`ret'" == "r4" local labels_share `" "Joint test: Share core${LATEX_X_YEAR} p-value" "Joint test: Share IRA${LATEX_X_YEAR} p-value""'
+        if "`ret'" == "r1" local labels_share `" "Joint test: Share core p-value""'
+        if "`ret'" == "r4" local stats_share "p_joint_share_asset"
+        if "`ret'" == "r4" local labels_share `" "Joint test: Share (core, IRA) p-value""'
         if "`ret'" == "r5" local stats_share "p_joint_share_asset p_joint_share_debt"
-        if "`ret'" == "r5" local labels_share `" "Joint test: Share (core,IRA,res)${LATEX_X_YEAR} p-value" "Joint test: Share (debt long,other)${LATEX_X_YEAR} p-value""'
-        local stats_line "N r2_w rho sigma_u sigma_e `stats_share'"
-        local labels_line `" "Observations" "Within R²" "Rho" "Sigma u" "Sigma e" `labels_share'"'
+        if "`ret'" == "r5" local labels_share `" "Joint test: Share (core, IRA, res) p-value" "Joint test: Share (debt long, other) p-value""'
+        local stats_line "N r2_w rho sigma_u sigma_e p_joint_age_bin p_joint_censreg p_joint_wealth p_joint_year `stats_share'"
+        local labels_line `" "Observations" "Within R²" "$\rho$" "$\sigma_u$" "$\sigma_e$" "Joint test: Age bins p-value" "Joint test: Region p-value" "Joint test: Wealth deciles p-value" "Joint test: Year p-value" `labels_share'"'
 
         eststo fe_`ret'_`win'
 
         * Display full regression in log (all coefficients; no keep) — for history of actual results
         esttab fe_`ret'_`win', se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
             stats(`stats_line', labels(`labels_line')) ///
-            nomtitles nonumbers noobs
+            nomtitles nonumbers nonotes noobs
 
         * Save FE to tempfile and append
         preserve
@@ -233,13 +271,13 @@ foreach win in raw win {
         local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_spec3.tex"
         if "`win'" == "win" local outfile "${REGRESSIONS}/Panel/panel_reg_`ret'_spec3_win.tex"
 
-        local tablabel "tab:panel_spec3_`ret'_`win'"
+        local tablabel "tab:panel_reg_`ret'_spec3_`win'"
         local omit_note1 "Age bins, wealth deciles, region dummies, year dummies,"
         local omit_note2 "${LATEX_SHARE_YEAR} interactions included in estimation but omitted from table."
         if `: list inlbrf_ in keep_final' == 0 | `: list married_ in keep_final' == 0 {
             local omit_note2 "`omit_note2' Employed and/or Married omitted (collinear with individual FE)."
         }
-        local note1 "\label{`tablabel'} Cluster-robust SE in parentheses. Individual fixed effects."
+        local note1 "Cluster-robust SE in parentheses. Individual fixed effects."
         local note2 "`omit_note1'"
         local note3 "`omit_note2'"
         local note4 "\sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)"
@@ -248,11 +286,11 @@ foreach win in raw win {
             mtitles("(1)") ///
             se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
             keep(`keep_final') order(`order_`ret'') ///
-            varlabels(inlbrf_ "Employed" married_ "Married" share_core "Share core" share_ira "Share IRA" share_res "Share residential" share_debt_long "Share long-term debt" share_debt_other "Share other debt" _cons `"\_cons"') ///
+            varlabels(inlbrf_ "In labor force" married_ "Married" share_core "Share core" share_ira "Share IRA" share_res "Share residential" share_debt_long "Share long-term debt" share_debt_other "Share other debt" _cons `"\_cons"') ///
             stats(`stats_line', labels(`labels_line')) ///
             title("Panel Spec 3: `ret_label' (`win_label', ${LATEX_SHARE_YEAR})") ///
-            addnotes("`note1'" "`note2'" "`note3'" "`note4'") ///
-            alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers substitute("\caption{" "\caption[]{")
+            addnotes(".") ///
+            alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes substitute("\caption{" "\caption[]{")
 
         di as txt "Wrote: `outfile'"
     }
@@ -274,26 +312,46 @@ merge m:1 hhidpn using `tinv', nogen
 save `fe_append', replace
 
 * ----------------------------------------------------------------------
-* Step C: Distribution plots (6)
+* Step C: Distribution plots (Spec 3, r5 winsorized)
+* - Fraction (share) on y-axis
+* - Demeaned FE
+* - Winsorized at 1% and 5%
 * ----------------------------------------------------------------------
-foreach win in raw win {
-    local win_label "raw"
-    if "`win'" == "win" local win_label "${LATEX_WIN_SHORT}"
-    foreach ret in r1 r4 r5 {
-        use `fe_append' if ret_type=="`ret'" & win_type=="`win'", clear
-        if _N == 0 continue
-        local ret_label "returns to core"
-        if "`ret'" == "r4" local ret_label "returns to ${LATEX_CORE_IRA}"
-        if "`ret'" == "r5" local ret_label "returns to net wealth"
-        local fname "fe_dist_`ret'"
-        if "`win'" == "win" local fname "fe_dist_`ret'_win"
-        histogram fe, percent width(0.01) ///
-            title("FE distribution: `ret_label' (`win_label')") ///
-            xtitle("Estimated fixed effect") ///
-            scheme(s2color)
-        graph export "${REGRESSIONS}/Panel/Figures/`fname'.png", replace width(1200)
-        di as txt "Wrote: `fname'.png"
-    }
+capture erase "${REGRESSIONS}/Panel/Figures/fe_dist_r5_spec3_win_demeaned_w1.png"
+capture erase "${REGRESSIONS}/Panel/Figures/fe_dist_r5_spec3_win_demeaned_w5.png"
+
+use `fe_append' if ret_type=="r5" & win_type=="win", clear
+if _N > 0 {
+    quietly summarize fe, meanonly
+    gen double fe_dm = fe - r(mean)
+
+    quietly summarize fe_dm, detail
+    local p1  = r(p1)
+    local p5  = r(p5)
+    local p95 = r(p95)
+    local p99 = r(p99)
+
+    gen double fe_dm_w1 = fe_dm
+    replace fe_dm_w1 = `p1' if fe_dm_w1 < `p1'
+    replace fe_dm_w1 = `p99' if fe_dm_w1 > `p99'
+
+    gen double fe_dm_w5 = fe_dm
+    replace fe_dm_w5 = `p5' if fe_dm_w5 < `p5'
+    replace fe_dm_w5 = `p95' if fe_dm_w5 > `p95'
+
+    histogram fe_dm_w1, fraction bin(100) ///
+        title("Distribution of f.e. for returns to net wealth") ///
+        xtitle("Estimated fixed effect (demeaned)") ytitle("Fraction") ///
+        scheme(s1mono)
+    graph export "${REGRESSIONS}/Panel/Figures/fe_dist_r5_spec3_win_demeaned_w1.png", replace width(1200)
+    di as txt "Wrote: fe_dist_r5_spec3_win_demeaned_w1.png"
+
+    histogram fe_dm_w5, fraction bin(100) ///
+        title("Distribution of f.e. for returns to net wealth") ///
+        xtitle("Estimated fixed effect (demeaned)") ytitle("Fraction") ///
+        scheme(s1mono)
+    graph export "${REGRESSIONS}/Panel/Figures/fe_dist_r5_spec3_win_demeaned_w5.png", replace width(1200)
+    di as txt "Wrote: fe_dist_r5_spec3_win_demeaned_w5.png"
 }
 
 * ----------------------------------------------------------------------
@@ -309,20 +367,28 @@ foreach win in raw win {
         drop if missing(educ_yrs) | missing(gender) | missing(race_eth)
 
         local ret_label "returns to core"
-        if "`ret'" == "r4" local ret_label "returns to ${LATEX_CORE_IRA}"
+        if "`ret'" == "r4" local ret_label "returns to core and IRA"
         if "`ret'" == "r5" local ret_label "returns to net wealth"
 
         eststo clear
         eststo m1: regress fe educ_yrs i.gender i.race_eth born_us, vce(robust)
+        estadd scalar p_joint_trust = . : m1
+        quietly testparm i.race_eth
+        estadd scalar p_joint_race = r(p) : m1
         eststo m2: regress fe educ_yrs i.gender i.race_eth born_us trust_others_2020 if !missing(trust_others_2020), vce(robust)
+        estadd scalar p_joint_trust = . : m2
+        quietly testparm i.race_eth
+        estadd scalar p_joint_race = r(p) : m2
         eststo m3: regress fe educ_yrs i.gender i.race_eth born_us trust_others_2020 c.trust_others_2020#c.trust_others_2020 if !missing(trust_others_2020), vce(robust)
         quietly testparm trust_others_2020 c.trust_others_2020#c.trust_others_2020
         estadd scalar p_joint_trust = r(p) : m3
+        quietly testparm i.race_eth
+        estadd scalar p_joint_race = r(p) : m3
 
         * Display full second-stage in log (all coefficients) — for history of actual results
         esttab m1 m2 m3, se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
             mtitles("(1)" "(2)" "(3)") ///
-            stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
+            stats(N r2_a p_joint_trust p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Race p-value")) ///
             title("Second-stage: FE from `ret_label' (`win_label') — full results")
 
         local keep_list "educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth born_us trust_others_2020 c.trust_others_2020#c.trust_others_2020 _cons"
@@ -333,11 +399,11 @@ foreach win in raw win {
             mtitles("(1)" "(2)" "(3)") ///
             se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
             keep(`keep_list') ///
-            varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S." trust_others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust²" _cons `"\_cons"') ///
-            stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint test: Trust+Trust² p-value")) ///
+            varlabels(educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S." trust_others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust\$^2\$" _cons `"\_cons"') ///
+            stats(N r2_a p_joint_trust p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Race p-value")) ///
             title("Second-stage: FE from `ret_label' (`win_label') on time-invariant vars") ///
-            addnotes("\label{`tablabel'} Robust SE. FE from Panel Spec 3 `ret_label' regression (`win_label').") ///
-            alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers substitute("\caption{" "\caption[]{")
+            addnotes(".") ///
+            alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes substitute("\caption{" "\caption[]{")
 
         di as txt "Wrote: panel_fe_on_tinv_`ret'_`win'.tex"
     }
@@ -355,7 +421,13 @@ foreach win in raw win {
     use `fe_append' if ret_type=="r1" & win_type=="`win'", clear
     drop if missing(fe) | missing(trust_others_2020)
     if _N < 10 continue
-    twoway scatter fe trust_others_2020, msize(tiny) msymbol(circle) ///
+    quietly summarize fe, detail
+    local p1 = r(p1)
+    local p99 = r(p99)
+    gen double fe_w1 = fe
+    replace fe_w1 = `p1' if fe_w1 < `p1'
+    replace fe_w1 = `p99' if fe_w1 > `p99'
+    twoway scatter fe_w1 trust_others_2020, msize(tiny) msymbol(circle) ///
         title("FE vs Trust (`win_label')") xtitle("Trust") ytitle("Estimated FE") ///
         scheme(s2color)
     graph export "${REGRESSIONS}/Panel/Figures/fe_vs_trust_`win'.png", replace width(1200)
@@ -369,7 +441,13 @@ foreach win in raw win {
     use `fe_append' if ret_type=="r1" & win_type=="`win'", clear
     drop if missing(fe) | missing(educ_yrs)
     if _N < 10 continue
-    twoway scatter fe educ_yrs, msize(tiny) msymbol(circle) ///
+    quietly summarize fe, detail
+    local p1 = r(p1)
+    local p99 = r(p99)
+    gen double fe_w1 = fe
+    replace fe_w1 = `p1' if fe_w1 < `p1'
+    replace fe_w1 = `p99' if fe_w1 > `p99'
+    twoway scatter fe_w1 educ_yrs, msize(tiny) msymbol(circle) ///
         title("FE vs Education (`win_label')") xtitle("Years of education") ytitle("Estimated FE") ///
         scheme(s2color)
     graph export "${REGRESSIONS}/Panel/Figures/fe_vs_educ_`win'.png", replace width(1200)
@@ -386,13 +464,19 @@ foreach win in raw win {
         di as txt "Skipping fe_by_race/gender for win=`win': no observations."
         continue
     }
+    quietly summarize fe, detail
+    local p1 = r(p1)
+    local p99 = r(p99)
+    gen double fe_w1 = fe
+    replace fe_w1 = `p1' if fe_w1 < `p1'
+    replace fe_w1 = `p99' if fe_w1 > `p99'
     local winsuf ""
     if "`win'" == "win" local winsuf "_win"
 
     capture confirm variable race_eth
     if !_rc {
         preserve
-        collapse (mean) fe_mean=fe (count) n=fe, by(race_eth)
+        collapse (mean) fe_mean=fe_w1 (count) n=fe_w1, by(race_eth)
         graph bar fe_mean, over(race_eth, relabel(1 "White (NH)" 2 "Black (NH)" 3 "Hispanic" 4 "Other (NH)")) ///
             title("Mean FE by race/ethnicity (`win_label')") ytitle("Mean estimated FE") ///
             blabel(total, format(%4.2f)) scheme(s2color)
@@ -404,7 +488,7 @@ foreach win in raw win {
     capture confirm variable gender
     if !_rc {
         preserve
-        collapse (mean) fe_mean=fe (count) n=fe, by(gender)
+        collapse (mean) fe_mean=fe_w1 (count) n=fe_w1, by(gender)
         graph bar fe_mean, over(gender, relabel(1 "Male" 2 "Female")) ///
             title("Mean FE by gender (`win_label')") ytitle("Mean estimated FE") ///
             blabel(total, format(%4.2f)) scheme(s2color)

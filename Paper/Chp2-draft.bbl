@@ -298,6 +298,62 @@
     \field{year}{2024}
   \endentry
 
+  \entry{Deuflhard14}{report}{}{}
+    \name{author}{3}{}{%
+      {{hash=DF}{%
+         family={Deuflhard},
+         familyi={D\bibinitperiod},
+         given={Florian},
+         giveni={F\bibinitperiod},
+      }}%
+      {{hash=GD}{%
+         family={Georgarakos},
+         familyi={G\bibinitperiod},
+         given={Dimitris},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=IR}{%
+         family={Inderst},
+         familyi={I\bibinitperiod},
+         given={Roman},
+         giveni={R\bibinitperiod},
+      }}%
+    }
+    \keyw{Financial literacy; savings accounts; interest rates; household
+  finance}
+    \strng{namehash}{DFGDIR1}
+    \strng{fullhash}{DFGDIR1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2014}
+    \field{labeldatesource}{}
+    \field{sortinit}{D}
+    \field{sortinithash}{D}
+    \field{abstract}{%
+    Savings accounts are owned by most households, but little is known about
+  the performance of households’ investments. We create a unique dataset by
+  matching information on individual savings accounts from the DNB Household
+  Survey with market data on account-specific interest rates and
+  characteristics. We document considerable heterogeneity in returns across
+  households, which can be partly explained by financial sophistication. A
+  one-standard deviation increase in financial literacy is associated with a
+  13\% increase compared to the median interest rate. We isolate the usage of
+  modern technology (online accounts) as one channel through which financial
+  literacy has a positive association with returns.%
+    }
+    \field{number}{53857}
+    \field{title}{{Financial Literacy and Savings Account Returns}}
+    \verb{url}
+    \verb https://ideas.repec.org/p/pra/mprapa/53857.html
+    \endverb
+    \list{institution}{1}{%
+      {University Library of Munich, Germany}%
+    }
+    \field{type}{MPRA Paper}
+    \field{month}{01}
+    \field{year}{2014}
+  \endentry
+
   \entry{aflgdmlp20}{article}{}{}
     \name{author}{4}{}{%
       {{hash=FA}{%
@@ -465,6 +521,54 @@
     \field{volume}{63}
     \field{journaltitle}{the Journal of Finance}
     \field{year}{2008}
+  \endentry
+
+  \entry{Lesmeister2019}{report}{}{}
+    \name{author}{3}{}{%
+      {{hash=LS}{%
+         family={Lesmeister},
+         familyi={L\bibinitperiod},
+         given={Simon},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=LP}{%
+         family={Limbach},
+         familyi={L\bibinitperiod},
+         given={Peter},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=GM}{%
+         family={Goergen},
+         familyi={G\bibinitperiod},
+         given={Marc},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \list{publisher}{2}{%
+      {University of Cologne}%
+      {Centre for Financial Research}%
+    }
+    \strng{namehash}{LSLPGM1}
+    \strng{fullhash}{LSLPGM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2019}
+    \field{labeldatesource}{}
+    \field{sortinit}{L}
+    \field{sortinithash}{L}
+    \field{title}{{Trust and shareholder voting}}
+    \verb{url}
+    \verb https://www.ecgi.global/sites/default/files/working_papers/documents/
+    \verb finallesmeisteretal.pdf
+    \endverb
+    \verb{file}
+    \verb All-Papers/L/Lesmeister-et-al.-2019-Trust-and-shareholder-voting.pdf
+    \endverb
+    \field{type}{techreport}
+    \field{year}{2019}
   \endentry
 \enddatalist
 \endinput
