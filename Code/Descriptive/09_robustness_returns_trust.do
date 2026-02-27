@@ -145,7 +145,7 @@ foreach v of local retlist {
     * -----------------------------------------------------------------
     file open fh using "${DESCRIPTIVE}/Tables/Robustness/robust_tabstat_`v'.tex", write replace
     file write fh "\begin{table}[htbp]\centering" _n ///
-        "\caption{Return robustness summary: `vlabel'}" _n ///
+        "\caption{.}" _n ///
         "\label{tab:robust_tabstat_`v'}" _n ///
         "\begin{tabular}{lrrrrrrrrrr}\toprule" _n ///
         "Series & N & Mean & SD & P1 & P5 & P50 & P95 & P99 & Min & Max \\\\ \midrule" _n

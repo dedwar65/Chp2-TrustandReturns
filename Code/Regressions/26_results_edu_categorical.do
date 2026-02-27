@@ -65,7 +65,7 @@ program define _mk_educ_group
     replace educ_group = 4 if educ_yrs == 16
     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
     capture label drop educ_group_lbl
-    label define educ_group_lbl 1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad"
+    label define educ_group_lbl 1 "No hs" 2 "Hs" 3 "Some college" 4 "4yr degree" 5 "Grad"
     label values educ_group educ_group_lbl
     label variable educ_group "Education group"
 end

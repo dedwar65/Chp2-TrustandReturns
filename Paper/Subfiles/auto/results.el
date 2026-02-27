@@ -15,6 +15,8 @@
     "tab:panel_fe_on_tinv_r5_win"
     "fig:fe_vs_trust_win"
     "tab:trust_turning_points_original_results"
-    "tab:trust_turning_points_original_results_delta"))
+    "tab:trust_turning_points_original_results_delta")
+   (LaTeX-add-environments
+    '("table" LaTeX-env-args ["argument"] 0)))
  :latex)
 

@@ -129,6 +129,32 @@ file close fh
 
 display "Descriptive table saved to `FININST_TAB'/fin_trust_summary.tex"
 
+* Correlation table: general trust + 3 fin-institution trust components
+preserve
+keep trust_others_2020 trust_banks_2020 trust_advisors_2020 trust_mutual_funds_2020
+keep if !missing(trust_others_2020, trust_banks_2020, trust_advisors_2020, trust_mutual_funds_2020)
+quietly correlate trust_others_2020 trust_banks_2020 trust_advisors_2020 trust_mutual_funds_2020
+matrix C = r(C)
+file open fh using "`FININST_TAB'/fin_trust_components_corr.tex", write replace
+file write fh "\begin{table}[htbp]\centering\small" _n ///
+    "\caption{.}" _n ///
+    "\label{tab:fin_trust_components_corr}" _n ///
+    "\begin{tabular}{lrrrr}\toprule" _n ///
+    " & General trust & Banks & Financial advisors & Mutual funds \\\\ \midrule" _n
+forvalues i = 1/4 {
+    local rowlab = cond(`i'==1,"General trust",cond(`i'==2,"Banks",cond(`i'==3,"Financial advisors","Mutual funds")))
+    local line "`rowlab'"
+    forvalues j = 1/4 {
+        local cij = string(C[`i',`j'], "%6.3f")
+        local line "`line' & `cij'"
+    }
+    file write fh "`line' \\\\" _n
+}
+file write fh "\bottomrule" _n "\end{tabular}\end{table}" _n
+file close fh
+restore
+display "Correlation table saved to `FININST_TAB'/fin_trust_components_corr.tex"
+
 * ----------------------------------------------------------------------
 * Save wide with fin trust vars for merge to panel
 * ----------------------------------------------------------------------
@@ -158,6 +184,7 @@ display "#######################################################################
 foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_avg_2020 {
     local stub = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", "pc1_wgen", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", "pc2_wgen", "avg"))
     local tlab = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", "Fin. Inst. PC1", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", "Fin. Inst. PC2", "Fin. Institutions"))
+    local ttag = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", " (PC1)", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", " (PC2)", ""))
     local keep_cs "`trust_agg' c.`trust_agg'#c.`trust_agg' educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbrf_2020 married_2020 born_us _cons"
     gen byte _samp = !missing(r5_annual_w5_2022) & !missing(`trust_agg')
     quietly count if _samp
@@ -219,7 +246,7 @@ foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_a
         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\$" ///
             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value")) ///
-        title("Cross section: r5 returns (${LATEX_PCT} wins) on financial-institutional trust") ///
+        title("Cross section: r5 returns (${LATEX_PCT} wins) on financial-institutional trust`ttag'") ///
         addnotes(".") ///
         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
     drop _samp
@@ -235,6 +262,7 @@ display "#######################################################################
 foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_avg_2020 {
     local stub = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", "pc1_wgen", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", "pc2_wgen", "avg"))
     local tlab = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", "Fin. Inst. PC1", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", "Fin. Inst. PC2", "Fin. Institutions"))
+    local ttag = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", " (PC1)", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", " (PC2)", ""))
     local keep_cs "`trust_agg' c.`trust_agg'#c.`trust_agg' educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbrf_2020 married_2020 born_us _cons"
     gen byte _samp = !missing(r5_annual_avg_w5) & !missing(`trust_agg')
     quietly count if _samp
@@ -296,7 +324,7 @@ foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_a
         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\$" ///
             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value")) ///
-        title("Average r5 returns (${LATEX_PCT} wins) on financial-institutional trust") ///
+        title("Average r5 returns (${LATEX_PCT} wins) on financial-institutional trust`ttag'") ///
         addnotes(".") ///
         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
     drop _samp
@@ -324,6 +352,7 @@ local share_cond "!missing(share_core) & !missing(share_ira) & !missing(share_re
 foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_avg_2020 {
     local stub = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", "pc1_wgen", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", "pc2_wgen", "avg"))
     local tlab = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", "Fin. Inst. PC1", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", "Fin. Inst. PC2", "Fin. Institutions"))
+    local ttag = cond("`trust_agg'"=="trust_fin_pc1_wgen_2020", " (PC1)", cond("`trust_agg'"=="trust_fin_pc2_wgen_2020", " (PC2)", ""))
     local keep_p "`trust_agg' c.`trust_agg'#c.`trust_agg' educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth inlbrf_ married_ born_us _cons"
 
     gen byte _samp = !missing(r5_annual_w5) & `share_cond' & !missing(`trust_agg')
@@ -397,7 +426,7 @@ foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_a
         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\$" ///
             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "Married" born_us "Born in U.S.") ///
         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_censreg, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value" "Joint test: Region p-value")) ///
-        title("Panel Spec 1 (pooled): r5 returns on financial-institutional trust") ///
+        title("Panel Spec 1 (pooled): r5 returns on financial-institutional trust`ttag'") ///
         addnotes(".") ///
         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
@@ -474,7 +503,7 @@ foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_a
         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\$" ///
             2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "Married" born_us "Born in U.S.") ///
         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value" "Joint test: Region p-value" "Joint test: Year p-value")) ///
-        title("Panel Spec 2 (${LATEX_SHARE_YEAR}): r5 returns on financial-institutional trust") ///
+        title("Panel Spec 2 (${LATEX_SHARE_YEAR}): r5 returns on financial-institutional trust`ttag'") ///
         addnotes(".") ///
         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
 
@@ -502,6 +531,21 @@ foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_a
     gen byte _fe_samp = !missing(fe_r5) & !missing(`trust_agg')
     quietly count if _fe_samp
     display "  N (persons) = " r(N)
+    if "`trust_agg'" == "trust_fin_avg_2020" {
+        quietly summarize fe_r5 if _fe_samp, detail
+        local p1 = r(p1)
+        local p99 = r(p99)
+        gen double fe_r5_w1 = fe_r5
+        replace fe_r5_w1 = `p1' if fe_r5_w1 < `p1' & _fe_samp
+        replace fe_r5_w1 = `p99' if fe_r5_w1 > `p99' & _fe_samp
+        twoway scatter fe_r5_w1 `trust_agg' if _fe_samp, msize(tiny) msymbol(circle) ///
+            title("FE vs Trust in Fin. Institutions (${LATEX_WIN_SHORT})") ///
+            xtitle("Trust in Fin. Institutions") ytitle("Estimated FE") ///
+            scheme(s2color)
+        graph export "${REGRESSIONS}/Trust/FinInst/Figures/fe_vs_trust_fininst_avg.png", replace width(1200)
+        di as txt "Wrote: fe_vs_trust_fininst_avg.png"
+        drop fe_r5_w1
+    }
     local keep_p3 "`trust_agg' c.`trust_agg'#c.`trust_agg' educ_yrs 2.gender 2.race_eth 3.race_eth 4.race_eth born_us _cons"
     eststo clear
     eststo m1: regress fe_r5 educ_yrs i.gender i.race_eth born_us if _fe_samp, vce(robust)
@@ -524,7 +568,7 @@ foreach trust_agg in trust_fin_pc1_wgen_2020 trust_fin_pc2_wgen_2020 trust_fin_a
         varlabels(`trust_agg' "Trust" c.`trust_agg'#c.`trust_agg' "Trust\$^2\$" ///
             educ_yrs "Years education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S.") ///
         stats(N r2_a p_joint_trust p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Race p-value")) ///
-        title("Panel Spec 3 (FE, 2nd stage): r5 returns on financial-institutional trust") ///
+        title("Panel Spec 3 (FE, 2nd stage): r5 returns on financial-institutional trust`ttag'") ///
         addnotes(".") ///
         alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
     restore

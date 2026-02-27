@@ -427,8 +427,8 @@ file open fh using "${REGRESSIONS}/Other/trust_turning_points_original_results.t
 file write fh "\begin{table}[htbp]\centering\small" _n ///
     "\caption{Estimated trust \(\textit{Trust}^*\) associated with maximal economic performance}" _n ///
     "\label{tab:trust_turning_points_original_results}" _n ///
-    "\begin{tabular}{llrrrrrr}\toprule" _n ///
-    "Model & Spec & N & \(\hat\beta_1\) & \(\hat\beta_2\) & Both sig.? & Joint test & \((\textit{Trust})^*\) \\\\ \midrule" _n
+    "\begin{tabular}{lrrrrrrr}\toprule" _n ///
+    "Model & N & \(\hat\beta_1\) & \(\hat\beta_2\) & Both sig.? & Joint test & \((\textit{Trust})^*\) \\\\ \midrule" _n
 
 forvalues i = 1/`=_N' {
     local b = block[`i']
@@ -439,8 +439,6 @@ forvalues i = 1/`=_N' {
     if "`b'" == "panel_spec1_r5_win"    local b "Panel specification 1"
     if "`b'" == "panel_spec2_r5_win"    local b "Panel specification 2"
     if "`b'" == "panel_fe_2nd_r5_win"   local b "Panel spec. 3 (f.e.)"
-    local s = spec[`i']
-    if "`s'" == "controls" local s "Controls"
     local N_s  = string(N[`i'], "%9.0fc")
     local b1_s = string(b1[`i'], "%9.4f")
     local b2_s = string(b2[`i'], "%9.4f")
@@ -448,7 +446,7 @@ forvalues i = 1/`=_N' {
     if both_sig[`i'] == 1 local bs_s "Yes"
     local pj_s = string(p_joint[`i'], "%9.4f")
     local tp_s = string(tp[`i'], "%9.4f")
-    file write fh "`b' & `s' & `N_s' & `b1_s' & `b2_s' & `bs_s' & `pj_s' & `tp_s' \\\\" _n
+    file write fh "`b' & `N_s' & `b1_s' & `b2_s' & `bs_s' & `pj_s' & `tp_s' \\\\" _n
 }
 file write fh "\bottomrule" _n ///
     "\end{tabular}" _n ///

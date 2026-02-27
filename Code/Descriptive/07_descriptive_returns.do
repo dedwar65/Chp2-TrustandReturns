@@ -91,20 +91,23 @@ forvalues w = 5/16 {
 preserve
 keep hhidpn cg_res_* cg_res2_* cg_re_* cg_bus_* cg_ira_* cg_stk_* cg_bnd_* cg_chk_* cg_cd_* cg_veh_* cg_oth_*
 reshape long cg_res_ cg_res2_ cg_re_ cg_bus_ cg_ira_ cg_stk_ cg_bnd_ cg_chk_ cg_cd_ cg_veh_ cg_oth_, i(hhidpn) j(year)
-collapse (mean) cg_res_mean=cg_res_ cg_res2_mean=cg_res2_ cg_re_mean=cg_re_ cg_bus_mean=cg_bus_ cg_stk_mean=cg_stk_ cg_bnd_mean=cg_bnd_ ///
-    (p50) cg_res_p50=cg_res_ cg_res2_p50=cg_res2_ cg_re_p50=cg_re_ cg_bus_p50=cg_bus_ cg_stk_p50=cg_stk_ cg_bnd_p50=cg_bnd_ `wopt', by(year)
-local cg_assets "res res2 re bus stk bnd"
-forvalues i = 1/6 {
+collapse (mean) cg_res_mean=cg_res_ cg_res2_mean=cg_res2_ cg_re_mean=cg_re_ cg_bus_mean=cg_bus_ cg_ira_mean=cg_ira_ cg_stk_mean=cg_stk_ cg_bnd_mean=cg_bnd_ ///
+    (p50) cg_res_p50=cg_res_ cg_res2_p50=cg_res2_ cg_re_p50=cg_re_ cg_bus_p50=cg_bus_ cg_ira_p50=cg_ira_ cg_stk_p50=cg_stk_ cg_bnd_p50=cg_bnd_ `wopt', by(year)
+local cg_assets "res res2 re bus ira stk bnd"
+forvalues i = 1/7 {
     local a : word `i' of `cg_assets'
     local lab = cond("`a'"=="res","Primary residence", ///
         cond("`a'"=="res2","Secondary residence", ///
         cond("`a'"=="re","Real estate", ///
         cond("`a'"=="bus","Business", ///
-        cond("`a'"=="stk","Stocks","Bonds")))))
-    twoway line cg_`a'_mean year || line cg_`a'_p50 year, ///
+        cond("`a'"=="ira","Retirement (IRA/Keogh)", ///
+        cond("`a'"=="stk","Stocks","Bonds"))))))
+    local leg_opt "legend(off)"
+    if "`a'" == "ira" local leg_opt `"legend(order(1 "Mean" 2 "Median"))"'
+    twoway (line cg_`a'_mean year, lcolor(blue)) || (line cg_`a'_p50 year, lcolor(red)), ///
         title("`lab' capital gains") ///
         xtitle("Year") ytitle("Capital gains ($)") ylabel(, format(%9.0fc)) ///
-        legend(order(1 "Mean" 2 "Median"))
+        `leg_opt'
     graph export "${DESCRIPTIVE}/Figures/cg_`a'_mean_median_by_year.png", replace
 }
 restore
@@ -164,7 +167,7 @@ list year wealth_total_ wealth_core_ wealth_ira_ wealth_res_ wealth_coreira_, no
 twoway line wealth_core_ year || line wealth_ira_ year || line wealth_res_ year, ///
     title("Mean wealth by year (components)") ///
     xtitle("Year") ytitle("Mean wealth ($)") ylabel(, format(%9.0fc)) ///
-    legend(order(1 "Core" 2 "Retirement (IRA)" 3 "Residential"))
+    legend(order(1 "Core" 2 "Ret." 3 "Res."))
 graph export "${DESCRIPTIVE}/Figures/wealth_mean_by_year_components.png", replace
 * Aggregated: core, Core+ret., net wealth
 twoway line wealth_core_ year || line wealth_coreira_ year || line wealth_total_ year, ///
@@ -260,7 +263,7 @@ postclose sh_handle
 use "`share_stats'", clear
 local dl = char(92) + char(36)
 file open fh using "${DESCRIPTIVE}/Tables/share_tabstat_2002_2022.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Portfolio share summary statistics (2002 and 2022)}" _n "\label{tab:share_tabstat_2002_2022}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{llrrrrrrr}\toprule" _n "Variable & Year & Obs & Mean & SD & P50 & P95 & Min & Max \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{.}" _n "\label{tab:share_tabstat_2002_2022}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{llrrrrrrr}\toprule" _n "Variable & Year & Obs & Mean & SD & P50 & P95 & Min & Max \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local v = varname[`r']
     local v_lab "`v'"
@@ -356,7 +359,7 @@ restore
 use "${PROCESSED}/analysis_ready_processed.dta", clear
 display "=== Block 3 asset_shares: reloaded wide data, N=" _N " ==="
 
-foreach yr in 2002 2022 {
+foreach yr in 2002 2020 2022 {
     foreach dec_type in labor_inc total_inc gross net {
         preserve
         local skip 0
@@ -398,16 +401,18 @@ foreach yr in 2002 2022 {
                 gen byte pct_grp = ceil(pct/20) if !missing(pct)
                 replace pct_grp = 5 if pct_grp > 5
                 collapse (mean) mean_core=share_core_`yr' mean_res=share_res_`yr' mean_ira=share_ira_`yr', by(pct_grp)
+                local asset_legend_opt `"legend(order(1 "Core" 2 "Residential" 3 "Retirement"))"'
+                if inlist("`dec_type'", "labor_inc", "total_inc") local asset_legend_opt "legend(off)"
                 graph bar mean_core mean_res mean_ira, over(pct_grp, relabel(1 "0-20" 2 "20-40" 3 "40-60" 4 "60-80" 5 "80-100")) ///
-                    ytitle("Mean share") ///
-                    legend(order(1 "Core" 2 "Residential" 3 "Retirement")) title("Asset Shares by `dec_lab' Percentile (`yr')")
+                    ytitle("Mean share") bar(1, color(blue)) bar(2, color(red)) bar(3, color(green)) ///
+                    `asset_legend_opt' title("Asset Shares by `dec_lab' Percentile (`yr')")
                 graph export "${DESCRIPTIVE}/Figures/asset_shares_by_`dec_type'_pct_`yr'.png", replace
             }
         }
         restore
     }
 }
-foreach yr in 2002 2022 {
+foreach yr in 2002 2020 2022 {
     foreach dec_type in labor_inc total_inc gross net {
         preserve
         local skip 0
@@ -446,9 +451,11 @@ foreach yr in 2002 2022 {
                 replace pct_grp = 5 if pct_grp > 5 & !missing(pct_grp)
                 drop if missing(pct_grp)
                 collapse (mean) mean_long=share_debt_long_`yr' mean_other=share_debt_other_`yr', by(pct_grp)
+                local debt_legend_opt `"legend(order(1 "Long-term debt" 2 "Other debt"))"'
+                if inlist("`dec_type'", "labor_inc", "total_inc") local debt_legend_opt "legend(off)"
                 graph bar mean_long mean_other, over(pct_grp, relabel(1 "0-20" 2 "20-40" 3 "40-60" 4 "60-80" 5 "80-100")) ///
-                    ytitle("Mean share") ///
-                    legend(order(1 "Long-term debt" 2 "Other debt")) title("Debt Shares by `dec_lab' Percentile (`yr')")
+                    ytitle("Mean share") bar(1, color(blue)) bar(2, color(red)) ///
+                    `debt_legend_opt' title("Debt Shares by `dec_lab' Percentile (`yr')")
                 graph export "${DESCRIPTIVE}/Figures/debt_shares_by_`dec_type'_pct_`yr'.png", replace
             }
         }
@@ -465,13 +472,13 @@ collapse (mean) r1=r1_annual_ r2=r2_annual_ r3=r3_annual_ r4=r4_annual_ r5=r5_an
 twoway line r1 year || line r2 year || line r3 year, ///
     title("Mean returns by year (components)") ///
     xtitle("Year") ytitle("Mean return") ///
-    legend(order(1 "Core" 2 "Retirement" 3 "Residential"))
+    legend(order(1 "Core" 2 "Ret." 3 "Res."))
 graph export "${DESCRIPTIVE}/Figures/returns_mean_by_year_components.png", replace
 * Aggregated: core, Core+ret., net wealth
 twoway line r1 year || line r4 year || line r5 year, ///
     title("Mean returns by year (aggregated)") ///
     xtitle("Year") ytitle("Mean return") ///
-    legend(order(1 "Core" 2 "Core+ret." 3 "Net wealth"))
+    legend(order(1 "Core" 2 "Coret" 3 "Net"))
 graph export "${DESCRIPTIVE}/Figures/returns_mean_by_year_agg.png", replace
 restore
 
@@ -490,7 +497,7 @@ replace educ_group = 2 if educ_yrs == 12
 replace educ_group = 3 if inrange(educ_yrs,13,15)
 replace educ_group = 4 if educ_yrs == 16
 replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
-label define educ_group 1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 5 "grad"
+label define educ_group 1 "No hs" 2 "Hs" 3 "Some college" 4 "4yr degree" 5 "Grad"
 label values educ_group educ_group
 tabstat r1_annual_ r2_annual_ r3_annual_ r4_annual_ r5_annual_ `wopt', by(educ_group) statistics(n mean sd p50 p95)
 restore
@@ -543,7 +550,7 @@ if !_rc {
             local rlab_short "`3'"
             local rlab_abbrev "`4' `5'"
             local rlab_portfolio = cond("`rlab_short'"=="core","core assets",cond("`rlab_short'"=="ret","retirement assets",cond("`rlab_short'"=="res","residential assets",cond("`rlab_short'"=="coreira","Core+ret.","net wealth"))))
-            local wlab = cond("`wvar'"=="wealth_core_pct","core",cond("`wvar'"=="wealth_ira_pct","retirement",cond("`wvar'"=="wealth_res_pct","residential",cond("`wvar'"=="wealth_coreira_pct","core+ret.","total"))))
+            local wlab = cond("`wvar'"=="wealth_core_pct","core",cond("`wvar'"=="wealth_ira_pct","retirement",cond("`wvar'"=="wealth_res_pct","residential",cond("`wvar'"=="wealth_coreira_pct","coret","total"))))
             quietly count if year == `yr' & !missing(`retvar') & !missing(`wvar')
             if r(N) < 10 continue
 
@@ -606,7 +613,7 @@ foreach yr in 2002 2022 {
         }
     }
     if "`gph_comp'" != "" {
-        graph combine `gph_comp', cols(2) title("Returns by portfolio (`yr'): components")
+        graph combine `gph_comp', cols(2)
         graph export "${DESCRIPTIVE}/Figures/returns_histogram_components_`yr'.png", replace
     }
     * Aggregated: r1, r4, r5
@@ -619,7 +626,7 @@ foreach yr in 2002 2022 {
         }
     }
     if "`gph_agg'" != "" {
-        graph combine `gph_agg', cols(2) title("Returns by portfolio (`yr'): aggregated")
+        graph combine `gph_agg', cols(2)
         graph export "${DESCRIPTIVE}/Figures/returns_histogram_agg_`yr'.png", replace
     }
 }
@@ -691,8 +698,8 @@ foreach y of local gini_years {
         local g = 1 - r(sum)
         post gini_handle ("`m'") (`y') (`g') (r(N)) (`totaly')
 
-        * Save Lorenz points for 2002/2022 (selected measures)
-        if inlist(`y',2002,2022) & inlist("`m'", "labor_income_real_win", "total_income_real_win", ///
+        * Save Lorenz points for 2002/2020/2022 (selected measures)
+        if inlist(`y',2002,2020,2022) & inlist("`m'", "labor_income_real_win", "total_income_real_win", ///
             "wealth_core", "wealth_ira", "wealth_coreira", "wealth_res", "wealth_total", "gross_wealth") {
             keep cum_w cum_y
             rename cum_w cum_pop
@@ -710,7 +717,7 @@ postclose lor_handle
 use "`gini_out'", clear
 local dl = char(92) + char(36)
 file open fh using "${DESCRIPTIVE}/Tables/gini_by_year.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Gini coefficient by measure and year}" _n "\label{tab:gini_by_year}" _n "\begin{tabular}{llrrr}\toprule" _n "Measure & Year & Gini & Obs & Total (sum `dl') \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:gini_by_year}" _n "\begin{tabular}{llrrr}\toprule" _n "Measure & Year & Gini & Obs & Total (sum `dl') \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local m = measure[`r']
     local m_lab = cond("`m'"=="labor_income_real_win","Labor income (real, win)",cond("`m'"=="total_income_real_win","Total income (real, win)",cond("`m'"=="wealth_core","Wealth core",cond("`m'"=="wealth_ira","Wealth IRA",cond("`m'"=="wealth_coreira","Wealth Core+ret.",cond("`m'"=="wealth_res","Wealth residential",cond("`m'"=="wealth_total","Wealth total",cond("`m'"=="gross_wealth","Gross wealth","`m'"))))))))
@@ -743,6 +750,12 @@ twoway line cum_share cum_pop if year==2002 & measure=="labor_income_real_win", 
        , title("Lorenz curves: income (2002)") xtitle("Cumulative population share") ytitle("Cumulative share") ///
        legend(order(1 "Labor income" 2 "Total income"))
 graph export "${DESCRIPTIVE}/Figures/lorenz_income_2002.png", replace
+
+twoway line cum_share cum_pop if year==2020 & measure=="labor_income_real_win", lcolor(navy) || ///
+       line cum_share cum_pop if year==2020 & measure=="total_income_real_win", lcolor(blue) ///
+       , title("Lorenz curves: income (2020)") xtitle("Cumulative population share") ytitle("Cumulative share") ///
+       legend(order(1 "Labor income" 2 "Total income"))
+graph export "${DESCRIPTIVE}/Figures/lorenz_income_2020.png", replace
 
 twoway line cum_share cum_pop if year==2022 & measure=="labor_income_real_win", lcolor(navy) || ///
        line cum_share cum_pop if year==2022 & measure=="total_income_real_win", lcolor(blue) ///

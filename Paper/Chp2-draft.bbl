@@ -523,6 +523,52 @@
     \field{year}{2008}
   \endentry
 
+  \entry{Rosen2025}{misc}{}{}
+    \name{author}{3}{}{%
+      {{hash=HRM}{%
+         family={Haran\bibnamedelima Rosen},
+         familyi={H\bibinitperiod\bibinitdelim R\bibinitperiod},
+         given={Maya},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=LA}{%
+         family={Lusardi},
+         familyi={L\bibinitperiod},
+         given={Annamaria},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=MOS}{%
+         family={Mitchell},
+         familyi={M\bibinitperiod},
+         given={Olivia\bibnamedelima S},
+         giveni={O\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \strng{namehash}{HRMLAMOS1}
+    \strng{fullhash}{HRMLAMOS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2025}
+    \field{labeldatesource}{}
+    \field{sortinit}{H}
+    \field{sortinithash}{H}
+    \field{title}{{Trust, financial literacy, and financial behavior driving
+  retirement security}}
+    \verb{url}
+    \verb https://ifdm.stanford.edu/sites/g/files/sbiybj30991/files/media/file/
+    \verb haran_rosen_maya-trust_financial_literacy_and_financial_behavior_driv
+    \verb ing_retirement_security_0.pdf
+    \endverb
+    \verb{file}
+    \verb All-Papers/H/Haran-Rosen-et-al.-2025-Trust,-financial-literacy,-and-f
+    \verb inancial-behavior-driving-retirement-security.pdf
+    \endverb
+    \field{year}{2025}
+  \endentry
+
   \entry{Lesmeister2019}{report}{}{}
     \name{author}{3}{}{%
       {{hash=LS}{%

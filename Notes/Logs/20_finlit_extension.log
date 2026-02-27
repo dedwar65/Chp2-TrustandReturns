@@ -1,9 +1,9 @@
--------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_f
-> inlit_extension.log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_fin
+> lit_extension.log
   log type:  text
- opened on:  25 Feb 2026, 23:10:41
+ opened on:  26 Feb 2026, 15:07:27
 
 . 
 . capture which esttab
@@ -57,8 +57,8 @@
 . egen byte finlit_score = rowtotal(finlit_q1 finlit_q2 finlit_q3), missing
 (43,909 missing values generated)
 
-. replace finlit_score = . if missing(finlit_q1) | missing(finlit_q2) | missing
-> (finlit_q3)
+. replace finlit_score = . if missing(finlit_q1) | missing(finlit_q2) | missing(f
+> inlit_q3)
 (286 real changes made, 286 to missing)
 
 . drop _q1 _q2 _q3
@@ -82,11 +82,11 @@
 . 
 . label define gender_lbl 1 "Male" 2 "Female", replace
 
-. label define race_eth_lbl 1 "White (NH)" 2 "Black (NH)" 3 "Hispanic" 4 "Other
->  (NH)", replace
+. label define race_eth_lbl 1 "White (NH)" 2 "Black (NH)" 3 "Hispanic" 4 "Other (
+> NH)", replace
 
-. label define educ_group_lbl 1 "no hs" 2 "hs" 3 "some college" 4 "4yr degree" 
-> 5 "grad", replace
+. label define educ_group_lbl 1 "No hs" 2 "Hs" 3 "Some college" 4 "4yr degree" 5 
+> "Grad", replace
 
 . label values gender gender_lbl
 
@@ -107,9 +107,9 @@
 
 . file open fh using "`FINLIT_TAB'/finlit_freq.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial li
-> teracy: Literacy score (0--3) frequency}" _n "\label{tab:finlit_freq}" _n "\b
-> egin{tabular}{lrr}\toprule" _n "Literacy score & N & Pct \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial lite
+> racy: Literacy score (0--3) frequency}" _n "\label{tab:finlit_freq}" _n "\begin
+> {tabular}{lrr}\toprule" _n "Literacy score & N & Pct \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local sc = string(finlit_score[`r'], "%9.0f")
@@ -130,10 +130,9 @@
 
 . file open fh using "`FINLIT_TAB'/finlit_q2_summary.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial li
-> teracy: Inflation question summary}" _n "\label{tab:finlit_q2_summary}" _n "\
-> begin{tabular}{lrr}\toprule" _n "Variable & N & Mean (prop. correct) \\\\ \mi
-> drule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial lite
+> racy: Inflation question summary}" _n "\label{tab:finlit_q2_summary}" _n "\begi
+> n{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
 
 . local n_s = string(r(N), "%9.0f")
 
@@ -158,9 +157,9 @@
 
 . file open fh using "`FINLIT_TAB'/finlit_q2_by_gender.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial li
-> teracy: Inflation by gender}" _n "\label{tab:finlit_q2_by_gender}" _n "\begin
-> {tabular}{lrr}\toprule" _n "Gender & N & Mean \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial lite
+> racy: Inflation by gender}" _n "\label{tab:finlit_q2_by_gender}" _n "\begin{tab
+> ular}{lrr}\toprule" _n "Gender & N & Mean \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local glab = gender_label[`r']
@@ -181,17 +180,15 @@
 
 . if !_rc {
 .     preserve
-.     collapse (mean) m=finlit_q2 (sd) s=finlit_q2 (count) n=finlit_q2, by(race
-> _eth)
+.     collapse (mean) m=finlit_q2 (sd) s=finlit_q2 (count) n=finlit_q2, by(race_e
+> th)
 .     drop if n < 2
 (1 observation deleted)
 .     decode race_eth, gen(race_label)
-.     file open fh using "`FINLIT_TAB'/finlit_q2_by_race_eth.tex", write replac
-> e
-.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financia
-> l literacy: Inflation by race/ethnicity}" _n "\label{tab:finlit_q2_by_race_et
-> h}" _n "\begin{tabular}{lrr}\toprule" _n "Race/ethnicity & N & Mean \\\\ \mid
-> rule" _n
+.     file open fh using "`FINLIT_TAB'/finlit_q2_by_race_eth.tex", write replace
+.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial 
+> literacy: Inflation by race}" _n "\label{tab:finlit_q2_by_race_eth}" _n "\begin
+> {tabular}{lrr}\toprule" _n "Race & N & Mean \\\\ \midrule" _n
 .     forvalues r = 1/`=_N' {
   2.         local rlab = race_label[`r']
   3.         local n_s = string(n[`r'], "%9.0f")
@@ -212,14 +209,24 @@
 . drop if missing(age_bin) | n < 2
 (6 observations deleted)
 
-. gen str age_label = string(age_bin, "%9.0f") + "--" + string(age_bin+4, "%9.0
-> f")
+. gen int age_group = age_bin
+
+. replace age_group = 25 if inrange(age_bin, 25, 45)
+(3 real changes made)
+
+. collapse (mean) m (sum) n, by(age_group)
+
+. gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4, "%9
+> .0f")
+
+. replace age_label = "25--49" if age_group == 25
+(1 real change made)
 
 . file open fh using "`FINLIT_TAB'/finlit_q2_by_age.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial li
-> teracy: Inflation by age}" _n "\label{tab:finlit_q2_by_age}" _n "\begin{tabul
-> ar}{lrr}\toprule" _n "Age & N & Mean \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial lite
+> racy: Inflation by age}" _n "\label{tab:finlit_q2_by_age}" _n "\begin{tabular}{
+> lrr}\toprule" _n "Age & N & Mean \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local alab = age_label[`r']
@@ -235,8 +242,8 @@
 . restore
 
 . 
-. * Q2 by education group (match income: no hs, hs, some college, 4yr degree, g
-> rad)
+. * Q2 by education group (match income: no hs, hs, some college, 4yr degree, gra
+> d)
 . capture confirm variable educ_yrs
 
 . if !_rc {
@@ -254,15 +261,18 @@
 .     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
 (4,262 real changes made)
 .     label values educ_group educ_group_lbl
-.     collapse (mean) m=finlit_q2 (sd) s=finlit_q2 (count) n=finlit_q2, by(educ
-> _group)
+.     collapse (mean) m=finlit_q2 (sd) s=finlit_q2 (count) n=finlit_q2, by(educ_g
+> roup)
 .     drop if missing(educ_group) | n < 2
 (1 observation deleted)
 .     decode educ_group, gen(educ_label)
+.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
+>  if !missing(educ_label)
+(0 real changes made)
 .     file open fh using "`FINLIT_TAB'/finlit_q2_by_educ.tex", write replace
-.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financia
-> l literacy: Inflation by education}" _n "\label{tab:finlit_q2_by_educ}" _n "\
-> begin{tabular}{lrr}\toprule" _n "Education & N & Mean \\\\ \midrule" _n
+.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial 
+> literacy: Inflation by education}" _n "\label{tab:finlit_q2_by_educ}" _n "\begi
+> n{tabular}{lrr}\toprule" _n "Education & N & Mean \\\\ \midrule" _n
 .     forvalues r = 1/`=_N' {
   2.         local elab = educ_label[`r']
   3.         local n_s = string(n[`r'], "%9.0f")
@@ -278,8 +288,8 @@
 . * Score (0-3) by gender
 . preserve
 
-. collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score, by
-> (gender)
+. collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score, by(g
+> ender)
 
 . drop if n < 2
 (0 observations deleted)
@@ -288,9 +298,9 @@
 
 . file open fh using "`FINLIT_TAB'/finlit_score_by_gender.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial li
-> teracy: Literacy score by gender}" _n "\label{tab:finlit_score_by_gender}" _n
->  "\begin{tabular}{lrr}\toprule" _n "Gender & N & Mean \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial lite
+> racy: Literacy score by gender}" _n "\label{tab:finlit_score_by_gender}" _n "\b
+> egin{tabular}{lrr}\toprule" _n "Gender & N & Mean \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local glab = gender_label[`r']
@@ -311,17 +321,16 @@
 
 . if !_rc {
 .     preserve
-.     collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score
-> , by(race_eth)
+.     collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score, 
+> by(race_eth)
 .     drop if n < 2
 (1 observation deleted)
 .     decode race_eth, gen(race_label)
-.     file open fh using "`FINLIT_TAB'/finlit_score_by_race_eth.tex", write rep
-> lace
-.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financia
-> l literacy: Literacy score by race/ethnicity}" _n "\label{tab:finlit_score_by
-> _race_eth}" _n "\begin{tabular}{lrr}\toprule" _n "Race/ethnicity & N & Mean \
-> \\\ \midrule" _n
+.     file open fh using "`FINLIT_TAB'/finlit_score_by_race_eth.tex", write repla
+> ce
+.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial 
+> literacy: Literacy score by race}" _n "\label{tab:finlit_score_by_race_eth}" _n
+>  "\begin{tabular}{lrr}\toprule" _n "Race & N & Mean \\\\ \midrule" _n
 .     forvalues r = 1/`=_N' {
   2.         local rlab = race_label[`r']
   3.         local n_s = string(n[`r'], "%9.0f")
@@ -337,20 +346,30 @@
 . * Score by age bin (5-yr bins)
 . preserve
 
-. collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score, by
-> (age_bin)
+. collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score, by(a
+> ge_bin)
 
 . drop if missing(age_bin) | n < 2
 (6 observations deleted)
 
-. gen str age_label = string(age_bin, "%9.0f") + "--" + string(age_bin+4, "%9.0
-> f")
+. gen int age_group = age_bin
+
+. replace age_group = 25 if inrange(age_bin, 25, 45)
+(3 real changes made)
+
+. collapse (mean) m (sum) n, by(age_group)
+
+. gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4, "%9
+> .0f")
+
+. replace age_label = "25--49" if age_group == 25
+(1 real change made)
 
 . file open fh using "`FINLIT_TAB'/finlit_score_by_age.tex", write replace
 
-. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial li
-> teracy: Literacy score by age}" _n "\label{tab:finlit_score_by_age}" _n "\beg
-> in{tabular}{lrr}\toprule" _n "Age & N & Mean \\\\ \midrule" _n
+. file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial lite
+> racy: Literacy score by age}" _n "\label{tab:finlit_score_by_age}" _n "\begin{t
+> abular}{lrr}\toprule" _n "Age & N & Mean \\\\ \midrule" _n
 
 . forvalues r = 1/`=_N' {
   2.     local alab = age_label[`r']
@@ -384,16 +403,18 @@
 .     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
 (4,262 real changes made)
 .     label values educ_group educ_group_lbl
-.     collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score
-> , by(educ_group)
+.     collapse (mean) m=finlit_score (sd) s=finlit_score (count) n=finlit_score, 
+> by(educ_group)
 .     drop if missing(educ_group) | n < 2
 (1 observation deleted)
 .     decode educ_group, gen(educ_label)
+.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
+>  if !missing(educ_label)
+(0 real changes made)
 .     file open fh using "`FINLIT_TAB'/finlit_score_by_educ.tex", write replace
-.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financia
-> l literacy: Literacy score by education}" _n "\label{tab:finlit_score_by_educ
-> }" _n "\begin{tabular}{lrr}\toprule" _n "Education & N & Mean \\\\ \midrule" 
-> _n
+.     file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Financial 
+> literacy: Literacy score by education}" _n "\label{tab:finlit_score_by_educ}" _
+> n "\begin{tabular}{lrr}\toprule" _n "Education & N & Mean \\\\ \midrule" _n
 .     forvalues r = 1/`=_N' {
   2.         local elab = educ_label[`r']
   3.         local n_s = string(n[`r'], "%9.0f")
@@ -406,9 +427,579 @@
 . }
 
 . 
+. * Combined 2x2 panel table: Q2 by key demographics
+. * Left column: gender + age; right column: race + education
+. file open fh using "`FINLIT_TAB'/finlit_q2_demographics_panels.tex", write repl
+> ace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Financial literacy (inflation question) by demographics}" _n ///
+>     "\label{tab:finlit_q2_demographics_panels}" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
+
+. 
+. * Left column: Panel A (gender)
+. file write fh "\textbf{Panel A: By gender}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. preserve
+
+. collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(gender)
+
+. drop if n < 2
+(0 observations deleted)
+
+. decode gender, gen(gender_label)
+
+. forvalues r = 1/`=_N' {
+  2.     local glab = gender_label[`r']
+  3.     local n_s = string(n[`r'], "%9.0f")
+  4.     local m_s = string(m[`r'], "%5.2f")
+  5.     file write fh "`glab' & `n_s' & `m_s' \\\\" _n
+  6. }
+
+. restore
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. * Left column: Panel B (age)
+. file write fh "\textbf{Panel B: By age}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Age & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable age_bin
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(age_bin)
+.     drop if missing(age_bin) | n < 2
+(6 observations deleted)
+.     gen int age_group = age_bin
+.     replace age_group = 25 if inrange(age_bin, 25, 45)
+(3 real changes made)
+.     collapse (mean) m (sum) n, by(age_group)
+.     gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4,
+>  "%9.0f")
+.     replace age_label = "25--49" if age_group == 25
+(1 real change made)
+.     forvalues r = 1/`=_N' {
+  2.         local alab = age_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`alab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\hfill" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
+
+. 
+. * Right column: Panel C (race)
+. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable race_eth
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(race_eth)
+.     drop if n < 2
+(1 observation deleted)
+.     decode race_eth, gen(race_label)
+.     forvalues r = 1/`=_N' {
+  2.         local rlab = race_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. * Right column: Panel D (education)
+. file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Education & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     preserve
+.     gen byte educ_group = .
+(45,234 missing values generated)
+.     replace educ_group = 1 if educ_yrs < 12
+(12,070 real changes made)
+.     replace educ_group = 2 if educ_yrs == 12
+(13,611 real changes made)
+.     replace educ_group = 3 if inrange(educ_yrs, 13, 15)
+(9,674 real changes made)
+.     replace educ_group = 4 if educ_yrs == 16
+(4,968 real changes made)
+.     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
+(4,262 real changes made)
+.     label values educ_group educ_group_lbl
+.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(educ_group)
+.     drop if missing(educ_group) | n < 2
+(1 observation deleted)
+.     decode educ_group, gen(educ_label)
+.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
+>  if !missing(educ_label)
+(0 real changes made)
+.     forvalues r = 1/`=_N' {
+  2.         local elab = educ_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`elab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\end{table}" _n
+
+. file close fh
+
+. 
+. * Combined 2x2 panel table: literacy score by key demographics
+. * Left column: gender + age; right column: race + education
+. file open fh using "`FINLIT_TAB'/finlit_score_demographics_panels.tex", write r
+> eplace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Financial literacy score by demographics}" _n ///
+>     "\label{tab:finlit_score_demographics_panels}" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
+
+. 
+. * Left column: Panel A (gender)
+. file write fh "\textbf{Panel A: By gender}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. preserve
+
+. collapse (mean) m=finlit_score (count) n=finlit_score, by(gender)
+
+. drop if n < 2
+(0 observations deleted)
+
+. decode gender, gen(gender_label)
+
+. forvalues r = 1/`=_N' {
+  2.     local glab = gender_label[`r']
+  3.     local n_s = string(n[`r'], "%9.0f")
+  4.     local m_s = string(m[`r'], "%5.2f")
+  5.     file write fh "`glab' & `n_s' & `m_s' \\\\" _n
+  6. }
+
+. restore
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. * Left column: Panel B (age)
+. file write fh "\textbf{Panel B: By age}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Age & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable age_bin
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_score (count) n=finlit_score, by(age_bin)
+.     drop if missing(age_bin) | n < 2
+(6 observations deleted)
+.     gen int age_group = age_bin
+.     replace age_group = 25 if inrange(age_bin, 25, 45)
+(3 real changes made)
+.     collapse (mean) m (sum) n, by(age_group)
+.     gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4,
+>  "%9.0f")
+.     replace age_label = "25--49" if age_group == 25
+(1 real change made)
+.     forvalues r = 1/`=_N' {
+  2.         local alab = age_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`alab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\hfill" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
+
+. 
+. * Right column: Panel C (race)
+. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable race_eth
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_score (count) n=finlit_score, by(race_eth)
+.     drop if n < 2
+(1 observation deleted)
+.     decode race_eth, gen(race_label)
+.     forvalues r = 1/`=_N' {
+  2.         local rlab = race_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. * Right column: Panel D (education)
+. file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Education & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     preserve
+.     gen byte educ_group = .
+(45,234 missing values generated)
+.     replace educ_group = 1 if educ_yrs < 12
+(12,070 real changes made)
+.     replace educ_group = 2 if educ_yrs == 12
+(13,611 real changes made)
+.     replace educ_group = 3 if inrange(educ_yrs, 13, 15)
+(9,674 real changes made)
+.     replace educ_group = 4 if educ_yrs == 16
+(4,968 real changes made)
+.     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
+(4,262 real changes made)
+.     label values educ_group educ_group_lbl
+.     collapse (mean) m=finlit_score (count) n=finlit_score, by(educ_group)
+.     drop if missing(educ_group) | n < 2
+(1 observation deleted)
+.     decode educ_group, gen(educ_label)
+.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
+>  if !missing(educ_label)
+(0 real changes made)
+.     forvalues r = 1/`=_N' {
+  2.         local elab = educ_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`elab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\end{table}" _n
+
+. file close fh
+
+. 
+. * Option 2: age in standalone column; gender/race/education stacked in other co
+> lumn
+. file open fh using "`FINLIT_TAB'/finlit_q2_demographics_panels_option2.tex", wr
+> ite replace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Financial literacy (inflation question) by demographics}" _n ///
+>     "\label{tab:finlit_q2_demographics_panels_option2}" _n ///
+>     "\begin{minipage}[t]{0.36\textwidth}\centering" _n
+
+. 
+. * Left column: age only
+. file write fh "\textbf{Panel A: By age}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Age & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable age_bin
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(age_bin)
+.     drop if missing(age_bin) | n < 2
+(6 observations deleted)
+.     gen int age_group = age_bin
+.     replace age_group = 25 if inrange(age_bin, 25, 45)
+(3 real changes made)
+.     collapse (mean) m (sum) n, by(age_group)
+.     gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4,
+>  "%9.0f")
+.     replace age_label = "25--49" if age_group == 25
+(1 real change made)
+.     forvalues r = 1/`=_N' {
+  2.         local alab = age_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`alab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\hfill" _n ///
+>     "\begin{minipage}[t]{0.60\textwidth}\centering" _n
+
+. 
+. * Right column: gender, race, education
+. file write fh "\textbf{Panel B: By gender}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. preserve
+
+. collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(gender)
+
+. drop if n < 2
+(0 observations deleted)
+
+. decode gender, gen(gender_label)
+
+. forvalues r = 1/`=_N' {
+  2.     local glab = gender_label[`r']
+  3.     local n_s = string(n[`r'], "%9.0f")
+  4.     local m_s = string(m[`r'], "%5.2f")
+  5.     file write fh "`glab' & `n_s' & `m_s' \\\\" _n
+  6. }
+
+. restore
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable race_eth
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(race_eth)
+.     drop if n < 2
+(1 observation deleted)
+.     decode race_eth, gen(race_label)
+.     forvalues r = 1/`=_N' {
+  2.         local rlab = race_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Education & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     preserve
+.     gen byte educ_group = .
+(45,234 missing values generated)
+.     replace educ_group = 1 if educ_yrs < 12
+(12,070 real changes made)
+.     replace educ_group = 2 if educ_yrs == 12
+(13,611 real changes made)
+.     replace educ_group = 3 if inrange(educ_yrs, 13, 15)
+(9,674 real changes made)
+.     replace educ_group = 4 if educ_yrs == 16
+(4,968 real changes made)
+.     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
+(4,262 real changes made)
+.     label values educ_group educ_group_lbl
+.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(educ_group)
+.     drop if missing(educ_group) | n < 2
+(1 observation deleted)
+.     decode educ_group, gen(educ_label)
+.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
+>  if !missing(educ_label)
+(0 real changes made)
+.     forvalues r = 1/`=_N' {
+  2.         local elab = educ_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`elab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\end{table}" _n
+
+. file close fh
+
+. 
+. file open fh using "`FINLIT_TAB'/finlit_score_demographics_panels_option2.tex",
+>  write replace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Financial literacy score by demographics}" _n ///
+>     "\label{tab:finlit_score_demographics_panels_option2}" _n ///
+>     "\begin{minipage}[t]{0.36\textwidth}\centering" _n
+
+. 
+. * Left column: age only
+. file write fh "\textbf{Panel A: By age}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Age & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable age_bin
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_score (count) n=finlit_score, by(age_bin)
+.     drop if missing(age_bin) | n < 2
+(6 observations deleted)
+.     gen int age_group = age_bin
+.     replace age_group = 25 if inrange(age_bin, 25, 45)
+(3 real changes made)
+.     collapse (mean) m (sum) n, by(age_group)
+.     gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4,
+>  "%9.0f")
+.     replace age_label = "25--49" if age_group == 25
+(1 real change made)
+.     forvalues r = 1/`=_N' {
+  2.         local alab = age_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`alab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\hfill" _n ///
+>     "\begin{minipage}[t]{0.60\textwidth}\centering" _n
+
+. 
+. * Right column: gender, race, education
+. file write fh "\textbf{Panel B: By gender}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. preserve
+
+. collapse (mean) m=finlit_score (count) n=finlit_score, by(gender)
+
+. drop if n < 2
+(0 observations deleted)
+
+. decode gender, gen(gender_label)
+
+. forvalues r = 1/`=_N' {
+  2.     local glab = gender_label[`r']
+  3.     local n_s = string(n[`r'], "%9.0f")
+  4.     local m_s = string(m[`r'], "%5.2f")
+  5.     file write fh "`glab' & `n_s' & `m_s' \\\\" _n
+  6. }
+
+. restore
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable race_eth
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_score (count) n=finlit_score, by(race_eth)
+.     drop if n < 2
+(1 observation deleted)
+.     decode race_eth, gen(race_label)
+.     forvalues r = 1/`=_N' {
+  2.         local rlab = race_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\vspace{0.8em}" _n
+
+. 
+. file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Education & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     preserve
+.     gen byte educ_group = .
+(45,234 missing values generated)
+.     replace educ_group = 1 if educ_yrs < 12
+(12,070 real changes made)
+.     replace educ_group = 2 if educ_yrs == 12
+(13,611 real changes made)
+.     replace educ_group = 3 if inrange(educ_yrs, 13, 15)
+(9,674 real changes made)
+.     replace educ_group = 4 if educ_yrs == 16
+(4,968 real changes made)
+.     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
+(4,262 real changes made)
+.     label values educ_group educ_group_lbl
+.     collapse (mean) m=finlit_score (count) n=finlit_score, by(educ_group)
+.     drop if missing(educ_group) | n < 2
+(1 observation deleted)
+.     decode educ_group, gen(educ_label)
+.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
+>  if !missing(educ_label)
+(0 real changes made)
+.     forvalues r = 1/`=_N' {
+  2.         local elab = educ_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`elab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\end{table}" _n
+
+. file close fh
+
+. 
 . display "Descriptive tables saved to `FINLIT_TAB'"
-Descriptive tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/
-> Code/Regressions/FinLit/Tables
+Descriptive tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
+> de/Regressions/FinLit/Tables
 
 . 
 . * ----------------------------------------------------------------------
@@ -432,8 +1023,8 @@ Descriptive tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/
 . }
 
 . 
-. local ctrl_r5 "i.age_bin i.gender educ_yrs inlbrf_2020 married_2020 born_us i
-> .race_eth"
+. local ctrl_r5 "i.age_bin i.gender educ_yrs inlbrf_2020 married_2020 born_us i.r
+> ace_eth"
 
 . forvalues d = 2/10 {
   2.     capture confirm variable wealth_d`d'_2020
@@ -441,128 +1032,307 @@ Descriptive tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/
   4. }
 
 . 
-. local trust_spec "c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
-> "
+. local trust_spec "c.trust_others_2020 c.trust_others_2020#c.trust_others_2020"
 
 . * Keep only main coefficients (age bins, wealth deciles omitted from table)
-. local keep_cs "finlit_q1 finlit_q2 finlit_q3 finlit_score trust_others_2020 c
-> .trust_others_2020#c.trust_others_2020 educ_yrs 2.gender 2.race_eth 3.race_et
-> h 4.race_eth inlbrf_2020 married_2020 born_us _cons"
+. local keep_cs "finlit_q1 finlit_q2 finlit_q3 finlit_score trust_others_2020 c.t
+> rust_others_2020#c.trust_others_2020 educ_yrs 2.gender 2.race_eth 3.race_eth 4.
+> race_eth inlbrf_2020 married_2020 born_us _cons"
 
 . 
 . * Cross section
-. gen byte _samp = !missing(r5_annual_w5_2022) & !missing(finlit_q1) & !missing
-> (finlit_q2) & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_o
-> thers_2020)
+. gen byte _samp = !missing(r5_annual_w5_2022) & !missing(finlit_q1) & !missing(f
+> inlit_q2) & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_other
+> s_2020)
 
 . 
 . eststo clear
 
-. eststo m1: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_q1 finlit_q2 fi
-> nlit_q3 if _samp, vce(robust)
+. eststo m1: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_q1 finlit_q2 finl
+> it_q3 if _samp, vce(robust)
 
 . estadd scalar p_joint_trust = . : m1
 
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m1
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m1
+. }
+
+. else estadd scalar p_joint_wealth = . : m1
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m1
+
 . 
-. eststo m2: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_score if _samp,
->  vce(robust)
+. eststo m2: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_score if _samp, v
+> ce(robust)
 
 . estadd scalar p_joint_trust = . : m2
 
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m2
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m2
+. }
+
+. else estadd scalar p_joint_wealth = . : m2
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m2
+
 . 
-. eststo m3: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_q1 finlit_q2 fi
-> nlit_q3 `trust_spec' if _samp, vce(robust)
+. eststo m3: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_q1 finlit_q2 finl
+> it_q3 `trust_spec' if _samp, vce(robust)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m3
 
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m3
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m3
+. }
+
+. else estadd scalar p_joint_wealth = . : m3
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m3
+
 . 
-. eststo m4: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_score `trust_sp
-> ec' if _samp, vce(robust)
+. eststo m4: quietly regress r5_annual_w5_2022 `ctrl_r5' finlit_score `trust_spec
+> ' if _samp, vce(robust)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m4
 
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m4
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m4
+. }
+
+. else estadd scalar p_joint_wealth = . : m4
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m4
+
 . 
-. esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_cross_section.tex", replace 
-> ///
+. esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_cross_section.tex", replace //
+> /
 >     booktabs mtitles("(1)" "(2)" "(3)" "(4)") ///
 >     se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >     keep(`keep_cs') ///
->     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div"
->  finlit_score "Literacy score" ///
->         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_
-> 2020 "(General trust)\$^2\$" ///
->         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_
-> eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" marrie
-> d_2020 "Married" born_us "Born in U.S.") ///
->     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint
->  test: Trust p-value")) ///
->     title("Cross section: r5 returns (${LATEX_PCT} wins) on financial literac
-> y and trust") ///
+>     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div" f
+> inlit_score "Literacy score" ///
+>         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_20
+> 20 "(General trust)\$^2\$" ///
+>         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_et
+> h "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" married_20
+> 20 "Married" born_us "Born in U.S.") ///
+>     stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race, lab
+> els("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Ag
+> e bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value"
+> )) ///
+>     title("Cross section: r5 returns (${LATEX_PCT} wins) on financial literacy 
+> and trust") ///
 >     addnotes(".") ///
 >     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
-> essions/FinLit/Tables/finlit_r5_cross_section.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/FinLit/Tables/finlit_r5_cross_section.tex)
 
 . 
 . drop _samp
 
 . 
 . * Average
-. gen byte _samp = !missing(r5_annual_avg_w5) & !missing(finlit_q1) & !missing(
-> finlit_q2) & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_ot
-> hers_2020)
+. gen byte _samp = !missing(r5_annual_avg_w5) & !missing(finlit_q1) & !missing(fi
+> nlit_q2) & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_others
+> _2020)
 
 . 
 . eststo clear
 
-. eststo m1: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_q1 finlit_q2 fin
-> lit_q3 if _samp, vce(robust)
+. eststo m1: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_q1 finlit_q2 finli
+> t_q3 if _samp, vce(robust)
 
 . estadd scalar p_joint_trust = . : m1
 
-. eststo m2: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_score if _samp, 
-> vce(robust)
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m1
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m1
+. }
+
+. else estadd scalar p_joint_wealth = . : m1
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m1
+
+. eststo m2: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_score if _samp, vc
+> e(robust)
 
 . estadd scalar p_joint_trust = . : m2
 
-. eststo m3: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_q1 finlit_q2 fin
-> lit_q3 `trust_spec' if _samp, vce(robust)
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m2
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m2
+. }
+
+. else estadd scalar p_joint_wealth = . : m2
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m2
+
+. eststo m3: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_q1 finlit_q2 finli
+> t_q3 `trust_spec' if _samp, vce(robust)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m3
 
-. eststo m4: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_score `trust_spe
-> c' if _samp, vce(robust)
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m3
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m3
+. }
+
+. else estadd scalar p_joint_wealth = . : m3
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m3
+
+. eststo m4: quietly regress r5_annual_avg_w5 `ctrl_r5' finlit_score `trust_spec'
+>  if _samp, vce(robust)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m4
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m4
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m4
+. }
+
+. else estadd scalar p_joint_wealth = . : m4
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m4
 
 . 
 . esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_average.tex", replace ///
 >     booktabs mtitles("(1)" "(2)" "(3)" "(4)") ///
 >     se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >     keep(`keep_cs') ///
->     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div"
->  finlit_score "Literacy score" ///
->         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_
-> 2020 "(General trust)\$^2\$" ///
->         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_
-> eth "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" marrie
-> d_2020 "Married" born_us "Born in U.S.") ///
->     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint
->  test: Trust p-value")) ///
->     title("Average r5 returns (${LATEX_PCT} wins) on financial literacy and t
-> rust") ///
+>     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div" f
+> inlit_score "Literacy score" ///
+>         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_20
+> 20 "(General trust)\$^2\$" ///
+>         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_et
+> h "NH Other" educ_yrs "Years education" inlbrf_2020 "In labor force" married_20
+> 20 "Married" born_us "Born in U.S.") ///
+>     stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race, lab
+> els("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Ag
+> e bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value"
+> )) ///
+>     title("Average r5 returns (${LATEX_PCT} wins) on financial literacy and tru
+> st") ///
 >     addnotes(".") ///
 >     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
-> essions/FinLit/Tables/finlit_r5_average.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/FinLit/Tables/finlit_r5_average.tex)
 
 . 
 . drop _samp
@@ -582,8 +1352,8 @@ Duplicates in terms of hhidpn
 . tempfile finlit_wide
 
 . save `finlit_wide'
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_07824.00000c saved
-    as .dta format
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000s saved as
+    .dta format
 
 . restore
 
@@ -605,41 +1375,63 @@ Panel variable: hhidpn (strongly balanced)
          Delta: 1 unit
 
 . 
-. local base_ctrl "i.age_bin educ_yrs i.gender i.race_eth inlbrf married born_u
-> s i.censreg"
+. local base_ctrl "i.age_bin educ_yrs i.gender i.race_eth inlbrf married born_us 
+> i.censreg i.year"
 
 . forvalues d = 2/10 {
   2.     capture confirm variable wealth_d`d'
   3.     if !_rc local base_ctrl "`base_ctrl' wealth_d`d'"
   4. }
 
-. local ctrl_s2 "`base_ctrl' c.share_core##i.year c.share_ira##i.year c.share_r
-> es##i.year c.share_debt_long##i.year c.share_debt_other##i.year"
+. local ctrl_s2 "`base_ctrl' c.share_core##i.year c.share_ira##i.year c.share_res
+> ##i.year c.share_debt_long##i.year c.share_debt_other##i.year"
 
 . 
-. * Keep only main coefficients (age bins, wealth deciles, share×year omitted f
-> rom table)
-. local keep_p "finlit_q1 finlit_q2 finlit_q3 finlit_score trust_others_2020 c.
-> trust_others_2020#c.trust_others_2020 educ_yrs 2.gender 2.race_eth 3.race_eth
->  4.race_eth inlbrf_ married_ born_us _cons"
+. * Keep only main coefficients (age bins, wealth deciles, share×year omitted fro
+> m table)
+. local keep_p "finlit_q1 finlit_q2 finlit_q3 finlit_score trust_others_2020 c.tr
+> ust_others_2020#c.trust_others_2020 educ_yrs 2.gender 2.race_eth 3.race_eth 4.r
+> ace_eth inlbrf_ married_ born_us _cons"
 
 . 
-. local trust_spec_p "c.trust_others_2020 c.trust_others_2020#c.trust_others_20
-> 20"
+. local trust_spec_p "c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
+> "
 
 . 
 . * Panel Spec 1
-. gen byte _samp = !missing(r5_annual_w5) & !missing(finlit_q1) & !missing(finl
-> it_q2) & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_others
-> _2020)
+. gen byte _samp = !missing(r5_annual_w5) & !missing(finlit_q1) & !missing(finlit
+> _q2) & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_others_202
+> 0)
 
 . 
 . eststo clear
 
-. eststo m1: quietly regress r5_annual_w5 `base_ctrl' finlit_q1 finlit_q2 finli
-> t_q3 if _samp, vce(cluster hhidpn)
+. eststo m1: quietly regress r5_annual_w5 `base_ctrl' finlit_q1 finlit_q2 finlit_
+> q3 if _samp, vce(cluster hhidpn)
 
 . estadd scalar p_joint_trust = . : m1
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m1
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m1
+. }
+
+. else estadd scalar p_joint_wealth = . : m1
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m1
 
 . capture testparm i.censreg
 
@@ -647,10 +1439,38 @@ Panel variable: hhidpn (strongly balanced)
 
 . else estadd scalar p_joint_censreg = . : m1
 
-. eststo m2: quietly regress r5_annual_w5 `base_ctrl' finlit_score if _samp, vc
-> e(cluster hhidpn)
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m1
+
+. else estadd scalar p_joint_year = . : m1
+
+. eststo m2: quietly regress r5_annual_w5 `base_ctrl' finlit_score if _samp, vce(
+> cluster hhidpn)
 
 . estadd scalar p_joint_trust = . : m2
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m2
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m2
+. }
+
+. else estadd scalar p_joint_wealth = . : m2
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m2
 
 . capture testparm i.censreg
 
@@ -658,12 +1478,40 @@ Panel variable: hhidpn (strongly balanced)
 
 . else estadd scalar p_joint_censreg = . : m2
 
-. eststo m3: quietly regress r5_annual_w5 `base_ctrl' finlit_q1 finlit_q2 finli
-> t_q3 `trust_spec_p' if _samp, vce(cluster hhidpn)
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m2
+
+. else estadd scalar p_joint_year = . : m2
+
+. eststo m3: quietly regress r5_annual_w5 `base_ctrl' finlit_q1 finlit_q2 finlit_
+> q3 `trust_spec_p' if _samp, vce(cluster hhidpn)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m3
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m3
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m3
+. }
+
+. else estadd scalar p_joint_wealth = . : m3
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m3
 
 . capture testparm i.censreg
 
@@ -671,52 +1519,111 @@ Panel variable: hhidpn (strongly balanced)
 
 . else estadd scalar p_joint_censreg = . : m3
 
-. eststo m4: quietly regress r5_annual_w5 `base_ctrl' finlit_score `trust_spec_
-> p' if _samp, vce(cluster hhidpn)
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m3
+
+. else estadd scalar p_joint_year = . : m3
+
+. eststo m4: quietly regress r5_annual_w5 `base_ctrl' finlit_score `trust_spec_p'
+>  if _samp, vce(cluster hhidpn)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m4
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m4
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m4
+. }
+
+. else estadd scalar p_joint_wealth = . : m4
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m4
 
 . capture testparm i.censreg
 
 . if _rc == 0 estadd scalar p_joint_censreg = r(p) : m4
 
 . else estadd scalar p_joint_censreg = . : m4
+
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m4
+
+. else estadd scalar p_joint_year = . : m4
 
 . 
 . esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel1.tex", replace ///
 >     booktabs mtitles("(1)" "(2)" "(3)" "(4)") ///
 >     se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >     keep(`keep_p') ///
->     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div"
->  finlit_score "Literacy score" ///
->         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_
-> 2020 "(General trust)\$^2\$" ///
->         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_
-> eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "
-> Married" born_us "Born in U.S.") ///
->     stats(N r2_a p_joint_trust p_joint_censreg, labels("Observations" "Adj. R
-> -squared" "Joint test: Trust p-value" "Joint test: Region p-value")) ///
->     title("Panel Spec 1 (pooled): r5 returns on financial literacy and trust"
-> ) ///
+>     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div" f
+> inlit_score "Literacy score" ///
+>         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_20
+> 20 "(General trust)\$^2\$" ///
+>         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_et
+> h "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "Marr
+> ied" born_us "Born in U.S.") ///
+>     stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_jo
+> int_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint test: T
+> rust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-valu
+> e" "Joint test: Race p-value" "Joint test: Region p-value" "Joint test: Year p-
+> value")) ///
+>     title("Panel Spec 1 (pooled): r5 returns on financial literacy and trust") 
+> ///
 >     addnotes(".") ///
 >     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
-> essions/FinLit/Tables/finlit_r5_panel1.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/FinLit/Tables/finlit_r5_panel1.tex)
 
 . 
 . * Panel Spec 2
-. gen byte _samp2 = _samp & !missing(share_core) & !missing(share_ira) & !missi
-> ng(share_res) & !missing(share_debt_long) & !missing(share_debt_other)
+. gen byte _samp2 = _samp & !missing(share_core) & !missing(share_ira) & !missing
+> (share_res) & !missing(share_debt_long) & !missing(share_debt_other)
 
 . 
 . eststo clear
 
-. eststo m1: quietly regress r5_annual_w5 `ctrl_s2' finlit_q1 finlit_q2 finlit_
-> q3 if _samp2, vce(cluster hhidpn)
+. eststo m1: quietly regress r5_annual_w5 `ctrl_s2' finlit_q1 finlit_q2 finlit_q3
+>  if _samp2, vce(cluster hhidpn)
 
 . estadd scalar p_joint_trust = . : m1
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m1
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m1
+. }
+
+. else estadd scalar p_joint_wealth = . : m1
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m1
 
 . capture testparm i.censreg
 
@@ -724,10 +1631,38 @@ Panel variable: hhidpn (strongly balanced)
 
 . else estadd scalar p_joint_censreg = . : m1
 
-. eststo m2: quietly regress r5_annual_w5 `ctrl_s2' finlit_score if _samp2, vce
-> (cluster hhidpn)
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m1
+
+. else estadd scalar p_joint_year = . : m1
+
+. eststo m2: quietly regress r5_annual_w5 `ctrl_s2' finlit_score if _samp2, vce(c
+> luster hhidpn)
 
 . estadd scalar p_joint_trust = . : m2
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m2
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m2
+. }
+
+. else estadd scalar p_joint_wealth = . : m2
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m2
 
 . capture testparm i.censreg
 
@@ -735,12 +1670,40 @@ Panel variable: hhidpn (strongly balanced)
 
 . else estadd scalar p_joint_censreg = . : m2
 
-. eststo m3: quietly regress r5_annual_w5 `ctrl_s2' finlit_q1 finlit_q2 finlit_
-> q3 `trust_spec_p' if _samp2, vce(cluster hhidpn)
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m2
+
+. else estadd scalar p_joint_year = . : m2
+
+. eststo m3: quietly regress r5_annual_w5 `ctrl_s2' finlit_q1 finlit_q2 finlit_q3
+>  `trust_spec_p' if _samp2, vce(cluster hhidpn)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m3
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m3
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m3
+. }
+
+. else estadd scalar p_joint_wealth = . : m3
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m3
 
 . capture testparm i.censreg
 
@@ -748,12 +1711,40 @@ Panel variable: hhidpn (strongly balanced)
 
 . else estadd scalar p_joint_censreg = . : m3
 
-. eststo m4: quietly regress r5_annual_w5 `ctrl_s2' finlit_score `trust_spec_p'
->  if _samp2, vce(cluster hhidpn)
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m3
+
+. else estadd scalar p_joint_year = . : m3
+
+. eststo m4: quietly regress r5_annual_w5 `ctrl_s2' finlit_score `trust_spec_p' i
+> f _samp2, vce(cluster hhidpn)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m4
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : m4
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local wlist "`wlist' wealth_d`d'"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : m4
+. }
+
+. else estadd scalar p_joint_wealth = . : m4
+
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m4
 
 . capture testparm i.censreg
 
@@ -761,26 +1752,35 @@ Panel variable: hhidpn (strongly balanced)
 
 . else estadd scalar p_joint_censreg = . : m4
 
+. capture testparm i.year
+
+. if _rc == 0 estadd scalar p_joint_year = r(p) : m4
+
+. else estadd scalar p_joint_year = . : m4
+
 . 
 . esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel2.tex", replace ///
 >     booktabs mtitles("(1)" "(2)" "(3)" "(4)") ///
 >     se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >     keep(`keep_p') ///
->     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div"
->  finlit_score "Literacy score" ///
->         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_
-> 2020 "(General trust)\$^2\$" ///
->         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_
-> eth "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "
-> Married" born_us "Born in U.S.") ///
->     stats(N r2_a p_joint_trust p_joint_censreg, labels("Observations" "Adj. R
-> -squared" "Joint test: Trust p-value" "Joint test: Region p-value")) ///
->     title("Panel Spec 2 (${LATEX_SHARE_YEAR}): r5 returns on financial litera
-> cy and trust") ///
+>     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div" f
+> inlit_score "Literacy score" ///
+>         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_20
+> 20 "(General trust)\$^2\$" ///
+>         2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_et
+> h "NH Other" educ_yrs "Years education" inlbrf_ "In labor force" married_ "Marr
+> ied" born_us "Born in U.S.") ///
+>     stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_jo
+> int_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint test: T
+> rust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-valu
+> e" "Joint test: Race p-value" "Joint test: Region p-value" "Joint test: Year p-
+> value")) ///
+>     title("Panel Spec 2 (${LATEX_SHARE_YEAR}): r5 returns on financial literacy
+>  and trust") ///
 >     addnotes(".") ///
 >     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
-> essions/FinLit/Tables/finlit_r5_panel2.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/FinLit/Tables/finlit_r5_panel2.tex)
 
 . 
 . * Panel Spec 3: FE + 2nd stage
@@ -791,14 +1791,13 @@ Panel variable: hhidpn (strongly balanced)
   3.     if !_rc local ctrl_fe "`ctrl_fe' wealth_d`d'"
   4. }
 
-. local ctrl_fe "`ctrl_fe' c.share_core##i.year c.share_ira##i.year c.share_res
-> ##i.year c.share_debt_long##i.year c.share_debt_other##i.year"
+. local ctrl_fe "`ctrl_fe' c.share_core##i.year c.share_ira##i.year c.share_res##
+> i.year c.share_debt_long##i.year c.share_debt_other##i.year"
 
 . 
-. gen byte _fe_cond = !missing(share_core) & !missing(share_ira) & !missing(sha
-> re_res) & !missing(share_debt_long) & !missing(share_debt_other) & !missing(f
-> inlit_q1) & !missing(finlit_q2) & !missing(finlit_q3) & !missing(trust_others
-> _2020)
+. gen byte _fe_cond = !missing(share_core) & !missing(share_ira) & !missing(share
+> _res) & !missing(share_debt_long) & !missing(share_debt_other) & !missing(finli
+> t_q1) & !missing(finlit_q2) & !missing(finlit_q3) & !missing(trust_others_2020)
 
 . xtreg r5_annual_w5 `ctrl_fe' if _fe_cond, fe vce(cluster hhidpn)
 
@@ -813,132 +1812,132 @@ R-squared:                                      Obs per group:
                                                 F(87, 421)        =          .
 corr(u_i, Xb) = -0.7577                         Prob > F          =          .
 
-                               (Std. err. adjusted for 422 clusters in hhidpn)
-------------------------------------------------------------------------------
-             |               Robust
-r5_annual~5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    age_bin_ |
-         35  |   .5270769   .2189899     2.41   0.017     .0966271    .9575267
-         40  |   .2801212   .3204948     0.87   0.383     -.349848    .9100905
-         45  |   .4231728   .3323902     1.27   0.204    -.2301784    1.076524
-         50  |   .5198248   .3837545     1.35   0.176    -.2344888    1.274138
-         55  |   .4394807   .3808466     1.15   0.249    -.3091171    1.188078
-         60  |   .4427473   .3842774     1.15   0.250     -.312594    1.198089
-         65  |   .4086013   .3911502     1.04   0.297    -.3602494    1.177452
-         70  |   .3582465   .3991084     0.90   0.370    -.4262468     1.14274
-         75  |   .3973894   .4111603     0.97   0.334    -.4107934    1.205572
-         80  |   .3514331   .4224805     0.83   0.406    -.4790008    1.181867
-         85  |   .4569737   .4390505     1.04   0.299    -.4060304    1.319978
-         90  |   .9589056   .6063358     1.58   0.115     -.232917    2.150728
-             |
-     inlbrf_ |   .0285854   .0254874     1.12   0.263     -.021513    .0786838
-    married_ |  -.0518429   .0540056    -0.96   0.338    -.1579971    .0543112
-             |
-        year |
-       2004  |  -.1745434   .2379426    -0.73   0.464    -.6422469    .2931602
-       2006  |   .6809123     .27015     2.52   0.012     .1499015    1.211923
-       2008  |  -.2393369   .3082673    -0.78   0.438    -.8452716    .3665978
-       2010  |   .4921494   .2005196     2.45   0.015      .098005    .8862938
-       2012  |   .3446531   .2483245     1.39   0.166    -.1434573    .8327635
-       2014  |   .2153844   .2134277     1.01   0.313    -.2041322    .6349009
-       2016  |    .440957   .2569858     1.72   0.087    -.0641782    .9460922
-       2018  |   .3185479   .2506065     1.27   0.204    -.1740481    .8111438
-       2020  |   .4510371   .2599356     1.74   0.083    -.0598963    .9619704
-       2022  |   .2752553   .2211203     1.24   0.214     -.159382    .7098927
-             |
-   wealth_d2 |  -.1569946    .176491    -0.89   0.374    -.5039079    .1899187
-   wealth_d3 |   .0114162   .1279016     0.09   0.929    -.2399891    .2628214
-   wealth_d4 |   .1313886   .1128119     1.16   0.245    -.0903561    .3531334
-   wealth_d5 |   .2773142   .1152335     2.41   0.017     .0508095     .503819
-   wealth_d6 |   .3626012   .1169167     3.10   0.002      .132788    .5924144
-   wealth_d7 |   .4434265    .122111     3.63   0.000     .2034033    .6834498
-   wealth_d8 |   .5027005   .1242451     4.05   0.000     .2584824    .7469185
-   wealth_d9 |   .6494931    .125497     5.18   0.000     .4028145    .8961718
-  wealth_d10 |   .8562371   .1297168     6.60   0.000     .6012638     1.11121
-  share_core |   .6737749   .2469702     2.73   0.007     .1883265    1.159223
-             |
-        year#|
-c.share_core |
-       2004  |   .2304773   .3266302     0.71   0.481    -.4115519    .8725065
-       2006  |  -.7655228   .3050131    -2.51   0.012    -1.365061   -.1659845
-       2008  |   .1215008   .3876536     0.31   0.754    -.6404768    .8834783
-       2010  |  -.7463327   .2905853    -2.57   0.011    -1.317511   -.1751538
-       2012  |  -.6596613    .314774    -2.10   0.037    -1.278386   -.0409368
-       2014  |   -.384818   .2942636    -1.31   0.192     -.963227    .1935909
-       2016  |  -.6888849   .3136888    -2.20   0.029    -1.305476   -.0722936
-       2018  |  -.5995946   .3138532    -1.91   0.057    -1.216509    .0173198
-       2020  |  -.6621152   .3099434    -2.14   0.033    -1.271345   -.0528858
-       2022  |  -.4599828    .277378    -1.66   0.098    -1.005201    .0852355
-             |
-   share_ira |   .2533334   .2218022     1.14   0.254    -.1826443    .6893111
-             |
-        year#|
- c.share_ira |
-       2004  |   .3524711    .291633     1.21   0.227    -.2207671    .9257093
-       2006  |  -.5479169    .359702    -1.52   0.128    -1.254953    .1591187
-       2008  |   .4864936   .3417298     1.42   0.155    -.1852156    1.158203
-       2010  |  -.2868533   .2587504    -1.11   0.268    -.7954569    .2217504
-       2012  |  -.2242442   .2880954    -0.78   0.437    -.7905289    .3420404
-       2014  |  -.2101952   .2413652    -0.87   0.384    -.6846262    .2642358
-       2016  |  -.3921749   .2908064    -1.35   0.178    -.9637884    .1794385
-       2018  |   -.262663   .2961656    -0.89   0.376    -.8448104    .3194844
-       2020  |  -.4838781   .2819558    -1.72   0.087    -1.038095    .0703385
-       2022  |  -.1948997   .2556795    -0.76   0.446    -.6974671    .3076677
-             |
-   share_res |   .2782411   .1986861     1.40   0.162    -.1122992    .6687815
-             |
-        year#|
- c.share_res |
-       2004  |   .1076991    .268404     0.40   0.688    -.4198797    .6352779
-       2006  |  -.6112335   .3093922    -1.98   0.049    -1.219379   -.0030877
-       2008  |   .1887473   .3538083     0.53   0.594    -.5067034     .884198
-       2010  |  -.5843545   .2275493    -2.57   0.011    -1.031629   -.1370803
-       2012  |  -.3484239    .278019    -1.25   0.211     -.894902    .1980543
-       2014  |  -.0338269   .2401226    -0.14   0.888    -.5058154    .4381617
-       2016  |  -.3377904   .2864062    -1.18   0.239    -.9007548    .2251739
-       2018  |  -.2680269   .2833062    -0.95   0.345    -.8248979     .288844
-       2020  |  -.4049946   .2763992    -1.47   0.144    -.9482889    .1382997
-       2022  |  -.1305902   .2226278    -0.59   0.558    -.5681908    .3070104
-             |
-share_debt~g |   -.485287   .2962044    -1.64   0.102    -1.067511    .0969367
-             |
-        year#|
-          c. |
-share_debt~g |
-       2004  |   .4312142   .2616692     1.65   0.100    -.0831267     .945555
-       2006  |   .3032892   .3047971     1.00   0.320    -.2958245    .9024029
-       2008  |   .4392791   .3321077     1.32   0.187    -.2135168    1.092075
-       2010  |   .1338883   .3103391     0.43   0.666    -.4761188    .7438954
-       2012  |   .3649468   .2945873     1.24   0.216    -.2140982    .9439919
-       2014  |   .4598562   .3194172     1.44   0.151    -.1679949    1.087707
-       2016  |   .0011796   .3844481     0.00   0.998    -.7544973    .7568565
-       2018  |   .3510746   .2878884     1.22   0.223    -.2148031    .9169522
-       2020  |   .3763155   .2960632     1.27   0.204    -.2056307    .9582618
-       2022  |    .370362   .3122061     1.19   0.236    -.2433148    .9840388
-             |
-share_debt~r |  -.8938575   .3364665    -2.66   0.008    -1.555221   -.2324939
-             |
-        year#|
-          c. |
-share_debt~r |
-       2004  |   .8855417    .335204     2.64   0.009     .2266597    1.544424
-       2006  |   .5005712   .3259497     1.54   0.125    -.1401203    1.141263
-       2008  |   .4974271   .4603633     1.08   0.281    -.4074698    1.402324
-       2010  |    .804457   .3457978     2.33   0.020     .1247518    1.484162
-       2012  |    .858031   .3905796     2.20   0.029     .0903019     1.62576
-       2014  |    .743012    .345842     2.15   0.032     .0632199    1.422804
-       2016  |   .9713287   .4181914     2.32   0.021     .1493254    1.793332
-       2018  |    .749348   .3393151     2.21   0.028     .0823852    1.416311
-       2020  |   .9372294    .336306     2.79   0.006     .2761814    1.598277
-       2022  |   1.282498   .3992996     3.21   0.001     .4976293    2.067368
-             |
-       _cons |   -.989929   .3402569    -2.91   0.004    -1.658743    -.321115
--------------+----------------------------------------------------------------
-     sigma_u |  .44372423
-     sigma_e |   .3469014
-         rho |  .62065408   (fraction of variance due to u_i)
-------------------------------------------------------------------------------
+                                 (Std. err. adjusted for 422 clusters in hhidpn)
+--------------------------------------------------------------------------------
+               |               Robust
+ r5_annual_w5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+      age_bin_ |
+           35  |   .5270769   .2189899     2.41   0.017     .0966271    .9575267
+           40  |   .2801212   .3204948     0.87   0.383     -.349848    .9100905
+           45  |   .4231728   .3323902     1.27   0.204    -.2301784    1.076524
+           50  |   .5198248   .3837545     1.35   0.176    -.2344888    1.274138
+           55  |   .4394807   .3808466     1.15   0.249    -.3091171    1.188078
+           60  |   .4427473   .3842774     1.15   0.250     -.312594    1.198089
+           65  |   .4086013   .3911502     1.04   0.297    -.3602494    1.177452
+           70  |   .3582465   .3991084     0.90   0.370    -.4262468     1.14274
+           75  |   .3973894   .4111603     0.97   0.334    -.4107934    1.205572
+           80  |   .3514331   .4224805     0.83   0.406    -.4790008    1.181867
+           85  |   .4569737   .4390505     1.04   0.299    -.4060304    1.319978
+           90  |   .9589056   .6063358     1.58   0.115     -.232917    2.150728
+               |
+       inlbrf_ |   .0285854   .0254874     1.12   0.263     -.021513    .0786838
+      married_ |  -.0518429   .0540056    -0.96   0.338    -.1579971    .0543112
+               |
+          year |
+         2004  |  -.1745434   .2379426    -0.73   0.464    -.6422469    .2931602
+         2006  |   .6809123     .27015     2.52   0.012     .1499015    1.211923
+         2008  |  -.2393369   .3082673    -0.78   0.438    -.8452716    .3665978
+         2010  |   .4921494   .2005196     2.45   0.015      .098005    .8862938
+         2012  |   .3446531   .2483245     1.39   0.166    -.1434573    .8327635
+         2014  |   .2153844   .2134277     1.01   0.313    -.2041322    .6349009
+         2016  |    .440957   .2569858     1.72   0.087    -.0641782    .9460922
+         2018  |   .3185479   .2506065     1.27   0.204    -.1740481    .8111438
+         2020  |   .4510371   .2599356     1.74   0.083    -.0598963    .9619704
+         2022  |   .2752553   .2211203     1.24   0.214     -.159382    .7098927
+               |
+     wealth_d2 |  -.1569946    .176491    -0.89   0.374    -.5039079    .1899187
+     wealth_d3 |   .0114162   .1279016     0.09   0.929    -.2399891    .2628214
+     wealth_d4 |   .1313886   .1128119     1.16   0.245    -.0903561    .3531334
+     wealth_d5 |   .2773142   .1152335     2.41   0.017     .0508095     .503819
+     wealth_d6 |   .3626012   .1169167     3.10   0.002      .132788    .5924144
+     wealth_d7 |   .4434265    .122111     3.63   0.000     .2034033    .6834498
+     wealth_d8 |   .5027005   .1242451     4.05   0.000     .2584824    .7469185
+     wealth_d9 |   .6494931    .125497     5.18   0.000     .4028145    .8961718
+    wealth_d10 |   .8562371   .1297168     6.60   0.000     .6012638     1.11121
+    share_core |   .6737749   .2469702     2.73   0.007     .1883265    1.159223
+               |
+          year#|
+  c.share_core |
+         2004  |   .2304773   .3266302     0.71   0.481    -.4115519    .8725065
+         2006  |  -.7655228   .3050131    -2.51   0.012    -1.365061   -.1659845
+         2008  |   .1215008   .3876536     0.31   0.754    -.6404768    .8834783
+         2010  |  -.7463327   .2905853    -2.57   0.011    -1.317511   -.1751538
+         2012  |  -.6596613    .314774    -2.10   0.037    -1.278386   -.0409368
+         2014  |   -.384818   .2942636    -1.31   0.192     -.963227    .1935909
+         2016  |  -.6888849   .3136888    -2.20   0.029    -1.305476   -.0722936
+         2018  |  -.5995946   .3138532    -1.91   0.057    -1.216509    .0173198
+         2020  |  -.6621152   .3099434    -2.14   0.033    -1.271345   -.0528858
+         2022  |  -.4599828    .277378    -1.66   0.098    -1.005201    .0852355
+               |
+     share_ira |   .2533334   .2218022     1.14   0.254    -.1826443    .6893111
+               |
+          year#|
+   c.share_ira |
+         2004  |   .3524711    .291633     1.21   0.227    -.2207671    .9257093
+         2006  |  -.5479169    .359702    -1.52   0.128    -1.254953    .1591187
+         2008  |   .4864936   .3417298     1.42   0.155    -.1852156    1.158203
+         2010  |  -.2868533   .2587504    -1.11   0.268    -.7954569    .2217504
+         2012  |  -.2242442   .2880954    -0.78   0.437    -.7905289    .3420404
+         2014  |  -.2101952   .2413652    -0.87   0.384    -.6846262    .2642358
+         2016  |  -.3921749   .2908064    -1.35   0.178    -.9637884    .1794385
+         2018  |   -.262663   .2961656    -0.89   0.376    -.8448104    .3194844
+         2020  |  -.4838781   .2819558    -1.72   0.087    -1.038095    .0703385
+         2022  |  -.1948997   .2556795    -0.76   0.446    -.6974671    .3076677
+               |
+     share_res |   .2782411   .1986861     1.40   0.162    -.1122992    .6687815
+               |
+          year#|
+   c.share_res |
+         2004  |   .1076991    .268404     0.40   0.688    -.4198797    .6352779
+         2006  |  -.6112335   .3093922    -1.98   0.049    -1.219379   -.0030877
+         2008  |   .1887473   .3538083     0.53   0.594    -.5067034     .884198
+         2010  |  -.5843545   .2275493    -2.57   0.011    -1.031629   -.1370803
+         2012  |  -.3484239    .278019    -1.25   0.211     -.894902    .1980543
+         2014  |  -.0338269   .2401226    -0.14   0.888    -.5058154    .4381617
+         2016  |  -.3377904   .2864062    -1.18   0.239    -.9007548    .2251739
+         2018  |  -.2680269   .2833062    -0.95   0.345    -.8248979     .288844
+         2020  |  -.4049946   .2763992    -1.47   0.144    -.9482889    .1382997
+         2022  |  -.1305902   .2226278    -0.59   0.558    -.5681908    .3070104
+               |
+share_debt_l~g |   -.485287   .2962044    -1.64   0.102    -1.067511    .0969367
+               |
+          year#|
+            c. |
+share_debt_l~g |
+         2004  |   .4312142   .2616692     1.65   0.100    -.0831267     .945555
+         2006  |   .3032892   .3047971     1.00   0.320    -.2958245    .9024029
+         2008  |   .4392791   .3321077     1.32   0.187    -.2135168    1.092075
+         2010  |   .1338883   .3103391     0.43   0.666    -.4761188    .7438954
+         2012  |   .3649468   .2945873     1.24   0.216    -.2140982    .9439919
+         2014  |   .4598562   .3194172     1.44   0.151    -.1679949    1.087707
+         2016  |   .0011796   .3844481     0.00   0.998    -.7544973    .7568565
+         2018  |   .3510746   .2878884     1.22   0.223    -.2148031    .9169522
+         2020  |   .3763155   .2960632     1.27   0.204    -.2056307    .9582618
+         2022  |    .370362   .3122061     1.19   0.236    -.2433148    .9840388
+               |
+share_debt_o~r |  -.8938575   .3364665    -2.66   0.008    -1.555221   -.2324939
+               |
+          year#|
+            c. |
+share_debt_o~r |
+         2004  |   .8855417    .335204     2.64   0.009     .2266597    1.544424
+         2006  |   .5005712   .3259497     1.54   0.125    -.1401203    1.141263
+         2008  |   .4974271   .4603633     1.08   0.281    -.4074698    1.402324
+         2010  |    .804457   .3457978     2.33   0.020     .1247518    1.484162
+         2012  |    .858031   .3905796     2.20   0.029     .0903019     1.62576
+         2014  |    .743012    .345842     2.15   0.032     .0632199    1.422804
+         2016  |   .9713287   .4181914     2.32   0.021     .1493254    1.793332
+         2018  |    .749348   .3393151     2.21   0.028     .0823852    1.416311
+         2020  |   .9372294    .336306     2.79   0.006     .2761814    1.598277
+         2022  |   1.282498   .3992996     3.21   0.001     .4976293    2.067368
+               |
+         _cons |   -.989929   .3402569    -2.91   0.004    -1.658743    -.321115
+---------------+----------------------------------------------------------------
+       sigma_u |  .44372423
+       sigma_e |   .3469014
+           rho |  .62065408   (fraction of variance due to u_i)
+--------------------------------------------------------------------------------
 
 . predict _fe_r5 if e(sample)
 (option xb assumed; fitted values)
@@ -949,81 +1948,96 @@ share_debt~r |
 
 . drop _fe_r5
 
-. collapse (first) fe_r5 educ_yrs gender race_eth born_us finlit_q1 finlit_q2 f
-> inlit_q3 finlit_score trust_others_2020, by(hhidpn)
+. collapse (first) fe_r5 educ_yrs gender race_eth born_us finlit_q1 finlit_q2 fin
+> lit_q3 finlit_score trust_others_2020, by(hhidpn)
 
 . 
-. gen byte _fe_samp = !missing(fe_r5) & !missing(finlit_q1) & !missing(finlit_q
-> 2) & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_others_202
-> 0)
+. gen byte _fe_samp = !missing(fe_r5) & !missing(finlit_q1) & !missing(finlit_q2)
+>  & !missing(finlit_q3) & !missing(finlit_score) & !missing(trust_others_2020)
 
 . 
 . eststo clear
 
-. eststo m1: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_
-> q1 finlit_q2 finlit_q3 if _fe_samp, vce(robust)
+. eststo m1: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_q1
+>  finlit_q2 finlit_q3 if _fe_samp, vce(robust)
 
 . estadd scalar p_joint_trust = . : m1
 
-. eststo m2: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_
-> score if _fe_samp, vce(robust)
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m1
+
+. eststo m2: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_sc
+> ore if _fe_samp, vce(robust)
 
 . estadd scalar p_joint_trust = . : m2
 
-. eststo m3: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_
-> q1 finlit_q2 finlit_q3 c.trust_others_2020 c.trust_others_2020#c.trust_others
-> _2020 if _fe_samp, vce(robust)
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m2
+
+. eststo m3: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_q1
+>  finlit_q2 finlit_q3 c.trust_others_2020 c.trust_others_2020#c.trust_others_202
+> 0 if _fe_samp, vce(robust)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m3
 
-. eststo m4: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_
-> score c.trust_others_2020 c.trust_others_2020#c.trust_others_2020 if _fe_samp
-> , vce(robust)
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m3
+
+. eststo m4: quietly regress fe_r5 educ_yrs i.gender i.race_eth born_us finlit_sc
+> ore c.trust_others_2020 c.trust_others_2020#c.trust_others_2020 if _fe_samp, vc
+> e(robust)
 
 . quietly testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
 
 . estadd scalar p_joint_trust = r(p) : m4
 
+. quietly testparm i.race_eth
+
+. estadd scalar p_joint_race = r(p) : m4
+
 . 
 . * Panel 3: FE 2nd stage — no inlbrf/married (time-varying)
-. local keep_p3 "finlit_q1 finlit_q2 finlit_q3 finlit_score trust_others_2020 c
-> .trust_others_2020#c.trust_others_2020 educ_yrs 2.gender 2.race_eth 3.race_et
-> h 4.race_eth born_us _cons"
+. local keep_p3 "finlit_q1 finlit_q2 finlit_q3 finlit_score trust_others_2020 c.t
+> rust_others_2020#c.trust_others_2020 educ_yrs 2.gender 2.race_eth 3.race_eth 4.
+> race_eth born_us _cons"
 
 . esttab m1 m2 m3 m4 using "`FINLIT_TAB'/finlit_r5_panel3.tex", replace ///
 >     booktabs mtitles("(1)" "(2)" "(3)" "(4)") ///
 >     se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
 >     keep(`keep_p3') ///
->     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div"
->  finlit_score "Literacy score" ///
->         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_
-> 2020 "(General trust)\$^2\$" ///
->         educ_yrs "Years education" 2.gender "Female" 2.race_eth "NH Black" 3.
-> race_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S.") ///
->     stats(N r2_a p_joint_trust, labels("Observations" "Adj. R-squared" "Joint
->  test: Trust p-value")) ///
->     title("Panel Spec 3 (FE, 2nd stage): r5 returns on financial literacy and
->  trust") ///
+>     varlabels(finlit_q1 "Interest" finlit_q2 "Inflation" finlit_q3 "Risk div" f
+> inlit_score "Literacy score" ///
+>         trust_others_2020 "General trust" c.trust_others_2020#c.trust_others_20
+> 20 "(General trust)\$^2\$" ///
+>         educ_yrs "Years education" 2.gender "Female" 2.race_eth "NH Black" 3.ra
+> ce_eth "Hispanic" 4.race_eth "NH Other" born_us "Born in U.S.") ///
+>     stats(N r2_a p_joint_trust p_joint_race, labels("Observations" "Adj. R-squa
+> red" "Joint test: Trust p-value" "Joint test: Race p-value")) ///
+>     title("Panel Spec 3 (FE, 2nd stage): r5 returns on financial literacy and t
+> rust") ///
 >     addnotes(".") ///
 >     alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes
-(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regr
-> essions/FinLit/Tables/finlit_r5_panel3.tex)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/FinLit/Tables/finlit_r5_panel3.tex)
 
 . 
 . display "Regression tables saved to `FINLIT_TAB'"
-Regression tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/C
-> ode/Regressions/FinLit/Tables
+Regression tables saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Cod
+> e/Regressions/FinLit/Tables
 
 . display "Done. Log: ${LOG_DIR}/20_finlit_extension.log"
-Done. Log: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_fin
-> lit_extension.log
+Done. Log: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_finli
+> t_extension.log
 
 . log close
       name:  <unnamed>
-       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_f
-> inlit_extension.log
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_fin
+> lit_extension.log
   log type:  text
- closed on:  25 Feb 2026, 23:11:00
--------------------------------------------------------------------------------
+ closed on:  26 Feb 2026, 15:08:11
+---------------------------------------------------------------------------------

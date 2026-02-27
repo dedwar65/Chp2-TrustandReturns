@@ -121,6 +121,7 @@
     "Guiso2004"
     "Alsan2018"
     "Algan2010"
-    "Lesmeister2019"))
+    "Lesmeister2019"
+    "Rosen2025"))
  '(or :bibtex :latex))
 

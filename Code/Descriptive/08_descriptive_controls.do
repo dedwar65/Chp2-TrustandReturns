@@ -84,9 +84,10 @@ program define _vlabel, rclass
     if "`v'"=="interest_2020" return local vlabel "Interest"
     if "`v'"=="inflation_2020" return local vlabel "Inflation"
     if "`v'"=="risk_div_2020" return local vlabel "Risk diversification"
-    if "`v'"=="finlit_q1" return local vlabel "Interest (correct)"
-    if "`v'"=="finlit_q2" return local vlabel "Inflation (correct)"
-    if "`v'"=="finlit_q3" return local vlabel "Risk div. (correct)"
+    if "`v'"=="finlit_q1" return local vlabel "Interest"
+    if "`v'"=="finlit_q2" return local vlabel "Inflation"
+    if "`v'"=="finlit_q3" return local vlabel "Risk div."
+    if "`v'"=="finlit_score" return local vlabel "Literacy score"
     if "`v'"=="par_citizen_2020" return local vlabel "Parent citizenship"
     if "`v'"=="par_loyalty_2020" return local vlabel "Parent loyalty"
     if "`v'"=="population_2020" return local vlabel "Population size"
@@ -102,9 +103,12 @@ preserve
 
     file open fh using "${DESCRIPTIVE}/Tables/demographics_general.tex", write replace
     file write fh "\begin{table}[htbp]\centering\small" _n ///
-        "\caption{Demographics: general controls (2020)}" _n ///
+        "\caption{.}" _n ///
         "\label{tab:demographics_general}" _n ///
         "\begin{tabular}{lrr}\toprule" _n ///
+        "Variable & N & Mean \\\\ \midrule" _n
+    file open fh_tab using "${DESCRIPTIVE}/Tables/demographics_general_tabular.tex", write replace
+    file write fh_tab "\begin{tabular}{lrr}\toprule" _n ///
         "Variable & N & Mean \\\\ \midrule" _n
 
     * General controls (2020 sample)
@@ -123,6 +127,7 @@ preserve
         local n_s = string(r(N), "%9.0f")
         local m_s = string(r(mean), "%9.3f")
         file write fh "`vlab' & `n_s' & `m_s' \\\\" _n
+        file write fh_tab "`vlab' & `n_s' & `m_s' \\\\" _n
     }
 
     * Race: one row per category (2020 sample)
@@ -148,6 +153,7 @@ preserve
             local n_r = string(n[`r'], "%9.0f")
             local pct_s = string(pct[`r'], "%9.3f")
             file write fh "Race: `rlab' & `n_r' & `pct_s' \\\\" _n
+            file write fh_tab "Race: `rlab' & `n_r' & `pct_s' \\\\" _n
         }
         use "`demog_work'", clear
     }
@@ -159,10 +165,13 @@ preserve
         local n_s = string(r(N), "%9.0f")
         local m_s = string(r(mean), "%9.3f")
         file write fh "Working (in labor force) & `n_s' & `m_s' \\\\" _n
+        file write fh_tab "Working (in labor force) & `n_s' & `m_s' \\\\" _n
     }
 
     file write fh "\bottomrule" _n "\end{tabular}\end{table}" _n
     file close fh
+    file write fh_tab "\bottomrule" _n "\end{tabular}" _n
+    file close fh_tab
 restore
 
 * ---------------------------------------------------------------------
@@ -198,7 +207,7 @@ input byte code str30 label
 5 "Other"
 end
 file open fh using "${DESCRIPTIVE}/Tables/region_labels.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Region code labels}" _n "\label{tab:region_labels}" _n "\begin{tabular}{rl}\toprule" _n "Code & Region \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:region_labels}" _n "\begin{tabular}{rl}\toprule" _n "Code & Region \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local c = string(code[`r'], "%9.0f")
     local lab = label[`r']
@@ -221,7 +230,7 @@ input byte code str30 label
 9 "Refused"
 end
 file open fh using "${DESCRIPTIVE}/Tables/population_labels.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Population size (hometown) code labels}" _n "\label{tab:population_labels}" _n "\begin{tabular}{rl}\toprule" _n "Code & Population size \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:population_labels}" _n "\begin{tabular}{rl}\toprule" _n "Code & Population size \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local c = string(code[`r'], "%9.0f")
     local plab = label[`r']
@@ -242,7 +251,7 @@ preserve
 keep if !missing(age_2020)
 
 file open fh using "${DESCRIPTIVE}/Tables/demographics.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics (2020)}" _n "\label{tab:demographics}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{.}" _n "\label{tab:demographics}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
 
 foreach v in age_2020 gender educ_yrs married_2020 immigrant born_us {
     capture confirm variable `v'
@@ -304,7 +313,9 @@ restore
 * demographics_other.tex: other controls – same style as finlit (Variable, N, Mean, SD, p50)
 * -----------------------------------------------------------------------
 file open fh using "${DESCRIPTIVE}/Tables/demographics_other.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Demographics: other controls (2020)}" _n "\label{tab:demographics_other}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{.}" _n "\label{tab:demographics_other}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
+file open fh_tab using "${DESCRIPTIVE}/Tables/demographics_other_tabular.tex", write replace
+file write fh_tab "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
 
 foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions" "medicare_2020 Medicare" "medicaid_2020 Medicaid" "life_ins_2020 Life insurance" "num_divorce_2020 Times divorced" "num_widow_2020 Times widowed" {
     tokenize `pair'
@@ -318,10 +329,13 @@ foreach pair in "depression_2020 Depression" "health_cond_2020 Health conditions
     local n_s = string(r(N), "%9.0f")
     local m_s = string(r(mean), "%9.2f")
     file write fh "`vlab' & `n_s' & `m_s' \\\\" _n
+    file write fh_tab "`vlab' & `n_s' & `m_s' \\\\" _n
 }
 
 file write fh "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Mean = pct.} \\\\" _n "\end{tabular}\end{table}" _n
 file close fh
+file write fh_tab "\bottomrule" _n "\multicolumn{3}{l}{\footnotesize Mean = pct.} \\\\" _n "\end{tabular}" _n
+file close fh_tab
 
 * Financial literacy: ensure binary correct (1) / incorrect (0) vars exist (created in 03_prep or on the fly)
 * finlit_q1, finlit_q2, finlit_q3 = 1 if correct, 0 if wrong; DK/RF/-8 = missing
@@ -356,12 +370,27 @@ if _rc {
     }
 }
 
+* Ensure composite literacy score exists for correlation table
+capture confirm variable finlit_score
+if _rc {
+    capture confirm variable finlit_q1
+    local ok_q1 = (_rc == 0)
+    capture confirm variable finlit_q2
+    local ok_q2 = (_rc == 0)
+    capture confirm variable finlit_q3
+    local ok_q3 = (_rc == 0)
+    if `ok_q1' & `ok_q2' & `ok_q3' {
+        egen byte finlit_score = rowtotal(finlit_q1 finlit_q2 finlit_q3), missing
+        replace finlit_score = . if missing(finlit_q1) | missing(finlit_q2) | missing(finlit_q3)
+    }
+}
+
 * Financial literacy summary (2020): Mean = proportion correct
 preserve
 capture confirm variable year
 if !_rc keep if year == 2020
 file open fh using "${DESCRIPTIVE}/Tables/finlit_summary.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Financial literacy summary (2020)}" _n "\label{tab:finlit_summary}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean (prop. correct) \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:finlit_summary}" _n "\begin{tabular}{lrr}\toprule" _n "Variable & N & Mean \\\\ \midrule" _n
 foreach pair in "finlit_q1 Interest" "finlit_q2 Inflation" "finlit_q3 Risk diversification" {
     tokenize `pair'
     local v "`1'"
@@ -384,7 +413,7 @@ capture confirm variable population_2020
 if !_rc {
     quietly summarize population_2020 `wopt', detail
     file open fh using "${DESCRIPTIVE}/Tables/population_summary.tex", write replace
-    file write fh "\begin{table}[htbp]\centering" _n "\caption{Population size (hometown) summary (2020)}" _n "\label{tab:population_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\\ \midrule" _n
+    file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:population_summary}" _n "\begin{tabular}{lrrr}\toprule" _n "Variable & N & Mean & SD \\\\ \midrule" _n
     local n_s = string(r(N), "%9.0f")
     local m_s = string(r(mean), "%9.2f")
     local s_s = string(r(sd), "%9.2f")
@@ -404,7 +433,7 @@ keep if !missing(trust_others_2020) & !missing(censreg_) & censreg_ != 5
 decode censreg_, gen(region_label)
 contract year censreg_ region_label, freq(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_region_groups_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Trust and region overlap (2020): observations by region}" _n "\label{tab:trust_region_groups_2020}" _n "\begin{tabular}{rrlr}\toprule" _n "Year & Region (code) & Region & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:trust_region_groups_2020}" _n "\begin{tabular}{rrlr}\toprule" _n "Year & Region (code) & Region & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local yr_s = string(year[`r'], "%9.0f")
     local reg_s = string(censreg_[`r'], "%9.0f")
@@ -426,7 +455,7 @@ label values population_3bin_2020 pop3_lbl
 contract censreg_2020, freq(n)
 decode censreg_2020, gen(region_label)
 file open fh using "${DESCRIPTIVE}/Tables/bin_counts_censreg_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by region (2020)}" _n "\label{tab:bin_counts_censreg_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:bin_counts_censreg_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local r_s = string(censreg_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
@@ -444,7 +473,7 @@ label values population_2020 pop_lbl
 contract population_2020, freq(n)
 decode population_2020, gen(pop_label)
 file open fh using "${DESCRIPTIVE}/Tables/bin_counts_population_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by population size (2020)}" _n "\label{tab:bin_counts_population_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Population (code) & Population size & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:bin_counts_population_2020}" _n "\begin{tabular}{rlr}\toprule" _n "Population (code) & Population size & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     if missing(population_2020[`r']) continue
     local p_s = string(population_2020[`r'], "%9.0f")
@@ -463,7 +492,7 @@ label values population_3bin_2020 pop3_lbl
 contract population_3bin_2020, freq(n)
 decode population_3bin_2020, gen(pop3_label)
 file open fh using "${DESCRIPTIVE}/Tables/bin_counts_population3_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Bin counts by population (3 bins, 2020)}" _n "\label{tab:bin_counts_population3_2020}" _n "\begin{tabular}{lr}\toprule" _n "Population & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:bin_counts_population3_2020}" _n "\begin{tabular}{lr}\toprule" _n "Population & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     if missing(population_3bin_2020[`r']) continue
     local p3lab = pop3_label[`r']
@@ -506,7 +535,7 @@ if !_rc {
         * LaTeX table
         file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_race_eth_`stub'_2020.tex", write replace
         file write fh "\begin{table}[htbp]\centering" _n ///
-            "\caption{Mean `tname' by race/ethnicity (2020)}" _n ///
+            "\caption{.}" _n ///
             "\label{tab:trust_mean_by_race_eth_`stub'_2020}" _n ///
             "\begin{tabular}{lrr}\toprule" _n ///
             "Race/ethnicity & Mean trust & Obs \\\\ \midrule" _n
@@ -528,6 +557,115 @@ if !_rc {
     }
 }
 
+* ---------------------------------------------------------------------
+* General trust by demographics (2020): combined 4-panel table
+* ---------------------------------------------------------------------
+preserve
+keep trust_others_2020 age_2020 gender race_eth educ_yrs
+keep if !missing(trust_others_2020)
+
+gen int age_bin5 = floor(age_2020/5)*5 if !missing(age_2020)
+gen byte educ_group = .
+replace educ_group = 1 if educ_yrs < 12
+replace educ_group = 2 if educ_yrs == 12
+replace educ_group = 3 if educ_yrs > 12 & educ_yrs < 16
+replace educ_group = 4 if educ_yrs == 16
+replace educ_group = 5 if educ_yrs > 16 & !missing(educ_yrs)
+tempfile trust_demo_base
+save "`trust_demo_base'", replace
+
+file open fh using "${DESCRIPTIVE}/Tables/trust_general_demographics_panels.tex", write replace
+file write fh "\begin{table}[htbp]\centering\small" _n ///
+    "\caption{General trust by demographics (2020)}" _n ///
+    "\label{tab:trust_general_demographics_panels}" _n ///
+    "\begin{minipage}[t]{0.48\textwidth}\centering" _n ///
+    "\textbf{Panel A: By age}\\[0.3em]" _n ///
+    "\begin{tabular}{lrr}\toprule" _n ///
+    "Group & N & Mean \\\\ \midrule" _n
+
+* Panel A: Age
+use "`trust_demo_base'", clear
+keep if !missing(age_bin5)
+gen int age_grp = age_bin5
+replace age_grp = 25 if inrange(age_bin5, 25, 45)
+collapse (count) n=trust_others_2020 (mean) mean_trust=trust_others_2020 `wopt', by(age_grp)
+sort age_grp
+forvalues r = 1/`=_N' {
+    local g = cond(age_grp[`r']==25, "25-49", string(age_grp[`r'], "%9.0f") + "-" + string(age_grp[`r']+4, "%9.0f"))
+    local n_s = string(n[`r'], "%9.0f")
+    local m_s = string(mean_trust[`r'], "%9.3f")
+    file write fh "`g' & `n_s' & `m_s' \\\\" _n
+}
+file write fh "\bottomrule" _n ///
+    "\end{tabular}" _n ///
+    "\end{minipage}\hfill" _n ///
+    "\begin{minipage}[t]{0.48\textwidth}\centering" _n ///
+    "\textbf{Panel C: By race}\\[0.3em]" _n ///
+    "\begin{tabular}{lrr}\toprule" _n ///
+    "Group & N & Mean \\\\ \midrule" _n
+
+* Panel C: Race
+use "`trust_demo_base'", clear
+keep if !missing(race_eth)
+capture label values race_eth race_eth_lbl
+collapse (count) n=trust_others_2020 (mean) mean_trust=trust_others_2020 `wopt', by(race_eth)
+sort race_eth
+decode race_eth, gen(race_label)
+forvalues r = 1/`=_N' {
+    local glab = race_label[`r']
+    local n_s = string(n[`r'], "%9.0f")
+    local m_s = string(mean_trust[`r'], "%9.3f")
+    file write fh "`glab' & `n_s' & `m_s' \\\\" _n
+}
+file write fh "\bottomrule" _n ///
+    "\end{tabular}" _n ///
+    "\end{minipage}" _n ///
+    "\par\vspace{0.8em}" _n ///
+    "\begin{minipage}[t]{0.48\textwidth}\centering" _n ///
+    "\textbf{Panel B: By gender}\\[0.3em]" _n ///
+    "\begin{tabular}{lrr}\toprule" _n ///
+    "Group & N & Mean \\\\ \midrule" _n
+
+* Panel B: Gender
+use "`trust_demo_base'", clear
+keep if !missing(gender)
+collapse (count) n=trust_others_2020 (mean) mean_trust=trust_others_2020 `wopt', by(gender)
+sort gender
+forvalues r = 1/`=_N' {
+    local gval = gender[`r']
+    local rlab = cond(`gval'==1, "Male", cond(`gval'==2, "Female", string(`gval', "%9.0f")))
+    local n_s = string(n[`r'], "%9.0f")
+    local m_s = string(mean_trust[`r'], "%9.3f")
+    file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
+}
+file write fh "\bottomrule" _n ///
+    "\end{tabular}" _n ///
+    "\end{minipage}\hfill" _n ///
+    "\begin{minipage}[t]{0.48\textwidth}\centering" _n ///
+    "\textbf{Panel D: By education}\\[0.3em]" _n ///
+    "\begin{tabular}{lrr}\toprule" _n ///
+    "Group & N & Mean \\\\ \midrule" _n
+
+* Panel D: Education
+use "`trust_demo_base'", clear
+keep if !missing(educ_group)
+collapse (count) n=trust_others_2020 (mean) mean_trust=trust_others_2020 `wopt', by(educ_group)
+sort educ_group
+forvalues r = 1/`=_N' {
+    local eval = educ_group[`r']
+    local elab = cond(`eval'==1, "No hs", cond(`eval'==2, "Hs", cond(`eval'==3, "Some college", cond(`eval'==4, "4yr degree", "Grad"))))
+    local n_s = string(n[`r'], "%9.0f")
+    local m_s = string(mean_trust[`r'], "%9.3f")
+    file write fh "`elab' & `n_s' & `m_s' \\\\" _n
+}
+
+file write fh "\bottomrule" _n ///
+    "\end{tabular}" _n ///
+    "\end{minipage}" _n ///
+    "\end{table}" _n
+file close fh
+restore
+
 display "=== Mean trust by region, population, population3 (2020 only) ==="
 preserve
 keep if !missing(trust_others_2020) & !missing(censreg_2020) & censreg_2020 != 5
@@ -535,7 +673,7 @@ label values censreg_2020 region_lbl
 collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(censreg_2020)
 decode censreg_2020, gen(region_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_censreg_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by region (2020)}" _n "\label{tab:trust_mean_by_censreg_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Region (code) & Region & Mean trust & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:trust_mean_by_censreg_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Region (code) & Region & Mean trust & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local r_s = string(censreg_2020[`r'], "%9.0f")
     local rlab = region_label[`r']
@@ -565,7 +703,7 @@ forvalues r = 1/`=_N' {
     if censreg_2020[`r'] == 4 local n4 = n[`r']
 }
 file open fh using "${DESCRIPTIVE}/Tables/region_counts_4col_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Region counts (2020, 4 regions, no Other)}" _n "\label{tab:region_counts_4col_2020}" _n "\begin{tabular}{cccc}\toprule" _n "Northeast & Midwest & South & West \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:region_counts_4col_2020}" _n "\begin{tabular}{cccc}\toprule" _n "Northeast & Midwest & South & West \\\\ \midrule" _n
 file write fh "`n1' & `n2' & `n3' & `n4' \\\\" _n
 file write fh "\bottomrule" _n "\multicolumn{4}{l}{\footnotesize Sample: 2020, nonmissing general trust; region codes 1--4 only.} \\\\" _n "\end{tabular}\end{table}" _n
 file close fh
@@ -577,7 +715,7 @@ label values population_2020 pop_lbl
 collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(population_2020)
 decode population_2020, gen(pop_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_population_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population size (2020)}" _n "\label{tab:trust_mean_by_population_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Population (code) & Population size & Mean trust & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:trust_mean_by_population_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Population (code) & Population size & Mean trust & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local p_s = string(population_2020[`r'], "%9.0f")
     local plab = pop_label[`r']
@@ -595,7 +733,7 @@ label values population_3bin_2020 pop3_lbl
 collapse (mean) trust_mean=trust_others_2020 (count) n=trust_others_2020 `wopt', by(population_3bin_2020)
 decode population_3bin_2020, gen(pop3_label)
 file open fh using "${DESCRIPTIVE}/Tables/trust_mean_by_population3_2020.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Mean trust by population (3 bins, 2020)}" _n "\label{tab:trust_mean_by_population3_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Pop3 (code) & Population & Mean trust & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:trust_mean_by_population3_2020}" _n "\begin{tabular}{rlrr}\toprule" _n "Pop3 (code) & Population & Mean trust & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local p3_s = string(population_3bin_2020[`r'], "%9.0f")
     local p3lab = pop3_label[`r']
@@ -634,7 +772,7 @@ contract censreg_, freq(n)
 merge 1:1 censreg_ using "`region_all'", nogenerate
 replace n = 0 if missing(n)
 file open fh using "${DESCRIPTIVE}/Tables/trust_region_groups_2020_with_empty.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Region groups with empty cells (2020)}" _n "\label{tab:trust_region_groups_2020_with_empty}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:trust_region_groups_2020_with_empty}" _n "\begin{tabular}{rlr}\toprule" _n "Region (code) & Region & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     if censreg_[`r'] == 5 continue
     local r_s = string(censreg_[`r'], "%9.0f")
@@ -692,7 +830,7 @@ foreach t of local trustvars {
 
 * Combined table (all controls)
 file open fh using "${DESCRIPTIVE}/Tables/trust_controls_corr.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Correlations of General trust with controls}" _n "\label{tab:trust_controls_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlation \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:trust_controls_corr}" _n "\begin{tabular}{llr}\toprule" _n "Variable 1 & Variable 2 & Correlation \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local v1 = var1[`r']
     local v2 = var2[`r']
@@ -714,7 +852,7 @@ matrix C = r(C)
 local n : word count `trustvars'
 local nc = `n' + 1
 file open fh using "${DESCRIPTIVE}/Tables/trust_corr.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Trust variables correlation matrix}" _n "\label{tab:trust_corr}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{l"
+file write fh "\begin{table}[htbp]\centering\small" _n "\caption{Correlations among trust measures}" _n "\label{tab:trust_corr}" _n "\resizebox{\textwidth}{!}{\begin{tabular}{l"
 forvalues j = 1/`n' {
     file write fh "r"
 }
@@ -760,7 +898,7 @@ forvalues i = 1/`n' {
 postclose handle
 use "`pcload'", clear
 file open fh using "${DESCRIPTIVE}/Tables/trust_pca_loadings.tex", write replace
-file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{6pt}" _n "\caption{Trust PCA loadings (first two components)}" _n "\label{tab:trust_pca_loadings}" _n "\begin{tabular}{lrr}\toprule" _n "Trust item & PC1 & PC2 \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering\small" _n "\setlength{\tabcolsep}{6pt}" _n "\caption{Principal component loadings for trust measures}" _n "\label{tab:trust_pca_loadings}" _n "\begin{tabular}{lrr}\toprule" _n "Trust item & PC1 & PC2 \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local vn = varname[`r']
     _vlabel `vn'
@@ -781,30 +919,80 @@ graph export "${DESCRIPTIVE}/Figures/trust_pca_scree.png", replace
 * Fin lit correlations with trust (matrix layout) — binary correct/incorrect
 * ---------------------------------------------------------------------
 display "=== Fin lit + trust correlations ==="
+local scorevar ""
+
+* Rebuild binary literacy items after any dataset reloads
+capture confirm variable finlit_q1
+if _rc {
+    capture confirm variable interest_2020
+    if !_rc {
+        gen byte _q1_corr = interest_2020
+        replace _q1_corr = . if inlist(_q1_corr, 8, 9, -8)
+        gen byte finlit_q1 = (_q1_corr == 3) if !missing(_q1_corr)
+        drop _q1_corr
+    }
+}
+capture confirm variable finlit_q2
+if _rc {
+    capture confirm variable inflation_2020
+    if !_rc {
+        gen byte _q2_corr = inflation_2020
+        replace _q2_corr = . if inlist(_q2_corr, 8, 9, -8)
+        gen byte finlit_q2 = (_q2_corr == 3) if !missing(_q2_corr)
+        drop _q2_corr
+    }
+}
+capture confirm variable finlit_q3
+if _rc {
+    capture confirm variable risk_div_2020
+    if !_rc {
+        gen byte _q3_corr = risk_div_2020
+        replace _q3_corr = . if inlist(_q3_corr, 8, 9, -8)
+        gen byte finlit_q3 = (_q3_corr == 5) if !missing(_q3_corr)
+        drop _q3_corr
+    }
+}
+
+capture confirm variable finlit_score
+if _rc {
+    capture confirm variable finlit_q1
+    local ok_q1 = (_rc == 0)
+    capture confirm variable finlit_q2
+    local ok_q2 = (_rc == 0)
+    capture confirm variable finlit_q3
+    local ok_q3 = (_rc == 0)
+    if `ok_q1' & `ok_q2' & `ok_q3' {
+        capture drop finlit_score
+        egen byte finlit_score = rowtotal(finlit_q1 finlit_q2 finlit_q3), missing
+        replace finlit_score = . if missing(finlit_q1) | missing(finlit_q2) | missing(finlit_q3)
+    }
+}
+capture confirm variable finlit_score
+if !_rc local scorevar "finlit_score"
 capture confirm variable finlit_q1
 if !_rc {
-    pwcorr finlit_q1 finlit_q2 finlit_q3 trust_others_2020, sig obs
+    pwcorr finlit_q1 finlit_q2 finlit_q3 `scorevar' trust_others_2020, sig obs
 }
 else {
-    pwcorr interest_2020 inflation_2020 risk_div_2020 trust_others_2020, sig obs
+    pwcorr interest_2020 inflation_2020 risk_div_2020 `scorevar' trust_others_2020, sig obs
 }
 
 preserve
 capture confirm variable finlit_q1
 if !_rc {
-    correlate finlit_q1 finlit_q2 finlit_q3 trust_others_2020
-    local finvars "finlit_q1 finlit_q2 finlit_q3 trust_others_2020"
+    correlate finlit_q1 finlit_q2 finlit_q3 `scorevar' trust_others_2020
+    local finvars "finlit_q1 finlit_q2 finlit_q3 `scorevar' trust_others_2020"
 }
 else {
-    correlate interest_2020 inflation_2020 risk_div_2020 trust_others_2020
-    local finvars "interest_2020 inflation_2020 risk_div_2020 trust_others_2020"
+    correlate interest_2020 inflation_2020 risk_div_2020 `scorevar' trust_others_2020
+    local finvars "interest_2020 inflation_2020 risk_div_2020 `scorevar' trust_others_2020"
 }
 matrix C = r(C)
 local n : word count `finvars'
 
 file open fh using "${DESCRIPTIVE}/Tables/finlit_trust_corr.tex", write replace
 file write fh "\begin{table}[htbp]\centering\small" _n ///
-    "\caption{Financial literacy and trust correlations}" _n ///
+    "\caption{.}" _n ///
     "\label{tab:finlit_trust_corr}" _n ///
     "\resizebox{\textwidth}{!}{\begin{tabular}{l"
 forvalues j = 1/`n' {
@@ -837,10 +1025,10 @@ forvalues i = 1/`n' {
 local nc = `n' + 1
 capture confirm variable finlit_q1
 if !_rc {
-    file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Binary correct (1) / incorrect (0) for interest, inflation, risk diversification; general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+    file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize .} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 }
 else {
-    file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize Interest, inflation, risk diversification, and general trust (2020).} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
+    file write fh "\bottomrule" _n "\multicolumn{`nc'}{l}{\footnotesize .} \\\\" _n "\end{tabular}}" _n "\end{table}" _n
 }
 file close fh
 restore
@@ -861,7 +1049,7 @@ local n : word count `ivvars'
 * Export as compact matrix
 file open fh using "${DESCRIPTIVE}/Tables/iv_trust_corr.tex", write replace
 file write fh "\begin{table}[htbp]\centering\small" _n ///
-    "\caption{IV and trust correlations}" _n ///
+    "\caption{.}" _n ///
     "\label{tab:iv_trust_corr}" _n ///
     "\resizebox{\textwidth}{!}{\begin{tabular}{l"
 forvalues j = 1/`n' {
@@ -903,7 +1091,7 @@ gen int age_group = floor(age/5)*5 if !missing(age)
 tabstat depression_2020 health_cond_2020 `wopt', by(age_group) statistics(n mean sd p50 p95)
 collapse (mean) mean_depression=depression_2020 mean_health=health_cond_2020 (count) n=depression_2020 `wopt', by(age_group)
 file open fh using "${DESCRIPTIVE}/Tables/depression_health_by_agegroup.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Depression and health conditions by age group}" _n "\label{tab:depression_health_by_agegroup}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & Depression (mean) & Health conditions (mean) & Obs \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:depression_health_by_agegroup}" _n "\begin{tabular}{lrrr}\toprule" _n "Age (midpoint) & Depression (mean) & Health conditions (mean) & Obs \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local ag_s = string(age_group[`r'], "%9.0f")
     local md_s = string(mean_depression[`r'], "%9.4f")
@@ -929,7 +1117,7 @@ contract year censreg_, freq(N)
 reshape wide N, i(year) j(censreg_)
 rename (N1 N2 N3 N4) (Northeast Midwest South West)
 file open fh using "${DESCRIPTIVE}/Tables/region_group_counts_by_year.tex", write replace
-file write fh "\begin{table}[htbp]\centering" _n "\caption{Observations by region and year}" _n "\label{tab:region_group_counts_by_year}" _n "\begin{tabular}{lrrrr}\toprule" _n "Year & Northeast & Midwest & South & West \\\\ \midrule" _n
+file write fh "\begin{table}[htbp]\centering" _n "\caption{.}" _n "\label{tab:region_group_counts_by_year}" _n "\begin{tabular}{lrrrr}\toprule" _n "Year & Northeast & Midwest & South & West \\\\ \midrule" _n
 forvalues r = 1/`=_N' {
     local yr_s = string(year[`r'], "%9.0f")
     local ne_s = string(Northeast[`r'], "%9.0f")
