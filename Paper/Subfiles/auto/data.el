@@ -20,7 +20,12 @@
     "fig:share_assets_debt_year"
     "fig:asset_shares_income_panels_2022"
     "fig:debt_shares_income_panels_2022"
+    "tab:summary_portfolios"
+    "tab:portfolio_comp_core_fractiles_pooled"
+    "tab:portfolio_comp_standard_fractiles_pooled"
     "fig:returns_mean_by_year_panels"
+    "fig:returns_histogram_agg_2022"
+    "tab:returns_portfolio_moments_pooled"
     "total_income_real_win_iqr_by_wealthpct_2020"
     "tab:trust_general_demographics_panels"
     "tab:demographics_panels"))

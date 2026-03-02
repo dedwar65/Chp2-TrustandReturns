@@ -52,14 +52,14 @@
 
 \subsection{Asset classes and portfolio definitions}
 
-\par The HRS asks a number of questions aimed at measuring household wealth and portfolio composition in the sample. I collect data on \textbf{interest income and dividends}, \textbf{capital gains}, \textbf{net investment flows}, and \textbf{previous period wealth holdings}, all of which are necessary to define the desired measure of household returns. Since population-level administration data on these objects for individual taxpayers is not available in the U.S., it is important to understand each component needed in the return calculation. This will help to determine whether or not our measured distribution of returns in this dataset is sensible. To understand what portfolios are accruing returns, we will let the structure of the HRS questions guide how we define returns to specific asset classes (and collections of them) that the survey collects data for.
+\par The HRS asks a number of questions aimed at measuring household wealth and portfolio composition in the sample. I collect data on i) \textbf{interest income and dividends}, ii) \textbf{capital gains}, iii) \textbf{net investment flows}, and iv) \textbf{previous period wealth holdings}, all of which are necessary to define the desired measure of household returns. Since population-level administration data on these objects for individual taxpayers is not available in the U.S., it is important to understand each component needed in the return calculation. This will help to determine whether or not our measured distribution of returns in this dataset is sensible. To understand what portfolios are accruing returns, we will let the structure of the HRS questions guide how we define returns to specific asset classes (and collections of them) that the survey collects data for.
 
 \subsubsection{Interest income and dividends}
 
 \par The HRS RAND longitudinal file has a distinctive way in which interest income and dividends received on major asset classes, like stocks and bonds, private business, and real estate, is measured. In particular, there is a variable in the survey which measures \say{household capital income}:
 
 \begin{itemize}
-  \item ... is the sum of household capital income received over the last calendar year, including business or farm income, self-employment earnings, gross rent, dividend and interest income, trust funds or royalties, and other asset income.
+  \item $\ldots$is the sum of household capital income received over the last calendar year, including business or farm income, self-employment earnings, gross rent, dividend and interest income, trust funds or royalties, and other asset income.
   \end{itemize}
 
   This particular feature of the data is the driving factor for the key modeling assumptions of this paper regarding measuring returns: asset classes are defined as narrowly as they can be given observation of interest income and dividends on those assets. For example, although we see capital gains for stocks, business, bonds, and real estate, we do not observe interest income or dividends on these assets individually. Thus, the narrowest asset class defined in this paper will be called \say{core assets} and will be comprised of these assets.
@@ -79,7 +79,7 @@
 
 \par The possible asset classes for which capital gains can be computed in the HRS are i) primary residences, ii) secondary residences, iii) other real estate, iv) private business, v) IRA/Keogh (or \say{retirement}), vi) stocks/mutual funds, vii) bonds, viii) checking/savings/money market, ix) cds/t-bills, x) vehicles, xi) other assets. The possible liabilities are i) mortgages on primary residence, ii) mortgage on secondary residence, iii) other home loans, and iv) total other debt.  
 
-\par Capital gains for each asset class are computed as the estimated change in valuation across survey waves. The general trend is that these changes move substantially over time. In the panel (Figure~\ref{fig:cg_core_assets_panels}), business, stocks, and other real estate all show large cyclical swings and end the sample at levels above where they begin, while bonds are flatter and lower-volatility by comparison. The y-axis scales reinforce this: the bond series moves in a much narrower range than the other three components.
+\par Capital gains for each asset class are computed as the estimated change in valuation across survey waves. The general trend is that these changes move substantially over time. In the panel (Figure~\ref{fig:cg_core_assets_panels}), business, stocks, and other real estate all show large cyclical swings and end the sample at levels above where they begin, while safe assets (bonds + checking/savings + CDs/T-bills) are flatter and lower-volatility by comparison.
 
 \begin{figure}[H]
 \centering
@@ -95,7 +95,7 @@
 \vspace{0.6em}
 \begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../../Code/Descriptive/Figures/cg_bnd_mean_median_by_year.png}
+\includegraphics[width=\textwidth]{../../Code/Descriptive/Figures/cg_safe_mean_median_by_year.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\textwidth}
 \centering
@@ -139,7 +139,7 @@
 
 \par Net investment flows are vital in computing returns accurately because capital gains and interest income can miss other flows of value into a given asset class. In the HRS dataset, net investment flows are the only variable relevant to the returns calculation that RAND did not clean and process. For this reason, there are substantially less observation for this variable per asset class than the others. To work around this, I do two things. First, I process the net investment flow per asset class myself by using the associated flag variable (asking yes or no if an individual has \say{bought or sold since the previous wave}) for each variable. Second, I assume that if an individual receives interest income on that asset class, but their flow in nonmissing, then the nonmissing flow to that asset class is treated as 0.\footnote{Non-missing interest income (and capital gains) indicate participation within an asset class.}
 
-\par With this in mind, I present a figure of net investment flows into the assets available in the dataset. As you can see, the magnitudes for flows into a given class are comparable. I use these flows to construct net investment flows into i) \textbf{core assets}, ii) \textbf{retirement assets}, iii) \textbf{residential assets}, iv) \textbf{core+residential assets}, and v) \textbf{net wealth}.
+\par With this in mind, I present a figure of net investment flows into the assets available in the dataset. As you can see, the magnitudes for flows into a given class are comparable. I use these flows to construct net investment flows into i) \textbf{core assets}, ii) \textbf{retirement assets}, iii) \textbf{residential assets}, iv) \textbf{core and residential assets}, and v) \textbf{net wealth}.
 
 \begin{figure}[H]
 \centering
@@ -281,7 +281,21 @@
 \end{figure}
 \FloatBarrier
 
+\par I summarize pooled participation and share statistics in Table~\ref{tab:summary_portfolios}.
 
+\inputtable{../../Code/Regressions/Other/summary_portfolios.tex}
+\label{tab:summary_portfolios}
+\FloatBarrier
+
+\par I also report pooled composition by wealth fractiles for the core distribution and for net wealth.
+
+\inputtable{../../Code/Regressions/Other/asset_shares_by_wealth_frac.tex}
+\label{tab:portfolio_comp_core_fractiles_pooled}
+\FloatBarrier
+
+\inputtable{../../Code/Regressions/Other/port_shares_by_wealth_frac.tex}
+\label{tab:portfolio_comp_standard_fractiles_pooled}
+\FloatBarrier
 
 \subsection{Returns}
 
@@ -326,10 +340,7 @@ $$ r^{net}_{i,t} = \frac{y^{net}_{i,t} + cg^{net}_{i,t} - F^{net}_{i,t}}{A^{net}
 
 where $y^{net}_{i,t}$ is the interest income and dividends on core and retirement assets, $cg^{net}_{i,t}$ are the capital gains on all available asset classes in the survey, $F^{net}_{i,t}$ are the net investment flows on assets for which it is relevant in the survey (stocks, bonds, business, IRA, residences, and real estate), and $A^{net}_{i,t-1}$ is the total value of the available assets minus liabilities in the previous period\footnote{Mortgages on secondary residences are left out of the list of liabilities since it was an optional question in some waves of the survey.}.
 
-\par I present the means for the return measures in the following figures. I group them by the returns at the asset level (core, retirement, residential) and at the portfolio level (core, core and retirement, net wealth).
-
-%%%%%%%%%%
-
+\par I present the means for the return measures in the following figure ~\ref{fig:returns_mean_by_year_panels}. I group them by the returns at the asset level (core, retirement, residential) and at the portfolio level (core, core and retirement, net wealth). %%%%describe%%%%%%
 
 \begin{figure}[H]
 \centering
@@ -346,23 +357,33 @@ where $y^{net}_{i,t}$ is the interest income and dividends on core and retiremen
 \end{figure}
 \FloatBarrier
 
-\par The following figures give a better idea of the distribution of the return measures across respondents. 
-
+Figure ~\ref{fig:returns_histogram_agg_2022} shows the distribution of the return measures across respondents by a similar grouping. In general, this attempt is encouraging, as its shape (in particular, for returns to net wealth) closely resembles early estimates of the empirical distribution of individual realized returns in the Norwegian population data. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_histogram_agg_2022.png}
 \caption{Returns histogram, aggregated (2022)}
+\label{fig:returns_histogram_agg_2022}
 \end{figure}
 \FloatBarrier
 
-\par These are encouraging, as shape of this distribution closely resembles early estimates of the empirical distribution of individual realized returns in the Norwegian population data. 
+\par %%%describe%%%
+
+\par %%%describe, for components below%%%
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{../../Code/Descriptive/Figures/returns_histogram_components_2022.png}
 \caption{Returns histogram, components (2022)}
 \end{figure}
+\FloatBarrier
+
+\par %%short paragraph about outliers - come back to this%%
+
+\par %%describe table about the dist of returns summary %%%%
+
+\inputtable{../../Code/Regressions/Other/returns_portfolio_moments_pooled.tex}
+\label{tab:returns_portfolio_moments_pooled}
 \FloatBarrier
 
 \subsection{Income and wealth}
@@ -527,6 +548,3 @@ The literature on income and wealth also documents significantly more inequality
 \caption{Depression vs.\ trust}
 \end{figure}
 \FloatBarrier
-
-
-

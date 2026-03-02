@@ -91,17 +91,22 @@ forvalues w = 5/16 {
 preserve
 keep hhidpn cg_res_* cg_res2_* cg_re_* cg_bus_* cg_ira_* cg_stk_* cg_bnd_* cg_chk_* cg_cd_* cg_veh_* cg_oth_*
 reshape long cg_res_ cg_res2_ cg_re_ cg_bus_ cg_ira_ cg_stk_ cg_bnd_ cg_chk_ cg_cd_ cg_veh_ cg_oth_, i(hhidpn) j(year)
+gen double cg_safe_ = cg_bnd_ + cg_chk_ + cg_cd_
+replace cg_safe_ = . if missing(cg_bnd_) & missing(cg_chk_) & missing(cg_cd_)
 collapse (mean) cg_res_mean=cg_res_ cg_res2_mean=cg_res2_ cg_re_mean=cg_re_ cg_bus_mean=cg_bus_ cg_ira_mean=cg_ira_ cg_stk_mean=cg_stk_ cg_bnd_mean=cg_bnd_ ///
-    (p50) cg_res_p50=cg_res_ cg_res2_p50=cg_res2_ cg_re_p50=cg_re_ cg_bus_p50=cg_bus_ cg_ira_p50=cg_ira_ cg_stk_p50=cg_stk_ cg_bnd_p50=cg_bnd_ `wopt', by(year)
-local cg_assets "res res2 re bus ira stk bnd"
-forvalues i = 1/7 {
+    cg_safe_mean=cg_safe_ ///
+    (p50) cg_res_p50=cg_res_ cg_res2_p50=cg_res2_ cg_re_p50=cg_re_ cg_bus_p50=cg_bus_ cg_ira_p50=cg_ira_ cg_stk_p50=cg_stk_ cg_bnd_p50=cg_bnd_ ///
+    cg_safe_p50=cg_safe_ `wopt', by(year)
+local cg_assets "res res2 re bus ira stk bnd safe"
+forvalues i = 1/8 {
     local a : word `i' of `cg_assets'
     local lab = cond("`a'"=="res","Primary residence", ///
         cond("`a'"=="res2","Secondary residence", ///
         cond("`a'"=="re","Real estate", ///
         cond("`a'"=="bus","Business", ///
         cond("`a'"=="ira","Retirement (IRA/Keogh)", ///
-        cond("`a'"=="stk","Stocks","Bonds"))))))
+        cond("`a'"=="stk","Stocks", ///
+        cond("`a'"=="bnd","Bonds","Safe assets")))))))
     local leg_opt "legend(off)"
     if "`a'" == "ira" local leg_opt `"legend(order(1 "Mean" 2 "Median"))"'
     twoway (line cg_`a'_mean year, lcolor(blue)) || (line cg_`a'_p50 year, lcolor(red)), ///

@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_des
 > criptive_returns.log
   log type:  text
- opened on:  26 Feb 2026, 21:26:03
+ opened on:  27 Feb 2026, 11:46:02
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -208,23 +208,31 @@ cg_veh_2002 cg_veh_2004 ... cg_veh_2022   ->   cg_veh_
 cg_oth_2002 cg_oth_2004 ... cg_oth_2022   ->   cg_oth_
 -----------------------------------------------------------------------------
 
+. gen double cg_safe_ = cg_bnd_ + cg_chk_ + cg_cd_
+(318,060 missing values generated)
+
+. replace cg_safe_ = . if missing(cg_bnd_) & missing(cg_chk_) & missing(cg_cd_)
+(0 real changes made)
+
 . collapse (mean) cg_res_mean=cg_res_ cg_res2_mean=cg_res2_ cg_re_mean=cg_re_ cg_
 > bus_mean=cg_bus_ cg_ira_mean=cg_ira_ cg_stk_mean=cg_stk_ cg_bnd_mean=cg_bnd_ //
 > /
+>     cg_safe_mean=cg_safe_ ///
 >     (p50) cg_res_p50=cg_res_ cg_res2_p50=cg_res2_ cg_re_p50=cg_re_ cg_bus_p50=c
-> g_bus_ cg_ira_p50=cg_ira_ cg_stk_p50=cg_stk_ cg_bnd_p50=cg_bnd_ `wopt', by(year
-> )
+> g_bus_ cg_ira_p50=cg_ira_ cg_stk_p50=cg_stk_ cg_bnd_p50=cg_bnd_ ///
+>     cg_safe_p50=cg_safe_ `wopt', by(year)
 
-. local cg_assets "res res2 re bus ira stk bnd"
+. local cg_assets "res res2 re bus ira stk bnd safe"
 
-. forvalues i = 1/7 {
+. forvalues i = 1/8 {
   2.     local a : word `i' of `cg_assets'
   3.     local lab = cond("`a'"=="res","Primary residence", ///
 >         cond("`a'"=="res2","Secondary residence", ///
 >         cond("`a'"=="re","Real estate", ///
 >         cond("`a'"=="bus","Business", ///
 >         cond("`a'"=="ira","Retirement (IRA/Keogh)", ///
->         cond("`a'"=="stk","Stocks","Bonds"))))))
+>         cond("`a'"=="stk","Stocks", ///
+>         cond("`a'"=="bnd","Bonds","Safe assets")))))))
   4.     local leg_opt "legend(off)"
   5.     if "`a'" == "ira" local leg_opt `"legend(order(1 "Mean" 2 "Median"))"'
   6.     twoway (line cg_`a'_mean year, lcolor(blue)) || (line cg_`a'_p50 year, l
@@ -256,6 +264,9 @@ file /Volumes/SSD
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/cg_bnd_mean_
     > median_by_year.png saved as PNG format
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/cg_safe_mean
+    > _median_by_year.png saved as PNG format
 
 . restore
 
@@ -2969,5 +2980,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_des
 > criptive_returns.log
   log type:  text
- closed on:  26 Feb 2026, 21:32:39
+ closed on:  27 Feb 2026, 11:53:19
 ---------------------------------------------------------------------------------

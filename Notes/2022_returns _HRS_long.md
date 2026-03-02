@@ -44,15 +44,22 @@ C) Asset values for capital gains (use H16 - H15 by class; compute cg_class = V_
    - Stocks / mutual funds:
        H16ASTCK   (Stocks/mutual funds, 2022)
        H15ASTCK   (Stocks/mutual funds, 2020)
-   - Bonds:
+   - Safe assets (sum of bonds + checking/savings + CDs/T-bills):
        H16ABOND   (Bonds, 2022)
-       H15ABOND   (Bonds, 2020)
-   - Checking / savings / money market:
        H16ACHCK   (Checking/savings, 2022)
-       H15ACHCK   (Checking/savings, 2020)
-   - CDs / T-bills:
        H16ACD     (CDs/T-bills, 2022)
+       H15ABOND   (Bonds, 2020)
+       H15ACHCK   (Checking/savings, 2020)
        H15ACD     (CDs/T-bills, 2020)
+       Construction:
+         safe_assets_2022 = H16ABOND + H16ACHCK + H16ACD
+         safe_assets_2020 = H15ABOND + H15ACHCK + H15ACD
+         cg_safe_assets   = safe_assets_2022 - safe_assets_2020
+       Missing rule:
+         set safe_assets_2022 (safe_assets_2020) to missing only if all three
+         components in 2022 (2020) are missing.
+       Naming convention:
+         use "Fraction with safe assets", "Share in safe assets", etc.
    - Vehicles:
        H16ATRAN   (Vehicles, 2022)
        H15ATRAN   (Vehicles, 2020)

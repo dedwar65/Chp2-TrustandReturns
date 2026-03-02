@@ -569,6 +569,58 @@
     \field{year}{2025}
   \endentry
 
+  \entry{Kennickell2017b}{article}{}{}
+    \name{author}{1}{}{%
+      {{hash=KAB}{%
+         family={Kennickell},
+         familyi={K\bibinitperiod},
+         given={Arthur\bibnamedelima B},
+         giveni={A\bibinitperiod\bibinitdelim B\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {IOS Press}%
+    }
+    \strng{namehash}{KAB1}
+    \strng{fullhash}{KAB1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2017}
+    \field{labeldatesource}{}
+    \field{sortinit}{K}
+    \field{sortinithash}{K}
+    \field{abstract}{%
+    Abstract The Survey of Consumer Finances (SCF) has a dual-frame sample
+  design that supplements a standard area-probability frame with a sample of
+  observations drawn from statistical records derived from tax returns. The
+  tax-based frame is stratified on the basis of a``wealth index''constructed
+  largely from observed income flows, with the intent of heavily oversampling
+  wealthy households. Although the SCF is not specifically designed to estimate
+  wealth concentration, the design arguably provides sufficient support to
+  enable such …%
+    }
+    \verb{doi}
+    \verb 10.3233/sji-170349
+    \endverb
+    \field{issn}{1874-7655, 1875-9254}
+    \field{number}{1}
+    \field{pages}{59\bibrangedash 79}
+    \field{title}{{Lining up: Survey and administrative data estimates of
+  wealth concentration}}
+    \verb{url}
+    \verb https://content.iospress.com/articles/statistical-journal-of-the-iaos
+    \verb /sji170349
+    \endverb
+    \field{volume}{33}
+    \verb{file}
+    \verb All-Papers/K/Kennickell-2017-Lining-up-Survey-and-administrative-data
+    \verb -estimates-of-wealth-concentration.pdf
+    \endverb
+    \field{journaltitle}{Stat. J. IAOS}
+    \field{month}{03}
+    \field{year}{2017}
+  \endentry
+
   \entry{Lesmeister2019}{report}{}{}
     \name{author}{3}{}{%
       {{hash=LS}{%
