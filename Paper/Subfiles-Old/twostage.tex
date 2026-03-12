@@ -1,0 +1,105 @@
+\onlyinsubfile{\setcounter{section}{4}}
+\section{2SLS approach for trust and returns}\notinsubfile{\label{sec:2sls}}
+
+\subsection{First stage: predict trust}
+
+\par Table~\ref{tab:trust_reg_general_untrust} describes the set of controls and determinants of general trust. Column~(1) includes demographics only: gender, education, marital status, and race/ethnicity. Column~(2) adds population size and the \say{Potential for Deception} measures for social security, medicare/medicaid, banks, financial advisors, mutual funds, and insurance companies. Column~(3) adds health conditions, insurance coverage, life insurance, and marital history. As \cite{Alesina2000} suggests, demographic variables tend to determine trust. In the HRS data, the estimated coefficients for non-Hispanic Black and for marital status have the strongest significance; the race coefficient is negative, consistent with \cite{Alsan2018}. Depression is negative and significant across specifications.
+
+\inputtable{../../Code/Regressions/2SLS/PredictTrust/trust_reg_general_untrust.tex}
+\label{tab:trust_reg_general_untrust}
+\FloatBarrier
+
+\subsubsection{Relevance}
+
+\par Table~\ref{tab:trust_reg_depression_iv} shows the first-stage trust models with depression instrument variants used in the IV checks. The coefficient on contemporaneous depression is negative and significant in the controlled specification; the 2018 lag is also negative and significant when entered alone. When both 2016 and 2018 lags are included, only the 2018 lag remains significant. The \say{ever depressed} indicator is negative and significant. This pattern supports instrument relevance.
+
+\inputtable{../../Code/Regressions/2SLS/PredictTrust/trust_reg_depression_iv.tex}
+\label{tab:trust_reg_depression_iv}
+\FloatBarrier
+
+\par The first-stage relevance checks in table~\ref{tab:trust_reg_depression_iv} show depression terms consistently negative. I focus on the set of variables $Z = \{\texttt{Depression}, \texttt{Population}, \texttt{Deception}_l\},$ where $l$ indexes the \say{Potential for Deception} measures in the HRS, as potential instruments. The remaining control variables match the reduced-form specifications. Because depression is negative and strongly predictive of trust in the first-stage, the core IV exercises focus on depression-based instruments.
+
+%\footnote{The HRS measures \say{trust} for people in general, social security, medicare or medicaid, bank, financial advisors, mutual funds, insurance companies, and mass media. The survey measures \say{potential for deception} for the same groups, excluding \textit{people in general} and \textit{mass media}.}
+
+\subsubsection{Exclusion restriction}
+
+\par For the 2022 cross section, table~\ref{tab:excl_restriction_r5_cs} regresses returns to net wealth on controls, trust, trust-squared, and depression instrument variants (no lag, one lag, two lags, ever depressed).
+
+\inputtable{../../Code/Regressions/2SLS/PredictTrust/excl_restriction_r5_cs.tex}
+\label{tab:excl_restriction_r5_cs}
+\FloatBarrier
+
+\par The cross-section exclusion checks are mixed. In most columns, the depression coefficient is not statistically different from zero; however, the 2018 lag is significant in the one-lag specification. The joint test for trust and trust-squared is not rejected across columns, so this cross-section setup is not the strongest environment for the exclusion argument.
+
+\par Table~\ref{tab:excl_restriction_r5_avg} runs the same exclusion check using average returns over 2002--2022.
+
+\inputtable{../../Code/Regressions/2SLS/PredictTrust/excl_restriction_r5_avg.tex}
+\label{tab:excl_restriction_r5_avg}
+\FloatBarrier
+
+\par For average returns, the exclusion evidence is stronger: all depression variants are insignificant, while the trust coefficients preserve a hump-shaped pattern and the joint test on trust and trust-squared is rejected in all columns. This pattern is more consistent with depression serving as a predictor of trust rather than a direct predictor of long-run returns.
+
+\par Table~\ref{tab:excl_restriction_r5_panel} repeats the exclusion check for the baseline panel specification (spec~1): returns to net wealth on controls, trust, trust-squared, and depression variants, with standard errors clustered by household. The panel uses the same control set and depression variants (no lag, one lag, two lags, ever depressed) as the cross-section and average specifications.
+
+\inputtable{../../Code/Regressions/2SLS/PredictTrust/excl_restriction_r5_panel.tex}
+\label{tab:excl_restriction_r5_panel}
+\FloatBarrier
+
+\par The panel exclusion checks are consistent with the average-returns results: depression variants are generally insignificant, and the joint test on trust and trust-squared is rejected, supporting the exclusion restriction in the panel setting.
+
+\subsubsection{Instrument exogeneity (independence)}
+
+\par
+
+\subsection{Second stage: predict returns with variation not explained by trust}
+
+\par Because trust enters the structural equation as both linear and quadratic terms, both \(\textit{Trust}\) and \(\textit{Trust}^2\) are treated as endogenous. Let \(Z_i\) denote the depression-based instrument variant (\(\textit{Depression}_{2020}\), \(\textit{Depression}_{2018}\), \((\textit{Depression}_{2018},\textit{Depression}_{2016})\), or \(\textit{EverDepressed}\)). Let \(X\) denote the exogenous controls. \par Here \(\tilde Z_i\) is the instrument set used for the quadratic endogenous regressor (for example, transformations such as \(Z_i^2\), and if needed interactions with exogenous controls).
+
+\par \textbf{Cross section (2022 returns):}
+\[
+\textit{Trust}_{i,2020}=\pi_0+X_{i,2020}'\pi_1+Z_i'\pi_2+v_i,\qquad
+\textit{Trust}_{i,2020}^{\,2}=\rho_0+X_{i,2020}'\rho_1+\tilde Z_i'\rho_2+u_i
+\]
+\[
+r^{net}_{i,2022}=\alpha+\beta_1\widehat{\textit{Trust}}_{i,2020}+\beta_2\widehat{\textit{Trust}^{\,2}}_{i,2020}+X_{i,2020}'\gamma+\varepsilon_{i,2022}
+\]
+
+%%%%%%% table here%%%%%%%%
+
+\par %%%%%description here%%%%%%%
+
+\par \textbf{Average returns (2002--2022):}
+\[
+\textit{Trust}_{i,2020}=\pi_0+X_{i,2020}'\pi_1+Z_i'\pi_2+v_i,\qquad
+\textit{Trust}_{i,2020}^{\,2}=\rho_0+X_{i,2020}'\rho_1+\tilde Z_i'\rho_2+u_i
+\]
+\[
+\bar r^{net}_{i,2002:2022}=\alpha+\beta_1\widehat{\textit{Trust}}_{i,2020}+\beta_2\widehat{\textit{Trust}^{\,2}}_{i,2020}+X_{i,2020}'\gamma+\bar\varepsilon_i
+\]
+
+%%%%%%% table here%%%%%%%%
+
+\par %%%%%description here%%%%%%%
+
+\par \textbf{Panel (baseline pooled panel specification):}
+\[
+\textit{Trust}_{i,2020}=\pi_0+X_{i,2020}'\pi_1+Z_i'\pi_2+v_i,\qquad
+\textit{Trust}_{i,2020}^{\,2}=\rho_0+X_{i,2020}'\rho_1+\tilde Z_i'\rho_2+u_i
+\]
+\[
+r^{net}_{i,t}=\alpha+\beta_1\widehat{\textit{Trust}}_{i,2020}+\beta_2\widehat{\textit{Trust}^{\,2}}_{i,2020}+X_{i,t}'\gamma+\varepsilon_{i,t},\quad t=2002,\dots,2022
+\]
+
+
+%%%%%%% table here%%%%%%%%
+
+\par %%%%%description here%%%%%%%
+
+
+
+
+\par
+
+\par
+
+\par 

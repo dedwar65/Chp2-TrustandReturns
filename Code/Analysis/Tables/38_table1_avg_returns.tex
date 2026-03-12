@@ -1,0 +1,51 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Average returns to net wealth on trust}
+\begin{tabular*}{0.95\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{Trust only}&\multicolumn{1}{c}{Trust + Trust²}&\multicolumn{1}{c}{35 controls}&\multicolumn{1}{c}{37 controls}\\
+\midrule
+Trust               &        0.01\sym{**} &        0.07\sym{***}&        0.04\sym{***}&        0.04\sym{***}\\
+                    &      (0.00)         &      (0.01)         &      (0.02)         &      (0.02)         \\
+Trust$^2$           &                     &       -0.01\sym{***}&                     &                     \\
+                    &                     &      (0.00)         &                     &                     \\
+Trust$^2$           &                     &                     &       -0.00\sym{**} &       -0.00\sym{**} \\
+                    &                     &                     &      (0.00)         &      (0.00)         \\
+inlbrf\_2020         &                     &                     &        0.09\sym{***}&        0.10\sym{***}\\
+                    &                     &                     &      (0.03)         &      (0.03)         \\
+Less HS             &                     &                     &        0.00         &        0.00         \\
+                    &                     &                     &         (.)         &         (.)         \\
+HS Grad             &                     &                     &        0.06         &        0.05         \\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+Some College        &                     &                     &        0.07         &        0.05         \\
+                    &                     &                     &      (0.04)         &      (0.04)         \\
+College             &                     &                     &        0.09\sym{*}  &        0.07         \\
+                    &                     &                     &      (0.05)         &      (0.05)         \\
+Postgrad            &                     &                     &        0.05         &        0.04         \\
+                    &                     &                     &      (0.05)         &      (0.05)         \\
+gender=2            &                     &                     &                     &       -0.04         \\
+                    &                     &                     &                     &      (0.02)         \\
+race\_eth=2          &                     &                     &                     &        0.03         \\
+                    &                     &                     &                     &      (0.04)         \\
+race\_eth=3          &                     &                     &                     &       -0.10\sym{**} \\
+                    &                     &                     &                     &      (0.05)         \\
+race\_eth=4          &                     &                     &                     &       -0.02         \\
+                    &                     &                     &                     &      (0.08)         \\
+born\_us             &                     &                     &                     &       -0.02         \\
+                    &                     &                     &                     &      (0.04)         \\
+censreg\_2020=2      &                     &                     &                     &       -0.01         \\
+                    &                     &                     &                     &      (0.04)         \\
+censreg\_2020=3      &                     &                     &                     &        0.03         \\
+                    &                     &                     &                     &      (0.04)         \\
+censreg\_2020=4      &                     &                     &                     &        0.13\sym{***}\\
+                    &                     &                     &                     &      (0.04)         \\
+married\_2020        &                     &                     &                     &       -0.00         \\
+                    &                     &                     &                     &      (0.03)         \\
+\_cons              &        0.15\sym{***}&        0.04         &        0.06         &        0.01         \\
+                    &      (0.03)         &      (0.04)         &      (0.07)         &      (0.09)         \\
+\midrule
+Observations        &      750.00         &      750.00         &      595.00         &      592.00         \\
+Adj. R-squared      &        0.01         &        0.03         &        0.07         &        0.09         \\
+\bottomrule
+\end{tabular*}
+\end{table}

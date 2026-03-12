@@ -6,9 +6,11 @@
    (TeX-run-style-hooks
     "latex2e"
     "Subfiles/packages"
+    "Subfiles/introduction"
     "Subfiles/litrev"
     "Subfiles/data"
     "Subfiles/results"
+    "Subfiles/twostage"
     "Subfiles/extensions"
     "article"
     "art10"

@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_des
 > criptive_controls.log
   log type:  text
- opened on:  27 Feb 2026, 11:53:19
+ opened on:   5 Mar 2026, 12:16:53
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -147,9 +147,9 @@
 .     if !_rc {
 .         tempfile demog_work
 .         save "`demog_work'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000003 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000003 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000003 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000003 saved as
     .dta format
 .         if "`wopt'" != "" {
 .             gen byte _one = 1
@@ -309,20 +309,20 @@ popu~on_2020 |      1,114    3.685817    1.400178          1          6
 
     Variable |        Obs        Mean    Std. dev.       Min        Max
 -------------+---------------------------------------------------------
-censreg_2000 |     19,538    2.587675    .9615719          1          4
-censreg_2002 |     18,122    2.598113    .9586695          1          4
-censreg_2004 |     20,074    2.617864    .9697162          1          4
-censreg_2006 |     18,400       2.625    .9609049          1          4
-censreg_2008 |     17,147    2.631539    .9576372          1          4
+censreg_2000 |     19,578    2.592604    .9667457          1          5
+censreg_2002 |     18,165    2.603799    .9646225          1          5
+censreg_2004 |     20,129    2.624373    .9763418          1          5
+censreg_2006 |     18,469    2.633873    .9699918          1          5
+censreg_2008 |     17,217    2.641169    .9674999          1          5
 -------------+---------------------------------------------------------
-censreg_2010 |     21,964    2.675879    .9703894          1          4
-censreg_2012 |     20,478    2.682049      .96864          1          4
-censreg_2014 |     18,660    2.685906    .9676722          1          4
-censreg_2016 |     20,831    2.721953    .9573615          1          4
-censreg_2018 |     17,067     2.73106    .9528177          1          4
+censreg_2010 |     22,034    2.683262    .9776351          1          5
+censreg_2012 |     20,554     2.69062    .9770303          1          5
+censreg_2014 |     18,747    2.696645    .9781519          1          5
+censreg_2016 |     20,912    2.730777    .9659269          1          5
+censreg_2018 |     17,146    2.741514    .9629591          1          5
 -------------+---------------------------------------------------------
-censreg_2020 |     15,662    2.743966    .9554038          1          4
-censreg_2022 |     12,823    2.757545    .9556214          1          4
+censreg_2020 |     15,723    2.752719     .963808          1          5
+censreg_2022 |     12,883    2.767989     .965542          1          5
 
 . 
 . * Export label mappings for region and population
@@ -436,9 +436,9 @@ censreg_2022 |     12,823    2.757545    .9556214          1          4
 . if !_rc {
 .     tempfile demog_work
 .     save "`demog_work'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000007 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000007 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000007 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000007 saved as
     .dta format
 .     contract race_eth, freq(n)
 .     drop if missing(race_eth)
@@ -464,9 +464,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000007 saved as
 . if !_rc {
 .     tempfile demog_work
 .     save "`demog_work'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000008 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000008 not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000008 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000008 saved as
     .dta format
 .     contract inlbrf_2020, freq(n)
 .     drop if missing(inlbrf_2020)
@@ -548,8 +548,11 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000008 saved as
 .     capture confirm variable interest_2020
 .     if !_rc {
 .         gen byte _q1 = interest_2020
+(43,932 missing values generated)
 .         replace _q1 = . if inlist(_q1, 8, 9, -8)
+(0 real changes made)
 .         gen byte finlit_q1 = (_q1 == 3) if !missing(_q1)
+(43,932 missing values generated)
 .         drop _q1
 .     }
 . }
@@ -560,8 +563,11 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000008 saved as
 .     capture confirm variable inflation_2020
 .     if !_rc {
 .         gen byte _q2 = inflation_2020
+(43,961 missing values generated)
 .         replace _q2 = . if inlist(_q2, 8, 9, -8)
+(0 real changes made)
 .         gen byte finlit_q2 = (_q2 == 3) if !missing(_q2)
+(43,961 missing values generated)
 .         drop _q2
 .     }
 . }
@@ -572,8 +578,11 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000008 saved as
 .     capture confirm variable risk_div_2020
 .     if !_rc {
 .         gen byte _q3 = risk_div_2020
+(44,162 missing values generated)
 .         replace _q3 = . if inlist(_q3, 8, 9, -8)
+(0 real changes made)
 .         gen byte finlit_q3 = (_q3 == 5) if !missing(_q3)
+(44,162 missing values generated)
 .         drop _q3
 .     }
 . }
@@ -592,8 +601,10 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000008 saved as
 .     if `ok_q1' & `ok_q2' & `ok_q3' {
 .         egen byte finlit_score = rowtotal(finlit_q1 finlit_q2 finlit_q3), missi
 > ng
+(43,909 missing values generated)
 .         replace finlit_score = . if missing(finlit_q1) | missing(finlit_q2) | m
 > issing(finlit_q3)
+(286 real changes made, 286 to missing)
 .     }
 . }
 
@@ -956,9 +967,9 @@ file /Volumes/SSD
 . tempfile trust_demo_base
 
 . save "`trust_demo_base'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000o not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00000o not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000o saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00000o saved as
     .dta format
 
 . 
@@ -1280,9 +1291,9 @@ file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000o saved as
 . tempfile region_all
 
 . save "`region_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000u not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00000u not
     found)
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000u saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00000u saved as
     .dta format
 
 . restore
@@ -1624,7 +1635,7 @@ num_wid~2020 |   1.0000
 
 . postfile handle str32 var1 str32 var2 double corr using "`trustctrlcorr'", repl
 > ace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000x not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00000x not
     found)
 
 . correlate `trustvars' `ctrlvars'
@@ -1920,7 +1931,7 @@ Scoring coefficients
 . tempfile pcload
 
 . postfile handle str32 varname double pc1 pc2 using "`pcload'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000012 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000012 not
     found)
 
 . matrix L = e(L)
@@ -1986,8 +1997,11 @@ file /Volumes/SSD
 .     capture confirm variable interest_2020
 .     if !_rc {
 .         gen byte _q1_corr = interest_2020
+(43,932 missing values generated)
 .         replace _q1_corr = . if inlist(_q1_corr, 8, 9, -8)
+(0 real changes made)
 .         gen byte finlit_q1 = (_q1_corr == 3) if !missing(_q1_corr)
+(43,932 missing values generated)
 .         drop _q1_corr
 .     }
 . }
@@ -1998,8 +2012,11 @@ file /Volumes/SSD
 .     capture confirm variable inflation_2020
 .     if !_rc {
 .         gen byte _q2_corr = inflation_2020
+(43,961 missing values generated)
 .         replace _q2_corr = . if inlist(_q2_corr, 8, 9, -8)
+(0 real changes made)
 .         gen byte finlit_q2 = (_q2_corr == 3) if !missing(_q2_corr)
+(43,961 missing values generated)
 .         drop _q2_corr
 .     }
 . }
@@ -2010,8 +2027,11 @@ file /Volumes/SSD
 .     capture confirm variable risk_div_2020
 .     if !_rc {
 .         gen byte _q3_corr = risk_div_2020
+(44,162 missing values generated)
 .         replace _q3_corr = . if inlist(_q3_corr, 8, 9, -8)
+(0 real changes made)
 .         gen byte finlit_q3 = (_q3_corr == 5) if !missing(_q3_corr)
+(44,162 missing values generated)
 .         drop _q3_corr
 .     }
 . }
@@ -2030,8 +2050,10 @@ file /Volumes/SSD
 .         capture drop finlit_score
 .         egen byte finlit_score = rowtotal(finlit_q1 finlit_q2 finlit_q3), missi
 > ng
+(43,909 missing values generated)
 .         replace finlit_score = . if missing(finlit_q1) | missing(finlit_q2) | m
 > issing(finlit_q3)
+(286 real changes made, 286 to missing)
 .     }
 . }
 
@@ -2191,7 +2213,7 @@ trust_o~2020 |   0.0682   0.0606   1.0000
 . tempfile ivcorr
 
 . postfile handle str32 var1 str32 var2 double corr using "`ivcorr'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000015 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000015 not
     found)
 
 . correlate par_citizen_2020 par_loyalty_2020 trust_others_2020
@@ -2463,21 +2485,21 @@ censreg_2000 censreg_2002 ... censreg_2022->   censreg_
 . label values censreg_ region_lbl
 
 . drop if missing(censreg_)
-(322,042 observations deleted)
+(321,251 observations deleted)
 
 . contract year censreg_, freq(N)
 
 . * Wide table: year x region with N (drop Other)
 . reshape wide N, i(year) j(censreg_)
-(j = 1 2 3 4)
+(j = 1 2 3 4 5)
 
 Data                               Long   ->   Wide
 -----------------------------------------------------------------------------
-Number of observations               48   ->   12          
-Number of variables                   3   ->   5           
-j variable (4 values)          censreg_   ->   (dropped)
+Number of observations               60   ->   12          
+Number of variables                   3   ->   6           
+j variable (5 values)          censreg_   ->   (dropped)
 xij variables:
-                                      N   ->   N1 N2 ... N4
+                                      N   ->   N1 N2 ... N5
 -----------------------------------------------------------------------------
 
 . rename (N1 N2 N3 N4) (Northeast Midwest South West)
@@ -2513,18 +2535,18 @@ xij variables:
   2.     capture confirm variable `v'
   3.     if !_rc replace `v' = . if `v' == 5
   4. }
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
+(40 real changes made, 40 to missing)
+(43 real changes made, 43 to missing)
+(55 real changes made, 55 to missing)
+(69 real changes made, 69 to missing)
+(70 real changes made, 70 to missing)
+(70 real changes made, 70 to missing)
+(76 real changes made, 76 to missing)
+(87 real changes made, 87 to missing)
+(81 real changes made, 81 to missing)
+(79 real changes made, 79 to missing)
+(61 real changes made, 61 to missing)
+(60 real changes made, 60 to missing)
 
 . 
 . * Save dataset with PCA components (region 5 = missing in saved data)
@@ -2761,5 +2783,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/08_des
 > criptive_controls.log
   log type:  text
- closed on:  27 Feb 2026, 11:54:13
+ closed on:   5 Mar 2026, 12:17:23
 ---------------------------------------------------------------------------------

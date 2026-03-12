@@ -35,13 +35,13 @@ display "Saved FRED CPIAUCSL to ${FRED_DATA}/CPIAUCSL.csv"
 clear
 
 * ------------------------------------------------------------------------------
-* 2. Merge 2022 flows (01_1), then 2020 trust (01_2), then 2002–2020 flows (01_3–01_12)
+* 2. Merge 2022 flows (01_1), then 2020 trust/untrust (01_2), then 2002–2020 flows (01_3–01_12)
 * ------------------------------------------------------------------------------
 * Run sub-scripts without capture so the first real error surfaces (which script/command failed)
 display "=== 01_1: Merging 2022 flows ==="
 do "${RAW_DATA}/01_1_merge_flow_2022.do"
 
-display "=== 01_2: Merging 2020 trust (rv557-rv570) ==="
+display "=== 01_2: Merging 2020 trust/untrust (rv550-rv570) ==="
 do "${RAW_DATA}/01_2_merge_trust_2020.do"
 
 display "=== 01_3–01_12: Merging 2002–2020 flows ==="
@@ -57,7 +57,7 @@ do "${RAW_DATA}/01_11_merge_flow_2018.do"
 do "${RAW_DATA}/01_12_merge_flow_2020.do"
 
 * ------------------------------------------------------------------------------
-* 5. Clean missing value codes for rv557-rv570: -9 and -8 only
+* 5. Clean missing value codes for rv*_*: -9 and -8 only
 * ------------------------------------------------------------------------------
 use "${CLEANED}/all_data_merged.dta", clear
 capture unab allrv : rv*_*

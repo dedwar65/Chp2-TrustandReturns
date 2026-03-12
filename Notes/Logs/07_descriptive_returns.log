@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_des
 > criptive_returns.log
   log type:  text
- opened on:  27 Feb 2026, 11:46:02
+ opened on:   5 Mar 2026, 12:10:59
 
 . 
 . capture mkdir "${DESCRIPTIVE}"
@@ -993,7 +993,7 @@ file /Volumes/SSD
 
 . postfile sh_handle str32 varname int year double obs mean sd p50 p95 min max us
 > ing "`share_stats'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000008 not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000008 not
     found)
 
 . foreach y of local share_years {
@@ -2083,14 +2083,24 @@ file /Volumes/SSD
  41.     }
  42. }
 (bin=80, start=-1, width=.09837923)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2002.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2002.gph saved
 (bin=80, start=-1, width=.06495191)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2002.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2002.gph saved
 (bin=80, start=-1, width=.03708099)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2002.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2002.gph saved
 (bin=80, start=-.9, width=.06782122)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2002.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2002.gph saved
 (bin=80, start=-.70186644, width=.04180263)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2002.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2002.gph saved
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/returns_hist
@@ -2099,14 +2109,24 @@ file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/returns_hist
     > ogram_agg_2002.png saved as PNG format
 (bin=80, start=-1, width=.10825318)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2022.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r1_hist_2022.gph saved
 (bin=80, start=-1, width=.09089373)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2022.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r2_hist_2022.gph saved
 (bin=80, start=-1, width=.04433351)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2022.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r3_hist_2022.gph saved
 (bin=80, start=-1, width=.08838835)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2022.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r4_hist_2022.gph saved
 (bin=80, start=-.82576699, width=.05444825)
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2022.gph not
+    found)
 file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T/_r5_hist_2022.gph saved
 file /Volumes/SSD
     PRO/Github-forks/Chp2-TrustandReturns/Code/Descriptive/Figures/returns_hist
@@ -2153,7 +2173,7 @@ file /Volumes/SSD
 
 . postfile lor_handle str32 measure int year double cum_pop cum_share using "`lor
 > enz_all'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00001f not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00001f not
     found)
 
 . 
@@ -2162,7 +2182,7 @@ file /Volumes/SSD
 
 . postfile gini_handle str32 measure int year double gini obs total_sum using "`g
 > ini_out'", replace
-(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00001g not
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00001g not
     found)
 
 . 
@@ -2980,5 +3000,5 @@ file /Volumes/SSD
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/07_des
 > criptive_returns.log
   log type:  text
- closed on:  27 Feb 2026, 11:53:19
+ closed on:   5 Mar 2026, 12:16:53
 ---------------------------------------------------------------------------------

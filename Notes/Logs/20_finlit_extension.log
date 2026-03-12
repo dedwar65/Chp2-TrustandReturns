@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_fin
 > lit_extension.log
   log type:  text
- opened on:  26 Feb 2026, 15:07:27
+ opened on:   5 Mar 2026, 12:21:08
 
 . 
 . capture which esttab
@@ -427,8 +427,7 @@
 . }
 
 . 
-. * Combined 2x2 panel table: Q2 by key demographics
-. * Left column: gender + age; right column: race + education
+. * Combined 2x2 panel table: Q2 by key demographics (true row layout: A|C, B|D)
 . file open fh using "`FINLIT_TAB'/finlit_q2_demographics_panels.tex", write repl
 > ace
 
@@ -438,7 +437,7 @@
 >     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
 
 . 
-. * Left column: Panel A (gender)
+. * Row 1, left: Panel A (gender)
 . file write fh "\textbf{Panel A: By gender}\\[0.3em]" _n ///
 >     "\begin{tabular}{lrr}\toprule" _n ///
 >     "Group & N & Mean \\\\ \midrule" _n
@@ -462,10 +461,40 @@
 . restore
 
 . file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
+>     "\end{minipage}" _n ///
+>     "\hfill" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
 
 . 
-. * Left column: Panel B (age)
+. * Row 1, right: Panel C (race)
+. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable race_eth
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(race_eth)
+.     drop if n < 2
+(1 observation deleted)
+.     decode race_eth, gen(race_label)
+.     forvalues r = 1/`=_N' {
+  2.         local rlab = race_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\par\vspace{0.8em}" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
+
+. 
+. * Row 2, left: Panel B (age)
 . file write fh "\textbf{Panel B: By age}\\[0.3em]" _n ///
 >     "\begin{tabular}{lrr}\toprule" _n ///
 >     "Age & N & Mean \\\\ \midrule" _n
@@ -500,33 +529,7 @@
 >     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
 
 . 
-. * Right column: Panel C (race)
-. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Group & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable race_eth
-
-. if !_rc {
-.     preserve
-.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(race_eth)
-.     drop if n < 2
-(1 observation deleted)
-.     decode race_eth, gen(race_label)
-.     forvalues r = 1/`=_N' {
-  2.         local rlab = race_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
-
-. 
-. * Right column: Panel D (education)
+. * Row 2, right: Panel D (education)
 . file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
 >     "\begin{tabular}{lrr}\toprule" _n ///
 >     "Education & N & Mean \\\\ \midrule" _n
@@ -571,8 +574,8 @@
 . file close fh
 
 . 
-. * Combined 2x2 panel table: literacy score by key demographics
-. * Left column: gender + age; right column: race + education
+. * Combined 2x2 panel table: literacy score by key demographics (true row layout
+> : A|C, B|D)
 . file open fh using "`FINLIT_TAB'/finlit_score_demographics_panels.tex", write r
 > eplace
 
@@ -582,7 +585,7 @@
 >     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
 
 . 
-. * Left column: Panel A (gender)
+. * Row 1, left: Panel A (gender)
 . file write fh "\textbf{Panel A: By gender}\\[0.3em]" _n ///
 >     "\begin{tabular}{lrr}\toprule" _n ///
 >     "Group & N & Mean \\\\ \midrule" _n
@@ -606,10 +609,40 @@
 . restore
 
 . file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
+>     "\end{minipage}" _n ///
+>     "\hfill" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
 
 . 
-. * Left column: Panel B (age)
+. * Row 1, right: Panel C (race)
+. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
+>     "\begin{tabular}{lrr}\toprule" _n ///
+>     "Group & N & Mean \\\\ \midrule" _n
+
+. capture confirm variable race_eth
+
+. if !_rc {
+.     preserve
+.     collapse (mean) m=finlit_score (count) n=finlit_score, by(race_eth)
+.     drop if n < 2
+(1 observation deleted)
+.     decode race_eth, gen(race_label)
+.     forvalues r = 1/`=_N' {
+  2.         local rlab = race_label[`r']
+  3.         local n_s = string(n[`r'], "%9.0f")
+  4.         local m_s = string(m[`r'], "%5.2f")
+  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
+  6.     }
+.     restore
+. }
+
+. file write fh "\bottomrule\end{tabular}" _n ///
+>     "\end{minipage}" _n ///
+>     "\par\vspace{0.8em}" _n ///
+>     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
+
+. 
+. * Row 2, left: Panel B (age)
 . file write fh "\textbf{Panel B: By age}\\[0.3em]" _n ///
 >     "\begin{tabular}{lrr}\toprule" _n ///
 >     "Age & N & Mean \\\\ \midrule" _n
@@ -644,315 +677,7 @@
 >     "\begin{minipage}[t]{0.48\textwidth}\centering" _n
 
 . 
-. * Right column: Panel C (race)
-. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Group & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable race_eth
-
-. if !_rc {
-.     preserve
-.     collapse (mean) m=finlit_score (count) n=finlit_score, by(race_eth)
-.     drop if n < 2
-(1 observation deleted)
-.     decode race_eth, gen(race_label)
-.     forvalues r = 1/`=_N' {
-  2.         local rlab = race_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
-
-. 
-. * Right column: Panel D (education)
-. file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Education & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable educ_yrs
-
-. if !_rc {
-.     preserve
-.     gen byte educ_group = .
-(45,234 missing values generated)
-.     replace educ_group = 1 if educ_yrs < 12
-(12,070 real changes made)
-.     replace educ_group = 2 if educ_yrs == 12
-(13,611 real changes made)
-.     replace educ_group = 3 if inrange(educ_yrs, 13, 15)
-(9,674 real changes made)
-.     replace educ_group = 4 if educ_yrs == 16
-(4,968 real changes made)
-.     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
-(4,262 real changes made)
-.     label values educ_group educ_group_lbl
-.     collapse (mean) m=finlit_score (count) n=finlit_score, by(educ_group)
-.     drop if missing(educ_group) | n < 2
-(1 observation deleted)
-.     decode educ_group, gen(educ_label)
-.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
->  if !missing(educ_label)
-(0 real changes made)
-.     forvalues r = 1/`=_N' {
-  2.         local elab = educ_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`elab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\end{minipage}" _n ///
->     "\end{table}" _n
-
-. file close fh
-
-. 
-. * Option 2: age in standalone column; gender/race/education stacked in other co
-> lumn
-. file open fh using "`FINLIT_TAB'/finlit_q2_demographics_panels_option2.tex", wr
-> ite replace
-
-. file write fh "\begin{table}[htbp]\centering\small" _n ///
->     "\caption{Financial literacy (inflation question) by demographics}" _n ///
->     "\label{tab:finlit_q2_demographics_panels_option2}" _n ///
->     "\begin{minipage}[t]{0.36\textwidth}\centering" _n
-
-. 
-. * Left column: age only
-. file write fh "\textbf{Panel A: By age}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Age & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable age_bin
-
-. if !_rc {
-.     preserve
-.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(age_bin)
-.     drop if missing(age_bin) | n < 2
-(6 observations deleted)
-.     gen int age_group = age_bin
-.     replace age_group = 25 if inrange(age_bin, 25, 45)
-(3 real changes made)
-.     collapse (mean) m (sum) n, by(age_group)
-.     gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4,
->  "%9.0f")
-.     replace age_label = "25--49" if age_group == 25
-(1 real change made)
-.     forvalues r = 1/`=_N' {
-  2.         local alab = age_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`alab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\end{minipage}" _n ///
->     "\hfill" _n ///
->     "\begin{minipage}[t]{0.60\textwidth}\centering" _n
-
-. 
-. * Right column: gender, race, education
-. file write fh "\textbf{Panel B: By gender}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Group & N & Mean \\\\ \midrule" _n
-
-. preserve
-
-. collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(gender)
-
-. drop if n < 2
-(0 observations deleted)
-
-. decode gender, gen(gender_label)
-
-. forvalues r = 1/`=_N' {
-  2.     local glab = gender_label[`r']
-  3.     local n_s = string(n[`r'], "%9.0f")
-  4.     local m_s = string(m[`r'], "%5.2f")
-  5.     file write fh "`glab' & `n_s' & `m_s' \\\\" _n
-  6. }
-
-. restore
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
-
-. 
-. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Group & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable race_eth
-
-. if !_rc {
-.     preserve
-.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(race_eth)
-.     drop if n < 2
-(1 observation deleted)
-.     decode race_eth, gen(race_label)
-.     forvalues r = 1/`=_N' {
-  2.         local rlab = race_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
-
-. 
-. file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Education & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable educ_yrs
-
-. if !_rc {
-.     preserve
-.     gen byte educ_group = .
-(45,234 missing values generated)
-.     replace educ_group = 1 if educ_yrs < 12
-(12,070 real changes made)
-.     replace educ_group = 2 if educ_yrs == 12
-(13,611 real changes made)
-.     replace educ_group = 3 if inrange(educ_yrs, 13, 15)
-(9,674 real changes made)
-.     replace educ_group = 4 if educ_yrs == 16
-(4,968 real changes made)
-.     replace educ_group = 5 if educ_yrs >= 17 & !missing(educ_yrs)
-(4,262 real changes made)
-.     label values educ_group educ_group_lbl
-.     collapse (mean) m=finlit_q2 (count) n=finlit_q2, by(educ_group)
-.     drop if missing(educ_group) | n < 2
-(1 observation deleted)
-.     decode educ_group, gen(educ_label)
-.     replace educ_label = upper(substr(educ_label,1,1)) + substr(educ_label,2,.)
->  if !missing(educ_label)
-(0 real changes made)
-.     forvalues r = 1/`=_N' {
-  2.         local elab = educ_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`elab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\end{minipage}" _n ///
->     "\end{table}" _n
-
-. file close fh
-
-. 
-. file open fh using "`FINLIT_TAB'/finlit_score_demographics_panels_option2.tex",
->  write replace
-
-. file write fh "\begin{table}[htbp]\centering\small" _n ///
->     "\caption{Financial literacy score by demographics}" _n ///
->     "\label{tab:finlit_score_demographics_panels_option2}" _n ///
->     "\begin{minipage}[t]{0.36\textwidth}\centering" _n
-
-. 
-. * Left column: age only
-. file write fh "\textbf{Panel A: By age}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Age & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable age_bin
-
-. if !_rc {
-.     preserve
-.     collapse (mean) m=finlit_score (count) n=finlit_score, by(age_bin)
-.     drop if missing(age_bin) | n < 2
-(6 observations deleted)
-.     gen int age_group = age_bin
-.     replace age_group = 25 if inrange(age_bin, 25, 45)
-(3 real changes made)
-.     collapse (mean) m (sum) n, by(age_group)
-.     gen str age_label = string(age_group, "%9.0f") + "--" + string(age_group+4,
->  "%9.0f")
-.     replace age_label = "25--49" if age_group == 25
-(1 real change made)
-.     forvalues r = 1/`=_N' {
-  2.         local alab = age_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`alab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\end{minipage}" _n ///
->     "\hfill" _n ///
->     "\begin{minipage}[t]{0.60\textwidth}\centering" _n
-
-. 
-. * Right column: gender, race, education
-. file write fh "\textbf{Panel B: By gender}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Group & N & Mean \\\\ \midrule" _n
-
-. preserve
-
-. collapse (mean) m=finlit_score (count) n=finlit_score, by(gender)
-
-. drop if n < 2
-(0 observations deleted)
-
-. decode gender, gen(gender_label)
-
-. forvalues r = 1/`=_N' {
-  2.     local glab = gender_label[`r']
-  3.     local n_s = string(n[`r'], "%9.0f")
-  4.     local m_s = string(m[`r'], "%5.2f")
-  5.     file write fh "`glab' & `n_s' & `m_s' \\\\" _n
-  6. }
-
-. restore
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
-
-. 
-. file write fh "\textbf{Panel C: By race}\\[0.3em]" _n ///
->     "\begin{tabular}{lrr}\toprule" _n ///
->     "Group & N & Mean \\\\ \midrule" _n
-
-. capture confirm variable race_eth
-
-. if !_rc {
-.     preserve
-.     collapse (mean) m=finlit_score (count) n=finlit_score, by(race_eth)
-.     drop if n < 2
-(1 observation deleted)
-.     decode race_eth, gen(race_label)
-.     forvalues r = 1/`=_N' {
-  2.         local rlab = race_label[`r']
-  3.         local n_s = string(n[`r'], "%9.0f")
-  4.         local m_s = string(m[`r'], "%5.2f")
-  5.         file write fh "`rlab' & `n_s' & `m_s' \\\\" _n
-  6.     }
-.     restore
-. }
-
-. file write fh "\bottomrule\end{tabular}" _n ///
->     "\vspace{0.8em}" _n
-
-. 
+. * Row 2, right: Panel D (education)
 . file write fh "\textbf{Panel D: By education}\\[0.3em]" _n ///
 >     "\begin{tabular}{lrr}\toprule" _n ///
 >     "Education & N & Mean \\\\ \midrule" _n
@@ -1352,7 +1077,7 @@ Duplicates in terms of hhidpn
 . tempfile finlit_wide
 
 . save `finlit_wide'
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.00000s saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.00000k saved as
     .dta format
 
 . restore
@@ -2039,5 +1764,5 @@ Done. Log: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_finl
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/20_fin
 > lit_extension.log
   log type:  text
- closed on:  26 Feb 2026, 15:08:11
+ closed on:   5 Mar 2026, 12:21:55
 ---------------------------------------------------------------------------------

@@ -209,6 +209,44 @@ if !_rc {
     gen trust_media_2020 = rv564_2020
 }
 
+* Untrust variables (potential for deception, 2020)
+capture confirm variable rv550_2020
+if !_rc {
+    capture drop untrust_social_security_2020
+    gen untrust_social_security_2020 = rv550_2020
+    label variable untrust_social_security_2020 "Potential deception: Social Security"
+}
+capture confirm variable rv551_2020
+if !_rc {
+    capture drop untrust_medicare_medicaid_2020
+    gen untrust_medicare_medicaid_2020 = rv551_2020
+    label variable untrust_medicare_medicaid_2020 "Potential deception: Medicare/Medicaid"
+}
+capture confirm variable rv552_2020
+if !_rc {
+    capture drop untrust_banks_2020
+    gen untrust_banks_2020 = rv552_2020
+    label variable untrust_banks_2020 "Potential deception: Banks"
+}
+capture confirm variable rv553_2020
+if !_rc {
+    capture drop untrust_advisors_2020
+    gen untrust_advisors_2020 = rv553_2020
+    label variable untrust_advisors_2020 "Potential deception: Financial advisors"
+}
+capture confirm variable rv554_2020
+if !_rc {
+    capture drop untrust_mutual_funds_2020
+    gen untrust_mutual_funds_2020 = rv554_2020
+    label variable untrust_mutual_funds_2020 "Potential deception: Mutual funds"
+}
+capture confirm variable rv555_2020
+if !_rc {
+    capture drop untrust_insurance_2020
+    gen untrust_insurance_2020 = rv555_2020
+    label variable untrust_insurance_2020 "Potential deception: Insurance companies"
+}
+
 * Controls for all waves (one-wave-ahead for returns)
 forvalues w = 5/16 {
     local y = 1990 + (2*`w')
@@ -469,6 +507,8 @@ capture unab _ctrlvars : age_* inlbrf_* married_* censreg_* pop_trust_* regional
 local keepvars hhidpn gender educ_yrs immigrant born_us race_eth ///
     trust_others_2020 trust_social_security_2020 trust_medicare_2020 trust_banks_2020 ///
     trust_advisors_2020 trust_mutual_funds_2020 trust_insurance_2020 trust_media_2020 ///
+    untrust_social_security_2020 untrust_medicare_medicaid_2020 untrust_banks_2020 ///
+    untrust_advisors_2020 untrust_mutual_funds_2020 untrust_insurance_2020 ///
     interest_2020 inflation_2020 risk_div_2020 par_citizen_2020 par_loyalty_2020 population_2020 population_3bin_2020 ///
     depression_2020 health_cond_2020 medicare_2020 medicaid_2020 life_ins_2020 beq_any_2020 ///
     num_divorce_2020 num_widow_2020 ///

@@ -1,0 +1,33 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{FE second-step: FE on trust + trust² + time-invariant}
+\begin{tabular*}{0.9\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{2}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{35 controls}&\multicolumn{1}{c}{37 controls}\\
+\midrule
+trust\_others\_2020   &       -0.00         &        0.02         \\
+                    &      (0.02)         &      (0.02)         \\
+Trust$^2$           &       -0.00         &       -0.00         \\
+                    &      (0.00)         &      (0.00)         \\
+educ\_yrs            &       -0.04\sym{***}&       -0.03\sym{***}\\
+                    &      (0.01)         &      (0.01)         \\
+born\_us             &                     &        0.11\sym{**} \\
+                    &                     &      (0.05)         \\
+censreg\_=1          &                     &        0.00         \\
+                    &                     &         (.)         \\
+censreg\_=2          &                     &        0.11\sym{*}  \\
+                    &                     &      (0.06)         \\
+censreg\_=3          &                     &        0.08\sym{*}  \\
+                    &                     &      (0.05)         \\
+censreg\_=4          &                     &        0.08         \\
+                    &                     &      (0.06)         \\
+married\_            &                     &       -0.27\sym{***}\\
+                    &                     &      (0.04)         \\
+\_cons              &        0.70\sym{***}&        0.47\sym{***}\\
+                    &      (0.08)         &      (0.12)         \\
+\midrule
+Observations        &      575.00         &      572.00         \\
+Adj. R-squared      &        0.09         &        0.21         \\
+\bottomrule
+\end{tabular*}
+\end{table}

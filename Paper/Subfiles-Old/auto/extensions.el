@@ -12,6 +12,7 @@
     "tab:finlit_r5_average"
     "tab:finlit_r5_panel3"
     "tab:fin_trust_summary"
+    "tab:fin_trust_components_corr"
     "tab:fin_trust_avg_panel1"
     "tab:fin_trust_avg_panel2"
     "tab:fin_trust_avg_panel3"

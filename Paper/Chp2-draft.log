@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.16)  2 MAR 2026 12:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.16)  12 MAR 2026 14:21
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1100,7 +1100,7 @@ e_mean_by_year.png  used on input line 73.
 
 
 [7]
-<Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png, id=102
+<Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png, id=103
 , 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_median_by_year.png Gr
 aphic file (type png)
@@ -1108,7 +1108,7 @@ aphic file (type png)
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_bus_mean_me
 dian_by_year.png  used on input line 88.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
-<Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png, id=103
+<Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png, id=104
 , 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_median_by_year.png Gr
 aphic file (type png)
@@ -1117,14 +1117,14 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_stk_mean_me
 dian_by_year.png  used on input line 92.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/cg_safe_mean_median_by_year.png, id=10
-4, 698.61pt x 419.5675pt>
+5, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_safe_mean_median_by_year.png G
 raphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/cg_safe_mean_median_by_year.png>
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_safe_mean_m
 edian_by_year.png  used on input line 98.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
-<Subfiles/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png, id=105,
+<Subfiles/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png, id=106,
  698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png Gra
 phic file (type png)
@@ -1136,7 +1136,7 @@ ian_by_year.png  used on input line 102.
 
 [8 <./Subfiles/../../Code/Descriptive/Figures/interest_income_mean_by_year.png>
 ]
-<Subfiles/../../Code/Descriptive/Figures/cg_ira_mean_median_by_year.png, id=113
+<Subfiles/../../Code/Descriptive/Figures/cg_ira_mean_median_by_year.png, id=114
 , 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_ira_mean_median_by_year.png Gr
 aphic file (type png)
@@ -1151,7 +1151,7 @@ dian_by_year.png  used on input line 111.
 bfiles/../../Code/Descriptive/Figures/cg_safe_mean_median_by_year.png> <./Subfi
 les/../../Code/Descriptive/Figures/cg_re_mean_median_by_year.png> <./Subfiles/.
 ./../Code/Descriptive/Figures/cg_ira_mean_median_by_year.png>]
-<Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png, id=120
+<Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png, id=121
 , 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png Gr
 aphic file (type png)
@@ -1160,7 +1160,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_res_mean_me
 dian_by_year.png  used on input line 123.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png, id=12
-1, 698.61pt x 419.5675pt>
+2, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png G
 raphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png>
@@ -1168,7 +1168,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_m
 edian_by_year.png  used on input line 127.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png, id=12
-3, 698.61pt x 419.5675pt>
+4, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png G
 raphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png>
@@ -1180,7 +1180,7 @@ _mean_by_year.png  used on input line 146.
 [10 <./Subfiles/../../Code/Descriptive/Figures/cg_res_mean_median_by_year.png> 
 <./Subfiles/../../Code/Descriptive/Figures/cg_res2_mean_median_by_year.png>]
 <Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.png, id
-=132, 698.61pt x 419.5675pt>
+=133, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.pn
 g Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.png
@@ -1188,7 +1188,7 @@ g Graphic file (type png)
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/wealth_mean_by
 _year_components.png  used on input line 159.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
-<Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png, id=133, 6
+<Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png, id=134, 6
 98.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png Graph
 ic file (type png)
@@ -1201,7 +1201,7 @@ _year_agg.png  used on input line 163.
 [11 <./Subfiles/../../Code/Descriptive/Figures/flows_by_asset_mean_by_year.png>
  <./Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_components.png>
  <./Subfiles/../../Code/Descriptive/Figures/wealth_mean_by_year_agg.png>]
-<Subfiles/../../Code/Descriptive/Figures/lorenz_income_2020.png, id=141, 698.61
+<Subfiles/../../Code/Descriptive/Figures/lorenz_income_2020.png, id=142, 698.61
 pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/lorenz_income_2020.png Graphic fi
 le (type png)
@@ -1210,7 +1210,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_income_
 2020.png  used on input line 176.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 <Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png, id=
-142, 698.61pt x 419.5675pt>
+143, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png
  Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png>
@@ -1218,7 +1218,7 @@ File: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png
 Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_
 components_2022.png  used on input line 186.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
-<Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png, id=143, 69
+<Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png, id=144, 69
 8.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png Graphi
 c file (type png)
@@ -1227,7 +1227,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/lorenz_wealth_
 agg_2022.png  used on input line 190.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_core_components.png
-, id=144, 698.61pt x 419.5675pt>
+, id=145, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_core_component
 s.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_core_components
@@ -1236,7 +1236,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_mean_by_
 year_core_components.png  used on input line 209.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_debt_long_component
-s.png, id=145, 698.61pt x 419.5675pt>
+s.png, id=146, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_debt_long_comp
 onents.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_debt_long_compo
@@ -1250,7 +1250,7 @@ year_debt_long_components.png  used on input line 213.
 les/../../Code/Descriptive/Figures/lorenz_wealth_components_2022.png> <./Subfil
 es/../../Code/Descriptive/Figures/lorenz_wealth_agg_2022.png>]
 <Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_core_res_ret.png, i
-d=152, 698.61pt x 419.5675pt>
+d=153, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_core_res_ret.p
 ng Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_core_res_ret.pn
@@ -1259,7 +1259,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_mean_by_
 year_core_res_ret.png  used on input line 224.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_debt_long_other.png
-, id=153, 698.61pt x 419.5675pt>
+, id=154, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_debt_long_othe
 r.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_debt_long_other
@@ -1268,7 +1268,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/share_mean_by_
 year_debt_long_other.png  used on input line 228.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/asset_shares_by_labor_inc_pct_2020.png
-, id=154, 698.61pt x 419.5675pt>
+, id=155, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/asset_shares_by_labor_inc_pct_202
 0.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/asset_shares_by_labor_inc_pct_2020
@@ -1277,7 +1277,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/asset_shares_b
 y_labor_inc_pct_2020.png  used on input line 241.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/asset_shares_by_total_inc_pct_2020.png
-, id=155, 698.61pt x 419.5675pt>
+, id=156, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/asset_shares_by_total_inc_pct_202
 0.png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/asset_shares_by_total_inc_pct_2020
@@ -1293,7 +1293,7 @@ _components.png> <./Subfiles/../../Code/Descriptive/Figures/share_mean_by_year_
 core_res_ret.png> <./Subfiles/../../Code/Descriptive/Figures/share_mean_by_year
 _debt_long_other.png>]
 <Subfiles/../../Code/Descriptive/Figures/asset_shares_by_net_pct_2020.png, id=1
-64, 698.61pt x 419.5675pt>
+65, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/asset_shares_by_net_pct_2020.png 
 Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/asset_shares_by_net_pct_2020.png>
@@ -1301,7 +1301,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/asset_shares_b
 y_net_pct_2020.png  used on input line 255.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 <Subfiles/../../Code/Descriptive/Figures/debt_shares_by_labor_inc_pct_2020.png,
- id=165, 698.61pt x 419.5675pt>
+ id=166, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/debt_shares_by_labor_inc_pct_2020
 .png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/debt_shares_by_labor_inc_pct_2020.
@@ -1310,7 +1310,7 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/debt_shares_by
 _labor_inc_pct_2020.png  used on input line 266.
 (pdftex.def)             Requested size: 206.40038pt x 123.95699pt.
 <Subfiles/../../Code/Descriptive/Figures/debt_shares_by_total_inc_pct_2020.png,
- id=166, 698.61pt x 419.5675pt>
+ id=167, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/debt_shares_by_total_inc_pct_2020
 .png Graphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/debt_shares_by_total_inc_pct_2020.
@@ -1325,7 +1325,7 @@ _total_inc_pct_2020.png  used on input line 270.
 t_2020.png> <./Subfiles/../../Code/Descriptive/Figures/asset_shares_by_net_pct_
 2020.png>]
 <Subfiles/../../Code/Descriptive/Figures/debt_shares_by_net_pct_2020.png, id=17
-3, 698.61pt x 419.5675pt>
+4, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Descriptive/Figures/debt_shares_by_net_pct_2020.png G
 raphic file (type png)
 <use Subfiles/../../Code/Descriptive/Figures/debt_shares_by_net_pct_2020.png>
@@ -1549,12 +1549,9 @@ Package pdftex.def Info: Subfiles/../../Code/Descriptive/Figures/depression_vs_
 trust_binscatter.png  used on input line 547.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 ) (./Subfiles/results.tex
-(./Subfiles/../../Code/Regressions/Trust/trust_reg_general.tex)
 
 [32 <./Subfiles/../../Code/Descriptive/Figures/depression_vs_trust_binscatter.p
 ng>]
-
-[33]
 (./Subfiles/../../Code/Regressions/Income/Total/income_trust_general_ihs.tex
 Overfull \hbox (20.65875pt too wide) in alignment at lines 4--38
 [] [] [] [] [] 
@@ -1562,7 +1559,7 @@ Overfull \hbox (20.65875pt too wide) in alignment at lines 4--38
 
 )
 
-[34]
+[33]
 (./Subfiles/../../Code/Regressions/Average/Income/Total/income_trust_general_de
 flwin_ihs.tex
 Overfull \hbox (42.19627pt too wide) in alignment at lines 4--38
@@ -1571,9 +1568,7 @@ Overfull \hbox (42.19627pt too wide) in alignment at lines 4--38
 
 )
 
-[35]
-
-[36]
+[34]
 (./Subfiles/../../Code/Regressions/Returns/Net wealth/returns_r5_trust_general_
 win.tex
 Overfull \hbox (37.18048pt too wide) in alignment at lines 4--39
@@ -1582,87 +1577,156 @@ Overfull \hbox (37.18048pt too wide) in alignment at lines 4--39
 
 )
 
-[37]
+[35]
 
-[38]
+[36]
 (./Subfiles/../../Code/Regressions/Average/Returns/Net wealth/returns_r5_trust_
 general_avg_win.tex
-Overfull \hbox (45.37494pt too wide) in alignment at lines 4--39
+Overfull \hbox (45.37494pt too wide) in alignment at lines 4--46
 [] [] [] [] [] 
  []
 
 )
 
-[39] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r5_win.tex)
+[37] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r5_win.tex)
 
-[40]
+[38]
 
-[41] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r5_spec2_win.tex
+[39] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r5_spec2_win.tex
 Overfull \hbox (33.86443pt too wide) in alignment at lines 4--58
 [] [] [] [] 
  []
 
 )
 
-[42]
+[40]
 Overfull \vbox (69.68579pt too high) has occurred while \output is active []
 
 
 
-[43] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r5_spec3_win.tex)
+[41] (./Subfiles/../../Code/Regressions/Panel/panel_reg_r5_spec3_win.tex)
 
-[44]
+[42]
 
-[45]
+[43]
 
-LaTeX Warning: Reference `fig:fe_dist_r5_win' on page 46 undefined on input lin
-e 108.
+LaTeX Warning: Reference `fig:fe_dist_r5_win' on page 44 undefined on input lin
+e 97.
 
 <Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r5_spec3_win_demeaned_w1
-.png, id=421, 1204.5pt x 876.27374pt>
+.png, id=408, 1204.5pt x 876.27374pt>
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r5_spec3_win_demean
 ed_w1.png Graphic file (type png)
 <use Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r5_spec3_win_demeane
 d_w1.png>
 Package pdftex.def Info: Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_
-r5_spec3_win_demeaned_w1.png  used on input line 112.
+r5_spec3_win_demeaned_w1.png  used on input line 101.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 (./Subfiles/../../Code/Regressions/Panel/panel_fe_on_tinv_r5_win.tex)
 
-[46 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r5_spec3_win_demea
+[44 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_dist_r5_spec3_win_demea
 ned_w1.png>]
-<Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png, id=430, 120
+<Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png, id=417, 120
 4.5pt x 876.27374pt>
 File: Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png Graphic
  file (type png)
 <use Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png>
 Package pdftex.def Info: Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_tr
-ust_win.png  used on input line 131.
+ust_win.png  used on input line 120.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[47]
+[45]
 (./Subfiles/../../Code/Regressions/Other/trust_turning_points_original_results.
 tex)
 
-[48 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png>]
+[46 <./Subfiles/../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png>]
 (./Subfiles/../../Code/Regressions/Other/trust_turning_points_original_results_
 delta.tex)
 
-[49]) (./Subfiles/extensions.tex
+[47]) (./Subfiles/twostage.tex
+(./Subfiles/../../Code/Regressions/2SLS/PredictTrust/trust_reg_general_untrust.
+tex
+Overfull \hbox (17.11629pt too wide) in alignment at lines 4--58
+[] [] [] [] 
+ []
 
-[50] (./Subfiles/../../Code/Descriptive/Tables/finlit_summary.tex)
+)
+
+[48]
+Overfull \vbox (69.68579pt too high) has occurred while \output is active []
+
+
+
+[49]
+(./Subfiles/../../Code/Regressions/2SLS/PredictTrust/trust_reg_depression_iv.te
+x
+Overfull \hbox (59.52554pt too wide) in alignment at lines 3--48
+[] [] [] [] [] 
+ []
+
+)
+
+[50]
+(./Subfiles/../../Code/Regressions/2SLS/PredictTrust/excl_restriction_r5_cs.tex
+
+Overfull \hbox (59.52554pt too wide) in alignment at lines 4--52
+[] [] [] [] [] 
+ []
+
+
+
+[51])
+
+[52]
+
+[53]
+(./Subfiles/../../Code/Regressions/2SLS/PredictTrust/excl_restriction_r5_avg.te
+x
+Overfull \hbox (59.52554pt too wide) in alignment at lines 4--52
+[] [] [] [] [] 
+ []
+
+)
+
+[54]
+
+[55]
+(./Subfiles/../../Code/Regressions/2SLS/PredictTrust/excl_restriction_r5_panel.
+tex
+Overfull \hbox (59.52554pt too wide) in alignment at lines 4--55
+[] [] [] [] [] 
+ []
+
+)
+
+[56]
+Overfull \vbox (33.68579pt too high) has occurred while \output is active []
+
+
+
+[57]
+Overfull \hbox (21.86957pt too wide) in paragraph at lines 56--56
+[][]$ \T1/cmr/m/n/10 are treated as en-doge-nous. Let $\OML/cmm/m/it/10 Z[]$ \T
+1/cmr/m/n/10 de-note the depression-based in-stru-ment vari-ant ($[][]$,
+ []
+
+) (./Subfiles/extensions.tex
+
+[58] (./Subfiles/../../Code/Descriptive/Tables/finlit_summary.tex)
 (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_freq.tex)
+
+[59]
 (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_score_demographics_pane
 ls.tex)
 
-[51]
+[60]
 (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_q2_demographics_panels.
 tex)
 
-[52] (./Subfiles/../../Code/Descriptive/Tables/finlit_trust_corr.tex)
+[61] (./Subfiles/../../Code/Descriptive/Tables/finlit_trust_corr.tex)
 
-[53]
+[62]
 (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_r5_cross_section.tex
 Overfull \hbox (45.37494pt too wide) in alignment at lines 4--47
 [] [] [] [] [] 
@@ -1670,35 +1734,35 @@ Overfull \hbox (45.37494pt too wide) in alignment at lines 4--47
 
 )
 
-[54] (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_r5_average.tex
+[63] (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_r5_average.tex
 Overfull \hbox (12.5971pt too wide) in alignment at lines 4--47
 [] [] [] [] [] 
  []
 
 
 
-[55])
+[64])
 
-[56] (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_r5_panel3.tex
+[65] (./Subfiles/../../Code/Regressions/FinLit/Tables/finlit_r5_panel3.tex
 Overfull \hbox (6.2456pt too wide) in alignment at lines 4--41
 [] [] [] [] [] 
  []
 
 )
 
-[57] (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_summary.tex)
+[66] (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_summary.tex)
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_components_corr.tex)
 
 
-[58] (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel1.tex)
+[67] (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel1.tex)
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel2.tex)
 
-[59] (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel3.tex)
+[68] (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_avg_panel3.tex)
 
 
-[60]
+[69]
 <Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fe_vs_trust_fininst_avg.
-png, id=542, 1204.5pt x 876.27374pt>
+png, id=596, 1204.5pt x 876.27374pt>
 File: Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fe_vs_trust_fininst
 _avg.png Graphic file (type png)
 <use Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fe_vs_trust_fininst_
@@ -1708,9 +1772,9 @@ fe_vs_trust_fininst_avg.png  used on input line 126.
 (pdftex.def)             Requested size: 344.005pt x 250.26207pt.
 
 
-[61]
+[70]
 <Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fin_trust_scree.png, id=
-550, 698.61pt x 419.5675pt>
+603, 698.61pt x 419.5675pt>
 File: Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fin_trust_scree.png
  Graphic file (type png)
 <use Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fin_trust_scree.png>
@@ -1720,31 +1784,31 @@ fin_trust_scree.png  used on input line 141.
 (pdftex.def)             Requested size: 344.005pt x 206.6014pt.
 
 
-[62 <./Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fe_vs_trust_finins
+[71 <./Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fe_vs_trust_finins
 t_avg.png>]
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_loadings.tex)
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_pc1_wgen_avg.tex)
 
-[63 <./Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fin_trust_scree.pn
+[72 <./Subfiles/../../Code/Regressions/Trust/FinInst/Figures/fin_trust_scree.pn
 g>]
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_pc1_wgen_panel3.tex)
 
 
-[64]
+[73]
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_avg.tex)
 
-[65]
+[74]
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_panel1.tex)
 
 
-[66]
+[75]
 (./Subfiles/../../Code/Regressions/Trust/FinInst/fin_trust_pc2_wgen_panel3.tex)
 
 
-[67])
+[76])
 
-[68]
-Overfull \hbox (8.72075pt too wide) in paragraph at lines 68--68
+[77]
+Overfull \hbox (8.72075pt too wide) in paragraph at lines 69--69
 \T1/cmtt/m/n/10 0002828041464498$[]\T1/cmr/m/n/10 . \T1/cmr/m/sc/10 url\T1/cmr/
 m/n/10 : []$\T1/cmtt/m/n/10 https : / / www . aeaweb . org / articles ? id = 10
  . 1257 / 0002828041464498$[]\T1/cmr/m/n/10 . 
@@ -1752,7 +1816,7 @@ m/n/10 : []$\T1/cmtt/m/n/10 https : / / www . aeaweb . org / articles ? id = 10
 
 
 
-[69
+[78
 
 ]
 
@@ -1776,11 +1840,11 @@ Package logreq Info: Writing requests to 'Chp2-draft.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 26424 strings out of 467816
- 519182 string characters out of 5432252
- 1378937 words of memory out of 5000000
- 54271 multiletter control sequences out of 15000+600000
- 650140 words of font info for 95 fonts, out of 8000000 for 9000
+ 26484 strings out of 467816
+ 521950 string characters out of 5432252
+ 1382157 words of memory out of 5000000
+ 54298 multiletter control sequences out of 15000+600000
+ 650766 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  73i,16n,77p,1907b,1502s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
@@ -1797,24 +1861,25 @@ e/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2
 24/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2024
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2024/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2024/tex
-mf-dist/fonts/type1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2024/texmf
--dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/local/texlive/2024/texmf-d
-ist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/2024/texmf-dis
-t/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/2024/texmf-dist/
-fonts/type1/public/cm-super/sfcc1000.pfb></usr/local/texlive/2024/texmf-dist/fo
-nts/type1/public/cm-super/sfrm0600.pfb></usr/local/texlive/2024/texmf-dist/font
-s/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2024/texmf-dist/fonts/
-type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2024/texmf-dist/fonts/ty
-pe1/public/cm-super/sfrm0900.pfb></usr/local/texlive/2024/texmf-dist/fonts/type
-1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/
-public/cm-super/sfrm1200.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/pu
-blic/cm-super/sfti0900.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/publ
-ic/cm-super/sfti1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public
-/cm-super/sftt1000.pfb>
-Output written on Chp2-draft.pdf (69 pages, 3480711 bytes).
+mf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2024
+/texmf-dist/fonts/type1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2024/t
+exmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></usr/local/texlive/2024/tex
+mf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/2024/texmf
+-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/2024/texmf-d
+ist/fonts/type1/public/cm-super/sfcc1000.pfb></usr/local/texlive/2024/texmf-dis
+t/fonts/type1/public/cm-super/sfrm0600.pfb></usr/local/texlive/2024/texmf-dist/
+fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2024/texmf-dist/fo
+nts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2024/texmf-dist/font
+s/type1/public/cm-super/sfrm0900.pfb></usr/local/texlive/2024/texmf-dist/fonts/
+type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/ty
+pe1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2024/texmf-dist/fonts/type
+1/public/cm-super/sfti0900.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/
+public/cm-super/sfti1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/pu
+blic/cm-super/sftt1000.pfb>
+Output written on Chp2-draft.pdf (78 pages, 3500041 bytes).
 PDF statistics:
- 802 PDF objects out of 1000 (max. 8388607)
- 616 compressed objects within 7 object streams
- 214 named destinations out of 1000 (max. 500000)
+ 864 PDF objects out of 1000 (max. 8388607)
+ 667 compressed objects within 7 object streams
+ 231 named destinations out of 1000 (max. 500000)
  246 words of extra memory for PDF output out of 10000 (max. 10000000)
 

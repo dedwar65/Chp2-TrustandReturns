@@ -3,7 +3,7 @@
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/25_reg
 > _trust_fininst.log
   log type:  text
- opened on:  26 Feb 2026, 21:17:37
+ opened on:   5 Mar 2026, 12:21:56
 
 . 
 . capture which esttab
@@ -239,9 +239,6 @@ Descriptive table saved to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Co
 . matrix C = r(C)
 
 . file open fh using "`FININST_TAB'/fin_trust_components_corr.tex", write replace
-(file /Volumes/SSD
-    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/Trust/FinInst/fin_tr
-    > ust_components_corr.tex not found)
 
 . file write fh "\begin{table}[htbp]\centering\small" _n ///
 >     "\caption{.}" _n ///
@@ -289,7 +286,7 @@ Duplicates in terms of hhidpn
 . tempfile fin_trust_wide
 
 . save `fin_trust_wide'
-file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_54027.000004 saved as
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000004 saved as
     .dta format
 
 . restore
@@ -3789,5 +3786,5 @@ Log: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/25_reg_trust_
        log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/25_reg
 > _trust_fininst.log
   log type:  text
- closed on:  26 Feb 2026, 21:18:23
+ closed on:   5 Mar 2026, 12:22:45
 ---------------------------------------------------------------------------------

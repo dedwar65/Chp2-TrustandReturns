@@ -69,6 +69,14 @@ if !_rc local demo_core "i.age_bin `demo_core'"
 capture confirm variable race_eth
 if _rc local demo_race ""
 local ctrl_base "`demo_core' `demo_race' inlbrf_2020"
+local region_term ""
+capture confirm variable censreg
+if !_rc local region_term "i.censreg"
+if "`region_term'" == "" {
+    capture confirm variable censreg_2020
+    if !_rc local region_term "i.censreg_2020"
+}
+local ctrl_base "`ctrl_base' `region_term'"
 
 local drop_base "1.gender 1.race_eth"
 
@@ -180,6 +188,7 @@ foreach pair of local trust_list {
             estadd scalar p_joint_age_bin = . : lin_raw
             estadd scalar p_joint_wealth = . : lin_raw
             estadd scalar p_joint_race = . : lin_raw
+            estadd scalar p_joint_censreg = . : lin_raw
 
             eststo quad_raw: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' if !missing(`y') & !missing(`trust_var'), vce(robust)
             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
@@ -187,6 +196,7 @@ foreach pair of local trust_list {
             estadd scalar p_joint_age_bin = . : quad_raw
             estadd scalar p_joint_wealth = . : quad_raw
             estadd scalar p_joint_race = . : quad_raw
+            estadd scalar p_joint_censreg = . : quad_raw
 
             eststo lin_ctl: regress `y' c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
             estadd scalar p_joint_trust = . : lin_ctl
@@ -226,6 +236,12 @@ foreach pair of local trust_list {
                 estadd scalar p_joint_race = r(p) : lin_ctl
             }
             else estadd scalar p_joint_race = . : lin_ctl
+            if "`region_term'" != "" {
+                capture testparm `region_term'
+                if _rc == 0 estadd scalar p_joint_censreg = r(p) : lin_ctl
+                else estadd scalar p_joint_censreg = . : lin_ctl
+            }
+            else estadd scalar p_joint_censreg = . : lin_ctl
 
             eststo quad_ctl: regress `y' c.`trust_var' c.`trust_var'#c.`trust_var' `full_ret' if !missing(`y') & !missing(`trust_var'), vce(robust)
             quietly testparm c.`trust_var' c.`trust_var'#c.`trust_var'
@@ -266,6 +282,12 @@ foreach pair of local trust_list {
                 estadd scalar p_joint_race = r(p) : quad_ctl
             }
             else estadd scalar p_joint_race = . : quad_ctl
+            if "`region_term'" != "" {
+                capture testparm `region_term'
+                if _rc == 0 estadd scalar p_joint_censreg = r(p) : quad_ctl
+                else estadd scalar p_joint_censreg = . : quad_ctl
+            }
+            else estadd scalar p_joint_censreg = . : quad_ctl
 
             local capt_stub = proper(substr("`stub'", 1, 1)) + substr("`stub'", 2, .)
             local capt_stub = subinstr("`capt_stub'", "_", " ", .)
@@ -277,7 +299,7 @@ foreach pair of local trust_list {
 
             local vlab_trust2 "(`capt_stub')\$^2\$"
 
-            local drop_list "1.gender 1.race_eth"
+            local drop_list "1.gender 1.race_eth 1.censreg 1.censreg_2020"
             capture confirm variable age_bin
             if !_rc {
                 estimates restore lin_ctl
@@ -310,8 +332,8 @@ foreach pair of local trust_list {
                 mtitles("1" "2" "3" "4") ///
                 se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
                 drop(`drop_list' *.age_bin, relax) ///
-                varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S.") ///
-                stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value")) ///
+                varlabels(`trust_var' "Trust" c.`trust_var'#c.`trust_var' "Trust\$^2\$" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" educ_yrs "Years of education" inlbrf_2020 "In labor force" married_2020 "Married" born_us "Born in U.S." 2.censreg "Midwest" 3.censreg "South" 4.censreg "West" 2.censreg_2020 "Midwest" 3.censreg_2020 "South" 4.censreg_2020 "West") ///
+                stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_censreg, labels("Observations" "Adj. R-squared" "Joint test: Trust p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint test: Race p-value" "Joint test: Region p-value")) ///
                 title("Average `ret_label' on `capt_stub' trust (2020)`win_label'") ///
                 addnotes(".") ///
                 alignment(${LATEX_ALIGN}) width(0.85\hsize) nonumbers nonotes

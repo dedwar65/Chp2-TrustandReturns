@@ -1,0 +1,145 @@
+\onlyinsubfile{\setcounter{section}{3}}
+\section{Results}\notinsubfile{\label{sec:results}}
+
+%\setcounter{page}{0}\pagenumbering{arabic}
+\subsection{Trust and economic performance}
+
+\par After examining the determinants of trust, I focus the analysis of the empirical relationship between both income and returns and trust on a subset of measures. For income, I omit the analysis for labor income. I also exclude the analysis of the log of total income. Labor income results are not statistically significant. Given the oversampling of older, retired households, lack of predictive power for trust on labor income is not alarming. Total income results are robust to both log and IHS transformations.
+
+\par For returns, I omit core and core and retirement portfolio results and instead focus the statistical analysis on returns to net wealth only. The results for the smaller portfolio compositions are largely insignificant across specifications (though the results are more encouraging when retirement assets are excluded). Again, with more retirees in the sample, an analysis of retirement assets may take more creative efforts. That said, I show significant that trust is predictive for the raw measure of returns to net wealth, and the relationship is robust to different trimming and winsorization choices.\footnote{This is important given the difficulty with computing returns in the U.S. due to lack of available data on flows in and out of narrowly defined asset classes. }
+
+\subsubsection{Total income and trust}
+
+\par First I test whether the hump-shaped relationship between trust and income in \cite{jbpglg2016} holds for the 2020 HRS cohort. In Table~\ref{tab:income_trust_general_total_ihs}, we see the coefficients for both the linear and quadratic terms are significant; the predictive power survives even when the additional controls important for explaining income are included. Since the goal is to uncover whether there is a maximal level of trust regarding economic performance, then we care about the significance of both trust coefficients. Here, we reject the hypothesis that both coefficients are $0$.\footnote{This rejection of the Wald test for the linear and quadratic trust terms (i.e. reject both coefficients are zero) will be true for most of the models analyzed in this paper.}
+
+\inputtable{../../Code/Regressions/Income/Total/income_trust_general_ihs.tex}
+\label{tab:income_trust_general_total_ihs}
+\FloatBarrier
+
+\par I also conduct the joint Wald test for the null hypotheses that the coefficients on the age bins and race categories are jointly equal to zero. In both cases, the null hypothesis is rejected at conventional significance levels.
+
+\par With income data available from 2002-2022, I consider the statistical relationship between average total income and trust. This can be seen in Table~\ref{tab:income_trust_general_total_deflwin_ihs}. Not only does the pattern persist, but the significance is stronger not only for trust coefficients, but for the other explanatory variables as well. Again, the Wald tests on the coefficients for race and age bins are rejected, meaning each matter for long-run total income.  
+
+\inputtable{../../Code/Regressions/Average/Income/Total/income_trust_general_deflwin_ihs.tex}
+\label{tab:income_trust_general_total_deflwin_ihs}
+\FloatBarrier
+
+\par It is important to note that this is where the assumption regarding constant trust becomes required. For the previous model, all of the variables are contemporaneous. With average total income as the dependent variable, trust is viewed as a persistent trait about respondents that influences economic decisions over time so that it matters for long-run income. \footnote{\cite{Lesmeister2019} is an example of work which also assumes trust is time invariant.}
+
+\subsubsection{Returns to net wealth and trust}
+
+\par The presence of hump-shaped empirical relationship between earnings and trust is important because it aligns with previous literature \cite{jbpglg2016}. Given the oversampling of older and retired households by the HRS, this is an important first step towards using the dataset to argue a similar pattern trust and returns.
+
+\par For earnings and trust, I used contemporaneous measures to see if the HRS results aligned with the literature. Since returns to net wealth are of primary interest, and the inherent struture of returns and financial contracts is about future payoff/repayment, I use the 2020 trust measure to predict returns in 2022 (the following wave of the survey).
+
+Table~\ref{tab:returns_r5_trust_general_win} shows the relationship between 2022 returns to net worth and 2020 trust and other control variables. These cross-section results are discouraging in that, the significance of the trust coefficients erodes when control variables are included. The Wald test on the linear and quadratic term for trust also fails to reject the null hypothesis that the coefficients are both zero.
+
+Among the controls which are significant for returns to net wealth, education is positive and has the strongest predictive power. Race and gender matter here, where all racial minority groups and women take a hit to returns for the cross section. I also conduct Wald tests for the null hypothesis that the coefficients on the age bins, wealth deciles, and race categories are jointly equal to zero. In all three cases, the null hypothesis is rejected at conventional significance levels, indicating that these groups of variables contribute significantly to explaining variation in the returns to net wealth.
+
+\inputtable{../../Code/Regressions/Returns/Net wealth/returns_r5_trust_general_win.tex}
+\label{tab:returns_r5_trust_general_win}
+\FloatBarrier
+
+\par The main empirical object of analysis for this paper is the distribution of returns to net worth for respondents in the HRS from 2002 to 2022. The persistent component of returns is of particular interest to the heterogeneous agent literature, and the panel regression version of the model with individual fixed effects will allow us to describe this components. Evidence of individuals persistently earning different returns on average is motivation for allowing households to be heterogeneous in their returns in the macro modeling framework, which I explore in another paper. %cite 
+
+\par I also inspect the relationship between average annual returns over the period and trust in Table~\ref{tab:returns_r5_trust_general_avg_win}. Here the hump-shaped relationship between trust and returns has empirical support. The individual coefficients are significant, and the Wald test for both the linear and quadratic term suggests that the model with both terms included does better at explaining returns than the model without (when both coefficients are zero). Labor force participation is highly significant and positive for average returns. 
+
+\par Among the controls significant for returns to net wealth, education remains a strong predictor, while gender and race also show notable effects in the analysis over average returns for the period. I conduct Wald tests and find that the null hypothesis is rejected for the coefficients of trust and age bins being jointly equal to zero. 
+
+\inputtable{../../Code/Regressions/Average/Returns/Net wealth/returns_r5_trust_general_avg_win.tex}
+\label{tab:returns_r5_trust_general_avg_win}
+\FloatBarrier
+
+\subsection{Returns from 2002-2022}
+
+\par The main empirical analysis of this paper involves computing returns across several years and describing the persistent component of returns. As my motivation is characterizing heterogeneity in the rate of return across individuals, I use model specifcations similar to those in \cite{aflgdmlp20}. First, a pooled OLS regression with a baseline set of controls. Second, a similar pooled regression aimed at controlling for risk exposure. Each of these specifications are captupred by the linear panel data regression model \[r^{net}_{i,t} = \alpha +  X_{i,t}'\beta + \varepsilon_{i,t}\] where $X_{i,t}$ the set of regressors includes both time-varying and time-invariant demographic variables, as well as the trust measure as linear or with both linear and quadratic terms present. 
+
+\par The third specification has two stages. I begin with a panel regression including individual and year fixed effects along with the time-invariant regressors from the second model. This regression model is extended so that the error term $\varepsilon_{i,t}$ can be written as \[\varepsilon_{i,t} = f_{i,t} + e_{i,t},\] where $e_{i,t}$ may possibly be serially correlated. Then I regress the estimated individual fixed effect onto the time invariant regressors \[\hat{f}_{i,t} = \bar{X}_{i,t} + u_{i,t},\] where $\bar{X}_{i,t}$ is the set of time-invariant regressor (subset of the full set of controls). This will give us a sense of how the persistent component changes with the variables excluded from the first stage. 
+
+\subsubsection{The pooled regression with constant trust}
+
+\par In Table~\ref{tab:panel_reg_r5_win}, I show three versions of the model: no trust term, linear trust term, both linear and quadratic terms. The time-invariant trust measure displays the hump-shaped relationship for returns to net wealth in terms inference on the estimated coefficients and the joint Wald test.
+
+\inputtable{../../Code/Regressions/Panel/panel_reg_r5_win.tex}
+\label{tab:panel_reg_r5_win}
+\FloatBarrier
+
+\par Education and marital status also have strong predictive power in the panel setting. Along with the general trust meausre, the Wald tests are rejected for the coefficients on age bins, wealth deciles, and year fixed effects being jointly equal to zero. 
+
+\subsubsection{Controlling for risk exposure}
+
+\par The key point about the documented persistent component to returns is that, even when controlling for risk preferences and exposure, individuals systematic earn different returns on the same assets\footnote{This point is further corroborated by evidence of heterogeneity in returns on safe assets like deposit accounts. An example from the academic literature is \cite{Deuflhard14}, but one can compare rates offered on deposit account at commercial banks like Bank of America versus local banks and see similar discrepancies in everyday life.}. Moreover, the descriptive statistics for mean returns show that returns do not seem stable over the time period (ex.\ Global Financial Crisis). To account for risk exposure in this environment, I add full interaction terms between shares invested in given asset classes (core, retirement, residential) and year. The regression results for the return measures are given in Table~\ref{tab:panel_reg_r5_spec2_win}. 
+
+\inputtable{../../Code/Regressions/Panel/panel_reg_r5_spec2_win.tex}
+\label{tab:panel_reg_r5_spec2_win}
+\FloatBarrier
+
+\par The predictive power of the trust coefficents survives after controlling for risk. Although the uninteracted terms for shares in various asset classes are not signficant, the performance for all asset classes and for the \say{Other debt} liability regarding the Wald test suggests that portfolio allocation among these assets and debt over the time period is explanatory for the variation in returns.  
+
+\par Education and marital status remain highly predictive as well even after controlling for risk exposure. Along with the general trust measure, the Wald tests are rejected for the coefficients on age bins, wealth deciles, region, and year fixed effects being jointly equal to zero. The interaction terms between asset class shares and year are also jointly significant for all asset classes and for the \say{Other debt} liabilities class.
+
+\subsubsection{Fixed effects and the persistent component of returns}
+
+\par Evidence of a maximal level of trust associated with returns to net wealth is a novel extension of the findings by \cite{jbpglg2016}. I now turn attention to estimating the persistent component of returns by estimated the model with individual fixed effects. Notably, inclusion of this term will require we drop the time-invariant regressors from the set of control variables. 
+
+\par In this setting, the coefficents on the uninteracted share terms for all of the available asset (core, retirement, residential) and liabilities (long, other) are now significant, which can be seen in Table~\ref{tab:panel_reg_r5_spec3_win}.
+
+\inputtable{../../Code/Regressions/Panel/panel_reg_r5_spec3_win.tex}
+\label{tab:panel_reg_r5_spec3_win}
+\FloatBarrier
+
+\par Employment status and marital status are significant predictors of returns to net wealth when fixed effects are included. Wald tests reject the null hypothesis that the coefficients on age bins, wealth deciles, and year fixed effects are jointly equal to zero, indicating their relevance in explaining within-individual return variation. The asset share variables (core, IRA, residential) and debt shares (long-term and other) are also jointly significant, confirming the importance of portfolio composition even after controlling for individual fixed effects.
+
+\par In terms of the estimated fixed effect, Table~\ref{tab:panel_reg_r5_spec3_win} shows that a large share of total variance is captured by $\rho$, which is evidence in favor of heterogeneity in returns across respondents. Consistent with this, $\sigma_u$ (the standard deviation of person-specific intercepts) is sizable, suggesting substantial persistent differences in return levels across individuals.
+
+\par By contrast, $\sigma_e$ captures the remaining within-person time variation in returns that is not explained by observed controls. The within-$R^2$ is therefore interpreted as the share of within-respondent return movements explained by the included time-varying covariates -- about only a third of the within-person variation in returns is left after controlling for observables, and importantly, individual fixed effects.
+
+\par The distribution of estimated individual fixed effects (demeaned, winsorized top/bottom $1\%$) from this model is shown in the following figure \ref{fig:fe_dist_r5_win}. The is centered close to zero, which indicates that most households have only modest persistent deviations from the return predicted by observed covariates and year effects. Relative to the Norwegian benchmark, the HRS distribution is visibly more compressed and right-skewed: there is a longer positive tail and fewer large negative fixed effects. This pattern is consistent with a small group of households exhibiting persistently higher net-wealth returns, while most households cluster around near-zero persistent effects.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_dist_r5_spec3_win_demeaned_w1.png}
+\caption{FE distribution: returns to net wealth}
+\label{fig:fe_dist_r5_spec3_win_demeaned_w1}
+\end{figure}
+\FloatBarrier
+
+\par In the second stage, I  predict the estimated fixed effects using the time-invariantregressors (education, gender, race, born in U.S., trust). The second-stage results for winsorized returns to net wealth are given in Table~\ref{tab:panel_fe_on_tinv_r5_win}.
+
+\inputtable{../../Code/Regressions/Panel/panel_fe_on_tinv_r5_win.tex}
+\label{tab:panel_fe_on_tinv_r5_win}
+\FloatBarrier
+
+\par  The estimated individual fixed effect is the average return for an individual after removing what part of average returns is predicted by the time-varying regressors. Race and education are predictive for the fixed effect, but unfortunately the trust variable is no longer significant for any version of the model. 
+%% explanation for coefficients for race, gender, and education here. Correlation table wwith the time-varying regressors? 
+
+\par Although the trust coefficients fail to reject the test that they are equal to $0$, I present a figure ~\ref{fig:fe_vs_trust_win} of the relationship between estimated fixed effects and trust here. Withstanding some observations, it does seem that the maximal levels of the estimated fixed effect are associated with the medium range of trust values between $0$ and $10$. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{../../Code/Regressions/Panel/Figures/fe_vs_trust_win.png}
+\caption{FE vs.\ trust (5 percent winsorized)}
+\label{fig:fe_vs_trust_win}
+\end{figure}
+\FloatBarrier
+
+\subsection{The ``right amount of trust'' in the HRS}
+
+\par The model specifications including both a linear and quadratic term for trust are of the form \[r^{net}_{i,t} = \alpha + \beta_1 \textit{Trust}_i + \beta_2 \textit{Trust}_i^2 + X_i'\gamma + \varepsilon_i\]. Taking the partial derivative with respect to trust is \[\frac{\partial r^{net}_{i,t} }{\partial \textit{Trust}_i} = \beta_1 + 2\beta_2 \textit{Trust}_i\]. Setting this to zero yields the critical point \(\textit{Trust}^* = \frac{-\beta_1}{2\beta_2} \). When \(\hat\beta_1 \geq 0,\hat\beta_2 \leq 0\) the relationship is hump-shaped (concave) and the estimated level of trust which maximizes returns to net wealth is \[\textit{Trust}^* = \frac{-\hat\beta_1}{2\hat\beta_2} \].
+
+\subsubsection{The maximal level of trust for income and returns}
+
+\par Table~\ref{tab:trust_turning_points_original_results} reports the turning point \(\textit{Trust}^*\) for each specification, along with \(\hat\beta_1\), \(\hat\beta_2\), whether both coefficients are individually significant, and the joint test p-value.
+
+\inputtable{../../Code/Regressions/Other/trust_turning_points_original_results.tex}
+\label{tab:trust_turning_points_original_results}
+\FloatBarrier
+
+\par Across all six specifications, \(\hat\beta_1 > 0\) and \(\hat\beta_2 < 0\), so the relationship is hump-shaped and \(\textit{Trust}^*\) is a maximum. Both trust coefficients are individually significant in five of the six specifications: total income in 2022, average total income, average returns to net worth, and returns to net worth in panel specifications 1 and 2. The Wald test for the linear and quadratic trust terms is rejected at the \(5\%\) level in average total income, average returns to net worth, and both panel specifications. Estimated trust \(\textit{Trust}^*\) associated with maximal economic performance ranges from about \(5.3\) for average total income to \(7.4\) for returns to net worth in the baseline panel specification, and in every case it lies within the observed trust scale \([0, 10]\).
+
+\subsubsection{Delta method for estimated trustassociated with maximal economic performance}
+
+\par Because \(\textit{Trust}^*\) is a nonlinear function of \(\hat\beta_1\) and \(\hat\beta_2\), Stata uses the delta method to approximate its standard error. Table~\ref{tab:trust_turning_points_original_results_delta} reports \(\textit{Trust}^*\), SE\((\textit{Trust}^*\)), $95\%$ confidence intervals, and p-values which test \(H_0: \textit{Trust}^* = 0\). 
+\inputtable{../../Code/Regressions/Other/trust_turning_points_original_results_delta.tex}
+\label{tab:trust_turning_points_original_results_delta}
+\FloatBarrier

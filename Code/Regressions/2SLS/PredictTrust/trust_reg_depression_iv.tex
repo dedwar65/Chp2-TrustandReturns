@@ -1,0 +1,49 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{No lag}&\multicolumn{1}{c}{One lag}&\multicolumn{1}{c}{Two lags}&\multicolumn{1}{c}{Ever depressed}\\
+\midrule
+Female              &        0.28         &        0.38\sym{*}  &        0.42\sym{**} &        0.32         \\
+                    &      (0.21)         &      (0.21)         &      (0.21)         &      (0.21)         \\
+Years of education  &        0.04         &        0.03         &        0.04         &        0.03         \\
+                    &      (0.04)         &      (0.04)         &      (0.04)         &      (0.04)         \\
+Married             &        0.09         &        0.13         &        0.11         &        0.12         \\
+                    &      (0.22)         &      (0.22)         &      (0.23)         &      (0.22)         \\
+NH Black            &       -1.13\sym{***}&       -1.16\sym{***}&       -1.16\sym{***}&       -1.06\sym{***}\\
+                    &      (0.27)         &      (0.28)         &      (0.28)         &      (0.27)         \\
+Hispanic            &       -0.18         &       -0.04         &        0.01         &       -0.21         \\
+                    &      (0.37)         &      (0.39)         &      (0.39)         &      (0.36)         \\
+NH Other            &       -0.75         &       -0.91         &       -0.91         &       -0.70         \\
+                    &      (0.54)         &      (0.59)         &      (0.60)         &      (0.54)         \\
+In labor force      &        0.02         &        0.01         &        0.02         &        0.04         \\
+                    &      (0.21)         &      (0.22)         &      (0.22)         &      (0.21)         \\
+Midwest             &        0.42         &        0.52         &        0.52         &        0.47         \\
+                    &      (0.32)         &      (0.33)         &      (0.34)         &      (0.31)         \\
+South               &        0.27         &        0.47         &        0.48         &        0.31         \\
+                    &      (0.29)         &      (0.31)         &      (0.32)         &      (0.29)         \\
+West                &        0.35         &        0.43         &        0.45         &        0.40         \\
+                    &      (0.31)         &      (0.34)         &      (0.35)         &      (0.31)         \\
+Born in U.S.        &        0.62\sym{**} &        0.60\sym{*}  &        0.58\sym{*}  &        0.60\sym{*}  \\
+                    &      (0.31)         &      (0.33)         &      (0.34)         &      (0.31)         \\
+Depression (no lag) &       -0.11\sym{**} &                     &                     &                     \\
+                    &      (0.05)         &                     &                     &                     \\
+Depression (lag 1)  &                     &       -0.19\sym{***}&       -0.17\sym{**} &                     \\
+                    &                     &      (0.05)         &      (0.08)         &                     \\
+Depression (lag 2)  &                     &                     &       -0.04         &                     \\
+                    &                     &                     &      (0.08)         &                     \\
+Ever depressed      &                     &                     &                     &       -0.79\sym{***}\\
+                    &                     &                     &                     &      (0.25)         \\
+Constant            &       -0.01         &       -0.32         &       -0.33         &        0.70         \\
+                    &      (0.73)         &      (0.75)         &      (0.76)         &      (0.78)         \\
+\midrule
+Observations        &      663.00         &      616.00         &      607.00         &      663.00         \\
+Adj. R-squared      &        0.12         &        0.14         &        0.14         &        0.13         \\
+Joint test: Age bins p-value&        0.00         &        0.00         &        0.00         &        0.00         \\
+Joint test: Wealth deciles p-value&        0.02         &        0.02         &        0.03         &        0.01         \\
+Joint test: Race p-value&        0.00         &        0.00         &        0.00         &        0.00         \\
+Joint test: Region p-value&        0.57         &        0.40         &        0.42         &        0.47         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize .}\\
+\end{tabular*}
+}

@@ -1,0 +1,2225 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/35_r
+> educed_form.log
+  log type:  text
+ opened on:  12 Mar 2026, 19:40:17
+
+. 
+. * ----------------------------------------------------------------------
+. * Load processed analysis data
+. * ----------------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. set showbaselevels off
+
+. 
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "35) REDUCED FORM"
+35) REDUCED FORM
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. display "Data: ${PROCESSED}/analysis_ready_processed.dta"
+Data: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Processing/analys
+> is_ready_processed.dta
+
+. display "Log: ${LOG_DIR}/35_reduced_form.log"
+Log: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/35_reduced_f
+> orm.log
+
+. 
+. * ----------------------------------------------------------------------
+. * Core variables
+. * ----------------------------------------------------------------------
+. capture confirm variable trust_others_2020
+
+. if _rc {
+.     display as error "35: trust_others_2020 not found. Exiting."
+.     log close
+.     exit 0
+. }
+
+. 
+. capture confirm variable r5_annual_avg_w5
+
+. if _rc {
+.     display as error "35: r5_annual_avg_w5 not found. Exiting."
+.     log close
+.     exit 0
+. }
+
+. 
+. capture drop trust_others_2020_sq
+
+. gen double trust_others_2020_sq = trust_others_2020 * trust_others_2020
+(44,334 missing values generated)
+
+. 
+. capture confirm variable age_bin
+
+. if _rc {
+.     capture confirm variable age_2020
+.     if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+. }
+
+. 
+. capture drop educ_cat
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     gen byte educ_cat = .
+(45,234 missing values generated)
+.     replace educ_cat = 1 if educ_yrs < 12
+(12,070 real changes made)
+.     replace educ_cat = 2 if educ_yrs == 12
+(13,611 real changes made)
+.     replace educ_cat = 3 if educ_yrs > 12 & educ_yrs < 16
+(9,674 real changes made)
+.     replace educ_cat = 4 if educ_yrs == 16
+(4,968 real changes made)
+.     replace educ_cat = 5 if educ_yrs > 16 & !missing(educ_yrs)
+(4,262 real changes made)
+.     capture label drop educ_lbl
+.     label define educ_lbl 1 "Less HS" 2 "HS Grad" 3 "Some College" 4 "College
+> " 5 "Postgrad"
+.     label values educ_cat educ_lbl
+. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Factor-variable expansions for pwcorr / sample definition
+. * ----------------------------------------------------------------------
+. local corr_gender_vars ""
+
+. local corr_age_vars ""
+
+. local corr_educ_vars ""
+
+. local corr_race_vars ""
+
+. local corr_inlbrf_vars ""
+
+. local corr_factor_note ""
+
+. 
+. capture confirm variable gender
+
+. if !_rc {
+.     quietly levelsof gender if !missing(gender), local(gender_levels)
+.     local first_gender = 1
+.     foreach lvl of local gender_levels {
+  2.         if `first_gender' {
+  3.             local gender_base "`lvl'"
+  4.             local first_gender = 0
+  5.             continue
+  6.         }
+  7.         local dname "corr_gender_`lvl'"
+  8.         capture drop `dname'
+  9.         gen byte `dname' = gender == `lvl' if !missing(gender)
+ 10.         local corr_gender_vars "`corr_gender_vars' `dname'"
+ 11.     }
+.     if "`gender_base'" != "" local corr_factor_note "`corr_factor_note' gende
+> r(base=`gender_base')"
+. }
+
+. 
+. capture confirm variable age_bin
+
+. if !_rc {
+.     quietly levelsof age_bin if !missing(age_bin), local(age_levels)
+.     local first_age = 1
+.     foreach lvl of local age_levels {
+  2.         if `first_age' {
+  3.             local age_base "`lvl'"
+  4.             local first_age = 0
+  5.             continue
+  6.         }
+  7.         local dname "corr_agebin_`lvl'"
+  8.         capture drop `dname'
+  9.         gen byte `dname' = age_bin == `lvl' if !missing(age_bin)
+ 10.         local corr_age_vars "`corr_age_vars' `dname'"
+ 11.     }
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+(29,511 missing values generated)
+.     if "`age_base'" != "" local corr_factor_note "`corr_factor_note' age_bin(
+> base=`age_base')"
+. }
+
+. 
+. capture confirm variable educ_cat
+
+. if !_rc {
+.     quietly levelsof educ_cat if !missing(educ_cat), local(educ_levels)
+.     local first_educ = 1
+.     foreach lvl of local educ_levels {
+  2.         if `first_educ' {
+  3.             local educ_base "`lvl'"
+  4.             local first_educ = 0
+  5.             continue
+  6.         }
+  7.         local dname "corr_educ_cat_`lvl'"
+  8.         capture drop `dname'
+  9.         gen byte `dname' = educ_cat == `lvl' if !missing(educ_cat)
+ 10.         local corr_educ_vars "`corr_educ_vars' `dname'"
+ 11.     }
+(649 missing values generated)
+(649 missing values generated)
+(649 missing values generated)
+(649 missing values generated)
+.     if "`educ_base'" != "" local corr_factor_note "`corr_factor_note' educ_ca
+> t(base=`educ_base')"
+. }
+
+. 
+. capture confirm variable race_eth
+
+. if !_rc {
+.     quietly levelsof race_eth if !missing(race_eth), local(race_levels)
+.     local first_race = 1
+.     foreach lvl of local race_levels {
+  2.         if `first_race' {
+  3.             local race_base "`lvl'"
+  4.             local first_race = 0
+  5.             continue
+  6.         }
+  7.         local dname "corr_race_eth_`lvl'"
+  8.         capture drop `dname'
+  9.         gen byte `dname' = race_eth == `lvl' if !missing(race_eth)
+ 10.         local corr_race_vars "`corr_race_vars' `dname'"
+ 11.     }
+(584 missing values generated)
+(584 missing values generated)
+(584 missing values generated)
+.     if "`race_base'" != "" local corr_factor_note "`corr_factor_note' race_et
+> h(base=`race_base')"
+. }
+
+. 
+. capture confirm variable inlbrf_2020
+
+. if !_rc local corr_inlbrf_vars "inlbrf_2020"
+
+. 
+. local wealth_r5_vars ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wealth_r5_vars "`wealth_r5_vars' wealth_d`d'_2020"
+  4. }
+
+. 
+. local reg_ctrl_age ""
+
+. if trim("`corr_age_vars'") != "" local reg_ctrl_age "i.age_bin"
+
+. local reg_ctrl_inlbrf ""
+
+. if trim("`corr_inlbrf_vars'") != "" local reg_ctrl_inlbrf "inlbrf_2020"
+
+. local reg_ctrl_educ ""
+
+. if trim("`corr_educ_vars'") != "" local reg_ctrl_educ "i.educ_cat"
+
+. local reg_ctrl_gender ""
+
+. if trim("`corr_gender_vars'") != "" local reg_ctrl_gender "i.gender"
+
+. local reg_ctrl_race ""
+
+. if trim("`corr_race_vars'") != "" local reg_ctrl_race "i.race_eth"
+
+. 
+. local r5_ctrls "`wealth_r5_vars' `reg_ctrl_age' `reg_ctrl_inlbrf' `reg_ctrl_e
+> duc'"
+
+. 
+. display "Expanded factor controls for pwcorr: `corr_factor_note'"
+Expanded factor controls for pwcorr:  gender(base=1) age_bin(base=20) educ_cat(
+> base=1) race_eth(base=1)
+
+. 
+. * ----------------------------------------------------------------------
+. * 1) Common-sample pwcorr
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "1) COMMON SAMPLE PWCORR"
+1) COMMON SAMPLE PWCORR
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. 
+. local corr_full "r5_annual_avg_w5 trust_others_2020 trust_others_2020_sq `wea
+> lth_r5_vars' `corr_age_vars' `corr_inlbrf_vars' `corr_educ_vars'"
+
+. tempvar common_sample
+
+. gen byte `common_sample' = 1
+
+. markout `common_sample' `corr_full'
+
+. quietly count if `common_sample' == 1
+
+. local common_n = r(N)
+
+. 
+. display "Variables in common-sample definition: `corr_full'"
+Variables in common-sample definition: r5_annual_avg_w5 trust_others_2020 trust
+> _others_2020_sq  wealth_d2_2020 wealth_d3_2020 wealth_d4_2020 wealth_d5_2020 
+> wealth_d6_2020 wealth_d7_2020 wealth_d8_2020 wealth_d9_2020 wealth_d10_2020  
+> corr_agebin_25 corr_agebin_30 corr_agebin_35 corr_agebin_40 corr_agebin_45 co
+> rr_agebin_50 corr_agebin_55 corr_agebin_60 corr_agebin_65 corr_agebin_70 corr
+> _agebin_75 corr_agebin_80 corr_agebin_85 corr_agebin_90 corr_agebin_95 corr_a
+> gebin_100 inlbrf_2020  corr_educ_cat_2 corr_educ_cat_3 corr_educ_cat_4 corr_e
+> duc_cat_5
+
+. display "Common-sample observations: `common_n'"
+Common-sample observations: 595
+
+. 
+. if `common_n' == 0 {
+.     display as error "35: Common sample has zero observations. Exiting."
+.     log close
+.     exit 0
+. }
+
+. 
+. display _n "--- pwcorr (sig, obs) ---"
+
+--- pwcorr (sig, obs) ---
+
+. pwcorr `corr_full', sig obs
+
+             | r5_ann~5 trust_.. trust_~q wealth.. wealth.. wealth.. wealth..
+-------------+---------------------------------------------------------------
+r5_annual_~5 |   1.0000 
+             |
+             |    28327
+             |
+trust_o~2020 |   0.0904   1.0000 
+             |   0.0132
+             |      750      900
+             |
+trust_othe~q |   0.0317   0.9381   1.0000 
+             |   0.3855   0.0000
+             |      750      900      900
+             |
+wealth_d2~20 |  -0.0738  -0.1600  -0.0671   1.0000 
+             |   0.0000   0.0000   0.0821
+             |    10918      673      673    11820
+             |
+wealth_d3~20 |   0.1000   0.0448   0.0399  -0.1104   1.0000 
+             |   0.0000   0.2454   0.3014   0.0000
+             |    10918      673      673    11820    11820
+             |
+wealth_d4~20 |   0.0180  -0.0587  -0.0397  -0.1105  -0.1105   1.0000 
+             |   0.0599   0.1279   0.3036   0.0000   0.0000
+             |    10918      673      673    11820    11820    11820
+             |
+wealth_d5~20 |   0.0408   0.0145   0.0110  -0.1108  -0.1108  -0.1109   1.0000 
+             |   0.0000   0.7082   0.7749   0.0000   0.0000   0.0000
+             |    10918      673      673    11820    11820    11820    11820
+             |
+wealth_d6~20 |  -0.0066  -0.0534  -0.0503  -0.1107  -0.1107  -0.1108  -0.1111 
+             |   0.4884   0.1666   0.1929   0.0000   0.0000   0.0000   0.0000
+             |    10918      673      673    11820    11820    11820    11820
+             |
+wealth_d7~20 |  -0.0196   0.0379   0.0181  -0.1107  -0.1108  -0.1108  -0.1112 
+             |   0.0410   0.3266   0.6399   0.0000   0.0000   0.0000   0.0000
+             |    10918      673      673    11820    11820    11820    11820
+             |
+wealth_d8~20 |  -0.0323   0.0851   0.0742  -0.1107  -0.1108  -0.1108  -0.1112 
+             |   0.0007   0.0273   0.0543   0.0000   0.0000   0.0000   0.0000
+             |    10918      673      673    11820    11820    11820    11820
+             |
+wealth_d9~20 |  -0.0440   0.1025   0.0726  -0.1107  -0.1108  -0.1108  -0.1112 
+             |   0.0000   0.0078   0.0599   0.0000   0.0000   0.0000   0.0000
+             |    10918      673      673    11820    11820    11820    11820
+             |
+w~h_d10_2020 |  -0.0366   0.0478   0.0020  -0.1107  -0.1108  -0.1108  -0.1112 
+             |   0.0001   0.2154   0.9582   0.0000   0.0000   0.0000   0.0000
+             |    10918      673      673    11820    11820    11820    11820
+             |
+corr_ageb~25 |  -0.0102  -0.0524  -0.0397        .        .        .        . 
+             |   0.2333   0.1165   0.2344        .        .        .        .
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~30 |   0.0066   0.0560   0.0650   0.0277  -0.0031  -0.0031  -0.0031 
+             |   0.4382   0.0934   0.0512   0.0026   0.7396   0.7395   0.7388
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~35 |  -0.0165  -0.0689  -0.0430   0.0152   0.0035   0.0151   0.0035 
+             |   0.0537   0.0388   0.1979   0.0994   0.7014   0.1000   0.7061
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~40 |   0.0167  -0.0752  -0.0518   0.0367  -0.0018   0.0046  -0.0083 
+             |   0.0506   0.0240   0.1207   0.0001   0.8407   0.6208   0.3653
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~45 |   0.0138   0.0060   0.0024   0.0140   0.0101   0.0024  -0.0016 
+             |   0.1067   0.8578   0.9422   0.1275   0.2704   0.7930   0.8656
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~50 |   0.0142  -0.0681  -0.0468   0.0244  -0.0000   0.0145  -0.0051 
+             |   0.0955   0.0412   0.1606   0.0080   0.9961   0.1138   0.5763
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~55 |   0.0055  -0.1227  -0.1253   0.0006   0.0005   0.0302   0.0043 
+             |   0.5188   0.0002   0.0002   0.9520   0.9572   0.0010   0.6379
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~60 |   0.0272  -0.0106  -0.0287   0.0262   0.0323   0.0105  -0.0078 
+             |   0.0015   0.7502   0.3897   0.0044   0.0004   0.2534   0.3955
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~65 |   0.0248  -0.0365  -0.0533   0.0322   0.0125   0.0006  -0.0093 
+             |   0.0037   0.2743   0.1098   0.0005   0.1725   0.9491   0.3123
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~70 |   0.0263   0.0801   0.0838  -0.0297  -0.0048  -0.0025  -0.0118 
+             |   0.0021   0.0162   0.0119   0.0012   0.6050   0.7834   0.1982
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~75 |  -0.0141   0.0618   0.0550  -0.0251  -0.0319  -0.0270   0.0006 
+             |   0.0988   0.0639   0.0994   0.0063   0.0005   0.0033   0.9448
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~80 |  -0.0453   0.0847   0.0885  -0.0320  -0.0178  -0.0052   0.0127 
+             |   0.0000   0.0110   0.0079   0.0005   0.0534   0.5719   0.1674
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~85 |  -0.0404   0.1251   0.1665   0.0075  -0.0091  -0.0147   0.0211 
+             |   0.0000   0.0002   0.0000   0.4155   0.3216   0.1100   0.0216
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~90 |  -0.0386        .        .  -0.0200   0.0024   0.0178   0.0106 
+             |   0.0000        .        .   0.0299   0.7982   0.0532   0.2495
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_ageb~95 |  -0.0099        .        .   0.0169   0.0103   0.0004   0.0003 
+             |   0.2487        .        .   0.0669   0.2636   0.9610   0.9738
+             |    13689      900      900    11820    11820    11820    11820
+             |
+corr_age~100 |   0.0026        .        .   0.0001   0.0195  -0.0097  -0.0097 
+             |   0.7585        .        .   0.9950   0.0341   0.2928   0.2914
+             |    13689      900      900    11820    11820    11820    11820
+             |
+ inlbrf_2020 |   0.0940  -0.0143  -0.0571  -0.0768   0.0234   0.0188  -0.0178 
+             |   0.0000   0.6690   0.0879   0.0000   0.0118   0.0422   0.0549
+             |    13495      896      896    11621    11621    11621    11621
+             |
+corr_educ_~2 |  -0.0223   0.0091   0.0137   0.0074   0.0320   0.0178   0.0449 
+             |   0.0002   0.7849   0.6820   0.4230   0.0005   0.0537   0.0000
+             |    28234      896      896    11757    11757    11757    11757
+             |
+corr_educ_~3 |   0.0175  -0.0031  -0.0333  -0.0564   0.0062  -0.0157  -0.0032 
+             |   0.0033   0.9260   0.3190   0.0000   0.5021   0.0878   0.7326
+             |    28234      896      896    11757    11757    11757    11757
+             |
+corr_educ_~4 |   0.0155   0.0546   0.0290  -0.0949  -0.0710  -0.0445  -0.0289 
+             |   0.0092   0.1024   0.3860   0.0000   0.0000   0.0000   0.0017
+             |    28234      896      896    11757    11757    11757    11757
+             |
+corr_educ_~5 |   0.0189   0.0391  -0.0010  -0.1082  -0.0809  -0.0687  -0.0515 
+             |   0.0015   0.2423   0.9761   0.0000   0.0000   0.0000   0.0000
+             |    28234      896      896    11757    11757    11757    11757
+             |
+
+             | wealth.. wealth.. wealth.. wealth.. wealth.. corr_~25 corr_~30
+-------------+---------------------------------------------------------------
+wealth_d6~20 |   1.0000 
+             |
+             |    11820
+             |
+wealth_d7~20 |  -0.1111   1.0000 
+             |   0.0000
+             |    11820    11820
+             |
+wealth_d8~20 |  -0.1111  -0.1111   1.0000 
+             |   0.0000   0.0000
+             |    11820    11820    11820
+             |
+wealth_d9~20 |  -0.1111  -0.1111  -0.1111   1.0000 
+             |   0.0000   0.0000   0.0000
+             |    11820    11820    11820    11820
+             |
+w~h_d10_2020 |  -0.1111  -0.1111  -0.1111  -0.1111   1.0000 
+             |   0.0000   0.0000   0.0000   0.0000
+             |    11820    11820    11820    11820    11820
+             |
+corr_ageb~25 |        .        .        .        .        .   1.0000 
+             |        .        .        .        .        .
+             |    11820    11820    11820    11820    11820    15723
+             |
+corr_ageb~30 |  -0.0031  -0.0031  -0.0031  -0.0031  -0.0031  -0.0004   1.0000 
+             |   0.7390   0.7389   0.7389   0.7389   0.7389   0.9588
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~35 |  -0.0081   0.0035  -0.0081  -0.0081  -0.0081  -0.0006  -0.0013 
+             |   0.3779   0.7054   0.3777   0.3777   0.3777   0.9396   0.8700
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~40 |  -0.0019  -0.0147  -0.0147  -0.0147  -0.0147  -0.0010  -0.0021 
+             |   0.8357   0.1096   0.1096   0.1096   0.1096   0.9033   0.7929
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~45 |  -0.0169  -0.0054  -0.0054  -0.0169  -0.0131  -0.0015  -0.0033 
+             |   0.0663   0.5586   0.5586   0.0660   0.1555   0.8489   0.6805
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~50 |   0.0022  -0.0100  -0.0246  -0.0148  -0.0148  -0.0028  -0.0061 
+             |   0.8090   0.2782   0.0075   0.1066   0.1066   0.7215   0.4411
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~55 |  -0.0083  -0.0154  -0.0197  -0.0098  -0.0098  -0.0065  -0.0141 
+             |   0.3669   0.0933   0.0324   0.2881   0.2881   0.4130   0.0769
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~60 |  -0.0278  -0.0300  -0.0279  -0.0314  -0.0286  -0.0066  -0.0142 
+             |   0.0025   0.0011   0.0024   0.0006   0.0019   0.4100   0.0750
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~65 |  -0.0111  -0.0064  -0.0230  -0.0251   0.0151  -0.0062  -0.0134 
+             |   0.2279   0.4880   0.0123   0.0063   0.1003   0.4370   0.0930
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~70 |   0.0032   0.0008   0.0148   0.0320   0.0023  -0.0051  -0.0111 
+             |   0.7241   0.9323   0.1065   0.0005   0.7989   0.5204   0.1648
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~75 |   0.0083   0.0215   0.0248   0.0215   0.0464  -0.0047  -0.0101 
+             |   0.3647   0.0193   0.0069   0.0193   0.0000   0.5581   0.2057
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~80 |   0.0247   0.0196   0.0196   0.0196   0.0061  -0.0046  -0.0099 
+             |   0.0072   0.0335   0.0335   0.0335   0.5094   0.5665   0.2154
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~85 |   0.0048   0.0190   0.0256   0.0179  -0.0184  -0.0033  -0.0072 
+             |   0.6013   0.0387   0.0054   0.0514   0.0459   0.6775   0.3688
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~90 |   0.0262   0.0055   0.0141   0.0003  -0.0203  -0.0020  -0.0044 
+             |   0.0045   0.5503   0.1259   0.9702   0.0276   0.7974   0.5790
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_ageb~95 |   0.0069  -0.0029  -0.0029  -0.0160   0.0036  -0.0011  -0.0023 
+             |   0.4546   0.7496   0.7496   0.0822   0.6965   0.8949   0.7752
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+corr_age~100 |   0.0097   0.0097  -0.0097  -0.0000   0.0000  -0.0003  -0.0008 
+             |   0.2911   0.2917   0.2917   1.0000   1.0000   0.9651   0.9248
+             |    11820    11820    11820    11820    11820    15723    15723
+             |
+ inlbrf_2020 |  -0.0026  -0.0082   0.0046  -0.0207   0.0211   0.0080   0.0159 
+             |   0.7792   0.3746   0.6200   0.0259   0.0230   0.3183   0.0484
+             |    11621    11621    11621    11621    11621    15479    15479
+             |
+corr_educ_~2 |   0.0381   0.0242  -0.0001  -0.0446  -0.1254  -0.0072   0.0062 
+             |   0.0000   0.0086   0.9952   0.0000   0.0000   0.3685   0.4411
+             |    11757    11757    11757    11757    11757    15651    15651
+             |
+corr_educ_~3 |   0.0097   0.0277   0.0159   0.0003  -0.0198   0.0191  -0.0019 
+             |   0.2906   0.0026   0.0840   0.9762   0.0318   0.0168   0.8145
+             |    11757    11757    11757    11757    11757    15651    15651
+             |
+corr_educ_~4 |  -0.0106  -0.0080   0.0291   0.0935   0.1385  -0.0047  -0.0057 
+             |   0.2485   0.3874   0.0016   0.0000   0.0000   0.5562   0.4724
+             |    11757    11757    11757    11757    11757    15651    15651
+             |
+corr_educ_~5 |  -0.0326   0.0142   0.0577   0.0957   0.2083  -0.0043  -0.0110 
+             |   0.0004   0.1248   0.0000   0.0000   0.0000   0.5895   0.1688
+             |    11757    11757    11757    11757    11757    15651    15651
+             |
+
+             | corr_~35 corr_~40 corr_~45 corr_~50 corr_~55 corr_~60 corr_~65
+-------------+---------------------------------------------------------------
+corr_ageb~35 |   1.0000 
+             |
+             |    15723
+             |
+corr_ageb~40 |  -0.0031   1.0000 
+             |   0.7005
+             |    15723    15723
+             |
+corr_ageb~45 |  -0.0048  -0.0077   1.0000 
+             |   0.5465   0.3332
+             |    15723    15723    15723
+             |
+corr_ageb~50 |  -0.0090  -0.0144  -0.0226   1.0000 
+             |   0.2592   0.0702   0.0045
+             |    15723    15723    15723    15723
+             |
+corr_ageb~55 |  -0.0207  -0.0332  -0.0520  -0.0973   1.0000 
+             |   0.0096   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723
+             |
+corr_ageb~60 |  -0.0208  -0.0334  -0.0523  -0.0979  -0.2248   1.0000 
+             |   0.0091   0.0000   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723
+             |
+corr_ageb~65 |  -0.0196  -0.0315  -0.0494  -0.0924  -0.2121  -0.2134   1.0000 
+             |   0.0139   0.0001   0.0000   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+corr_ageb~70 |  -0.0162  -0.0260  -0.0408  -0.0764  -0.1754  -0.1765  -0.1665 
+             |   0.0419   0.0011   0.0000   0.0000   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+corr_ageb~75 |  -0.0148  -0.0237  -0.0372  -0.0696  -0.1598  -0.1608  -0.1517 
+             |   0.0638   0.0029   0.0000   0.0000   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+corr_ageb~80 |  -0.0145  -0.0232  -0.0364  -0.0681  -0.1564  -0.1574  -0.1485 
+             |   0.0696   0.0036   0.0000   0.0000   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+corr_ageb~85 |  -0.0105  -0.0168  -0.0264  -0.0494  -0.1135  -0.1142  -0.1077 
+             |   0.1881   0.0347   0.0009   0.0000   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+corr_ageb~90 |  -0.0065  -0.0104  -0.0163  -0.0305  -0.0701  -0.0705  -0.0665 
+             |   0.4165   0.1923   0.0409   0.0001   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+corr_ageb~95 |  -0.0033  -0.0054  -0.0084  -0.0157  -0.0361  -0.0363  -0.0342 
+             |   0.6758   0.5022   0.2926   0.0489   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+corr_age~100 |  -0.0011  -0.0018  -0.0028  -0.0052  -0.0119  -0.0120  -0.0113 
+             |   0.8900   0.8244   0.7279   0.5150   0.1349   0.1324   0.1558
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+ inlbrf_2020 |   0.0043   0.0525   0.0853   0.1526   0.3004   0.1776  -0.0271 
+             |   0.5951   0.0000   0.0000   0.0000   0.0000   0.0000   0.0007
+             |    15479    15479    15479    15479    15479    15479    15479
+             |
+corr_educ_~2 |  -0.0143  -0.0024  -0.0092  -0.0126  -0.0262  -0.0212  -0.0306 
+             |   0.0742   0.7681   0.2482   0.1144   0.0011   0.0081   0.0001
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+corr_educ_~3 |  -0.0018  -0.0020  -0.0090  -0.0033   0.0231   0.0411   0.0121 
+             |   0.8257   0.8015   0.2588   0.6835   0.0038   0.0000   0.1298
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+corr_educ_~4 |  -0.0054   0.0016   0.0004   0.0199   0.0348   0.0189   0.0174 
+             |   0.5023   0.8379   0.9584   0.0128   0.0000   0.0182   0.0295
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+corr_educ_~5 |  -0.0075  -0.0049   0.0020   0.0038  -0.0181  -0.0281   0.0050 
+             |   0.3470   0.5403   0.8072   0.6343   0.0236   0.0004   0.5337
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+
+             | corr_~70 corr_~75 corr_~80 corr_~85 corr_~90 corr_~95 corr~100
+-------------+---------------------------------------------------------------
+corr_ageb~70 |   1.0000 
+             |
+             |    15723
+             |
+corr_ageb~75 |  -0.1255   1.0000 
+             |   0.0000
+             |    15723    15723
+             |
+corr_ageb~80 |  -0.1228  -0.1119   1.0000 
+             |   0.0000   0.0000
+             |    15723    15723    15723
+             |
+corr_ageb~85 |  -0.0891  -0.0812  -0.0795   1.0000 
+             |   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723
+             |
+corr_ageb~90 |  -0.0550  -0.0501  -0.0491  -0.0356   1.0000 
+             |   0.0000   0.0000   0.0000   0.0000
+             |    15723    15723    15723    15723    15723
+             |
+corr_ageb~95 |  -0.0283  -0.0258  -0.0252  -0.0183  -0.0113   1.0000 
+             |   0.0004   0.0012   0.0015   0.0216   0.1562
+             |    15723    15723    15723    15723    15723    15723
+             |
+corr_age~100 |  -0.0094  -0.0085  -0.0083  -0.0061  -0.0037  -0.0019   1.0000 
+             |   0.2405   0.2849   0.2952   0.4476   0.6392   0.8093
+             |    15723    15723    15723    15723    15723    15723    15723
+             |
+ inlbrf_2020 |  -0.1279  -0.1839  -0.2124  -0.1706  -0.1117  -0.0575  -0.0169 
+             |   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000   0.0358
+             |    15479    15479    15479    15479    15479    15479    15479
+             |
+corr_educ_~2 |  -0.0009   0.0292   0.0460   0.0332   0.0259  -0.0004   0.0118 
+             |   0.9136   0.0003   0.0000   0.0000   0.0012   0.9631   0.1384
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+corr_educ_~3 |   0.0037  -0.0182  -0.0435  -0.0346  -0.0147  -0.0031  -0.0034 
+             |   0.6472   0.0227   0.0000   0.0000   0.0663   0.7021   0.6688
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+corr_educ_~4 |  -0.0091  -0.0248  -0.0428  -0.0193  -0.0172  -0.0081  -0.0034 
+             |   0.2572   0.0019   0.0000   0.0158   0.0313   0.3092   0.6713
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+corr_educ_~5 |   0.0403   0.0127  -0.0001   0.0010   0.0001  -0.0115  -0.0096 
+             |   0.0000   0.1118   0.9931   0.8979   0.9940   0.1496   0.2275
+             |    15651    15651    15651    15651    15651    15651    15651
+             |
+
+             | inl~2020 corr_e~2 corr_e~3 corr_e~4 corr_e~5
+-------------+---------------------------------------------
+ inlbrf_2020 |   1.0000 
+             |
+             |    15479
+             |
+corr_educ_~2 |  -0.0820   1.0000 
+             |   0.0000
+             |    15409    44585
+             |
+corr_educ_~3 |   0.0384  -0.3490   1.0000 
+             |   0.0000   0.0000
+             |    15409    44585    44585
+             |
+corr_educ_~4 |   0.0985  -0.2347  -0.1864   1.0000 
+             |   0.0000   0.0000   0.0000
+             |    15409    44585    44585    44585
+             |
+corr_educ_~5 |   0.0758  -0.2155  -0.1711  -0.1151   1.0000 
+             |   0.0000   0.0000   0.0000   0.0000
+             |    15409    44585    44585    44585    44585
+             |
+
+. 
+. * ----------------------------------------------------------------------
+. * 2) r5 on trust and trust squared (reduced control set)
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "2) r5 ON TRUST AND TRUST SQUARED (REDUCED CONTROL SET)"
+2) r5 ON TRUST AND TRUST SQUARED (REDUCED CONTROL SET)
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. display "Outcome: r5_annual_avg_w5"
+Outcome: r5_annual_avg_w5
+
+. display "Regressions use listwise deletion; N may differ across models."
+Regressions use listwise deletion; N may differ across models.
+
+. display "Controls: `r5_ctrls'"
+Controls:  wealth_d2_2020 wealth_d3_2020 wealth_d4_2020 wealth_d5_2020 wealth_d
+> 6_2020 wealth_d7_2020 wealth_d8_2020 wealth_d9_2020 wealth_d10_2020 i.age_bin
+>  inlbrf_2020 i.educ_cat
+
+. 
+. regress r5_annual_avg_w5 c.trust_others_2020 c.trust_others_2020#c.trust_othe
+> rs_2020 ///
+>     `r5_ctrls', vce(robust)
+
+Linear regression                               Number of obs     =        595
+                                                F(24, 568)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1090
+                                                Root MSE          =     .29635
+
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual_~5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0442464   .0169362     2.61   0.009     .0109812    .0775117
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0033019   .0014611    -2.26   0.024    -.0061717    -.000432
+             |
+wealth_d2~20 |  -.0919312    .095818    -0.96   0.338    -.2801321    .0962698
+wealth_d3~20 |   .0027936   .0712398     0.04   0.969     -.137132    .1427193
+wealth_d4~20 |  -.0467373    .067768    -0.69   0.491    -.1798438    .0863692
+wealth_d5~20 |  -.0241476   .0694771    -0.35   0.728    -.1606109    .1123158
+wealth_d6~20 |  -.0718988    .067816    -1.06   0.290    -.2050996     .061302
+wealth_d7~20 |  -.0838792   .0677163    -1.24   0.216    -.2168841    .0491256
+wealth_d8~20 |  -.0772992   .0681927    -1.13   0.257    -.2112399    .0566415
+wealth_d9~20 |  -.1254876   .0650997    -1.93   0.054    -.2533532     .002378
+w~h_d10_2020 |  -.1179684   .0646366    -1.83   0.069    -.2449244    .0089875
+             |
+     age_bin |
+         40  |   .0338103   .0963456     0.35   0.726    -.1554269    .2230475
+         45  |   .1831431   .2300435     0.80   0.426    -.2686967    .6349829
+         50  |  -.3164216   .1163469    -2.72   0.007    -.5449443   -.0878989
+         55  |   .0676648   .0990448     0.68   0.495     -.126874    .2622036
+         60  |   .0054837   .0598329     0.09   0.927     -.112037    .1230045
+         65  |   -.002147    .055693    -0.04   0.969    -.1115363    .1072423
+         70  |   .0772429   .0590452     1.31   0.191    -.0387306    .1932165
+         75  |   .0379691   .0569418     0.67   0.505    -.0738731    .1498114
+         80  |  -.0177638   .0558033    -0.32   0.750    -.1273698    .0918423
+         85  |  -.0099143   .0601629    -0.16   0.869    -.1280832    .1082546
+             |
+ inlbrf_2020 |   .0912322   .0333962     2.73   0.006     .0256372    .1568272
+             |
+    educ_cat |
+    HS Grad  |   .0570579   .0385953     1.48   0.140    -.0187489    .1328648
+Some Coll..  |   .0659765   .0424233     1.56   0.120    -.0173493    .1493022
+    College  |   .0894828   .0504403     1.77   0.077    -.0095895     .188555
+   Postgrad  |   .0473229   .0486707     0.97   0.331    -.0482737    .1429195
+             |
+       _cons |   .0550034    .067768     0.81   0.417    -.0781031      .18811
+------------------------------------------------------------------------------
+
+. display "--- Joint test: Trust and trust squared ---"
+--- Joint test: Trust and trust squared ---
+
+. testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
+
+ ( 1)  trust_others_2020 = 0
+ ( 2)  c.trust_others_2020#c.trust_others_2020 = 0
+
+       F(  2,   568) =    3.71
+            Prob > F =    0.0251
+
+. if trim("`wealth_r5_vars'") != "" {
+.     display "--- Joint test: Wealth deciles (net wealth) ---"
+--- Joint test: Wealth deciles (net wealth) ---
+.     testparm `wealth_r5_vars'
+
+ ( 1)  wealth_d2_2020 = 0
+ ( 2)  wealth_d3_2020 = 0
+ ( 3)  wealth_d4_2020 = 0
+ ( 4)  wealth_d5_2020 = 0
+ ( 5)  wealth_d6_2020 = 0
+ ( 6)  wealth_d7_2020 = 0
+ ( 7)  wealth_d8_2020 = 0
+ ( 8)  wealth_d9_2020 = 0
+ ( 9)  wealth_d10_2020 = 0
+
+       F(  9,   568) =    1.19
+            Prob > F =    0.3010
+. }
+
+. if trim("`reg_ctrl_age'") != "" {
+.     display "--- Joint test: Age bins ---"
+--- Joint test: Age bins ---
+.     testparm i.age_bin
+
+ ( 1)  40.age_bin = 0
+ ( 2)  45.age_bin = 0
+ ( 3)  50.age_bin = 0
+ ( 4)  55.age_bin = 0
+ ( 5)  60.age_bin = 0
+ ( 6)  65.age_bin = 0
+ ( 7)  70.age_bin = 0
+ ( 8)  75.age_bin = 0
+ ( 9)  80.age_bin = 0
+ (10)  85.age_bin = 0
+
+       F( 10,   568) =    1.69
+            Prob > F =    0.0797
+. }
+
+. if trim("`reg_ctrl_educ'") != "" {
+.     display "--- Joint test: Education categories ---"
+--- Joint test: Education categories ---
+.     testparm i.educ_cat
+
+ ( 1)  2.educ_cat = 0
+ ( 2)  3.educ_cat = 0
+ ( 3)  4.educ_cat = 0
+ ( 4)  5.educ_cat = 0
+
+       F(  4,   568) =    1.01
+            Prob > F =    0.4019
+. }
+
+. 
+. * ======================================================================
+. * PANEL MODEL SEQUENCE
+. * ======================================================================
+. * Load the long panel; use listwise deletion on outcome and controls (like 14
+> ).
+. *   4) Panel sample construction
+. *   5a) Pooled OLS
+. *   5b) FE on shared time-varying specification
+. *   5c) Second-step regression of FE on time-invariant vars
+. *   5d) Matching RE + classic Hausman test
+. *   5e) Substantive RE with trust and trust squared
+. *   5f) CRE/Mundlak test and substantive CRE model
+. 
+. * ----------------------------------------------------------------------
+. * 4) Panel sample construction
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "4) PANEL SAMPLE CONSTRUCTION"
+4) PANEL SAMPLE CONSTRUCTION
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. 
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. set showbaselevels off
+
+. xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+
+. 
+. capture confirm variable trust_others_2020
+
+. if _rc {
+.     display as error "35 panel: trust_others_2020 not found in long panel. Ex
+> iting."
+.     log close
+.     exit 0
+. }
+
+. 
+. capture drop trust_others_2020_sq
+
+. gen double trust_others_2020_sq = trust_others_2020 * trust_others_2020
+(532,008 missing values generated)
+
+. 
+. capture confirm variable r5_annual_w5
+
+. if _rc {
+.     display as error "35 panel: r5_annual_w5 not found in long panel. Exiting
+> ."
+.     log close
+.     exit 0
+. }
+
+. 
+. capture drop panel_educ_cat
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     gen byte panel_educ_cat = .
+(542,808 missing values generated)
+.     replace panel_educ_cat = 1 if educ_yrs < 12
+(144,840 real changes made)
+.     replace panel_educ_cat = 2 if educ_yrs == 12
+(163,332 real changes made)
+.     replace panel_educ_cat = 3 if educ_yrs > 12 & educ_yrs < 16
+(116,088 real changes made)
+.     replace panel_educ_cat = 4 if educ_yrs == 16
+(59,616 real changes made)
+.     replace panel_educ_cat = 5 if educ_yrs > 16 & !missing(educ_yrs)
+(51,144 real changes made)
+.     capture label drop peduc_lbl
+.     label define peduc_lbl 1 "Less HS" 2 "HS Grad" 3 "Some College" 4 "Colleg
+> e" 5 "Postgrad"
+.     label values panel_educ_cat peduc_lbl
+. }
+
+. 
+. * Time-varying controls for the reduced control set
+. local panel_wealth_vars ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local panel_wealth_vars "`panel_wealth_vars' wealth_d`d'"
+  4. }
+
+. local panel_tv_ctrls "`panel_wealth_vars' i.age_bin inlbrf i.year"
+
+. 
+. * Time-invariant controls (absorbed by FE, estimable in RE/CRE/second-step)
+. local panel_tinv_ctrls ""
+
+. capture confirm variable educ_yrs
+
+. if !_rc local panel_tinv_ctrls "`panel_tinv_ctrls' educ_yrs"
+
+. 
+. display "Panel uses listwise deletion on outcome and controls; N may vary acr
+> oss models."
+Panel uses listwise deletion on outcome and controls; N may vary across models.
+
+. 
+. * ----------------------------------------------------------------------
+. * 5a) Pooled OLS
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "5a) POOLED OLS: r5 ON TRUST + TRUST^2 + ALL CONTROLS + YEAR"
+5a) POOLED OLS: r5 ON TRUST + TRUST^2 + ALL CONTROLS + YEAR
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. 
+. display "Outcome: r5_annual_w5"
+Outcome: r5_annual_w5
+
+. display "Sample: listwise deletion on outcome and controls"
+Sample: listwise deletion on outcome and controls
+
+. display "Controls (time-varying): `panel_tv_ctrls'"
+Controls (time-varying):  wealth_d2 wealth_d3 wealth_d4 wealth_d5 wealth_d6 wea
+> lth_d7 wealth_d8 wealth_d9 wealth_d10 i.age_bin inlbrf i.year
+
+. display "Controls (time-invariant): `panel_tinv_ctrls'"
+Controls (time-invariant):  educ_yrs
+
+. display "Trust terms: trust_others_2020 trust_others_2020_sq"
+Trust terms: trust_others_2020 trust_others_2020_sq
+
+. 
+. regress r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_others_2
+> 020 ///
+>     `panel_tv_ctrls' `panel_tinv_ctrls', vce(cluster hhidpn)
+
+Linear regression                               Number of obs     =      2,920
+                                                F(34, 574)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.0439
+                                                Root MSE          =     .39403
+
+                               (Std. err. adjusted for 575 clusters in hhidpn)
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual~5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |    .025784   .0086626     2.98   0.003     .0087697    .0427983
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0019175   .0007663    -2.50   0.013    -.0034226   -.0004125
+             |
+   wealth_d2 |  -.0545353    .077197    -0.71   0.480    -.2061583    .0970877
+   wealth_d3 |   .0828516   .0621436     1.33   0.183     -.039205    .2049082
+   wealth_d4 |   .0484996   .0591978     0.82   0.413    -.0677712    .1647704
+   wealth_d5 |     .06905    .057971     1.19   0.234    -.0448111    .1829111
+   wealth_d6 |    .065733   .0584648     1.12   0.261    -.0490981    .1805641
+   wealth_d7 |   .0205878     .05823     0.35   0.724     -.093782    .1349576
+   wealth_d8 |   .0264234   .0564071     0.47   0.640    -.0843661    .1372128
+   wealth_d9 |   .0747785   .0566882     1.32   0.188    -.0365632    .1861202
+  wealth_d10 |   .0796119   .0568653     1.40   0.162    -.0320775    .1913013
+             |
+    age_bin_ |
+         35  |   .7264365   .0466378    15.58   0.000      .634835    .8180381
+         40  |   .3494665   .1926242     1.81   0.070    -.0288678    .7278008
+         45  |   .4972205   .1079305     4.61   0.000     .2852337    .7092073
+         50  |    .572996   .0862899     6.64   0.000     .4035135    .7424785
+         55  |   .5566898   .0667141     8.34   0.000     .4256563    .6877233
+         60  |   .5827148   .0612963     9.51   0.000     .4623223    .7031072
+         65  |   .5959988   .0609667     9.78   0.000     .4762537    .7157439
+         70  |   .5349931   .0621546     8.61   0.000     .4129149    .6570713
+         75  |   .5431685   .0610498     8.90   0.000     .4232602    .6630767
+         80  |   .4831734   .0673939     7.17   0.000     .3508046    .6155421
+         85  |   .5827986   .0785211     7.42   0.000      .428575    .7370223
+         90  |   .7813833   .3515536     2.22   0.027     .0908949    1.471872
+             |
+     inlbrf_ |   .0281379   .0155887     1.81   0.072    -.0024799    .0587557
+             |
+        year |
+       2004  |   .0067757   .0476095     0.14   0.887    -.0867344    .1002858
+       2006  |   .1165333   .0426448     2.73   0.006     .0327744    .2002923
+       2008  |  -.0048641   .0431552    -0.11   0.910    -.0896255    .0798973
+       2010  |  -.0333799   .0418355    -0.80   0.425    -.1155493    .0487894
+       2012  |   .0078311   .0395645     0.20   0.843    -.0698778    .0855399
+       2014  |   .0701796   .0398828     1.76   0.079    -.0081544    .1485137
+       2016  |   .0664305    .042335     1.57   0.117    -.0167198    .1495808
+       2018  |   .0737313   .0381318     1.93   0.054    -.0011636    .1486262
+       2020  |    .098748   .0385658     2.56   0.011     .0230008    .1744953
+       2022  |   .1997728   .0403048     4.96   0.000     .1206099    .2789356
+             |
+    educ_yrs |  -.0066661   .0024896    -2.68   0.008     -.011556   -.0017763
+       _cons |  -.5237983   .0450553   -11.63   0.000    -.6122917   -.4353049
+------------------------------------------------------------------------------
+
+. estimates store pooled_ols
+
+. 
+. display "--- Joint test: Trust and trust squared ---"
+--- Joint test: Trust and trust squared ---
+
+. testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
+
+ ( 1)  trust_others_2020 = 0
+ ( 2)  c.trust_others_2020#c.trust_others_2020 = 0
+
+       F(  2,   574) =    5.21
+            Prob > F =    0.0057
+
+. if trim("`panel_wealth_vars'") != "" {
+.     display "--- Joint test: Wealth deciles ---"
+--- Joint test: Wealth deciles ---
+.     testparm `panel_wealth_vars'
+
+ ( 1)  wealth_d2 = 0
+ ( 2)  wealth_d3 = 0
+ ( 3)  wealth_d4 = 0
+ ( 4)  wealth_d5 = 0
+ ( 5)  wealth_d6 = 0
+ ( 6)  wealth_d7 = 0
+ ( 7)  wealth_d8 = 0
+ ( 8)  wealth_d9 = 0
+ ( 9)  wealth_d10 = 0
+
+       F(  9,   574) =    1.95
+            Prob > F =    0.0430
+. }
+
+. display "--- Joint test: Age bins ---"
+--- Joint test: Age bins ---
+
+. testparm i.age_bin
+
+ ( 1)  35.age_bin_ = 0
+ ( 2)  40.age_bin_ = 0
+ ( 3)  45.age_bin_ = 0
+ ( 4)  50.age_bin_ = 0
+ ( 5)  55.age_bin_ = 0
+ ( 6)  60.age_bin_ = 0
+ ( 7)  65.age_bin_ = 0
+ ( 8)  70.age_bin_ = 0
+ ( 9)  75.age_bin_ = 0
+ (10)  80.age_bin_ = 0
+ (11)  85.age_bin_ = 0
+ (12)  90.age_bin_ = 0
+
+       F( 12,   574) =   38.66
+            Prob > F =    0.0000
+
+. display "--- Joint test: Year ---"
+--- Joint test: Year ---
+
+. testparm i.year
+
+ ( 1)  2004.year = 0
+ ( 2)  2006.year = 0
+ ( 3)  2008.year = 0
+ ( 4)  2010.year = 0
+ ( 5)  2012.year = 0
+ ( 6)  2014.year = 0
+ ( 7)  2016.year = 0
+ ( 8)  2018.year = 0
+ ( 9)  2020.year = 0
+ (10)  2022.year = 0
+
+       F( 10,   574) =    8.17
+            Prob > F =    0.0000
+
+. 
+. * ----------------------------------------------------------------------
+. * 5b) FE on shared time-varying specification
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "5b) FE: r5 ON TIME-VARYING REDUCED CONTROLS"
+5b) FE: r5 ON TIME-VARYING REDUCED CONTROLS
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. display "Time-varying controls: `panel_tv_ctrls'"
+Time-varying controls:  wealth_d2 wealth_d3 wealth_d4 wealth_d5 wealth_d6 wealt
+> h_d7 wealth_d8 wealth_d9 wealth_d10 i.age_bin inlbrf i.year
+
+. display "(trust and trust^2 are time-invariant; absorbed by FE)"
+(trust and trust^2 are time-invariant; absorbed by FE)
+
+. 
+. xtreg r5_annual_w5 `panel_tv_ctrls', fe vce(cluster hhidpn)
+
+Fixed-effects (within) regression               Number of obs     =    102,894
+Group variable: hhidpn                          Number of groups  =     22,062
+
+R-squared:                                      Obs per group:
+     Within  = 0.1788                                         min =          1
+     Between = 0.0066                                         avg =        4.7
+     Overall = 0.0017                                         max =         11
+
+                                                F(35, 22061)      =     309.19
+corr(u_i, Xb) = -0.8166                         Prob > F          =     0.0000
+
+                            (Std. err. adjusted for 22,062 clusters in hhidpn)
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual~5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   wealth_d2 |  -.0893574   .0152108    -5.87   0.000    -.1191716   -.0595432
+   wealth_d3 |   .0960607   .0132214     7.27   0.000     .0701457    .1219756
+   wealth_d4 |   .2647504   .0130077    20.35   0.000     .2392543    .2902465
+   wealth_d5 |   .3789645   .0132969    28.50   0.000     .3529016    .4050274
+   wealth_d6 |   .5044594   .0136002    37.09   0.000     .4778019    .5311168
+   wealth_d7 |   .6112219   .0139738    43.74   0.000     .5838323    .6386116
+   wealth_d8 |   .7524023   .0143621    52.39   0.000     .7242516     .780553
+   wealth_d9 |   .9002579   .0149405    60.26   0.000     .8709734    .9295424
+  wealth_d10 |    1.12026   .0156693    71.49   0.000     1.089547    1.150973
+             |
+    age_bin_ |
+         35  |   .0288953    .160511     0.18   0.857    -.2857177    .3435084
+         40  |   -.040006   .1550622    -0.26   0.796     -.343939     .263927
+         45  |  -.0800164   .1587172    -0.50   0.614    -.3911135    .2310807
+         50  |  -.1208693   .1598929    -0.76   0.450    -.4342708    .1925322
+         55  |  -.1538541   .1603181    -0.96   0.337     -.468089    .1603808
+         60  |  -.1880761   .1607305    -1.17   0.242    -.5031194    .1269671
+         65  |  -.1983706   .1611745    -1.23   0.218    -.5142843     .117543
+         70  |  -.2185423   .1617085    -1.35   0.177    -.5355025    .0984178
+         75  |  -.2108671   .1623282    -1.30   0.194    -.5290419    .1073078
+         80  |  -.1952767   .1630156    -1.20   0.231     -.514799    .1242456
+         85  |  -.1585552   .1637743    -0.97   0.333    -.4795646    .1624541
+         90  |  -.1155868   .1647605    -0.70   0.483    -.4385292    .2073555
+         95  |  -.0567402   .1668056    -0.34   0.734     -.383691    .2702107
+        100  |   .0361813   .1813317     0.20   0.842    -.3192418    .3916044
+        105  |  -.1075387   .1750663    -0.61   0.539    -.4506811    .2356038
+             |
+     inlbrf_ |   .0276527   .0045663     6.06   0.000     .0187024    .0366029
+             |
+        year |
+       2004  |    .021995     .00492     4.47   0.000     .0123515    .0316385
+       2006  |   .0681395   .0055817    12.21   0.000     .0571989    .0790802
+       2008  |  -.0020908    .006607    -0.32   0.752     -.015041    .0108595
+       2010  |   -.046123   .0079932    -5.77   0.000    -.0617901   -.0304558
+       2012  |  -.0248111   .0091764    -2.70   0.007    -.0427975   -.0068247
+       2014  |   .0391703    .010564     3.71   0.000     .0184642    .0598765
+       2016  |   .0297861   .0121208     2.46   0.014     .0060284    .0535438
+       2018  |    .001405    .013638     0.10   0.918    -.0253265    .0281364
+       2020  |  -.0017192   .0151458    -0.11   0.910     -.031406    .0279676
+       2022  |    .068327   .0167436     4.08   0.000     .0355083    .1011458
+             |
+       _cons |  -.2493284   .1607324    -1.55   0.121    -.5643753    .0657185
+-------------+----------------------------------------------------------------
+     sigma_u |  .45717484
+     sigma_e |  .33125359
+         rho |  .65573915   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. estimates store fe_r5
+
+. 
+. if trim("`panel_wealth_vars'") != "" {
+.     display "--- Joint test: Wealth deciles ---"
+--- Joint test: Wealth deciles ---
+.     testparm `panel_wealth_vars'
+
+ ( 1)  wealth_d2 = 0
+ ( 2)  wealth_d3 = 0
+ ( 3)  wealth_d4 = 0
+ ( 4)  wealth_d5 = 0
+ ( 5)  wealth_d6 = 0
+ ( 6)  wealth_d7 = 0
+ ( 7)  wealth_d8 = 0
+ ( 8)  wealth_d9 = 0
+ ( 9)  wealth_d10 = 0
+
+       F(  9, 22061) = 1041.99
+            Prob > F =    0.0000
+. }
+
+. display "--- Joint test: Age bins ---"
+--- Joint test: Age bins ---
+
+. testparm i.age_bin
+
+ ( 1)  35.age_bin_ = 0
+ ( 2)  40.age_bin_ = 0
+ ( 3)  45.age_bin_ = 0
+ ( 4)  50.age_bin_ = 0
+ ( 5)  55.age_bin_ = 0
+ ( 6)  60.age_bin_ = 0
+ ( 7)  65.age_bin_ = 0
+ ( 8)  70.age_bin_ = 0
+ ( 9)  75.age_bin_ = 0
+ (10)  80.age_bin_ = 0
+ (11)  85.age_bin_ = 0
+ (12)  90.age_bin_ = 0
+ (13)  95.age_bin_ = 0
+ (14)  100.age_bin_ = 0
+ (15)  105.age_bin_ = 0
+
+       F( 15, 22061) =   14.78
+            Prob > F =    0.0000
+
+. display "--- Joint test: Year ---"
+--- Joint test: Year ---
+
+. testparm i.year
+
+ ( 1)  2004.year = 0
+ ( 2)  2006.year = 0
+ ( 3)  2008.year = 0
+ ( 4)  2010.year = 0
+ ( 5)  2012.year = 0
+ ( 6)  2014.year = 0
+ ( 7)  2016.year = 0
+ ( 8)  2018.year = 0
+ ( 9)  2020.year = 0
+ (10)  2022.year = 0
+
+       F( 10, 22061) =  107.08
+            Prob > F =    0.0000
+
+. 
+. display _n "--- FE model summary ---"
+
+--- FE model summary ---
+
+. display "sigma_u = " e(sigma_u)
+sigma_u = .45717484
+
+. display "sigma_e = " e(sigma_e)
+sigma_e = .33125359
+
+. display "rho     = " e(rho)
+rho     = .65573915
+
+. display "R2_w    = " e(r2_w)
+R2_w    = .17876971
+
+. display "R2_b    = " e(r2_b)
+R2_b    = .00657665
+
+. display "R2_o    = " e(r2_o)
+R2_o    = .00165681
+
+. 
+. * Extract individual fixed effects
+. predict double __fe_hat if e(sample), u
+(439,914 missing values generated)
+
+. 
+. * ----------------------------------------------------------------------
+. * 5c) Second-step regression of FE on time-invariant vars
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "5c) SECOND-STEP: FE ON TIME-INVARIANT VARIABLES"
+5c) SECOND-STEP: FE ON TIME-INVARIANT VARIABLES
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. display "LHS: estimated FE. RHS: educ (Spec 1); + trust (Spec 2); + trust^2 (
+> Spec 3)."
+LHS: estimated FE. RHS: educ (Spec 1); + trust (Spec 2); + trust^2 (Spec 3).
+
+. display "Reduce to one row per hhidpn (collapse) so we can run cross-sectiona
+> l regression."
+Reduce to one row per hhidpn (collapse) so we can run cross-sectional regressio
+> n.
+
+. 
+. preserve
+
+. keep if !missing(__fe_hat)
+(439,914 observations deleted)
+
+. local collapse_vars "__fe_hat trust_others_2020 trust_others_2020_sq"
+
+. capture confirm variable educ_yrs
+
+. if !_rc local collapse_vars "`collapse_vars' educ_yrs"
+
+. collapse (first) `collapse_vars', by(hhidpn)
+
+. 
+. display _n "--- Spec 1: FE on education only (no trust) ---"
+
+--- Spec 1: FE on education only (no trust) ---
+
+. regress __fe_hat educ_yrs, vce(robust)
+
+Linear regression                               Number of obs     =     21,997
+                                                F(1, 21995)       =    2027.00
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0784
+                                                Root MSE          =     .43855
+
+------------------------------------------------------------------------------
+             |               Robust
+    __fe_hat | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    educ_yrs |  -.0399902   .0008882   -45.02   0.000    -.0417312   -.0382492
+       _cons |   .5827749   .0114053    51.10   0.000     .5604197    .6051302
+------------------------------------------------------------------------------
+
+. 
+. display _n "--- Spec 2: FE on education + linear trust ---"
+
+--- Spec 2: FE on education + linear trust ---
+
+. regress __fe_hat trust_others_2020 educ_yrs ///
+>     if !missing(trust_others_2020), vce(robust)
+
+Linear regression                               Number of obs     =        575
+                                                F(2, 572)         =      33.34
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0934
+                                                Root MSE          =     .45192
+
+------------------------------------------------------------------------------
+             |               Robust
+    __fe_hat | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |  -.0065434   .0067843    -0.96   0.335    -.0198687    .0067818
+    educ_yrs |  -.0419107   .0052778    -7.94   0.000    -.0522769   -.0315445
+       _cons |   .7048868   .0750053     9.40   0.000     .5575674    .8522061
+------------------------------------------------------------------------------
+
+. 
+. display _n "--- Spec 3: FE on education + trust + trust^2 ---"
+
+--- Spec 3: FE on education + trust + trust^2 ---
+
+. regress __fe_hat trust_others_2020 trust_others_2020_sq educ_yrs ///
+>     if !missing(trust_others_2020), vce(robust)
+
+Linear regression                               Number of obs     =        575
+                                                F(3, 571)         =      22.21
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0934
+                                                Root MSE          =     .45231
+
+------------------------------------------------------------------------------
+             |               Robust
+    __fe_hat | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   -.004523   .0201417    -0.22   0.822    -.0440839    .0350378
+trust_othe~q |  -.0001854   .0018648    -0.10   0.921     -.003848    .0034773
+    educ_yrs |  -.0420463   .0054512    -7.71   0.000    -.0527531   -.0313396
+       _cons |   .7022888   .0761957     9.22   0.000     .5526307    .8519469
+------------------------------------------------------------------------------
+
+. display "--- Joint test: Trust and trust squared ---"
+--- Joint test: Trust and trust squared ---
+
+. testparm trust_others_2020 trust_others_2020_sq
+
+ ( 1)  trust_others_2020 = 0
+ ( 2)  trust_others_2020_sq = 0
+
+       F(  2,   571) =    0.47
+            Prob > F =    0.6264
+
+. 
+. restore
+
+. 
+. * ----------------------------------------------------------------------
+. * 5d) Matching RE + Hausman test
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "5d) MATCHING RE + HAUSMAN TEST"
+5d) MATCHING RE + HAUSMAN TEST
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. display "RE uses the same time-varying specification as FE."
+RE uses the same time-varying specification as FE.
+
+. display "Hausman test compares FE and RE on shared time-varying coefficients.
+> "
+Hausman test compares FE and RE on shared time-varying coefficients.
+
+. 
+. * RE with same time-varying controls (no trust, which is time-invariant)
+. xtreg r5_annual_w5 `panel_tv_ctrls', re vce(cluster hhidpn)
+
+Random-effects GLS regression                   Number of obs     =    102,894
+Group variable: hhidpn                          Number of groups  =     22,062
+
+R-squared:                                      Obs per group:
+     Within  = 0.1072                                         min =          1
+     Between = 0.0000                                         avg =        4.7
+     Overall = 0.0105                                         max =         11
+
+                                                Wald chi2(35)     =    4174.44
+corr(u_i, X) = 0 (assumed)                      Prob > chi2       =     0.0000
+
+                            (Std. err. adjusted for 22,062 clusters in hhidpn)
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual~5_ | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   wealth_d2 |   .0139957   .0123559     1.13   0.257    -.0102215    .0382128
+   wealth_d3 |   .0804633    .010539     7.63   0.000     .0598072    .1011193
+   wealth_d4 |   .1210729   .0101262    11.96   0.000     .1012259      .14092
+   wealth_d5 |   .1283996   .0099951    12.85   0.000     .1088095    .1479896
+   wealth_d6 |   .1527933   .0099512    15.35   0.000     .1332894    .1722972
+   wealth_d7 |   .1591614   .0098269    16.20   0.000      .139901    .1784217
+   wealth_d8 |   .1967471   .0098628    19.95   0.000     .1774163    .2160779
+   wealth_d9 |   .2251554   .0098084    22.96   0.000     .2059313    .2443795
+  wealth_d10 |   .3024811   .0099715    30.33   0.000     .2829372    .3220249
+             |
+    age_bin_ |
+         35  |  -.0546572   .1502178    -0.36   0.716    -.3490788    .2397643
+         40  |  -.0645967   .1234669    -0.52   0.601    -.3065875    .1773941
+         45  |  -.0774031    .119885    -0.65   0.519    -.3123734    .1575671
+         50  |  -.0770054   .1185154    -0.65   0.516    -.3092913    .1552804
+         55  |  -.0917114   .1180353    -0.78   0.437    -.3230563    .1396335
+         60  |  -.1011892    .117931    -0.86   0.391    -.3323297    .1299513
+         65  |  -.0889771   .1179329    -0.75   0.451    -.3201214    .1421672
+         70  |  -.1149994   .1179421    -0.98   0.330    -.3461617    .1161628
+         75  |  -.1241694   .1179567    -1.05   0.292    -.3553602    .1070215
+         80  |   -.132526   .1179733    -1.12   0.261    -.3637495    .0986974
+         85  |  -.1262198   .1180183    -1.07   0.285    -.3575314    .1050918
+         90  |  -.1295777   .1181734    -1.10   0.273    -.3611933    .1020379
+         95  |  -.1056986   .1192697    -0.89   0.376     -.339463    .1280658
+        100  |  -.0174032   .1370226    -0.13   0.899    -.2859625    .2511561
+        105  |  -.5131265   .1206075    -4.25   0.000    -.7495128   -.2767401
+             |
+     inlbrf_ |   .0223966   .0032835     6.82   0.000      .015961    .0288322
+             |
+        year |
+       2004  |   .0169423   .0051483     3.29   0.001     .0068519    .0270328
+       2006  |   .0468892   .0047565     9.86   0.000     .0375666    .0562119
+       2008  |  -.0276605   .0046977    -5.89   0.000    -.0368678   -.0184533
+       2010  |  -.0725601   .0048544   -14.95   0.000    -.0820745   -.0630458
+       2012  |  -.0382005   .0048401    -7.89   0.000    -.0476869   -.0287141
+       2014  |   .0205665    .005167     3.98   0.000     .0104394    .0306936
+       2016  |   .0153753   .0055258     2.78   0.005     .0045448    .0262057
+       2018  |   .0287405    .005472     5.25   0.000     .0180157    .0394654
+       2020  |   .0177314   .0057382     3.09   0.002     .0064849     .028978
+       2022  |   .0974628   .0063551    15.34   0.000     .0850071    .1099185
+             |
+       _cons |   .0833201   .1182084     0.70   0.481    -.1483641    .3150042
+-------------+----------------------------------------------------------------
+     sigma_u |  .17981757
+     sigma_e |  .33125359
+         rho |   .2276053   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. estimates store re_match
+
+. 
+. display _n "--- RE matching model summary ---"
+
+--- RE matching model summary ---
+
+. display "sigma_u = " e(sigma_u)
+sigma_u = .17981757
+
+. display "sigma_e = " e(sigma_e)
+sigma_e = .33125359
+
+. display "rho     = " e(rho)
+rho     = .2276053
+
+. 
+. * Classic Hausman test requires non-robust SEs.
+. * Re-estimate FE and RE without vce(cluster) for this test only.
+. display _n "--- Re-estimating FE and RE without cluster-robust SE for Hausman
+>  ---"
+
+--- Re-estimating FE and RE without cluster-robust SE for Hausman ---
+
+. 
+. quietly xtreg r5_annual_w5 `panel_tv_ctrls', fe
+
+. estimates store fe_haus
+
+. 
+. quietly xtreg r5_annual_w5 `panel_tv_ctrls', re
+
+. estimates store re_haus
+
+. 
+. display _n "--- Classic Hausman test (FE vs RE on shared time-varying spec) -
+> --"
+
+--- Classic Hausman test (FE vs RE on shared time-varying spec) ---
+
+. hausman fe_haus re_haus, sigmamore
+
+                 ---- Coefficients ----
+             |      (b)          (B)            (b-B)     sqrt(diag(V_b-V_B))
+             |    fe_haus      re_haus       Difference       Std. err.
+-------------+----------------------------------------------------------------
+   wealth_d2 |   -.0893574     .0139957        -.103353        .0061005
+   wealth_d3 |    .0960607     .0804633        .0155974        .0050892
+   wealth_d4 |    .2647504     .1210729        .1436775        .0052452
+   wealth_d5 |    .3789645     .1283996         .250565        .0055212
+   wealth_d6 |    .5044594     .1527933        .3516661        .0058957
+   wealth_d7 |    .6112219     .1591614        .4520606        .0062597
+   wealth_d8 |    .7524023     .1967471        .5556552        .0067025
+   wealth_d9 |    .9002579     .2251554        .6751025        .0073025
+  wealth_d10 |     1.12026     .3024811        .8177792        .0083862
+    age_bin_ |
+         35  |    .0288953    -.0546572        .0835525        .0488792
+         40  |    -.040006    -.0645967        .0245907        .0673433
+         45  |   -.0800164    -.0774031       -.0026132        .0734729
+         50  |   -.1208693    -.0770054       -.0438639        .0761721
+         55  |   -.1538541    -.0917114       -.0621427        .0775271
+         60  |   -.1880761    -.1011892       -.0868869        .0785829
+         65  |   -.1983706    -.0889771       -.1093936        .0796761
+         70  |   -.2185423    -.1149994       -.1035429        .0809718
+         75  |   -.2108671    -.1241694       -.0866977        .0824802
+         80  |   -.1952767     -.132526       -.0627506        .0840843
+         85  |   -.1585552    -.1262198       -.0323354         .085805
+         90  |   -.1155868    -.1295777        .0139909        .0876851
+         95  |   -.0567402    -.1056986        .0489584         .089916
+        100  |    .0361813    -.0174032        .0535846        .0944384
+        105  |   -.1075387    -.5131265        .4055878         .236202
+     inlbrf_ |    .0276527     .0223966        .0052561        .0027699
+        year |
+       2004  |     .021995     .0169423        .0050527        .0019702
+       2006  |    .0681395     .0468892        .0212503        .0035117
+       2008  |   -.0020908    -.0276605        .0255698        .0050016
+       2010  |    -.046123    -.0725601        .0264372        .0067376
+       2012  |   -.0248111    -.0382005        .0133894        .0082392
+       2014  |    .0391703     .0205665        .0186038        .0096668
+       2016  |    .0297861     .0153753        .0144108        .0113731
+       2018  |     .001405     .0287405       -.0273356        .0130835
+       2020  |   -.0017192     .0177314       -.0194506        .0146518
+       2022  |     .068327     .0974628       -.0291358        .0163366
+------------------------------------------------------------------------------
+                          b = Consistent under H0 and Ha; obtained from xtreg.
+           B = Inconsistent under Ha, efficient under H0; obtained from xtreg.
+
+Test of H0: Difference in coefficients not systematic
+
+   chi2(35) = (b-B)'[(V_b-V_B)^(-1)](b-B)
+            = 13355.61
+Prob > chi2 =   0.0000
+
+. display "Interpretation: reject H0 (p < 0.05) => FE preferred over RE."
+Interpretation: reject H0 (p < 0.05) => FE preferred over RE.
+
+. 
+. * ----------------------------------------------------------------------
+. * 5e) Substantive RE with trust and trust squared
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "5e) SUBSTANTIVE RE: r5 WITH TRUST + TRUST^2 + EDUCATION"
+5e) SUBSTANTIVE RE: r5 WITH TRUST + TRUST^2 + EDUCATION
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. display "Adds time-invariant regressors (trust, trust^2, educ_yrs) to RE."
+Adds time-invariant regressors (trust, trust^2, educ_yrs) to RE.
+
+. 
+. xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_others_202
+> 0 ///
+>     `panel_tv_ctrls' `panel_tinv_ctrls', re vce(cluster hhidpn)
+
+Random-effects GLS regression                   Number of obs     =      2,920
+Group variable: hhidpn                          Number of groups  =        575
+
+R-squared:                                      Obs per group:
+     Within  = 0.0936                                         min =          1
+     Between = 0.0207                                         avg =        5.1
+     Overall = 0.0301                                         max =         11
+
+                                                Wald chi2(35)     =   25839.40
+corr(u_i, X) = 0 (assumed)                      Prob > chi2       =     0.0000
+
+                               (Std. err. adjusted for 575 clusters in hhidpn)
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual~5_ | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0215807   .0113924     1.89   0.058    -.0007481    .0439094
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0016369   .0010089    -1.62   0.105    -.0036143    .0003406
+             |
+   wealth_d2 |  -.1079477   .0806782    -1.34   0.181     -.266074    .0501786
+   wealth_d3 |   .0682176   .0654232     1.04   0.297    -.0600096    .1964447
+   wealth_d4 |   .0918132   .0638925     1.44   0.151    -.0334138    .2170402
+   wealth_d5 |   .1422721    .063506     2.24   0.025     .0178027    .2667415
+   wealth_d6 |   .1591146   .0641064     2.48   0.013     .0334684    .2847608
+   wealth_d7 |   .1358998   .0635318     2.14   0.032     .0113797    .2604199
+   wealth_d8 |   .1589274   .0615837     2.58   0.010     .0382255    .2796293
+   wealth_d9 |   .2283946   .0621543     3.67   0.000     .1065744    .3502148
+  wealth_d10 |   .2680409    .062999     4.25   0.000     .1445651    .3915166
+             |
+    age_bin_ |
+         35  |   .6437368   .0891252     7.22   0.000     .4690546     .818419
+         40  |   .2818055   .1848307     1.52   0.127    -.0804561    .6440671
+         45  |   .4364674   .1186112     3.68   0.000     .2039938    .6689411
+         50  |   .5635332   .0998017     5.65   0.000     .3679255     .759141
+         55  |     .52829   .0843847     6.26   0.000      .362899    .6936811
+         60  |   .5503916   .0795506     6.92   0.000     .3944754    .7063079
+         65  |   .5506955    .079109     6.96   0.000     .3956447    .7057462
+         70  |   .4800334   .0801909     5.99   0.000      .322862    .6372047
+         75  |   .4838708   .0792508     6.11   0.000      .328542    .6391996
+         80  |   .4313174   .0875948     4.92   0.000     .2596348        .603
+         85  |   .5324424   .0957615     5.56   0.000     .3447533    .7201314
+         90  |   .7729678   .3213235     2.41   0.016     .1431853     1.40275
+             |
+     inlbrf_ |   .0235896   .0177266     1.33   0.183     -.011154    .0583332
+             |
+        year |
+       2004  |   .0138657   .0455677     0.30   0.761    -.0754453    .1031767
+       2006  |   .1245681   .0418172     2.98   0.003     .0426078    .2065283
+       2008  |   .0078147    .041712     0.19   0.851    -.0739392    .0895687
+       2010  |   -.016226   .0410545    -0.40   0.693    -.0966914    .0642394
+       2012  |    .026237   .0385995     0.68   0.497    -.0494165    .1018906
+       2014  |   .0896419   .0395906     2.26   0.024     .0120458    .1672379
+       2016  |   .0858895   .0421213     2.04   0.041     .0033332    .1684457
+       2018  |   .0898749   .0383725     2.34   0.019     .0146662    .1650836
+       2020  |   .1148123   .0392214     2.93   0.003     .0379397    .1916848
+       2022  |   .2128275   .0412272     5.16   0.000     .1320237    .2936313
+             |
+    educ_yrs |  -.0136133   .0034351    -3.96   0.000    -.0203459   -.0068807
+       _cons |  -.4706354   .0608449    -7.73   0.000    -.5898893   -.3513816
+-------------+----------------------------------------------------------------
+     sigma_u |  .18421409
+     sigma_e |  .35945222
+         rho |  .20800955   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. estimates store re_trust
+
+. 
+. display "--- Joint test: Trust and trust squared ---"
+--- Joint test: Trust and trust squared ---
+
+. testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
+
+ ( 1)  trust_others_2020 = 0
+ ( 2)  c.trust_others_2020#c.trust_others_2020 = 0
+
+           chi2(  2) =    3.94
+         Prob > chi2 =    0.1396
+
+. if trim("`panel_wealth_vars'") != "" {
+.     display "--- Joint test: Wealth deciles ---"
+--- Joint test: Wealth deciles ---
+.     testparm `panel_wealth_vars'
+
+ ( 1)  wealth_d2 = 0
+ ( 2)  wealth_d3 = 0
+ ( 3)  wealth_d4 = 0
+ ( 4)  wealth_d5 = 0
+ ( 5)  wealth_d6 = 0
+ ( 6)  wealth_d7 = 0
+ ( 7)  wealth_d8 = 0
+ ( 8)  wealth_d9 = 0
+ ( 9)  wealth_d10 = 0
+
+           chi2(  9) =   57.85
+         Prob > chi2 =    0.0000
+. }
+
+. display "--- Joint test: Age bins ---"
+--- Joint test: Age bins ---
+
+. testparm i.age_bin
+
+ ( 1)  35.age_bin_ = 0
+ ( 2)  40.age_bin_ = 0
+ ( 3)  45.age_bin_ = 0
+ ( 4)  50.age_bin_ = 0
+ ( 5)  55.age_bin_ = 0
+ ( 6)  60.age_bin_ = 0
+ ( 7)  65.age_bin_ = 0
+ ( 8)  70.age_bin_ = 0
+ ( 9)  75.age_bin_ = 0
+ (10)  80.age_bin_ = 0
+ (11)  85.age_bin_ = 0
+ (12)  90.age_bin_ = 0
+
+           chi2( 12) =  160.44
+         Prob > chi2 =    0.0000
+
+. display "--- Joint test: Year ---"
+--- Joint test: Year ---
+
+. testparm i.year
+
+ ( 1)  2004.year = 0
+ ( 2)  2006.year = 0
+ ( 3)  2008.year = 0
+ ( 4)  2010.year = 0
+ ( 5)  2012.year = 0
+ ( 6)  2014.year = 0
+ ( 7)  2016.year = 0
+ ( 8)  2018.year = 0
+ ( 9)  2020.year = 0
+ (10)  2022.year = 0
+
+           chi2( 10) =   73.00
+         Prob > chi2 =    0.0000
+
+. 
+. display _n "--- Substantive RE summary ---"
+
+--- Substantive RE summary ---
+
+. display "sigma_u = " e(sigma_u)
+sigma_u = .18421409
+
+. display "sigma_e = " e(sigma_e)
+sigma_e = .35945222
+
+. display "rho     = " e(rho)
+rho     = .20800955
+
+. 
+. * ----------------------------------------------------------------------
+. * 5f) CRE/Mundlak test and substantive CRE model
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "5f) CRE/MUNDLAK TEST AND SUBSTANTIVE CRE MODEL"
+5f) CRE/MUNDLAK TEST AND SUBSTANTIVE CRE MODEL
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. display "Add within-group means of time-varying regressors to RE."
+Add within-group means of time-varying regressors to RE.
+
+. display "Joint significance of means = Mundlak test of FE vs RE."
+Joint significance of means = Mundlak test of FE vs RE.
+
+. 
+. * Compute within-group means of time-varying regressors
+. foreach v of local panel_wealth_vars {
+  2.     capture drop m_`v'
+  3.     bysort hhidpn: egen double m_`v' = mean(`v')
+  4. }
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+
+. capture drop m_inlbrf
+
+. bysort hhidpn: egen double m_inlbrf = mean(inlbrf)
+(77,280 missing values generated)
+
+. 
+. capture confirm variable age_bin
+
+. if !_rc {
+.     capture drop m_age_bin
+.     bysort hhidpn: egen double m_age_bin = mean(age_bin)
+(70,512 missing values generated)
+. }
+
+. 
+. local mundlak_means ""
+
+. foreach v of local panel_wealth_vars {
+  2.     local mundlak_means "`mundlak_means' m_`v'"
+  3. }
+
+. local mundlak_means "`mundlak_means' m_inlbrf"
+
+. capture confirm variable m_age_bin
+
+. if !_rc local mundlak_means "`mundlak_means' m_age_bin"
+
+. 
+. display "Mundlak means: `mundlak_means'"
+Mundlak means:  m_wealth_d2 m_wealth_d3 m_wealth_d4 m_wealth_d5 m_wealth_d6 m_w
+> ealth_d7 m_wealth_d8 m_wealth_d9 m_wealth_d10 m_inlbrf m_age_bin
+
+. 
+. * CRE model: RE with trust + trust^2 + time-varying + time-invariant + means
+. display _n "--- CRE/Mundlak model ---"
+
+--- CRE/Mundlak model ---
+
+. xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_others_202
+> 0 ///
+>     `panel_tv_ctrls' `panel_tinv_ctrls' `mundlak_means', re vce(cluster hhidp
+> n)
+
+Random-effects GLS regression                   Number of obs     =      2,920
+Group variable: hhidpn                          Number of groups  =        575
+
+R-squared:                                      Obs per group:
+     Within  = 0.1525                                         min =          1
+     Between = 0.2109                                         avg =        5.1
+     Overall = 0.1667                                         max =         11
+
+                                                Wald chi2(46)     =   42135.64
+corr(u_i, X) = 0 (assumed)                      Prob > chi2       =     0.0000
+
+                               (Std. err. adjusted for 575 clusters in hhidpn)
+------------------------------------------------------------------------------
+             |               Robust
+r5_annual~5_ | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+trust_o~2020 |   .0316429   .0102801     3.08   0.002     .0114942    .0517915
+             |
+          c. |
+trust_o~2020#|
+          c. |
+trust_o~2020 |  -.0024903   .0008449    -2.95   0.003    -.0041462   -.0008343
+             |
+   wealth_d2 |  -.1848758   .0924643    -2.00   0.046    -.3661025   -.0036492
+   wealth_d3 |   .0599877   .0772412     0.78   0.437    -.0914023    .2113778
+   wealth_d4 |   .2309182   .0763227     3.03   0.002     .0813285     .380508
+   wealth_d5 |   .3767715   .0791712     4.76   0.000     .2215988    .5319442
+   wealth_d6 |    .489982   .0797746     6.14   0.000     .3336267    .6463373
+   wealth_d7 |   .5741639   .0843771     6.80   0.000     .4087879    .7395398
+   wealth_d8 |   .6765947   .0877358     7.71   0.000     .5046357    .8485537
+   wealth_d9 |   .8314704   .0912008     9.12   0.000     .6527202    1.010221
+  wealth_d10 |   1.022991   .0962091    10.63   0.000     .8344248    1.211558
+             |
+    age_bin_ |
+         35  |   .6411856   .0841304     7.62   0.000      .476293    .8060782
+         40  |   .2259345    .199269     1.13   0.257    -.1646256    .6164945
+         45  |   .4448089   .1294121     3.44   0.001     .1911659     .698452
+         50  |   .5261136    .136584     3.85   0.000     .2584139    .7938134
+         55  |   .5033455   .1423119     3.54   0.000     .2244193    .7822718
+         60  |   .5234828   .1530016     3.42   0.001     .2236052    .8233603
+         65  |   .4984151   .1669547     2.99   0.003     .1711899    .8256403
+         70  |   .4331909   .1838611     2.36   0.018     .0728297    .7935521
+         75  |   .4417288   .2001451     2.21   0.027     .0494516    .8340059
+         80  |   .4189004   .2183211     1.92   0.055    -.0090011    .8468019
+         85  |   .5094023   .2345473     2.17   0.030      .049698    .9691066
+         90  |   .8197582   .3189535     2.57   0.010     .1946209    1.444896
+             |
+     inlbrf_ |   .0092844   .0221931     0.42   0.676    -.0342132    .0527821
+             |
+        year |
+       2004  |   .0232537   .0401563     0.58   0.563    -.0554513    .1019587
+       2006  |   .1435868   .0436693     3.29   0.001     .0579964    .2291771
+       2008  |   .0294309   .0436925     0.67   0.501    -.0562048    .1150665
+       2010  |   .0033448   .0498618     0.07   0.947    -.0943826    .1010722
+       2012  |   .0483127   .0535094     0.90   0.367    -.0565639    .1531893
+       2014  |   .1175903   .0582454     2.02   0.044     .0034314    .2317492
+       2016  |   .0966036   .0641996     1.50   0.132    -.0292253    .2224326
+       2018  |    .078191   .0656335     1.19   0.234    -.0504482    .2068303
+       2020  |   .1123741   .0717928     1.57   0.118    -.0283372    .2530853
+       2022  |   .1996454   .0776515     2.57   0.010     .0474514    .3518395
+             |
+    educ_yrs |   .0018502   .0029116     0.64   0.525    -.0038564    .0075568
+ m_wealth_d2 |   .1265569   .1623656     0.78   0.436    -.1916739    .4447876
+ m_wealth_d3 |  -.0897312   .1208552    -0.74   0.458     -.326603    .1471406
+ m_wealth_d4 |  -.3489135   .1127504    -3.09   0.002    -.5699002   -.1279267
+ m_wealth_d5 |  -.5417407   .1148485    -4.72   0.000    -.7668396   -.3166419
+ m_wealth_d6 |   -.644119   .1100795    -5.85   0.000    -.8598708   -.4283671
+ m_wealth_d7 |  -.8060204   .1147183    -7.03   0.000    -1.030864   -.5811767
+ m_wealth_d8 |  -.8948395   .1126315    -7.94   0.000    -1.115593   -.6740858
+ m_wealth_d9 |  -1.007935   .1179605    -8.54   0.000    -1.239134   -.7767369
+m_wealth_d10 |  -1.236936   .1178007   -10.50   0.000    -1.467821   -1.006051
+    m_inlbrf |   .0711789   .0359415     1.98   0.048     .0007349     .141623
+   m_age_bin |    .004056   .0046058     0.88   0.379    -.0049712    .0130833
+       _cons |  -.6682753   .2089918    -3.20   0.001    -1.077892   -.2586589
+-------------+----------------------------------------------------------------
+     sigma_u |  .15447894
+     sigma_e |  .35945222
+         rho |  .15590122   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. estimates store cre_trust
+
+. 
+. display "--- Joint test: Trust and trust squared ---"
+--- Joint test: Trust and trust squared ---
+
+. testparm c.trust_others_2020 c.trust_others_2020#c.trust_others_2020
+
+ ( 1)  trust_others_2020 = 0
+ ( 2)  c.trust_others_2020#c.trust_others_2020 = 0
+
+           chi2(  2) =    9.48
+         Prob > chi2 =    0.0087
+
+. if trim("`panel_wealth_vars'") != "" {
+.     display "--- Joint test: Wealth deciles ---"
+--- Joint test: Wealth deciles ---
+.     testparm `panel_wealth_vars'
+
+ ( 1)  wealth_d2 = 0
+ ( 2)  wealth_d3 = 0
+ ( 3)  wealth_d4 = 0
+ ( 4)  wealth_d5 = 0
+ ( 5)  wealth_d6 = 0
+ ( 6)  wealth_d7 = 0
+ ( 7)  wealth_d8 = 0
+ ( 8)  wealth_d9 = 0
+ ( 9)  wealth_d10 = 0
+
+           chi2(  9) =  225.60
+         Prob > chi2 =    0.0000
+. }
+
+. display "--- Joint test: Age bins ---"
+--- Joint test: Age bins ---
+
+. testparm i.age_bin
+
+ ( 1)  35.age_bin_ = 0
+ ( 2)  40.age_bin_ = 0
+ ( 3)  45.age_bin_ = 0
+ ( 4)  50.age_bin_ = 0
+ ( 5)  55.age_bin_ = 0
+ ( 6)  60.age_bin_ = 0
+ ( 7)  65.age_bin_ = 0
+ ( 8)  70.age_bin_ = 0
+ ( 9)  75.age_bin_ = 0
+ (10)  80.age_bin_ = 0
+ (11)  85.age_bin_ = 0
+ (12)  90.age_bin_ = 0
+
+           chi2( 12) =  137.64
+         Prob > chi2 =    0.0000
+
+. display "--- Joint test: Year ---"
+--- Joint test: Year ---
+
+. testparm i.year
+
+ ( 1)  2004.year = 0
+ ( 2)  2006.year = 0
+ ( 3)  2008.year = 0
+ ( 4)  2010.year = 0
+ ( 5)  2012.year = 0
+ ( 6)  2014.year = 0
+ ( 7)  2016.year = 0
+ ( 8)  2018.year = 0
+ ( 9)  2020.year = 0
+ (10)  2022.year = 0
+
+           chi2( 10) =   45.03
+         Prob > chi2 =    0.0000
+
+. 
+. display _n "--- Mundlak test: joint significance of within-group means ---"
+
+--- Mundlak test: joint significance of within-group means ---
+
+. testparm `mundlak_means'
+
+ ( 1)  m_wealth_d2 = 0
+ ( 2)  m_wealth_d3 = 0
+ ( 3)  m_wealth_d4 = 0
+ ( 4)  m_wealth_d5 = 0
+ ( 5)  m_wealth_d6 = 0
+ ( 6)  m_wealth_d7 = 0
+ ( 7)  m_wealth_d8 = 0
+ ( 8)  m_wealth_d9 = 0
+ ( 9)  m_wealth_d10 = 0
+ (10)  m_inlbrf = 0
+ (11)  m_age_bin = 0
+
+           chi2( 11) =  245.25
+         Prob > chi2 =    0.0000
+
+. display "Interpretation: reject H0 (p < 0.05) => unit effects correlated with
+>  regressors;"
+Interpretation: reject H0 (p < 0.05) => unit effects correlated with regressors
+> ;
+
+. display "CRE preferred over standard RE."
+CRE preferred over standard RE.
+
+. 
+. display _n "--- CRE model summary ---"
+
+--- CRE model summary ---
+
+. display "sigma_u = " e(sigma_u)
+sigma_u = .15447894
+
+. display "sigma_e = " e(sigma_e)
+sigma_e = .35945222
+
+. display "rho     = " e(rho)
+rho     = .15590122
+
+. 
+. * ----------------------------------------------------------------------
+. * Histograms of estimated individual effects (FE vs CRE)
+. * ----------------------------------------------------------------------
+. * CRE individual effect = u_i + x̄_i*γ (same structure as FE alpha_i).
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "HISTOGRAMS: FE vs CRE individual effects"
+HISTOGRAMS: FE vs CRE individual effects
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. 
+. predict double __u_cre if e(sample), u
+(539,888 missing values generated)
+
+. gen double __alpha_cre = __u_cre if e(sample)
+(539,888 missing values generated)
+
+. foreach v of local mundlak_means {
+  2.     capture replace __alpha_cre = __alpha_cre + _b[`v']*`v' if e(sample)
+  3. }
+
+. 
+. capture mkdir "${BASE_PATH}/Code/Analysis/Figures"
+
+. 
+. preserve
+
+. keep if !missing(__fe_hat)
+(439,914 observations deleted)
+
+. collapse (first) __fe_hat, by(hhidpn)
+
+. quietly summarize __fe_hat, meanonly
+
+. gen double __fe_dm = __fe_hat - r(mean)
+
+. histogram __fe_dm, fraction bin(80) ///
+>     title("Distribution of FE (demeaned): r5 returns") ///
+>     xtitle("Estimated fixed effect") ytitle("Fraction") ///
+>     scheme(s1mono)
+(bin=80, start=-1.2107629, width=.039234)
+
+. graph export "${BASE_PATH}/Code/Analysis/Figures/35_fe_hist.png", replace wid
+> th(1200)
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Analysis/Figures/35_fe_hist.pn
+    > g saved as PNG format
+
+. display "Wrote: Code/Analysis/Figures/35_fe_hist.png"
+Wrote: Code/Analysis/Figures/35_fe_hist.png
+
+. restore
+
+. 
+. preserve
+
+. keep if !missing(__alpha_cre)
+(539,888 observations deleted)
+
+. collapse (first) __alpha_cre, by(hhidpn)
+
+. quietly summarize __alpha_cre, meanonly
+
+. gen double __alpha_cre_dm = __alpha_cre - r(mean)
+
+. histogram __alpha_cre_dm, fraction bin(80) ///
+>     title("Distribution of CRE individual effect (demeaned): r5 returns") ///
+>     xtitle("Estimated individual effect") ytitle("Fraction") ///
+>     scheme(s1mono)
+(bin=80, start=-.78127056, width=.02006865)
+
+. graph export "${BASE_PATH}/Code/Analysis/Figures/35_cre_hist.png", replace wi
+> dth(1200)
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Analysis/Figures/35_cre_hist.p
+    > ng saved as PNG format
+
+. display "Wrote: Code/Analysis/Figures/35_cre_hist.png"
+Wrote: Code/Analysis/Figures/35_cre_hist.png
+
+. restore
+
+. 
+. * Clean up
+. capture drop __fe_hat __u_cre __alpha_cre
+
+. capture drop m_inlbrf m_age_bin
+
+. foreach v of local panel_wealth_vars {
+  2.     capture drop m_`v'
+  3. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Summary
+. * ----------------------------------------------------------------------
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "35_reduced_form: Completed."
+35_reduced_form: Completed.
+
+. display "Cross-sectional sections 1-3 and panel sections 4-5f."
+Cross-sectional sections 1-3 and panel sections 4-5f.
+
+. display "Log saved in: ${LOG_DIR}/35_reduced_form.log"
+Log saved in: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/35_
+> reduced_form.log
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/35_r
+> educed_form.log
+  log type:  text
+ closed on:  12 Mar 2026, 19:41:04
+-------------------------------------------------------------------------------

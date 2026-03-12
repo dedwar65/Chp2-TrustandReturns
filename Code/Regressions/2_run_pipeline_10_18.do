@@ -56,7 +56,22 @@ do "${BASE_PATH}/Code/Regressions/18_reg_returns_avg_trust.do"
 * 20: Financial literacy extension
 do "${BASE_PATH}/Code/Regressions/20_finlit_extension.do"
 
+* 22: 2SLS first-stage and exclusion diagnostics
+do "${BASE_PATH}/Code/Regressions/22_2sls_tests.do"
+
 * 25: Financial-institutional trust (PCA 4-vars, r5 regressions)
 do "${BASE_PATH}/Code/Regressions/25_reg_trust_fininst.do"
 
-display "2_run_pipeline_10_18: Completed 10–18, 20, 25."
+* 29: Untrust diagnostics (correlations, PCA, trust-LHS specs)
+do "${BASE_PATH}/Code/Regressions/29_2sls_untrust.do"
+
+* 30: Depression-as-IV first-stage checks (trust on dep, lagged dep, ever depressed)
+do "${BASE_PATH}/Code/Regressions/30_2sls_dep.do"
+
+* 31: Spouse depression (same structure as 30, with cross-corr and graph)
+do "${BASE_PATH}/Code/Regressions/31_2sls_spdep.do"
+
+* 31b: Full IV/2SLS with depression instruments (second stage + first-stage tables)
+do "${BASE_PATH}/Code/Regressions/31_2sls_dep_2.do"
+
+display "2_run_pipeline_10_18: Completed 10–18, 20, 22, 25, 29, 30, 31, 31_2sls_dep_2."

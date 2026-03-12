@@ -1,0 +1,772 @@
+---------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/31_2sl
+> s_spdep.log
+  log type:  text
+ opened on:   5 Mar 2026, 14:13:35
+
+. 
+. * ----------------------------------------------------------------------
+. * Load analysis sample, merge r*cesd and s*cesd from all_data_merged
+. * ----------------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. 
+. * Merge r*cesd and s*cesd (respondent and spouse CESD) from RAND longitudinal
+. preserve
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. local cesd_vars "hhidpn"
+
+. forvalues w = 6/15 {
+  2.     capture confirm variable r`w'cesd
+  3.     if !_rc local cesd_vars "`cesd_vars' r`w'cesd"
+  4.     capture confirm variable s`w'cesd
+  5.     if !_rc local cesd_vars "`cesd_vars' s`w'cesd"
+  6. }
+
+. keep `cesd_vars'
+
+. tempfile cesd
+
+. save "`cesd'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000003 not
+    found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000003 saved as
+    .dta format
+
+. restore
+
+. 
+. merge 1:1 hhidpn using "`cesd'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                            45,234  
+    -----------------------------------------
+
+. 
+. * Spouse depression: contemporaneous and lagged (s15=2020, s14=2018, s13=2016)
+. capture confirm variable s15cesd
+
+. if !_rc {
+.     capture drop spouse_depression_2020
+.     gen spouse_depression_2020 = s15cesd
+(37,177 missing values generated)
+. }
+
+. capture confirm variable s14cesd
+
+. if !_rc {
+.     capture drop spouse_depression_2018
+.     gen spouse_depression_2018 = s14cesd
+(36,262 missing values generated)
+. }
+
+. capture confirm variable s13cesd
+
+. if !_rc {
+.     capture drop spouse_depression_2016
+.     gen spouse_depression_2016 = s13cesd
+(33,983 missing values generated)
+. }
+
+. 
+. * Ever spouse depressed (waves 6-15): 1 if spouse CESD > 0 in any wave
+. gen byte ever_spouse_depressed = 0
+
+. forvalues w = 6/15 {
+  2.     capture confirm variable s`w'cesd
+  3.     if !_rc replace ever_spouse_depressed = 1 if s`w'cesd > 0 & !missing(s`w
+> 'cesd)
+  4. }
+(5,174 real changes made)
+(2,783 real changes made)
+(1,472 real changes made)
+(904 real changes made)
+(2,848 real changes made)
+(1,175 real changes made)
+(657 real changes made)
+(1,818 real changes made)
+(640 real changes made)
+(479 real changes made)
+
+. local _scesd ""
+
+. forvalues w = 6/15 {
+  2.     capture confirm variable s`w'cesd
+  3.     if !_rc local _scesd "`_scesd' s`w'cesd"
+  4. }
+
+. if "`_scesd'" != "" {
+.     egen _n_scesd = rownonmiss(`_scesd')
+.     replace ever_spouse_depressed = . if _n_scesd == 0
+(22,647 real changes made, 22,647 to missing)
+.     drop _n_scesd
+. }
+
+. 
+. * Age bins
+. capture confirm variable age_bin
+
+. if _rc {
+.     capture confirm variable age_2020
+.     if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+. }
+
+. 
+. * Controls (match 22 Addl Spec 7b / 29 baseline)
+. local demo_core "i.gender educ_yrs married_2020"
+
+. local demo_race "i.race_eth"
+
+. capture confirm variable age_bin
+
+. if !_rc local demo_core "i.age_bin `demo_core'"
+
+. capture confirm variable race_eth
+
+. if _rc local demo_race ""
+
+. 
+. local region_var ""
+
+. capture confirm variable censreg
+
+. if !_rc local region_var "censreg"
+
+. if "`region_var'" == "" {
+.     capture confirm variable censreg_2020
+.     if !_rc local region_var "censreg_2020"
+. }
+
+. 
+. local ctrl "`demo_core' `demo_race'"
+
+. capture confirm variable wealth_d2_2020
+
+. if !_rc {
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local ctrl "`ctrl' wealth_d`d'_2020"
+  4.     }
+. }
+
+. capture confirm variable inlbrf_2020
+
+. if !_rc local ctrl "`ctrl' inlbrf_2020"
+
+. capture confirm variable population_3bin_2020
+
+. if !_rc local ctrl "`ctrl' i.population_3bin_2020"
+
+. if "`region_var'" != "" local ctrl "`ctrl' i.`region_var'"
+
+. capture confirm variable born_us
+
+. if !_rc local ctrl "`ctrl' born_us"
+
+. 
+. local samp "if !missing(trust_others_2020)"
+
+. 
+. * ----------------------------------------------------------------------
+. * 1) Cross-correlation: general trust, own depression, spouse depression
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "1) CROSS-CORRELATION: General trust, own depression, spouse depression
+> "
+1) CROSS-CORRELATION: General trust, own depression, spouse depression
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. local corr_vars "trust_others_2020 depression_2020"
+
+. capture confirm variable spouse_depression_2020
+
+. if !_rc local corr_vars "`corr_vars' spouse_depression_2020"
+
+. display _n "--- pwcorr (sig, obs) ---"
+
+--- pwcorr (sig, obs) ---
+
+. pwcorr `corr_vars' `samp', sig obs
+
+             | t~othe~0 dep~2020 spo~2020
+-------------+---------------------------
+trust_o~2020 |   1.0000 
+             |
+             |      900
+             |
+depress~2020 |  -0.1743   1.0000 
+             |   0.0000
+             |      900      900
+             |
+spouse_~2020 |  -0.0350   0.1111   1.0000 
+             |   0.4548   0.0173
+             |      459      459      459
+             |
+
+. display _n "--- correlate ---"
+
+--- correlate ---
+
+. correlate `corr_vars' `samp'
+(obs=459)
+
+             | t~othe~0 dep~2020 spo~2020
+-------------+---------------------------
+trust_o~2020 |   1.0000
+depress~2020 |  -0.2148   1.0000
+spouse_~2020 |  -0.0350   0.1111   1.0000
+
+
+. 
+. * ----------------------------------------------------------------------
+. * 2) Graph: Average depression and spouse depression over time (2002-2020)
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "2) GRAPH: Average depression and spouse depression by wave"
+2) GRAPH: Average depression and spouse depression by wave
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. preserve
+
+. * Postfile: compute mean depression and spouse depression by wave
+. tempfile graphdata
+
+. tempname memhold
+
+. postfile `memhold' wave year mean_dep mean_spdep using `graphdata', replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000005 not
+    found)
+
+. forvalues w = 6/15 {
+  2.     quietly summarize r`w'cesd
+  3.     local md = r(mean)
+  4.     capture quietly summarize s`w'cesd
+  5.     local ms = cond(_rc==0, r(mean), .)
+  6.     local y = 1990 + 2 * `w'
+  7.     post `memhold' (`w') (`y') (`md') (`ms')
+  8. }
+
+. postclose `memhold'
+
+. 
+. use `graphdata', clear
+
+. twoway (line mean_dep year, lcolor(blue)) (line mean_spdep year, lcolor(red)), 
+> ///
+>     xlabel(2002(4)2020) xtitle("Year") ytitle("Mean CESD score") ///
+>     legend(order(1 "Respondent depression" 2 "Spouse depression") ring(0) pos(5
+> )) ///
+>     title("Average depression and spouse depression over time")
+
+. capture mkdir "${REGRESSIONS}/2SLS/PredictTrust"
+
+. graph export "${REGRESSIONS}/2SLS/PredictTrust/depression_spouse_depression_ove
+> r_time.png", replace
+file /Volumes/SSD
+    PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/2SLS/PredictTrust/de
+    > pression_spouse_depression_over_time.png saved as PNG format
+
+. restore
+
+. 
+. * ----------------------------------------------------------------------
+. * 3) Regressions: Trust on spouse depression (mirror 30 steps 1-6b)
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "3) REGRESSIONS: Trust on spouse depression"
+3) REGRESSIONS: Trust on spouse depression
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. 
+. * 1: Trust on contemporaneous spouse depression (no controls)
+. display _n "--- 1: Trust on contemporaneous spouse depression (no controls) ---
+> "
+
+--- 1: Trust on contemporaneous spouse depression (no controls) ---
+
+. capture confirm variable spouse_depression_2020
+
+. if !_rc {
+.     reg trust_others_2020 spouse_depression_2020 `samp', vce(robust)
+
+Linear regression                               Number of obs     =        459
+                                                F(1, 457)         =       0.50
+                                                Prob > F          =     0.4778
+                                                R-squared         =     0.0012
+                                                Root MSE          =     2.4166
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+spouse_de~2020 |  -.0442904   .0623429    -0.71   0.478    -.1668048     .078224
+         _cons |   5.594423   .1337269    41.83   0.000     5.331627    5.857218
+--------------------------------------------------------------------------------
+. }
+
+. else display "spouse_depression_2020 not found. Skipped."
+
+. 
+. * 2: Trust on contemporaneous spouse depression + controls
+. display _n "--- 2: Trust on contemporaneous spouse depression + controls ---"
+
+--- 2: Trust on contemporaneous spouse depression + controls ---
+
+. capture confirm variable spouse_depression_2020
+
+. if !_rc {
+.     eststo step2: reg trust_others_2020 spouse_depression_2020 `ctrl' `samp', v
+> ce(robust)
+
+Linear regression                               Number of obs     =        274
+                                                F(31, 241)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.2772
+                                                Root MSE          =     2.0586
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+spouse_de~2020 |   .0955314   .0688658     1.39   0.167    -.0401243     .231187
+               |
+       age_bin |
+           45  |   7.262206    1.96437     3.70   0.000     3.392679    11.13173
+           50  |   2.244194   1.200918     1.87   0.063    -.1214418    4.609829
+           55  |   3.587611    1.29454     2.77   0.006     1.037553    6.137669
+           60  |   4.814725   1.169436     4.12   0.000     2.511103    7.118346
+           65  |   4.294073   1.208904     3.55   0.000     1.912706     6.67544
+           70  |   5.674206   1.256133     4.52   0.000     3.199804    8.148608
+           75  |   5.086715   1.254694     4.05   0.000     2.615148    7.558282
+           80  |   5.361013   1.314682     4.08   0.000     2.771278    7.950748
+           85  |   5.812147   1.793428     3.24   0.001     2.279352    9.344941
+               |
+      2.gender |   .0776251   .2838051     0.27   0.785    -.4814301    .6366803
+      educ_yrs |   .0633958   .0574164     1.10   0.271    -.0497062    .1764978
+  married_2020 |  -.2508314   .6334386    -0.40   0.692    -1.498614    .9969516
+               |
+      race_eth |
+            2  |  -1.525271   .4334941    -3.52   0.001    -2.379192   -.6713503
+            3  |  -.7272302   .4948169    -1.47   0.143    -1.701948     .247488
+            4  |   .2524816   .7675456     0.33   0.742    -1.259473    1.764436
+               |
+wealth_d2_2020 |  -1.357912   1.098211    -1.24   0.217     -3.52123    .8054061
+wealth_d3_2020 |   .2657978    .697425     0.38   0.703    -1.108029    1.639625
+wealth_d4_2020 |  -1.294125   .6153123    -2.10   0.036    -2.506202   -.0820488
+wealth_d5_2020 |   -.518996   .6447439    -0.80   0.422    -1.789049    .7510567
+wealth_d6_2020 |   -1.98487    .643796    -3.08   0.002    -3.253056   -.7166846
+wealth_d7_2020 |  -1.367689   .5886994    -2.32   0.021    -2.527342   -.2080359
+wealth_d8_2020 |  -.9317897   .6359233    -1.47   0.144    -2.184467    .3208877
+wealth_d9_2020 |  -.2729665   .5600082    -0.49   0.626    -1.376102    .8301692
+wealth_d10_~20 |  -.9254514   .5444236    -1.70   0.090    -1.997888    .1469847
+   inlbrf_2020 |   .3317404   .3266549     1.02   0.311    -.3117227    .9752035
+               |
+population_3~0 |
+            2  |  -.7319453   .3706766    -1.97   0.049    -1.462125   -.0017658
+            3  |  -.1325404   .3715694    -0.36   0.722    -.8644787    .5993978
+               |
+  censreg_2020 |
+            2  |  -.0201578   .4445023    -0.05   0.964    -.8957635    .8554479
+            3  |   .1479101   .4218126     0.35   0.726    -.6830002    .9788203
+            4  |  -.3315577   .4234738    -0.78   0.434     -1.16574    .5026249
+               |
+       born_us |   .3320151   .4473151     0.74   0.459    -.5491313    1.213162
+         _cons |   1.302792   1.582084     0.82   0.411    -1.813686    4.419269
+--------------------------------------------------------------------------------
+. }
+
+. else display "spouse_depression_2020 not found. Skipped."
+
+. 
+. * 3: Trust on lagged spouse depression (2018) only
+. display _n "--- 3: Trust on lagged spouse depression (2018) only ---"
+
+--- 3: Trust on lagged spouse depression (2018) only ---
+
+. capture confirm variable spouse_depression_2018
+
+. if !_rc {
+.     reg trust_others_2020 spouse_depression_2018 `samp', vce(robust)
+
+Linear regression                               Number of obs     =        451
+                                                F(1, 449)         =       0.39
+                                                Prob > F          =     0.5342
+                                                R-squared         =     0.0008
+                                                Root MSE          =      2.468
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+spouse_de~2018 |  -.0390221   .0627238    -0.62   0.534    -.1622907    .0842465
+         _cons |   5.634046   .1343849    41.92   0.000     5.369945    5.898148
+--------------------------------------------------------------------------------
+. }
+
+. else display "spouse_depression_2018 not found. Skipped."
+
+. 
+. * 4: Trust on lagged spouse depression (2018) + controls
+. display _n "--- 4: Trust on lagged spouse depression (2018) + controls ---"
+
+--- 4: Trust on lagged spouse depression (2018) + controls ---
+
+. capture confirm variable spouse_depression_2018
+
+. if !_rc {
+.     eststo step4: reg trust_others_2020 spouse_depression_2018 `ctrl' `samp', v
+> ce(robust)
+
+Linear regression                               Number of obs     =        274
+                                                F(31, 242)        =       2.38
+                                                Prob > F          =     0.0001
+                                                R-squared         =     0.2445
+                                                Root MSE          =     2.0842
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+spouse_de~2018 |   .1426569   .0662091     2.15   0.032     .0122372    .2730765
+               |
+       age_bin |
+           50  |  -1.043059   1.878781    -0.56   0.579    -4.743909    2.657792
+           55  |   -.737139   1.768768    -0.42   0.677    -4.221284    2.747006
+           60  |   .7921827    1.70087     0.47   0.642    -2.558216    4.142581
+           65  |   .3498853   1.689931     0.21   0.836    -2.978966    3.678736
+           70  |   1.744599   1.700473     1.03   0.306    -1.605019    5.094216
+           75  |   1.117763   1.701566     0.66   0.512    -2.234009    4.469534
+           80  |    1.29782   1.720972     0.75   0.452    -2.092176    4.687816
+           85  |   2.015204   2.049105     0.98   0.326    -2.021153    6.051562
+               |
+      2.gender |   .2391238   .2735338     0.87   0.383    -.2996873    .7779348
+      educ_yrs |   .0670605   .0564265     1.19   0.236    -.0440893    .1782102
+  married_2020 |  -.0794841   .5266369    -0.15   0.880    -1.116861    .9578932
+               |
+      race_eth |
+            2  |  -1.329662    .452229    -2.94   0.004     -2.22047   -.4388547
+            3  |    -.85698    .473016    -1.81   0.071    -1.788734    .0747741
+            4  |   .0356393   .8815429     0.04   0.968    -1.700837    1.772116
+               |
+wealth_d2_2020 |  -1.631816   1.279147    -1.28   0.203    -4.151499     .887867
+wealth_d3_2020 |   .5195421   .6615889     0.79   0.433    -.7836657     1.82275
+wealth_d4_2020 |  -.8351521   .6133898    -1.36   0.175    -2.043417    .3731123
+wealth_d5_2020 |  -.3531284   .6450067    -0.55   0.585    -1.623672    .9174156
+wealth_d6_2020 |  -1.343896   .6772426    -1.98   0.048    -2.677939   -.0098533
+wealth_d7_2020 |  -.7184822   .5898295    -1.22   0.224    -1.880337    .4433728
+wealth_d8_2020 |  -.4057242   .6209373    -0.65   0.514    -1.628856    .8174075
+wealth_d9_2020 |   .2654213   .5324263     0.50   0.619    -.7833601    1.314203
+wealth_d10_~20 |   -.481045   .5546959    -0.87   0.387    -1.573693    .6116034
+   inlbrf_2020 |   .3470619   .3164681     1.10   0.274    -.2763218    .9704456
+               |
+population_3~0 |
+            2  |  -.6004012   .3948027    -1.52   0.130     -1.37809    .1772872
+            3  |  -.0948413   .3828117    -0.25   0.805    -.8489096     .659227
+               |
+  censreg_2020 |
+            2  |  -.0028019   .4823329    -0.01   0.995    -.9529086    .9473048
+            3  |     .10651   .4593673     0.23   0.817    -.7983586    1.011379
+            4  |   -.484778    .468712    -1.03   0.302    -1.408054    .4384979
+               |
+       born_us |   .0840794   .4728424     0.18   0.859    -.8473327    1.015491
+         _cons |   4.678695   2.057523     2.27   0.024     .6257542    8.731635
+--------------------------------------------------------------------------------
+. }
+
+. else display "spouse_depression_2018 not found. Skipped."
+
+. 
+. * 5: Trust on multiple lags (2016, 2018) of spouse depression + controls
+. display _n "--- 5: Trust on multiple lags (2016, 2018) spouse depression + cont
+> rols ---"
+
+--- 5: Trust on multiple lags (2016, 2018) spouse depression + controls ---
+
+. capture confirm variable spouse_depression_2016
+
+. local has_s2016 = (_rc == 0)
+
+. capture confirm variable spouse_depression_2018
+
+. local has_s2018 = (_rc == 0)
+
+. if `has_s2016' & `has_s2018' {
+.     eststo step5: reg trust_others_2020 spouse_depression_2016 spouse_depressio
+> n_2018 `ctrl' `samp', vce(robust)
+
+Linear regression                               Number of obs     =        262
+                                                F(32, 229)        =       2.29
+                                                Prob > F          =     0.0002
+                                                R-squared         =     0.2549
+                                                Root MSE          =     2.1045
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+spouse_de~2016 |  -.0670884   .1137195    -0.59   0.556    -.2911587    .1569819
+spouse_de~2018 |   .1718608   .1160103     1.48   0.140    -.0567232    .4004449
+               |
+       age_bin |
+           50  |  -1.031228   1.980516    -0.52   0.603    -4.933591    2.871136
+           55  |  -.5473568   1.856195    -0.29   0.768    -4.204762    3.110048
+           60  |   1.179098   1.780379     0.66   0.508     -2.32892    4.687115
+           65  |   .6019499   1.781198     0.34   0.736    -2.907682    4.111582
+           70  |   2.046685   1.795993     1.14   0.256    -1.492098    5.585469
+           75  |   1.501751   1.803495     0.83   0.406    -2.051815    5.055317
+           80  |   1.659323   1.827546     0.91   0.365    -1.941633    5.260279
+           85  |   2.371047   2.121146     1.12   0.265     -1.80841    6.550505
+               |
+      2.gender |   .2834282   .2791778     1.02   0.311    -.2666574    .8335138
+      educ_yrs |   .0615005   .0619092     0.99   0.322     -.060484     .183485
+  married_2020 |  -.1740152   .5377609    -0.32   0.747    -1.233607    .8855766
+               |
+      race_eth |
+            2  |  -1.429083   .4865107    -2.94   0.004    -2.387693   -.4704737
+            3  |  -.7697489   .4979026    -1.55   0.123    -1.750805    .2113071
+            4  |   -.004588   .8999395    -0.01   0.996    -1.777808    1.768632
+               |
+wealth_d2_2020 |  -1.951302   1.266172    -1.54   0.125    -4.446138    .5435345
+wealth_d3_2020 |   .1411118   .6676243     0.21   0.833     -1.17436    1.456584
+wealth_d4_2020 |  -1.229906   .6186796    -1.99   0.048    -2.448938   -.0108734
+wealth_d5_2020 |  -.7860783   .6580486    -1.19   0.233    -2.082682    .5105257
+wealth_d6_2020 |  -1.763536   .6811837    -2.59   0.010    -3.105725   -.4213466
+wealth_d7_2020 |  -1.157667   .5886399    -1.97   0.050    -2.317509    .0021759
+wealth_d8_2020 |  -.8814003   .6483395    -1.36   0.175    -2.158874    .3960731
+wealth_d9_2020 |  -.1542074   .5464021    -0.28   0.778    -1.230826     .922411
+wealth_d10_~20 |  -.9725347   .5874855    -1.66   0.099    -2.130103    .1850333
+   inlbrf_2020 |   .3581198   .3262574     1.10   0.274    -.2847304     1.00097
+               |
+population_3~0 |
+            2  |  -.6145544    .410033    -1.50   0.135    -1.422474    .1933652
+            3  |   .0035103   .4027826     0.01   0.993    -.7901233    .7971439
+               |
+  censreg_2020 |
+            2  |  -.0290218   .4890177    -0.06   0.953    -.9925713    .9345276
+            3  |   .1240547   .4622599     0.27   0.789    -.7867717    1.034881
+            4  |  -.5170832   .4814639    -1.07   0.284    -1.465749    .4315823
+               |
+       born_us |   .0144426   .4795713     0.03   0.976    -.9304938    .9593789
+         _cons |   5.030036   2.199543     2.29   0.023     .6961061    9.363966
+--------------------------------------------------------------------------------
+. }
+
+. else display "spouse_depression_2016 or spouse_depression_2018 not found. Skipp
+> ed."
+
+. 
+. * 6a: Trust on ever spouse depressed (no controls)
+. display _n "--- 6a: Trust on ever spouse depressed (no controls) ---"
+
+--- 6a: Trust on ever spouse depressed (no controls) ---
+
+. reg trust_others_2020 ever_spouse_depressed `samp', vce(robust)
+
+Linear regression                               Number of obs     =        641
+                                                F(1, 639)         =       0.19
+                                                Prob > F          =     0.6596
+                                                R-squared         =     0.0003
+                                                Root MSE          =     2.5141
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+ever_spouse_~d |   .1160113   .2632861     0.44   0.660    -.4009992    .6330218
+         _cons |   5.386792   .2396216    22.48   0.000     4.916251    5.857333
+--------------------------------------------------------------------------------
+
+. 
+. * 6b: Trust on ever spouse depressed + controls
+. display _n "--- 6b: Trust on ever spouse depressed + controls ---"
+
+--- 6b: Trust on ever spouse depressed + controls ---
+
+. eststo step6b: reg trust_others_2020 ever_spouse_depressed `ctrl' `samp', vce(r
+> obust)
+
+Linear regression                               Number of obs     =        393
+                                                F(31, 359)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.2447
+                                                Root MSE          =     2.1308
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+ever_spouse_~d |   .1586735   .3164447     0.50   0.616    -.4636447    .7809917
+               |
+       age_bin |
+           40  |  -.0305581   .9666405    -0.03   0.975    -1.931547    1.870431
+           45  |    5.63051   1.977155     2.85   0.005      1.74225     9.51877
+           50  |   1.585899   1.036731     1.53   0.127    -.4529298    3.624728
+           55  |   3.218702   .8175076     3.94   0.000     1.610997    4.826408
+           60  |   4.183432   .6821731     6.13   0.000     2.841875     5.52499
+           65  |   3.662931   .6488202     5.65   0.000     2.386965    4.938896
+           70  |   4.818336   .6061561     7.95   0.000     3.626274    6.010399
+           75  |   3.995148   .6562429     6.09   0.000     2.704585    5.285712
+           80  |   4.170717   .7208193     5.79   0.000     2.753158    5.588276
+           85  |   5.798014    1.11298     5.21   0.000     3.609234    7.986794
+               |
+      2.gender |   .3552612   .2380457     1.49   0.136    -.1128781    .8234005
+      educ_yrs |   .0992533   .0509261     1.95   0.052    -.0008976    .1994042
+  married_2020 |  -.0910775   .2888512    -0.32   0.753    -.6591306    .4769756
+               |
+      race_eth |
+            2  |     -1.262   .3762606    -3.35   0.001    -2.001952   -.5220481
+            3  |   .0326347   .4053651     0.08   0.936    -.7645539    .8298233
+            4  |  -.8213018   .7119898    -1.15   0.249    -2.221497    .5788931
+               |
+wealth_d2_2020 |  -.7584082   .8064439    -0.94   0.348    -2.344356    .8275395
+wealth_d3_2020 |    .837412   .5196769     1.61   0.108    -.1845814    1.859405
+wealth_d4_2020 |  -.5763892   .5837164    -0.99   0.324    -1.724322     .571544
+wealth_d5_2020 |   .3948894   .5511466     0.72   0.474    -.6889923    1.478771
+wealth_d6_2020 |  -.4119886   .4866192    -0.85   0.398    -1.368971    .5449937
+wealth_d7_2020 |  -.0106083   .4849538    -0.02   0.983    -.9643156     .943099
+wealth_d8_2020 |   .2429995     .50598     0.48   0.631    -.7520577    1.238057
+wealth_d9_2020 |    .825155   .4607439     1.79   0.074    -.0809411    1.731251
+wealth_d10_~20 |  -.0217739   .4550315    -0.05   0.962     -.916636    .8730882
+   inlbrf_2020 |  -.0802375    .254464    -0.32   0.753    -.5806648    .4201899
+               |
+population_3~0 |
+            2  |  -.0710727   .3191162    -0.22   0.824    -.6986447    .5564992
+            3  |   .1935923   .3132745     0.62   0.537    -.4224914     .809676
+               |
+  censreg_2020 |
+            2  |   .0964601    .378955     0.25   0.799    -.6487905    .8417108
+            3  |  -.1086868    .364777    -0.30   0.766    -.8260551    .6086815
+            4  |  -.2398325   .3720173    -0.64   0.520    -.9714394    .4917745
+               |
+       born_us |   .3351122   .3935957     0.85   0.395    -.4389307    1.109155
+         _cons |  -.0731211    1.01158    -0.07   0.942    -2.062489    1.916247
+--------------------------------------------------------------------------------
+
+. 
+. * ----------------------------------------------------------------------
+. * Table export: steps 2, 4, 5, 6b
+. * ----------------------------------------------------------------------
+. local estlist ""
+
+. local mtlist ""
+
+. capture confirm variable spouse_depression_2020
+
+. if !_rc {
+.     local estlist "step2"
+.     local mtlist `""No lag""'
+. }
+
+. capture confirm variable spouse_depression_2018
+
+. if !_rc local estlist "`estlist' step4"
+
+. if !_rc local mtlist `"`mtlist' "One lag""'
+
+. capture confirm variable spouse_depression_2016
+
+. if !_rc {
+.     capture confirm variable spouse_depression_2018
+.     if !_rc local estlist "`estlist' step5"
+.     if !_rc local mtlist `"`mtlist' "Two lags""'
+. }
+
+. local estlist "`estlist' step6b"
+
+. local mtlist `"`mtlist' "Ever depressed""'
+
+. local outfile "${REGRESSIONS}/2SLS/PredictTrust/trust_reg_spouse_depression_iv.
+> tex"
+
+. if trim("`estlist'") != "" {
+.     esttab `estlist' using "`outfile'", replace ///
+>     booktabs no gap ///
+>     mtitles(`mtlist') ///
+>     se star(* 0.10 ** 0.05 *** 0.01) ///
+>     b(2) se(2) label ///
+>     order(spouse_depression_2020 spouse_depression_2018 spouse_depression_2016 
+> ever_spouse_depressed _cons) ///
+>     varlabels(spouse_depression_2020 "Spouse depression (2020)" spouse_depressi
+> on_2018 "Spouse depression (2018)" spouse_depression_2016 "Spouse depression (2
+> 016)" ever_spouse_depressed "Ever spouse depressed" _cons "Constant") ///
+>     alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+>     stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+>     nonumbers nonotes
+estout step2 step4 step5 step6b using `"/Volumes/SSD PRO/Github-forks/Chp2-Trusta
+> ndReturns/Code/Regressions/2SLS/PredictTrust/trust_reg_spouse_depression_iv.tex
+> "' ,
+ cells(b(fmt(2) star) se(fmt(2) par))
+ stats(N r2_a, labels("Observations" "Adj. R-squared"))
+ starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<@\
+> )"))
+ varwidth(20)
+ modelwidth(12)
+ delimiter(&)
+ end(\\)
+ prehead(`"{"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}"' `"\begin{tabular*}{
+> 0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\topru
+> le"')
+ posthead("\midrule")
+ prefoot("\midrule")
+ postfoot(`"\bottomrule"' `"\end{tabular*}"' `"}"')
+ label
+ varlabels(spouse_depression_2020 "Spouse depression (2020)" spouse_depression_20
+> 18 "Spouse depression (2018)" spouse_depression_2016 "Spouse depression (2016)"
+>  ever_spouse_depressed "Ever spouse depressed" _cons "Constant")
+ mlabels("No lag" "One lag" "Two lags" "Ever depressed", titles span prefix(\mult
+> icolumn{@span}{c}{) suffix(}))
+ nonumbers
+ collabels(none)
+ eqlabels(, begin("\midrule" "") nofirst)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+ order(spouse_depression_2020 spouse_depression_2018 spouse_depression_2016 ever_
+> spouse_depressed _cons)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/2SLS/PredictTrust/trust_reg_spouse_depression_iv.tex)
+.     display "Table saved: `outfile'"
+Table saved: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/
+> 2SLS/PredictTrust/trust_reg_spouse_depression_iv.tex
+. }
+
+. else display "No spouse depression models to export. Table skipped."
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/31_2sl
+> s_spdep.log
+  log type:  text
+ closed on:   5 Mar 2026, 14:13:39
+---------------------------------------------------------------------------------

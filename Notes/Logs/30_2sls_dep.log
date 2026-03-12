@@ -1,0 +1,2443 @@
+---------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/30_2sl
+> s_dep.log
+  log type:  text
+ opened on:   5 Mar 2026, 16:54:21
+
+. 
+. * ----------------------------------------------------------------------
+. * Load analysis sample, merge lagged CESD from all_data_merged
+. * ----------------------------------------------------------------------
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. 
+. * Merge r*cesd from RAND longitudinal (all_data_merged has full RAND vars)
+. preserve
+
+. use "${CLEANED}/all_data_merged.dta", clear
+
+. local cesd_vars "hhidpn"
+
+. forvalues w = 6/15 {
+  2.     capture confirm variable r`w'cesd
+  3.     if !_rc local cesd_vars "`cesd_vars' r`w'cesd"
+  4. }
+
+. keep `cesd_vars'
+
+. tempfile cesd
+
+. save "`cesd'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000003 not
+    found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000003 saved as
+    .dta format
+
+. restore
+
+. 
+. merge 1:1 hhidpn using "`cesd'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                            45,234  
+    -----------------------------------------
+
+. 
+. * Create lagged depression (RAND wave 14=2018, 13=2016, 12=2014, ...)
+. capture confirm variable r14cesd
+
+. if !_rc {
+.     capture drop depression_2018
+.     gen depression_2018 = r14cesd
+(28,755 missing values generated)
+. }
+
+. capture confirm variable r13cesd
+
+. if !_rc {
+.     capture drop depression_2016
+.     gen depression_2016 = r13cesd
+(25,269 missing values generated)
+. }
+
+. capture confirm variable r12cesd
+
+. if !_rc {
+.     capture drop depression_2014
+.     gen depression_2014 = r12cesd
+(27,538 missing values generated)
+. }
+
+. 
+. * Ever depressed 2002-2020 (waves 6-15): 1 if CESD score > 0 in any wave
+. gen byte ever_depressed = 0
+
+. forvalues w = 6/15 {
+  2.     capture confirm variable r`w'cesd
+  3.     if !_rc replace ever_depressed = 1 if r`w'cesd > 0 & !missing(r`w'cesd)
+  4. }
+(9,116 real changes made)
+(4,289 real changes made)
+(1,961 real changes made)
+(1,171 real changes made)
+(4,657 real changes made)
+(1,429 real changes made)
+(790 real changes made)
+(3,353 real changes made)
+(841 real changes made)
+(601 real changes made)
+
+. * Missing if no CESD response in any wave
+. local _cesd ""
+
+. forvalues w = 6/15 {
+  2.     capture confirm variable r`w'cesd
+  3.     if !_rc local _cesd "`_cesd' r`w'cesd"
+  4. }
+
+. if "`_cesd'" != "" {
+.     egen _n_cesd = rownonmiss(`_cesd')
+.     replace ever_depressed = . if _n_cesd == 0
+(12,044 real changes made, 12,044 to missing)
+.     drop _n_cesd
+. }
+
+. 
+. * Age bins
+. capture confirm variable age_bin
+
+. if _rc {
+.     capture confirm variable age_2020
+.     if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+. }
+
+. 
+. * Controls (match 22 Addl Spec 7b / 29 baseline): demo + wealth + inlbrf + pop 
+> + region + born_us
+. * Exclude depression from controls when testing depression as predictor
+. local demo_core "i.gender educ_yrs married_2020"
+
+. local demo_race "i.race_eth"
+
+. capture confirm variable age_bin
+
+. if !_rc local demo_core "i.age_bin `demo_core'"
+
+. capture confirm variable race_eth
+
+. if _rc local demo_race ""
+
+. 
+. local region_var ""
+
+. capture confirm variable censreg
+
+. if !_rc local region_var "censreg"
+
+. if "`region_var'" == "" {
+.     capture confirm variable censreg_2020
+.     if !_rc local region_var "censreg_2020"
+. }
+
+. 
+. local ctrl "`demo_core' `demo_race'"
+
+. capture confirm variable wealth_d2_2020
+
+. if !_rc {
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local ctrl "`ctrl' wealth_d`d'_2020"
+  4.     }
+. }
+
+. capture confirm variable inlbrf_2020
+
+. if !_rc local ctrl "`ctrl' inlbrf_2020"
+
+. if "`region_var'" != "" local ctrl "`ctrl' i.`region_var'"
+
+. capture confirm variable born_us
+
+. if !_rc local ctrl "`ctrl' born_us"
+
+. 
+. * Sample: nonmissing trust
+. local samp "if !missing(trust_others_2020)"
+
+. 
+. * ----------------------------------------------------------------------
+. * STEP 1: Trust on contemporaneous depression (no controls)
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "STEP 1: Trust on contemporaneous depression (no controls)"
+STEP 1: Trust on contemporaneous depression (no controls)
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. reg trust_others_2020 depression_2020 `samp', vce(robust)
+
+Linear regression                               Number of obs     =        900
+                                                F(1, 898)         =      24.44
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0304
+                                                Root MSE          =     2.5769
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+depressio~2020 |  -.2174978   .0439952    -4.94   0.000    -.3038432   -.1311524
+         _cons |   5.749688   .1053421    54.58   0.000     5.542943    5.956434
+--------------------------------------------------------------------------------
+
+. 
+. * ----------------------------------------------------------------------
+. * STEP 2: Trust on contemporaneous depression + controls
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "STEP 2: Trust on contemporaneous depression + controls"
+STEP 2: Trust on contemporaneous depression + controls
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. eststo step2: reg trust_others_2020 depression_2020 `ctrl' `samp', vce(robust)
+
+Linear regression                               Number of obs     =        663
+                                                F(30, 631)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1648
+                                                Root MSE          =     2.4331
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+depressio~2020 |  -.1077059    .051711    -2.08   0.038    -.2092524   -.0061595
+               |
+       age_bin |
+           40  |   3.298337   2.567213     1.28   0.199    -1.742977    8.339651
+           45  |   5.440753   1.490597     3.65   0.000     2.513621    8.367884
+           50  |   1.861934   .8789964     2.12   0.035     .1358219    3.588046
+           55  |   3.693068   .6762464     5.46   0.000     2.365102    5.021034
+           60  |   4.267445   .5516974     7.74   0.000      3.18406    5.350831
+           65  |   4.370216   .5295665     8.25   0.000      3.33029    5.410142
+           70  |   4.865225   .5361652     9.07   0.000     3.812341    5.918109
+           75  |   4.710373   .5660278     8.32   0.000     3.598847    5.821899
+           80  |   4.824362   .5809997     8.30   0.000     3.683435    5.965289
+           85  |   6.192412   .7661384     8.08   0.000     4.687922    7.696901
+               |
+      2.gender |     .27885   .2052318     1.36   0.175      -.12417      .68187
+      educ_yrs |   .0405815   .0417142     0.97   0.331     -.041334     .122497
+  married_2020 |   .0942567   .2158953     0.44   0.663    -.3297034    .5182169
+               |
+      race_eth |
+            2  |  -1.130496   .2729772    -4.14   0.000     -1.66655    -.594442
+            3  |  -.1841152   .3651404    -0.50   0.614    -.9011526    .5329221
+            4  |  -.7483637   .5368665    -1.39   0.164    -1.802625    .3058976
+               |
+wealth_d2_2020 |  -.4531136   .5018242    -0.90   0.367    -1.438561    .5323339
+wealth_d3_2020 |   .5660274   .3913338     1.45   0.149    -.2024468    1.334502
+wealth_d4_2020 |  -.3836679   .4286575    -0.90   0.371    -1.225436    .4580999
+wealth_d5_2020 |   .2582398   .4580273     0.56   0.573    -.6412025    1.157682
+wealth_d6_2020 |  -.5661491   .4303765    -1.32   0.189    -1.411293    .2789944
+wealth_d7_2020 |  -.2723829   .4215411    -0.65   0.518    -1.100176    .5554104
+wealth_d8_2020 |   .3370129    .393548     0.86   0.392    -.4358094    1.109835
+wealth_d9_2020 |   .5988805   .3841215     1.56   0.119    -.1554307    1.353192
+wealth_d10_~20 |  -.0708966   .3850046    -0.18   0.854     -.826942    .6851487
+   inlbrf_2020 |   .0191792   .2135785     0.09   0.928    -.4002314    .4385898
+               |
+  censreg_2020 |
+            2  |   .4223412   .3150174     1.34   0.181    -.1962682    1.040951
+            3  |   .2744801   .2894748     0.95   0.343    -.2939705    .8429307
+            4  |   .3485745   .3118573     1.12   0.264    -.2638292    .9609782
+               |
+       born_us |   .6209658   .3129436     1.98   0.048     .0064289    1.235503
+         _cons |  -.0108311   .7314418    -0.01   0.988    -1.447186    1.425523
+--------------------------------------------------------------------------------
+
+.     quietly testparm i.age_bin
+
+.     estadd scalar p_joint_age_bin = r(p) : step2
+
+.     local wlist ""
+
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4.     }
+
+.     if trim("`wlist'") != "" {
+.         quietly testparm `wlist'
+.         estadd scalar p_joint_wealth = r(p) : step2
+.     }
+
+.     else estadd scalar p_joint_wealth = . : step2
+
+.     capture confirm variable race_eth
+
+.     if !_rc {
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : step2
+.     }
+
+.     else estadd scalar p_joint_race = . : step2
+
+.     if "`region_var'" != "" {
+.         capture testparm i.`region_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : step2
+.         else estadd scalar p_joint_censreg = . : step2
+.     }
+
+.     else estadd scalar p_joint_censreg = . : step2
+
+. 
+. * ----------------------------------------------------------------------
+. * STEP 3: Trust on lagged depression only (2018)
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "STEP 3: Trust on lagged depression (2018) only"
+STEP 3: Trust on lagged depression (2018) only
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. capture confirm variable depression_2018
+
+. if !_rc {
+.     reg trust_others_2020 depression_2018 `samp', vce(robust)
+
+Linear regression                               Number of obs     =        827
+                                                F(1, 825)         =      30.05
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0384
+                                                Root MSE          =     2.5444
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+depressio~2018 |  -.2573558   .0469479    -5.48   0.000    -.3495071   -.1652045
+         _cons |   5.853826   .1059538    55.25   0.000     5.645855    6.061796
+--------------------------------------------------------------------------------
+. }
+
+. else {
+.     display "depression_2018 not found (r14cesd missing). Skipped."
+. }
+
+. 
+. * ----------------------------------------------------------------------
+. * STEP 4: Trust on lagged depression (2018) + controls
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "STEP 4: Trust on lagged depression (2018) + controls"
+STEP 4: Trust on lagged depression (2018) + controls
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. capture confirm variable depression_2018
+
+. if !_rc {
+.     eststo step4: reg trust_others_2020 depression_2018 `ctrl' `samp', vce(robu
+> st)
+
+Linear regression                               Number of obs     =        616
+                                                F(29, 584)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1827
+                                                Root MSE          =     2.4164
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+depressio~2018 |  -.1887541   .0547511    -3.45   0.001    -.2962871    -.081221
+               |
+       age_bin |
+           40  |   7.210497   .7677965     9.39   0.000     5.702519    8.718476
+           45  |   5.659171   1.520215     3.72   0.000     2.673417    8.644926
+           50  |   1.988988   .8425898     2.36   0.019     .3341129    3.643864
+           55  |   4.002782   .7423586     5.39   0.000     2.544764      5.4608
+           60  |   4.643377   .5779028     8.03   0.000     3.508356    5.778398
+           65  |   4.792388   .5572104     8.60   0.000     3.698007    5.886768
+           70  |   5.282779   .5537526     9.54   0.000      4.19519    6.370368
+           75  |   5.092936   .5917917     8.61   0.000     3.930637    6.255235
+           80  |   5.196171   .5978495     8.69   0.000     4.021974    6.370368
+           85  |    6.55971   .7975205     8.23   0.000     4.993352    8.126067
+               |
+      2.gender |    .381593    .210102     1.82   0.070    -.0310546    .7942407
+      educ_yrs |   .0323784    .042282     0.77   0.444    -.0506649    .1154217
+  married_2020 |   .1303535    .222549     0.59   0.558    -.3067404    .5674473
+               |
+      race_eth |
+            2  |  -1.163678   .2803396    -4.15   0.000    -1.714275   -.6130817
+            3  |  -.0371263   .3899694    -0.10   0.924    -.8030396    .7287871
+            4  |  -.9077225   .5929482    -1.53   0.126    -2.072293    .2568481
+               |
+wealth_d2_2020 |  -.6552793   .5256388    -1.25   0.213    -1.687652    .3770933
+wealth_d3_2020 |   .5782347   .4051127     1.43   0.154    -.2174205     1.37389
+wealth_d4_2020 |  -.3914197   .4382717    -0.89   0.372      -1.2522    .4693609
+wealth_d5_2020 |   .1447892   .4697114     0.31   0.758    -.7777401    1.067319
+wealth_d6_2020 |  -.6816823   .4550729    -1.50   0.135    -1.575461    .2120965
+wealth_d7_2020 |  -.3634951    .437931    -0.83   0.407    -1.223607    .4966165
+wealth_d8_2020 |   .2888553   .4229721     0.68   0.495    -.5418765    1.119587
+wealth_d9_2020 |   .5322139   .3985746     1.34   0.182    -.2506004    1.315028
+wealth_d10_~20 |  -.1536195   .4013025    -0.38   0.702    -.9417913    .6345524
+   inlbrf_2020 |   .0080117   .2218997     0.04   0.971    -.4278069    .4438302
+               |
+  censreg_2020 |
+            2  |   .5218919   .3294252     1.58   0.114    -.1251106    1.168894
+            3  |   .4707999   .3083358     1.53   0.127    -.1347822    1.076382
+            4  |   .4267007    .339984     1.26   0.210    -.2410395    1.094441
+               |
+       born_us |   .5986716    .333991     1.79   0.074    -.0572982    1.254641
+         _cons |  -.3227789   .7469772    -0.43   0.666    -1.789868     1.14431
+--------------------------------------------------------------------------------
+.     quietly testparm i.age_bin
+.     estadd scalar p_joint_age_bin = r(p) : step4
+.     local wlist ""
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4.     }
+.     if trim("`wlist'") != "" {
+.         quietly testparm `wlist'
+.         estadd scalar p_joint_wealth = r(p) : step4
+.     }
+.     else estadd scalar p_joint_wealth = . : step4
+.     capture confirm variable race_eth
+.     if !_rc {
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : step4
+.     }
+.     else estadd scalar p_joint_race = . : step4
+.     if "`region_var'" != "" {
+.         capture testparm i.`region_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : step4
+.         else estadd scalar p_joint_censreg = . : step4
+.     }
+.     else estadd scalar p_joint_censreg = . : step4
+. }
+
+. else {
+.     display "depression_2018 not found. Skipped."
+. }
+
+. 
+. * ----------------------------------------------------------------------
+. * STEP 5: Trust on multiple lags (2016 and 2018) + controls
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "STEP 5: Trust on multiple lags (2016, 2018) + controls"
+STEP 5: Trust on multiple lags (2016, 2018) + controls
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. capture confirm variable depression_2016
+
+. local has_d2016 = (_rc == 0)
+
+. capture confirm variable depression_2018
+
+. local has_d2018 = (_rc == 0)
+
+. if `has_d2016' & `has_d2018' {
+.     eststo step5: reg trust_others_2020 depression_2016 depression_2018 `ctrl' 
+> `samp', vce(robust)
+
+Linear regression                               Number of obs     =        607
+                                                F(30, 574)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1836
+                                                Root MSE          =     2.4249
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+depressio~2016 |  -.0376617   .0843983    -0.45   0.656    -.2034289    .1281054
+depressio~2018 |  -.1712062   .0766214    -2.23   0.026    -.3216986   -.0207137
+               |
+       age_bin |
+           40  |   7.153423   .7879058     9.08   0.000     5.605893    8.700953
+           45  |   5.696732   1.549752     3.68   0.000     2.652856    8.740608
+           50  |   1.998935   .8490197     2.35   0.019     .3313705    3.666499
+           55  |   3.995977   .7528304     5.31   0.000     2.517338    5.474615
+           60  |   4.642724   .5897895     7.87   0.000     3.484315    5.801133
+           65  |   4.810605   .5687239     8.46   0.000     3.693571    5.927638
+           70  |   5.318136   .5797751     9.17   0.000     4.179396    6.456875
+           75  |   5.152505   .6100358     8.45   0.000      3.95433    6.350679
+           80  |   5.180266   .6161351     8.41   0.000     3.970111     6.39042
+           85  |   6.586385   .8103767     8.13   0.000      4.99472     8.17805
+               |
+      2.gender |   .4231046   .2106916     2.01   0.045      .009284    .8369252
+      educ_yrs |   .0359436   .0438867     0.82   0.413    -.0502545    .1221416
+  married_2020 |   .1070052   .2304925     0.46   0.643    -.3457064    .5597168
+               |
+      race_eth |
+            2  |  -1.156365   .2814862    -4.11   0.000    -1.709234   -.6034968
+            3  |   .0103312   .3922368     0.03   0.979    -.7600633    .7807257
+            4  |  -.9101031   .5963289    -1.53   0.128    -2.081356    .2611496
+               |
+wealth_d2_2020 |  -.7014212   .5279918    -1.33   0.185    -1.738453    .3356103
+wealth_d3_2020 |    .482091   .4094469     1.18   0.240    -.3221059    1.286288
+wealth_d4_2020 |  -.4597891   .4447075    -1.03   0.302    -1.333242    .4136633
+wealth_d5_2020 |   .1229956   .4785263     0.26   0.797    -.8168806    1.062872
+wealth_d6_2020 |  -.7045716   .4630797    -1.52   0.129    -1.614109    .2049657
+wealth_d7_2020 |  -.4211323   .4426117    -0.95   0.342    -1.290468    .4482037
+wealth_d8_2020 |    .225999   .4282195     0.53   0.598    -.6150693    1.067067
+wealth_d9_2020 |   .4651099   .4104519     1.13   0.258     -.341061    1.271281
+wealth_d10_~20 |  -.2064946   .4069711    -0.51   0.612    -1.005829    .5928396
+   inlbrf_2020 |    .017474   .2247237     0.08   0.938     -.423907     .458855
+               |
+  censreg_2020 |
+            2  |   .5201039   .3380835     1.54   0.125    -.1439278    1.184136
+            3  |   .4804475   .3158225     1.52   0.129    -.1398611    1.100756
+            4  |   .4526295   .3487981     1.30   0.195    -.2324467    1.137706
+               |
+       born_us |   .5797807   .3370896     1.72   0.086    -.0822988     1.24186
+         _cons |  -.3258381   .7583358    -0.43   0.668     -1.81529    1.163613
+--------------------------------------------------------------------------------
+.     quietly testparm i.age_bin
+.     estadd scalar p_joint_age_bin = r(p) : step5
+.     local wlist ""
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4.     }
+.     if trim("`wlist'") != "" {
+.         quietly testparm `wlist'
+.         estadd scalar p_joint_wealth = r(p) : step5
+.     }
+.     else estadd scalar p_joint_wealth = . : step5
+.     capture confirm variable race_eth
+.     if !_rc {
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : step5
+.     }
+.     else estadd scalar p_joint_race = . : step5
+.     if "`region_var'" != "" {
+.         capture testparm i.`region_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : step5
+.         else estadd scalar p_joint_censreg = . : step5
+.     }
+.     else estadd scalar p_joint_censreg = . : step5
+. }
+
+. else {
+.     display "depression_2016 or depression_2018 not found. Skipped."
+. }
+
+. 
+. * ----------------------------------------------------------------------
+. * STEP 6: Trust on ever depressed (2002-2020)
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "STEP 6a: Trust on ever depressed (no controls)"
+STEP 6a: Trust on ever depressed (no controls)
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. reg trust_others_2020 ever_depressed `samp', vce(robust)
+
+Linear regression                               Number of obs     =        900
+                                                F(1, 898)         =      20.41
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0140
+                                                Root MSE          =     2.5986
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+ever_depressed |   -.927167   .2052303    -4.52   0.000    -1.329954   -.5243801
+         _cons |   6.208696   .1815622    34.20   0.000      5.85236    6.565031
+--------------------------------------------------------------------------------
+
+. 
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "STEP 6b: Trust on ever depressed + controls"
+STEP 6b: Trust on ever depressed + controls
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. eststo step6b: reg trust_others_2020 ever_depressed `ctrl' `samp', vce(robust)
+
+Linear regression                               Number of obs     =        663
+                                                F(30, 631)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1673
+                                                Root MSE          =     2.4296
+
+--------------------------------------------------------------------------------
+               |               Robust
+trust_oth~2020 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+ever_depressed |  -.7853847   .2453036    -3.20   0.001    -1.267095   -.3036745
+               |
+       age_bin |
+           40  |   3.286599   2.551155     1.29   0.198    -1.723182     8.29638
+           45  |   5.361773   1.515007     3.54   0.000     2.386707     8.33684
+           50  |   1.730961   .8837762     1.96   0.051    -.0045373     3.46646
+           55  |   3.498016   .6744368     5.19   0.000     2.173604    4.822428
+           60  |   4.100671   .5514481     7.44   0.000     3.017775    5.183566
+           65  |   4.212369   .5298773     7.95   0.000     3.171832    5.252905
+           70  |   4.737879   .5366667     8.83   0.000      3.68401    5.791747
+           75  |    4.62263   .5607618     8.24   0.000     3.521445    5.723815
+           80  |    4.72786   .5817201     8.13   0.000     3.585519    5.870202
+           85  |   6.146256   .7720793     7.96   0.000       4.6301    7.662411
+               |
+      2.gender |    .317315   .2065036     1.54   0.125    -.0882024    .7228324
+      educ_yrs |   .0347168   .0422097     0.82   0.411    -.0481716    .1176052
+  married_2020 |   .1231266   .2159454     0.57   0.569     -.300932    .5471853
+               |
+      race_eth |
+            2  |  -1.060205   .2676783    -3.96   0.000    -1.585853   -.5345565
+            3  |  -.2079317    .362946    -0.57   0.567      -.92066    .5047965
+            4  |    -.69753    .539332    -1.29   0.196    -1.756633    .3615727
+               |
+wealth_d2_2020 |  -.5504235   .5058841    -1.09   0.277    -1.543844    .4429966
+wealth_d3_2020 |   .5358629   .3904825     1.37   0.170    -.2309396    1.302665
+wealth_d4_2020 |   -.434279   .4270264    -1.02   0.310    -1.272844    .4042858
+wealth_d5_2020 |   .2144512   .4593855     0.47   0.641    -.6876583    1.116561
+wealth_d6_2020 |  -.5868952   .4343213    -1.35   0.177    -1.439785    .2659949
+wealth_d7_2020 |   -.321332   .4256757    -0.75   0.451    -1.157244    .5145805
+wealth_d8_2020 |   .2698759   .3970065     0.68   0.497    -.5097379     1.04949
+wealth_d9_2020 |   .5879187   .3796403     1.55   0.122    -.1575926     1.33343
+wealth_d10_~20 |  -.2024748   .3867191    -0.52   0.601    -.9618869    .5569372
+   inlbrf_2020 |   .0357949   .2101133     0.17   0.865     -.376811    .4484008
+               |
+  censreg_2020 |
+            2  |   .4696093   .3145159     1.49   0.136    -.1480152    1.087234
+            3  |   .3054848    .286364     1.07   0.286    -.2568569    .8678264
+            4  |   .3979317   .3136789     1.27   0.205    -.2180492    1.013913
+               |
+       born_us |    .602484   .3130204     1.92   0.055    -.0122037    1.217172
+         _cons |   .6982365   .7762391     0.90   0.369    -.8260881    2.222561
+--------------------------------------------------------------------------------
+
+. quietly testparm i.age_bin
+
+. estadd scalar p_joint_age_bin = r(p) : step6b
+
+. local wlist ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4. }
+
+. if trim("`wlist'") != "" {
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : step6b
+. }
+
+. else estadd scalar p_joint_wealth = . : step6b
+
+. capture confirm variable race_eth
+
+. if !_rc {
+.     quietly testparm i.race_eth
+.     estadd scalar p_joint_race = r(p) : step6b
+. }
+
+. else estadd scalar p_joint_race = . : step6b
+
+. if "`region_var'" != "" {
+.     capture testparm i.`region_var'
+.     if _rc == 0 estadd scalar p_joint_censreg = r(p) : step6b
+.     else estadd scalar p_joint_censreg = . : step6b
+. }
+
+. else estadd scalar p_joint_censreg = . : step6b
+
+. 
+. * ----------------------------------------------------------------------
+. * Table export: steps 2, 4, 5, 6b
+. * ----------------------------------------------------------------------
+. capture mkdir "${REGRESSIONS}/2SLS/PredictTrust"
+
+. local outfile "${REGRESSIONS}/2SLS/PredictTrust/trust_reg_depression_iv.tex"
+
+. local estlist "step2"
+
+. local mtlist `""No lag""'
+
+. capture confirm variable depression_2018
+
+. if !_rc local estlist "`estlist' step4"
+
+. if !_rc local mtlist `"`mtlist' "One lag""'
+
+. capture confirm variable depression_2016
+
+. if !_rc {
+.     capture confirm variable depression_2018
+.     if !_rc local estlist "`estlist' step5"
+.     if !_rc local mtlist `"`mtlist' "Two lags""'
+. }
+
+. local estlist "`estlist' step6b"
+
+. local mtlist `"`mtlist' "Ever depressed""'
+
+. * Drop age bins, wealth deciles, base factor levels (same as exclusion tables);
+>  keep controls + depression
+. local drop_trust_iv "1.gender 1.race_eth"
+
+. if "`region_var'" != "" local drop_trust_iv "`drop_trust_iv' 1.`region_var'"
+
+. capture confirm variable age_bin
+
+. if !_rc {
+.     estimates restore step2
+(results step2 are active now)
+.     local cnames : colnames e(b)
+.     foreach c of local cnames {
+  2.         if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.age_bin$") local
+>  drop_trust_iv "`drop_trust_iv' `c'"
+  3.     }
+. }
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local drop_trust_iv "`drop_trust_iv' wealth_d`d'_2020"
+  4. }
+
+. * Build order and varlabels for controls + depression (match trust_reg_general_
+> untrust / exclusion structure)
+. local order_trust_iv "2.gender educ_yrs married_2020 2.race_eth 3.race_eth 4.ra
+> ce_eth inlbrf_2020"
+
+. if "`region_var'" != "" local order_trust_iv "`order_trust_iv' 2.`region_var' 3
+> .`region_var' 4.`region_var'"
+
+. capture confirm variable born_us
+
+. if !_rc local order_trust_iv "`order_trust_iv' born_us"
+
+. local order_trust_iv "`order_trust_iv' depression_2020 depression_2018 depressi
+> on_2016 ever_depressed _cons"
+
+. local vl_trust_iv `"2.gender "Female" educ_yrs "Years of education" married_202
+> 0 "Married" 2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" i
+> nlbrf_2020 "In labor force" born_us "Born in U.S." depression_2020 "Depression 
+> (no lag)" depression_2018 "Depression (lag 1)" depression_2016 "Depression (lag
+>  2)" ever_depressed "Ever depressed" _cons "Constant""'
+
+. if "`region_var'" != "" local vl_trust_iv `"`vl_trust_iv' 2.`region_var' "Midwe
+> st" 3.`region_var' "South" 4.`region_var' "West""'
+
+. esttab `estlist' using "`outfile'", replace ///
+>     booktabs no gap ///
+>     mtitles(`mtlist') ///
+>     se star(* 0.10 ** 0.05 *** 0.01) ///
+>     b(2) se(2) label ///
+>     drop(`drop_trust_iv' *.age_bin, relax) ///
+>     order(`order_trust_iv') ///
+>     varlabels(`vl_trust_iv') ///
+>     alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+>     stats(N r2_a p_joint_age_bin p_joint_wealth p_joint_race p_joint_censreg, l
+> abels("Observations" "Adj. R-squared" "Joint test: Age bins p-value" "Joint tes
+> t: Wealth deciles p-value" "Joint test: Race p-value" "Joint test: Region p-val
+> ue")) ///
+>     addnotes(".") nonumbers nonotes
+estout step2 step4 step5 step6b using `"/Volumes/SSD PRO/Github-forks/Chp2-Trusta
+> ndReturns/Code/Regressions/2SLS/PredictTrust/trust_reg_depression_iv.tex"' ,
+ cells(b(fmt(2) star) se(fmt(2) par))
+ drop(1.gender 1.race_eth 1.censreg_2020 40.age_bin 45.age_bin 50.age_bin 55.age_
+> bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bin wealth_d2
+> _2020 wealth_d3_2020 wealth_d4_2020 wealth_d5_2020 wealth_d6_2020 wealth_d7_202
+> 0 wealth_d8_2020 wealth_d9_2020 wealth_d10_2020 *.age_bin, relax)
+ stats(N r2_a p_joint_age_bin p_joint_wealth p_joint_race p_joint_censreg, labels
+> ("Observations" "Adj. R-squared" "Joint test: Age bins p-value" "Joint test: We
+> alth deciles p-value" "Joint test: Race p-value" "Joint test: Region p-value"))
+ starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<@\
+> )"))
+ varwidth(20)
+ modelwidth(12)
+ delimiter(&)
+ end(\\)
+ prehead(`"{"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}"' `"\begin{tabular*}{
+> 0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\topru
+> le"')
+ posthead("\midrule")
+ prefoot("\midrule")
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{ta
+> bular*}"' `"}"')
+ label
+ varlabels(2.gender "Female" educ_yrs "Years of education" married_2020 "Married"
+>  2.race_eth "NH Black" 3.race_eth "Hispanic" 4.race_eth "NH Other" inlbrf_2020 
+> "In labor force" born_us "Born in U.S." depression_2020 "Depression (no lag)" d
+> epression_2018 "Depression (lag 1)" depression_2016 "Depression (lag 2)" ever_d
+> epressed "Ever depressed" _cons "Constant" 2.censreg_2020 "Midwest" 3.censreg_2
+> 020 "South" 4.censreg_2020 "West")
+ mlabels("No lag" "One lag" "Two lags" "Ever depressed", titles span prefix(\mult
+> icolumn{@span}{c}{) suffix(}))
+ nonumbers
+ collabels(none)
+ eqlabels(, begin("\midrule" "") nofirst)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+ order(2.gender educ_yrs married_2020 2.race_eth 3.race_eth 4.race_eth inlbrf_202
+> 0 2.censreg_2020 3.censreg_2020 4.censreg_2020 born_us depression_2020 depressi
+> on_2018 depression_2016 ever_depressed _cons)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/2SLS/PredictTrust/trust_reg_depression_iv.tex)
+
+. display "Table saved: `outfile'"
+Table saved: /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regressions/
+> 2SLS/PredictTrust/trust_reg_depression_iv.tex
+
+. 
+. * ----------------------------------------------------------------------
+. * Exclusion restriction: r5 on controls + depression (4 variants)
+. * Tables: r5 cross-section (2022), r5 average
+. * ----------------------------------------------------------------------
+. local y_r5_cs "r5_annual_w5_2022"
+
+. capture confirm variable `y_r5_cs'
+
+. if _rc local y_r5_cs "r5_annual_2022_w5"
+
+. local y_r5_avg "r5_annual_avg_w5"
+
+. capture confirm variable `y_r5_avg'
+
+. if _rc local y_r5_avg "r5_annual_avg"
+
+. 
+. * Base controls for exclusion restriction (match 18): demo + inlbrf + wealth + 
+> region, no depression
+. local ctrl_r5 "`demo_core' `demo_race' inlbrf_2020"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local ctrl_r5 "`ctrl_r5' wealth_d`d'_2020"
+  4. }
+
+. if "`region_var'" != "" local ctrl_r5 "`ctrl_r5' i.`region_var'"
+
+. 
+. capture confirm variable `y_r5_cs'
+
+. local has_cs = (_rc == 0)
+
+. capture confirm variable `y_r5_avg'
+
+. local has_avg = (_rc == 0)
+
+. capture confirm variable trust_others_2020
+
+. local has_trust = (_rc == 0)
+
+. 
+. local trust_spec "c.trust_others_2020 c.trust_others_2020#c.trust_others_2020"
+
+. local samp_cs_trust "!missing(`y_r5_cs') & !missing(trust_others_2020)"
+
+. local samp_avg_trust "!missing(`y_r5_avg') & !missing(trust_others_2020)"
+
+. 
+. * Table 1: r5 cross-section (2022) on controls + depression + Trust + Trust² (N
+> o lag, One lag, Two lags, Ever depressed)
+. if `has_cs' & `has_trust' {
+.     display _n "###############################################################
+> #########"
+
+########################################################################
+.     display "EXCLUSION RESTRICTION: r5 cross-section (2022) on controls + depre
+> ssion + Trust + Trust²"
+EXCLUSION RESTRICTION: r5 cross-section (2022) on controls + depression + Trust +
+>  Trust²
+.     display "##################################################################
+> ######"
+########################################################################
+.     eststo clear
+.     eststo excl_cs_1: reg `y_r5_cs' `ctrl_r5' depression_2020 `trust_spec' if `
+> samp_cs_trust' & !missing(depression_2020), vce(robust)
+
+Linear regression                               Number of obs     =        405
+                                                F(29, 373)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.2987
+                                                Root MSE          =     .41383
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           45  |   .4020127   .1427121     2.82   0.005     .1213917    .6826338
+           50  |   .2233577   .4069918     0.55   0.583    -.5769284    1.023644
+           55  |   .6234347   .1388689     4.49   0.000     .3503707    .8964987
+           60  |   .6891294     .12968     5.31   0.000     .4341338    .9441249
+           65  |   .7342908    .112714     6.51   0.000     .5126562    .9559253
+           70  |    .689206   .1141045     6.04   0.000     .4648372    .9135747
+           75  |   .7721052   .1211922     6.37   0.000     .5337996    1.010411
+           80  |   .7992971   .1290653     6.19   0.000     .5455102    1.053084
+           85  |   .8135728   .1682051     4.84   0.000     .4828236    1.144322
+               |
+      2.gender |  -.0946294   .0439352    -2.15   0.032    -.1810212   -.0082377
+      educ_yrs |   .0238406   .0083514     2.85   0.005     .0074189    .0402624
+  married_2020 |   .0827235   .0511426     1.62   0.107    -.0178404    .1832873
+               |
+      race_eth |
+            2  |  -.1659019    .065483    -2.53   0.012    -.2946641   -.0371397
+            3  |  -.1950565   .0730371    -2.67   0.008    -.3386725   -.0514405
+            4  |  -.1211293   .1344848    -0.90   0.368    -.3855727     .143314
+               |
+   inlbrf_2020 |   .1349949   .0516325     2.61   0.009     .0334676    .2365221
+wealth_d2_2020 |   .4422323    .396157     1.12   0.265    -.3367487    1.221213
+wealth_d3_2020 |   .1327686   .1636899     0.81   0.418    -.1891021    .4546393
+wealth_d4_2020 |  -.0653806   .1565113    -0.42   0.676    -.3731357    .2423745
+wealth_d5_2020 |  -.3195891    .149853    -2.13   0.034    -.6142516   -.0249266
+wealth_d6_2020 |  -.3958736   .1456862    -2.72   0.007    -.6823429   -.1094043
+wealth_d7_2020 |  -.4519847   .1514305    -2.98   0.003    -.7497492   -.1542203
+wealth_d8_2020 |  -.5487164   .1458999    -3.76   0.000    -.8356058   -.2618271
+wealth_d9_2020 |  -.6030228   .1442242    -4.18   0.000    -.8866172   -.3194284
+wealth_d10_~20 |  -.7247915   .1432431    -5.06   0.000    -1.006457   -.4431262
+               |
+  censreg_2020 |
+            2  |  -.0575855   .0714455    -0.81   0.421    -.1980719    .0829009
+            3  |    .045303   .0619857     0.73   0.465    -.0765822    .1671883
+            4  |   .1200679    .072771     1.65   0.100    -.0230249    .2631608
+               |
+depressio~2020 |   .0000458   .0124034     0.00   0.997    -.0243435    .0244352
+trust_oth~2020 |   .0333111     .03034     1.10   0.273    -.0263478    .0929701
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0023793   .0026759    -0.89   0.374    -.0076411    .0028824
+               |
+         _cons |  -.5337666   .2130014    -2.51   0.013    -.9526007   -.1149326
+--------------------------------------------------------------------------------
+.     quietly testparm `trust_spec'
+.     estadd scalar p_joint_trust = r(p) : excl_cs_1
+.     quietly testparm i.age_bin
+.     estadd scalar p_joint_age_bin = r(p) : excl_cs_1
+.     local wlist ""
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4.     }
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : excl_cs_1
+.     quietly testparm i.race_eth
+.     estadd scalar p_joint_race = r(p) : excl_cs_1
+.     if "`region_var'" != "" {
+.         capture testparm i.`region_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_cs_1
+.         else estadd scalar p_joint_censreg = . : excl_cs_1
+.     }
+.     else estadd scalar p_joint_censreg = . : excl_cs_1
+.     capture confirm variable depression_2018
+.     if !_rc {
+.         eststo excl_cs_2: reg `y_r5_cs' `ctrl_r5' depression_2018 `trust_spec' 
+> if `samp_cs_trust' & !missing(depression_2018), vce(robust)
+
+Linear regression                               Number of obs     =        384
+                                                F(28, 352)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.3230
+                                                Root MSE          =     .40547
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           45  |   .4716607   .1425013     3.31   0.001     .1913997    .7519218
+           50  |  -.3430705   .2256085    -1.52   0.129    -.7867807    .1006397
+           55  |   .6795729   .1513077     4.49   0.000     .3819922    .9771537
+           60  |   .7367771   .1315375     5.60   0.000     .4780789    .9954754
+           65  |   .7785026   .1154403     6.74   0.000     .5514631    1.005542
+           70  |   .7311706   .1164769     6.28   0.000     .5020923    .9602488
+           75  |   .8173834   .1224469     6.68   0.000      .576564    1.058203
+           80  |   .8387462   .1292099     6.49   0.000     .5846256    1.092867
+           85  |   .7893588   .1595066     4.95   0.000      .475653    1.103065
+               |
+      2.gender |  -.0733125    .044545    -1.65   0.101    -.1609204    .0142955
+      educ_yrs |   .0199526   .0082269     2.43   0.016     .0037725    .0361328
+  married_2020 |   .0839436   .0524298     1.60   0.110    -.0191714    .1870586
+               |
+      race_eth |
+            2  |  -.1727697   .0675813    -2.56   0.011    -.3056835   -.0398558
+            3  |  -.2257489   .0733072    -3.08   0.002    -.3699241   -.0815737
+            4  |  -.1478179   .1414678    -1.04   0.297    -.4260462    .1304105
+               |
+   inlbrf_2020 |   .1285712   .0526753     2.44   0.015     .0249732    .2321691
+wealth_d2_2020 |   .3581227   .3942036     0.91   0.364    -.4171678    1.133413
+wealth_d3_2020 |   .0884151   .1708624     0.52   0.605    -.2476245    .4244548
+wealth_d4_2020 |  -.1221275   .1648372    -0.74   0.459    -.4463173    .2020622
+wealth_d5_2020 |  -.3630181   .1579373    -2.30   0.022    -.6736376   -.0523987
+wealth_d6_2020 |  -.4743317   .1530506    -3.10   0.002    -.7753403   -.1733231
+wealth_d7_2020 |  -.5314301   .1609263    -3.30   0.001     -.847928   -.2149321
+wealth_d8_2020 |  -.6170626   .1550306    -3.98   0.000    -.9219654   -.3121599
+wealth_d9_2020 |  -.6689866   .1518634    -4.41   0.000    -.9676603    -.370313
+wealth_d10_~20 |  -.7904982   .1524823    -5.18   0.000    -1.090389   -.4906073
+               |
+  censreg_2020 |
+            2  |  -.0781376   .0733978    -1.06   0.288    -.2224909    .0662157
+            3  |    .012801   .0632594     0.20   0.840     -.111613     .137215
+            4  |   .1190148   .0764782     1.56   0.121    -.0313968    .2694265
+               |
+depressio~2018 |  -.0362284   .0122794    -2.95   0.003    -.0603786   -.0120782
+trust_oth~2020 |   .0401195   .0297268     1.35   0.178     -.018345     .098584
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0032122    .002655    -1.21   0.227    -.0084338    .0020094
+               |
+         _cons |  -.4231204   .2140077    -1.98   0.049     -.844015   -.0022258
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec'
+.         estadd scalar p_joint_trust = r(p) : excl_cs_2
+.         quietly testparm i.age_bin
+.         estadd scalar p_joint_age_bin = r(p) : excl_cs_2
+.         quietly testparm `wlist'
+.         estadd scalar p_joint_wealth = r(p) : excl_cs_2
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_cs_2
+.         if "`region_var'" != "" {
+.             capture testparm i.`region_var'
+.             if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_cs_2
+.             else estadd scalar p_joint_censreg = . : excl_cs_2
+.         }
+.         else estadd scalar p_joint_censreg = . : excl_cs_2
+.     }
+.     if `has_d2016' & `has_d2018' {
+.         eststo excl_cs_3: reg `y_r5_cs' `ctrl_r5' depression_2016 depression_20
+> 18 `trust_spec' if `samp_cs_trust' & !missing(depression_2016) & !missing(depre
+> ssion_2018), vce(robust)
+
+Linear regression                               Number of obs     =        380
+                                                F(29, 347)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.3191
+                                                Root MSE          =     .40687
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           45  |   .4740474    .144857     3.27   0.001     .1891392    .7589556
+           50  |  -.3022354   .2359868    -1.28   0.201    -.7663799    .1619091
+           55  |   .6903798   .1518249     4.55   0.000      .391767    .9889926
+           60  |   .7522512   .1332228     5.65   0.000     .4902254    1.014277
+           65  |   .7888472   .1160571     6.80   0.000     .5605833    1.017111
+           70  |   .7322615   .1171282     6.25   0.000      .501891    .9626321
+           75  |   .8118585   .1232636     6.59   0.000     .5694206    1.054296
+           80  |   .8309467   .1309451     6.35   0.000     .5734009    1.088493
+           85  |   .7855763    .158461     4.96   0.000     .4739114    1.097241
+               |
+      2.gender |  -.0711226   .0462084    -1.54   0.125    -.1620063    .0197611
+      educ_yrs |   .0203934   .0085827     2.38   0.018     .0035127    .0372741
+  married_2020 |   .0777107   .0535129     1.45   0.147    -.0275397    .1829611
+               |
+      race_eth |
+            2  |  -.1774462   .0675347    -2.63   0.009    -.3102751   -.0446172
+            3  |  -.2360121   .0741489    -3.18   0.002      -.38185   -.0901743
+            4  |  -.1516561   .1406048    -1.08   0.282     -.428201    .1248887
+               |
+   inlbrf_2020 |    .121645     .05371     2.26   0.024      .016007    .2272831
+wealth_d2_2020 |   .4018438   .3917215     1.03   0.306    -.3686035    1.172291
+wealth_d3_2020 |   .1178088   .1780231     0.66   0.509    -.2323313    .4679488
+wealth_d4_2020 |  -.1078318   .1728254    -0.62   0.533    -.4477489    .2320853
+wealth_d5_2020 |  -.3497444   .1658492    -2.11   0.036    -.6759405   -.0235483
+wealth_d6_2020 |  -.4542203   .1618062    -2.81   0.005    -.7724647   -.1359758
+wealth_d7_2020 |   -.511875   .1696708    -3.02   0.003    -.8455876   -.1781624
+wealth_d8_2020 |  -.6014036   .1654983    -3.63   0.000    -.9269097   -.2758976
+wealth_d9_2020 |  -.6640684    .163147    -4.07   0.000    -.9849497    -.343187
+wealth_d10_~20 |  -.7750081   .1624217    -4.77   0.000    -1.094463   -.4555531
+               |
+  censreg_2020 |
+            2  |  -.0656978   .0758955    -0.87   0.387    -.2149708    .0835752
+            3  |   .0200947   .0654738     0.31   0.759    -.1086809    .1488702
+            4  |   .1356385   .0780946     1.74   0.083    -.0179599    .2892369
+               |
+depressio~2016 |   -.016534    .016923    -0.98   0.329    -.0498186    .0167506
+depressio~2018 |  -.0263636    .015369    -1.72   0.087    -.0565918    .0038645
+trust_oth~2020 |   .0345862   .0299591     1.15   0.249    -.0243381    .0935105
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0025318    .002671    -0.95   0.344    -.0077853    .0027217
+               |
+         _cons |  -.4401882   .2232461    -1.97   0.049    -.8792739   -.0011025
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec'
+.         estadd scalar p_joint_trust = r(p) : excl_cs_3
+.         quietly testparm i.age_bin
+.         estadd scalar p_joint_age_bin = r(p) : excl_cs_3
+.         quietly testparm `wlist'
+.         estadd scalar p_joint_wealth = r(p) : excl_cs_3
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_cs_3
+.         if "`region_var'" != "" {
+.             capture testparm i.`region_var'
+.             if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_cs_3
+.             else estadd scalar p_joint_censreg = . : excl_cs_3
+.         }
+.         else estadd scalar p_joint_censreg = . : excl_cs_3
+.     }
+.     eststo excl_cs_4: reg `y_r5_cs' `ctrl_r5' ever_depressed `trust_spec' if `s
+> amp_cs_trust' & !missing(ever_depressed), vce(robust)
+
+Linear regression                               Number of obs     =        405
+                                                F(29, 373)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.3007
+                                                Root MSE          =     .41325
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annu~5_2022 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           45  |   .3912591   .1431721     2.73   0.007     .1097335    .6727846
+           50  |   .2193382   .4096722     0.54   0.593    -.5862185    1.024895
+           55  |   .6227051   .1390076     4.48   0.000     .3493683    .8960419
+           60  |   .6885274   .1297901     5.30   0.000     .4333154    .9437394
+           65  |   .7337503   .1127378     6.51   0.000      .512069    .9554316
+           70  |   .6898242   .1144296     6.03   0.000     .4648162    .9148322
+           75  |   .7690679   .1210761     6.35   0.000     .5309906    1.007145
+           80  |   .7991283   .1293085     6.18   0.000     .5448633    1.053393
+           85  |   .8126187   .1668225     4.87   0.000     .4845882    1.140649
+               |
+      2.gender |  -.0993676   .0441863    -2.25   0.025    -.1862531    -.012482
+      educ_yrs |   .0244016   .0083824     2.91   0.004      .007919    .0408841
+  married_2020 |   .0883163   .0511388     1.73   0.085    -.0122402    .1888727
+               |
+      race_eth |
+            2  |  -.1686045   .0660884    -2.55   0.011     -.298557    -.038652
+            3  |  -.1949681   .0735677    -2.65   0.008    -.3396275   -.0503087
+            4  |  -.1264096   .1349767    -0.94   0.350    -.3918202    .1390009
+               |
+   inlbrf_2020 |   .1395712   .0514207     2.71   0.007     .0384604    .2406819
+wealth_d2_2020 |   .4468759    .395702     1.13   0.259    -.3312105    1.224962
+wealth_d3_2020 |    .138156   .1637596     0.84   0.399    -.1838518    .4601639
+wealth_d4_2020 |  -.0552959   .1565686    -0.35   0.724    -.3631637    .2525719
+wealth_d5_2020 |  -.3137565   .1496647    -2.10   0.037    -.6080489   -.0194641
+wealth_d6_2020 |   -.392496   .1457014    -2.69   0.007    -.6789951   -.1059969
+wealth_d7_2020 |  -.4378073   .1508387    -2.90   0.004    -.7344082   -.1412065
+wealth_d8_2020 |  -.5360834   .1446981    -3.70   0.000    -.8206097   -.2515571
+wealth_d9_2020 |  -.5954376   .1426959    -4.17   0.000    -.8760269   -.3148483
+wealth_d10_~20 |  -.7095637   .1426664    -4.97   0.000     -.990095   -.4290324
+               |
+  censreg_2020 |
+            2  |  -.0630679   .0716608    -0.88   0.379    -.2039778     .077842
+            3  |   .0450166   .0613976     0.73   0.464    -.0757121    .1657454
+            4  |   .1139253   .0725878     1.57   0.117    -.0288073    .2566579
+               |
+ever_depressed |   .0618725   .0526721     1.17   0.241    -.0416991     .165444
+trust_oth~2020 |   .0350252    .030447     1.15   0.251    -.0248442    .0948945
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0024271   .0026732    -0.91   0.364    -.0076835    .0028292
+               |
+         _cons |  -.6085821   .2216402    -2.75   0.006    -1.044403   -.1727612
+--------------------------------------------------------------------------------
+.     quietly testparm `trust_spec'
+.     estadd scalar p_joint_trust = r(p) : excl_cs_4
+.     quietly testparm i.age_bin
+.     estadd scalar p_joint_age_bin = r(p) : excl_cs_4
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : excl_cs_4
+.     quietly testparm i.race_eth
+.     estadd scalar p_joint_race = r(p) : excl_cs_4
+.     if "`region_var'" != "" {
+.         capture testparm i.`region_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_cs_4
+.         else estadd scalar p_joint_censreg = . : excl_cs_4
+.     }
+.     else estadd scalar p_joint_censreg = . : excl_cs_4
+. 
+.     local excl_cs_list "excl_cs_1"
+.     local excl_cs_mt `""No lag""'
+.     capture confirm variable depression_2018
+.     if !_rc {
+.         local excl_cs_list "`excl_cs_list' excl_cs_2"
+.         local excl_cs_mt `"`excl_cs_mt' "One lag""'
+.     }
+.     if `has_d2016' & `has_d2018' {
+.         local excl_cs_list "`excl_cs_list' excl_cs_3"
+.         local excl_cs_mt `"`excl_cs_mt' "Two lags""'
+.     }
+.     local excl_cs_list "`excl_cs_list' excl_cs_4"
+.     local excl_cs_mt `"`excl_cs_mt' "Ever depressed""'
+. 
+.     local drop_excl "1.gender 1.race_eth"
+.     if "`region_var'" != "" local drop_excl "`drop_excl' 1.`region_var'"
+.     capture confirm variable age_bin
+.     if !_rc {
+.         estimates restore excl_cs_1
+(results excl_cs_1 are active now)
+.         local cnames : colnames e(b)
+.         foreach c of local cnames {
+  2.             if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.age_bin$") l
+> ocal drop_excl "`drop_excl' `c'"
+  3.         }
+.     }
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local drop_excl "`drop_excl' wealth_d`d'_2020"
+  4.     }
+.     local order_cs "2.gender educ_yrs married_2020 2.race_eth 3.race_eth 4.race
+> _eth inlbrf_2020"
+.     if "`region_var'" != "" local order_cs "`order_cs' 2.`region_var' 3.`region
+> _var' 4.`region_var'"
+.     local order_cs "`order_cs' depression_2020 depression_2018 depression_2016 
+> ever_depressed trust_others_2020 c.trust_others_2020#c.trust_others_2020 _cons"
+.     local vl_cs `"depression_2020 "Depression (no lag)" depression_2018 "Depres
+> sion (lag 1)" depression_2016 "Depression (lag 2)" ever_depressed "Ever depress
+> ed" trust_others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust\$^
+> 2\$" educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.ra
+> ce_eth "Hispanic" 4.race_eth "NH Other" inlbrf_2020 "In labor force" married_20
+> 20 "Married" born_us "Born in U.S." _cons "Constant""'
+.     if "`region_var'" != "" local vl_cs `"`vl_cs' 2.`region_var' "Midwest" 3.`r
+> egion_var' "South" 4.`region_var' "West""'
+.     esttab `excl_cs_list' using "${REGRESSIONS}/2SLS/PredictTrust/excl_restrict
+> ion_r5_cs.tex", replace ///
+>         booktabs no gap ///
+>         title("Exclusion restriction: r5 cross-section (2022) on controls + dep
+> ression + Trust + Trust\$^2\$") ///
+>         mtitles(`excl_cs_mt') ///
+>         se star(* 0.10 ** 0.05 *** 0.01) ///
+>         b(2) se(2) label ///
+>         drop(`drop_excl' *.age_bin, relax) ///
+>         order(`order_cs') ///
+>         varlabels(`vl_cs') ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race 
+> p_joint_censreg, labels("Observations" "Adj. R-squared" "Joint test: Trust only
+>  p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "
+> Joint test: Race p-value" "Joint test: Region p-value")) ///
+>         addnotes(".") nonumbers nonotes
+estout excl_cs_1 excl_cs_2 excl_cs_3 excl_cs_4 using `"/Volumes/SSD PRO/Github-fo
+> rks/Chp2-TrustandReturns/Code/Regressions/2SLS/PredictTrust/excl_restriction_r5
+> _cs.tex"' ,
+ cells(b(fmt(2) star) se(fmt(2) par))
+ drop(1.gender 1.race_eth 1.censreg_2020 45.age_bin 50.age_bin 55.age_bin 60.age_
+> bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bin wealth_d2_2020 wealt
+> h_d3_2020 wealth_d4_2020 wealth_d5_2020 wealth_d6_2020 wealth_d7_2020 wealth_d8
+> _2020 wealth_d9_2020 wealth_d10_2020 *.age_bin, relax)
+ stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_c
+> ensreg, labels("Observations" "Adj. R-squared" "Joint test: Trust only p-value"
+>  "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint tes
+> t: Race p-value" "Joint test: Region p-value"))
+ starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<@\
+> )"))
+ varwidth(20)
+ modelwidth(12)
+ delimiter(&)
+ end(\\)
+ title("Exclusion restriction: r5 cross-section (2022) on controls + depression +
+>  Trust + Trust$^2$")
+ prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}
+> \)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep
+> \extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
+ posthead("\midrule")
+ prefoot("\midrule")
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{ta
+> bular*}"' `"\end{table}"')
+ label
+ varlabels(depression_2020 "Depression (no lag)" depression_2018 "Depression (lag
+>  1)" depression_2016 "Depression (lag 2)" ever_depressed "Ever depressed" trust
+> _others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust$^2$" educ_y
+> rs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "His
+> panic" 4.race_eth "NH Other" inlbrf_2020 "In labor force" married_2020 "Married
+> " born_us "Born in U.S." _cons "Constant" 2.censreg_2020 "Midwest" 3.censreg_20
+> 20 "South" 4.censreg_2020 "West")
+ mlabels("No lag" "One lag" "Two lags" "Ever depressed", titles span prefix(\mult
+> icolumn{@span}{c}{) suffix(}))
+ nonumbers
+ collabels(none)
+ eqlabels(, begin("\midrule" "") nofirst)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+ order(2.gender educ_yrs married_2020 2.race_eth 3.race_eth 4.race_eth inlbrf_202
+> 0 2.censreg_2020 3.censreg_2020 4.censreg_2020 depression_2020 depression_2018 
+> depression_2016 ever_depressed trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 _cons)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/2SLS/PredictTrust/excl_restriction_r5_cs.tex)
+.     display "Exclusion restriction table (r5 cross-section) saved: excl_restric
+> tion_r5_cs.tex"
+Exclusion restriction table (r5 cross-section) saved: excl_restriction_r5_cs.tex
+. }
+
+. 
+. * Table 2: r5 average on controls + depression + Trust + Trust² (No lag, One la
+> g, Two lags, Ever depressed)
+. if `has_avg' & `has_trust' {
+.     display _n "###############################################################
+> #########"
+
+########################################################################
+.     display "EXCLUSION RESTRICTION: r5 average on controls + depression + Trust
+>  + Trust²"
+EXCLUSION RESTRICTION: r5 average on controls + depression + Trust + Trust²
+.     display "##################################################################
+> ######"
+########################################################################
+.     eststo clear
+.     local wlist ""
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local wlist "`wlist' wealth_d`d'_2020"
+  4.     }
+.     eststo excl_avg_1: reg `y_r5_avg' `ctrl_r5' depression_2020 `trust_spec' if
+>  `samp_avg_trust' & !missing(depression_2020), vce(robust)
+
+Linear regression                               Number of obs     =        592
+                                                F(30, 559)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1389
+                                                Root MSE          =     .29356
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annual_av~5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           40  |   .0091498   .1097046     0.08   0.934    -.2063338    .2246334
+           45  |   .2426311   .2404538     1.01   0.313    -.2296723    .7149346
+           50  |  -.1931779   .1197096    -1.61   0.107    -.4283135    .0419577
+           55  |   .1628904   .1142524     1.43   0.155    -.0615261     .387307
+           60  |    .074082   .0783903     0.95   0.345    -.0798935    .2280575
+           65  |   .0690697   .0722751     0.96   0.340    -.0728942    .2110336
+           70  |   .1481656   .0776272     1.91   0.057    -.0043109    .3006422
+           75  |   .1125925   .0761929     1.48   0.140    -.0370668    .2622519
+           80  |   .0574439   .0744886     0.77   0.441     -.088868    .2037558
+           85  |   .0616942   .0801744     0.77   0.442    -.0957857    .2191742
+               |
+      2.gender |  -.0401974   .0245571    -1.64   0.102    -.0884329     .008038
+      educ_yrs |   .0045335   .0047655     0.95   0.342     -.004827     .013894
+  married_2020 |  -.0060481   .0285763    -0.21   0.832    -.0621782     .050082
+               |
+      race_eth |
+            2  |   .0210828   .0389766     0.54   0.589    -.0554757    .0976414
+            3  |  -.0861936   .0454945    -1.89   0.059    -.1755546    .0031674
+            4  |  -.0199975   .0756936    -0.26   0.792    -.1686762    .1286812
+               |
+   inlbrf_2020 |   .0979335   .0334354     2.93   0.004     .0322591    .1636079
+wealth_d2_2020 |  -.0811056   .0960857    -0.84   0.399    -.2698387    .1076276
+wealth_d3_2020 |   .0017812   .0726981     0.02   0.980    -.1410136     .144576
+wealth_d4_2020 |  -.0315734   .0698058    -0.45   0.651    -.1686872    .1055403
+wealth_d5_2020 |  -.0261487   .0708386    -0.37   0.712     -.165291    .1129937
+wealth_d6_2020 |  -.0874461    .065662    -1.33   0.183    -.2164206    .0415284
+wealth_d7_2020 |  -.0881804   .0665418    -1.33   0.186     -.218883    .0425221
+wealth_d8_2020 |  -.0852471   .0701894    -1.21   0.225    -.2231143    .0526201
+wealth_d9_2020 |  -.1403405   .0659435    -2.13   0.034    -.2698677   -.0108132
+wealth_d10_~20 |  -.1494553   .0650594    -2.30   0.022    -.2772461   -.0216644
+               |
+  censreg_2020 |
+            2  |  -.0135577     .03821    -0.35   0.723    -.0886104    .0614951
+            3  |   .0292093   .0360538     0.81   0.418    -.0416082    .1000267
+            4  |   .1328814   .0448725     2.96   0.003      .044742    .2210207
+               |
+depressio~2020 |  -.0031745    .007108    -0.45   0.655    -.0171362    .0107871
+trust_oth~2020 |   .0440444    .016583     2.66   0.008     .0114718     .076617
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0031298   .0014311    -2.19   0.029    -.0059408   -.0003188
+               |
+         _cons |  -.0248268   .1036978    -0.24   0.811    -.2285117    .1788582
+--------------------------------------------------------------------------------
+.     quietly testparm `trust_spec'
+.     estadd scalar p_joint_trust = r(p) : excl_avg_1
+.     quietly testparm i.age_bin
+.     estadd scalar p_joint_age_bin = r(p) : excl_avg_1
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : excl_avg_1
+.     quietly testparm i.race_eth
+.     estadd scalar p_joint_race = r(p) : excl_avg_1
+.     if "`region_var'" != "" {
+.         capture testparm i.`region_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_avg_1
+.         else estadd scalar p_joint_censreg = . : excl_avg_1
+.     }
+.     else estadd scalar p_joint_censreg = . : excl_avg_1
+.     capture confirm variable depression_2018
+.     if !_rc {
+.         eststo excl_avg_2: reg `y_r5_avg' `ctrl_r5' depression_2018 `trust_spec
+> ' if `samp_avg_trust' & !missing(depression_2018), vce(robust)
+
+Linear regression                               Number of obs     =        554
+                                                F(30, 521)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1351
+                                                Root MSE          =     .29608
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annual_av~5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           40  |   .0251929   .1176074     0.21   0.830    -.2058502    .2562359
+           45  |   .2398158   .2444247     0.98   0.327    -.2403634    .7199949
+           50  |  -.1887431   .1312708    -1.44   0.151    -.4466282    .0691419
+           55  |   .1311112   .1239166     1.06   0.291    -.1123264    .3745487
+           60  |   .0680921   .0869575     0.78   0.434    -.1027384    .2389226
+           65  |   .0667469   .0783943     0.85   0.395    -.0872608    .2207546
+           70  |   .1481304   .0830792     1.78   0.075    -.0150809    .3113418
+           75  |   .1070374   .0817099     1.31   0.191    -.0534841    .2675588
+           80  |   .0512123   .0806956     0.63   0.526    -.1073164     .209741
+           85  |   .0643594   .0861717     0.75   0.455    -.1049273    .2336461
+               |
+      2.gender |  -.0346733   .0261002    -1.33   0.185    -.0859478    .0166012
+      educ_yrs |   .0044199   .0048817     0.91   0.366    -.0051703    .0140102
+  married_2020 |  -.0215432    .029722    -0.72   0.469    -.0799328    .0368465
+               |
+      race_eth |
+            2  |   .0237721   .0407572     0.58   0.560    -.0562966    .1038409
+            3  |  -.0757628   .0483386    -1.57   0.118    -.1707254    .0191998
+            4  |  -.0469042   .0836232    -0.56   0.575    -.2111843    .1173759
+               |
+   inlbrf_2020 |   .0993227   .0351802     2.82   0.005     .0302101    .1684353
+wealth_d2_2020 |  -.0838947   .1013792    -0.83   0.408    -.2830569    .1152675
+wealth_d3_2020 |   .0078184   .0748975     0.10   0.917    -.1393197    .1549566
+wealth_d4_2020 |  -.0257547   .0729155    -0.35   0.724    -.1689992    .1174899
+wealth_d5_2020 |  -.0103306   .0732061    -0.14   0.888     -.154146    .1334848
+wealth_d6_2020 |   -.109469   .0675904    -1.62   0.106    -.2422522    .0233142
+wealth_d7_2020 |  -.0887059   .0698266    -1.27   0.205    -.2258823    .0484704
+wealth_d8_2020 |  -.0513775   .0727893    -0.71   0.481    -.1943741     .091619
+wealth_d9_2020 |    -.12085   .0683099    -1.77   0.077    -.2550466    .0133466
+wealth_d10_~20 |  -.1246736   .0675676    -1.85   0.066     -.257412    .0080648
+               |
+  censreg_2020 |
+            2  |   .0029213   .0409776     0.07   0.943    -.0775803     .083423
+            3  |   .0555796   .0388642     1.43   0.153    -.0207702    .1319294
+            4  |   .1478276   .0476632     3.10   0.002      .054192    .2414631
+               |
+depressio~2018 |   -.001869   .0078366    -0.24   0.812    -.0172643    .0135263
+trust_oth~2020 |   .0433254   .0172294     2.51   0.012     .0094778     .077173
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0030927    .001489    -2.08   0.038    -.0060179   -.0001676
+               |
+         _cons |  -.0430205   .1067672    -0.40   0.687    -.2527675    .1667266
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec'
+.         estadd scalar p_joint_trust = r(p) : excl_avg_2
+.         quietly testparm i.age_bin
+.         estadd scalar p_joint_age_bin = r(p) : excl_avg_2
+.         quietly testparm `wlist'
+.         estadd scalar p_joint_wealth = r(p) : excl_avg_2
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_avg_2
+.         if "`region_var'" != "" {
+.             capture testparm i.`region_var'
+.             if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_avg_2
+.             else estadd scalar p_joint_censreg = . : excl_avg_2
+.         }
+.         else estadd scalar p_joint_censreg = . : excl_avg_2
+.     }
+.     if `has_d2016' & `has_d2018' {
+.         eststo excl_avg_3: reg `y_r5_avg' `ctrl_r5' depression_2016 depression_
+> 2018 `trust_spec' if `samp_avg_trust' & !missing(depression_2016) & !missing(de
+> pression_2018), vce(robust)
+
+Linear regression                               Number of obs     =        547
+                                                F(31, 513)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1330
+                                                Root MSE          =     .29739
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annual_av~5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           40  |   .0237545   .1203277     0.20   0.844    -.2126411    .2601501
+           45  |   .2412211   .2465479     0.98   0.328    -.2431468    .7255889
+           50  |  -.1941792   .1320871    -1.47   0.142    -.4536774    .0653189
+           55  |   .1254614   .1237365     1.01   0.311    -.1176312     .368554
+           60  |   .0622233   .0876979     0.71   0.478    -.1100679    .2345144
+           65  |   .0609146   .0788467     0.77   0.440    -.0939875    .2158167
+           70  |    .136908   .0832826     1.64   0.101     -.026709    .3005249
+           75  |   .0971762   .0821921     1.18   0.238    -.0642983    .2586506
+           80  |   .0424935   .0810748     0.52   0.600     -.116786     .201773
+           85  |   .0547764   .0862964     0.63   0.526    -.1147614    .2243142
+               |
+      2.gender |  -.0312981   .0267263    -1.17   0.242    -.0838045    .0212084
+      educ_yrs |   .0053636   .0049376     1.09   0.278    -.0043368     .015064
+  married_2020 |  -.0253157   .0305083    -0.83   0.407    -.0852523     .034621
+               |
+      race_eth |
+            2  |   .0234678   .0409802     0.57   0.567    -.0570418    .1039774
+            3  |   -.077207   .0487898    -1.58   0.114    -.1730594    .0186455
+            4  |  -.0495547   .0837575    -0.59   0.554    -.2141047    .1149952
+               |
+   inlbrf_2020 |   .0938852   .0361369     2.60   0.010     .0228907    .1648797
+wealth_d2_2020 |   -.080549   .1024887    -0.79   0.432    -.2818981    .1208001
+wealth_d3_2020 |   .0098621   .0763078     0.13   0.897    -.1400522    .1597764
+wealth_d4_2020 |  -.0303554   .0739886    -0.41   0.682    -.1757134    .1150026
+wealth_d5_2020 |  -.0063168   .0743905    -0.08   0.932    -.1524643    .1398307
+wealth_d6_2020 |  -.1079028   .0697817    -1.55   0.123    -.2449959    .0291903
+wealth_d7_2020 |  -.0867793   .0714079    -1.22   0.225    -.2270673    .0535086
+wealth_d8_2020 |  -.0502796   .0750571    -0.67   0.503    -.1977368    .0971775
+wealth_d9_2020 |  -.1174176   .0712996    -1.65   0.100    -.2574928    .0226576
+wealth_d10_~20 |  -.1239641   .0697769    -1.78   0.076    -.2610477    .0131196
+               |
+  censreg_2020 |
+            2  |   .0005063   .0427922     0.01   0.991    -.0835632    .0845759
+            3  |   .0517178   .0401914     1.29   0.199    -.0272422    .1306779
+            4  |   .1475187   .0489336     3.01   0.003     .0513838    .2436536
+               |
+depressio~2016 |   -.004748   .0108159    -0.44   0.661    -.0259969    .0165008
+depressio~2018 |   .0014256   .0103031     0.14   0.890    -.0188158     .021667
+trust_oth~2020 |   .0413698    .017369     2.38   0.018     .0072467    .0754929
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0029251   .0015087    -1.94   0.053    -.0058891    .0000389
+               |
+         _cons |  -.0385563    .108564    -0.36   0.723    -.2518411    .1747284
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec'
+.         estadd scalar p_joint_trust = r(p) : excl_avg_3
+.         quietly testparm i.age_bin
+.         estadd scalar p_joint_age_bin = r(p) : excl_avg_3
+.         quietly testparm `wlist'
+.         estadd scalar p_joint_wealth = r(p) : excl_avg_3
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_avg_3
+.         if "`region_var'" != "" {
+.             capture testparm i.`region_var'
+.             if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_avg_3
+.             else estadd scalar p_joint_censreg = . : excl_avg_3
+.         }
+.         else estadd scalar p_joint_censreg = . : excl_avg_3
+.     }
+.     eststo excl_avg_4: reg `y_r5_avg' `ctrl_r5' ever_depressed `trust_spec' if 
+> `samp_avg_trust' & !missing(ever_depressed), vce(robust)
+
+Linear regression                               Number of obs     =        592
+                                                F(30, 559)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.1407
+                                                Root MSE          =     .29324
+
+--------------------------------------------------------------------------------
+               |               Robust
+r5_annual_av~5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       age_bin |
+           40  |   .0083847   .1089173     0.08   0.939    -.2055525     .222322
+           45  |   .2424541   .2379914     1.02   0.309    -.2250125    .7099208
+           50  |  -.1990302   .1198376    -1.66   0.097    -.4344173    .0363569
+           55  |   .1531948   .1109249     1.38   0.168    -.0646857    .3710754
+           60  |   .0670876   .0779283     0.86   0.390    -.0859804    .2201556
+           65  |   .0633141   .0717336     0.88   0.378    -.0775862    .2042144
+           70  |   .1419856   .0765146     1.86   0.064    -.0083056    .2922768
+           75  |   .1089467   .0757821     1.44   0.151    -.0399058    .2577992
+           80  |   .0526811   .0739892     0.71   0.477    -.0926497    .1980119
+           85  |   .0603258   .0802214     0.75   0.452    -.0972464     .217898
+               |
+      2.gender |  -.0370955   .0243166    -1.53   0.128    -.0848585    .0106676
+      educ_yrs |   .0040492   .0047935     0.84   0.399    -.0053662    .0134646
+  married_2020 |  -.0068177   .0282412    -0.24   0.809    -.0622895     .048654
+               |
+      race_eth |
+            2  |   .0231156   .0388245     0.60   0.552    -.0531442    .0993754
+            3  |  -.0880877   .0452494    -1.95   0.052    -.1769674    .0007921
+            4  |  -.0171551   .0754863    -0.23   0.820    -.1654266    .1311165
+               |
+   inlbrf_2020 |    .097216   .0333724     2.91   0.004     .0316654    .1627665
+wealth_d2_2020 |  -.0901583   .0958029    -0.94   0.347    -.2783359    .0980193
+wealth_d3_2020 |  -.0008469    .072612    -0.01   0.991    -.1434726    .1417788
+wealth_d4_2020 |  -.0370711   .0701876    -0.53   0.598    -.1749348    .1007925
+wealth_d5_2020 |   -.029772   .0706597    -0.42   0.674    -.1685629    .1090189
+wealth_d6_2020 |  -.0896686   .0654263    -1.37   0.171      -.21818    .0388428
+wealth_d7_2020 |  -.0947741    .066573    -1.42   0.155    -.2255379    .0359897
+wealth_d8_2020 |  -.0913212   .0697245    -1.31   0.191    -.2282752    .0456328
+wealth_d9_2020 |  -.1431556   .0659456    -2.17   0.030    -.2726872   -.0136241
+wealth_d10_~20 |  -.1587537   .0651842    -2.44   0.015    -.2867897   -.0307178
+               |
+  censreg_2020 |
+            2  |   -.010233   .0381604    -0.27   0.789    -.0851883    .0647223
+            3  |   .0302527   .0356824     0.85   0.397    -.0398352    .1003406
+            4  |   .1355014   .0448262     3.02   0.003     .0474532    .2235497
+               |
+ever_depressed |  -.0450012    .033738    -1.33   0.183      -.11127    .0212676
+trust_oth~2020 |   .0437244   .0165906     2.64   0.009     .0111368     .076312
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0031458    .001427    -2.20   0.028    -.0059488   -.0003429
+               |
+         _cons |   .0254472   .1121164     0.23   0.821    -.1947738    .2456682
+--------------------------------------------------------------------------------
+.     quietly testparm `trust_spec'
+.     estadd scalar p_joint_trust = r(p) : excl_avg_4
+.     quietly testparm i.age_bin
+.     estadd scalar p_joint_age_bin = r(p) : excl_avg_4
+.     quietly testparm `wlist'
+.     estadd scalar p_joint_wealth = r(p) : excl_avg_4
+.     quietly testparm i.race_eth
+.     estadd scalar p_joint_race = r(p) : excl_avg_4
+.     if "`region_var'" != "" {
+.         capture testparm i.`region_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_avg_4
+.         else estadd scalar p_joint_censreg = . : excl_avg_4
+.     }
+.     else estadd scalar p_joint_censreg = . : excl_avg_4
+. 
+.     local excl_avg_list "excl_avg_1"
+.     local excl_avg_mt `""No lag""'
+.     capture confirm variable depression_2018
+.     if !_rc {
+.         local excl_avg_list "`excl_avg_list' excl_avg_2"
+.         local excl_avg_mt `"`excl_avg_mt' "One lag""'
+.     }
+.     if `has_d2016' & `has_d2018' {
+.         local excl_avg_list "`excl_avg_list' excl_avg_3"
+.         local excl_avg_mt `"`excl_avg_mt' "Two lags""'
+.     }
+.     local excl_avg_list "`excl_avg_list' excl_avg_4"
+.     local excl_avg_mt `"`excl_avg_mt' "Ever depressed""'
+. 
+.     local drop_excl_avg "1.gender 1.race_eth"
+.     if "`region_var'" != "" local drop_excl_avg "`drop_excl_avg' 1.`region_var'
+> "
+.     capture confirm variable age_bin
+.     if !_rc {
+.         estimates restore excl_avg_1
+(results excl_avg_1 are active now)
+.         local cnames : colnames e(b)
+.         foreach c of local cnames {
+  2.             if regexm("`c'", "\.age_bin$") & !regexm("`c'", "b\.age_bin$") l
+> ocal drop_excl_avg "`drop_excl_avg' `c'"
+  3.         }
+.     }
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'_2020
+  3.         if !_rc local drop_excl_avg "`drop_excl_avg' wealth_d`d'_2020"
+  4.     }
+.     local order_avg "2.gender educ_yrs married_2020 2.race_eth 3.race_eth 4.rac
+> e_eth inlbrf_2020"
+.     if "`region_var'" != "" local order_avg "`order_avg' 2.`region_var' 3.`regi
+> on_var' 4.`region_var'"
+.     local order_avg "`order_avg' depression_2020 depression_2018 depression_201
+> 6 ever_depressed trust_others_2020 c.trust_others_2020#c.trust_others_2020 _con
+> s"
+.     local vl_avg `"depression_2020 "Depression (no lag)" depression_2018 "Depre
+> ssion (lag 1)" depression_2016 "Depression (lag 2)" ever_depressed "Ever depres
+> sed" trust_others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust\$
+> ^2\$" educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.r
+> ace_eth "Hispanic" 4.race_eth "NH Other" inlbrf_2020 "In labor force" married_2
+> 020 "Married" born_us "Born in U.S." _cons "Constant""'
+.     if "`region_var'" != "" local vl_avg `"`vl_avg' 2.`region_var' "Midwest" 3.
+> `region_var' "South" 4.`region_var' "West""'
+.     esttab `excl_avg_list' using "${REGRESSIONS}/2SLS/PredictTrust/excl_restric
+> tion_r5_avg.tex", replace ///
+>         booktabs no gap ///
+>         title("Exclusion restriction: r5 average on controls + depression + Tru
+> st + Trust\$^2\$") ///
+>         mtitles(`excl_avg_mt') ///
+>         se star(* 0.10 ** 0.05 *** 0.01) ///
+>         b(2) se(2) label ///
+>         drop(`drop_excl_avg' *.age_bin, relax) ///
+>         order(`order_avg') ///
+>         varlabels(`vl_avg') ///
+>         alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+>         stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race 
+> p_joint_censreg, labels("Observations" "Adj. R-squared" "Joint test: Trust only
+>  p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "
+> Joint test: Race p-value" "Joint test: Region p-value")) ///
+>         addnotes(".") nonumbers nonotes
+estout excl_avg_1 excl_avg_2 excl_avg_3 excl_avg_4 using `"/Volumes/SSD PRO/Githu
+> b-forks/Chp2-TrustandReturns/Code/Regressions/2SLS/PredictTrust/excl_restrictio
+> n_r5_avg.tex"' ,
+ cells(b(fmt(2) star) se(fmt(2) par))
+ drop(1.gender 1.race_eth 1.censreg_2020 40.age_bin 45.age_bin 50.age_bin 55.age_
+> bin 60.age_bin 65.age_bin 70.age_bin 75.age_bin 80.age_bin 85.age_bin wealth_d2
+> _2020 wealth_d3_2020 wealth_d4_2020 wealth_d5_2020 wealth_d6_2020 wealth_d7_202
+> 0 wealth_d8_2020 wealth_d9_2020 wealth_d10_2020 *.age_bin, relax)
+ stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_c
+> ensreg, labels("Observations" "Adj. R-squared" "Joint test: Trust only p-value"
+>  "Joint test: Age bins p-value" "Joint test: Wealth deciles p-value" "Joint tes
+> t: Race p-value" "Joint test: Region p-value"))
+ starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<@\
+> )"))
+ varwidth(20)
+ modelwidth(12)
+ delimiter(&)
+ end(\\)
+ title("Exclusion restriction: r5 average on controls + depression + Trust + Trus
+> t$^2$")
+ prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}
+> \)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep
+> \extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
+ posthead("\midrule")
+ prefoot("\midrule")
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{ta
+> bular*}"' `"\end{table}"')
+ label
+ varlabels(depression_2020 "Depression (no lag)" depression_2018 "Depression (lag
+>  1)" depression_2016 "Depression (lag 2)" ever_depressed "Ever depressed" trust
+> _others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust$^2$" educ_y
+> rs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "His
+> panic" 4.race_eth "NH Other" inlbrf_2020 "In labor force" married_2020 "Married
+> " born_us "Born in U.S." _cons "Constant" 2.censreg_2020 "Midwest" 3.censreg_20
+> 20 "South" 4.censreg_2020 "West")
+ mlabels("No lag" "One lag" "Two lags" "Ever depressed", titles span prefix(\mult
+> icolumn{@span}{c}{) suffix(}))
+ nonumbers
+ collabels(none)
+ eqlabels(, begin("\midrule" "") nofirst)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+ order(2.gender educ_yrs married_2020 2.race_eth 3.race_eth 4.race_eth inlbrf_202
+> 0 2.censreg_2020 3.censreg_2020 4.censreg_2020 depression_2020 depression_2018 
+> depression_2016 ever_depressed trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 _cons)
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/2SLS/PredictTrust/excl_restriction_r5_avg.tex)
+.     display "Exclusion restriction table (r5 average) saved: excl_restriction_r
+> 5_avg.tex"
+Exclusion restriction table (r5 average) saved: excl_restriction_r5_avg.tex
+. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Exclusion restriction: r5 panel (baseline spec 1) on controls + depression + 
+> Trust + Trust²
+. * Panel: analysis_final_long_unbalanced.dta; vce(cluster hhidpn)
+. * ----------------------------------------------------------------------
+. capture confirm file "${PROCESSED}/analysis_final_long_unbalanced.dta"
+
+. if !_rc {
+.     display _n "###############################################################
+> #########"
+
+########################################################################
+.     display "EXCLUSION RESTRICTION: r5 panel (spec 1) on controls + depression 
+> + Trust + Trust\$^2\$"
+EXCLUSION RESTRICTION: r5 panel (spec 1) on controls + depression + Trust + Trust
+> $^2$
+.     display "##################################################################
+> ######"
+########################################################################
+.     use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+.     set showbaselevels off
+.     xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+. 
+.     * Merge r*cesd for panel (waves 6-16 for years 2002-2022)
+.     preserve
+.     use "${CLEANED}/all_data_merged.dta", clear
+.     local pcesd_vars "hhidpn"
+.     forvalues w = 6/16 {
+  2.         capture confirm variable r`w'cesd
+  3.         if !_rc local pcesd_vars "`pcesd_vars' r`w'cesd"
+  4.     }
+.     keep `pcesd_vars'
+.     tempfile pcesd
+.     save "`pcesd'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000005 not
+    found)
+file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000005 saved as
+    .dta format
+.     restore
+.     merge m:1 hhidpn using "`pcesd'", nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                           542,808  
+    -----------------------------------------
+. 
+.     * Depression by year (contemporaneous): r6cesd=2002, r7cesd=2004, ... r16ce
+> sd=2022
+.     gen double depression = .
+(542,808 missing values generated)
+.     forvalues w = 6/16 {
+  2.         local y = 1990 + 2 * `w'
+  3.         capture confirm variable r`w'cesd
+  4.         if !_rc replace depression = r`w'cesd if year == `y'
+  5.     }
+(18,165 real changes made, 2,040 to missing)
+(20,129 real changes made, 1,846 to missing)
+(18,469 real changes made, 1,271 to missing)
+(17,217 real changes made, 1,142 to missing)
+(22,034 real changes made, 1,387 to missing)
+(20,554 real changes made, 1,154 to missing)
+(18,747 real changes made, 1,051 to missing)
+(20,912 real changes made, 947 to missing)
+(17,146 real changes made, 667 to missing)
+(15,723 real changes made, 725 to missing)
+(15,856 real changes made, 593 to missing)
+.     * Depression lag 1 (2 years ago): year 2020 -> r14cesd, year 2018 -> r13ces
+> d, etc.
+.     gen double depression_lag1 = .
+(542,808 missing values generated)
+.     forvalues w = 7/16 {
+  2.         local y = 1990 + 2 * `w'
+  3.         local wlag = `w' - 1
+  4.         capture confirm variable r`wlag'cesd
+  5.         if !_rc replace depression_lag1 = r`wlag'cesd if year == `y'
+  6.     }
+(18,165 real changes made, 2,040 to missing)
+(20,129 real changes made, 1,846 to missing)
+(18,469 real changes made, 1,271 to missing)
+(17,217 real changes made, 1,142 to missing)
+(22,034 real changes made, 1,387 to missing)
+(20,554 real changes made, 1,154 to missing)
+(18,747 real changes made, 1,051 to missing)
+(20,912 real changes made, 947 to missing)
+(17,146 real changes made, 667 to missing)
+(15,723 real changes made, 725 to missing)
+.     * Depression lag 2 (4 years ago)
+.     gen double depression_lag2 = .
+(542,808 missing values generated)
+.     forvalues w = 8/16 {
+  2.         local y = 1990 + 2 * `w'
+  3.         local wlag = `w' - 2
+  4.         capture confirm variable r`wlag'cesd
+  5.         if !_rc replace depression_lag2 = r`wlag'cesd if year == `y'
+  6.     }
+(18,165 real changes made, 2,040 to missing)
+(20,129 real changes made, 1,846 to missing)
+(18,469 real changes made, 1,271 to missing)
+(17,217 real changes made, 1,142 to missing)
+(22,034 real changes made, 1,387 to missing)
+(20,554 real changes made, 1,154 to missing)
+(18,747 real changes made, 1,051 to missing)
+(20,912 real changes made, 947 to missing)
+(17,146 real changes made, 667 to missing)
+.     * Ever depressed (time-invariant)
+.     gen byte ever_depressed_p = 0
+.     forvalues w = 6/16 {
+  2.         capture confirm variable r`w'cesd
+  3.         if !_rc replace ever_depressed_p = 1 if r`w'cesd > 0 & !missing(r`w'
+> cesd)
+  4.     }
+(109,392 real changes made)
+(51,468 real changes made)
+(23,532 real changes made)
+(14,052 real changes made)
+(55,884 real changes made)
+(17,148 real changes made)
+(9,480 real changes made)
+(40,236 real changes made)
+(10,092 real changes made)
+(7,212 real changes made)
+(24,720 real changes made)
+.     local _pcesd ""
+.     forvalues w = 6/16 {
+  2.         capture confirm variable r`w'cesd
+  3.         if !_rc local _pcesd "`_pcesd' r`w'cesd"
+  4.     }
+.     if "`_pcesd'" != "" {
+.         egen _npcesd = rownonmiss(`_pcesd')
+.         replace ever_depressed_p = . if _npcesd == 0
+(110,616 real changes made, 110,616 to missing)
+.         drop _npcesd
+.     }
+. 
+.     * Panel controls (match 14 spec 1 for r5)
+.     local base_ctrl "i.age_bin educ_yrs i.gender i.race_eth inlbrf married born
+> _us i.censreg i.year"
+.     local ctrl_r5_p "`base_ctrl'"
+.     forvalues d = 2/10 {
+  2.         capture confirm variable wealth_d`d'
+  3.         if !_rc local ctrl_r5_p "`ctrl_r5_p' wealth_d`d'"
+  4.     }
+.     local trust_spec_p "c.trust_others_2020 c.trust_others_2020#c.trust_others_
+> 2020"
+. 
+.     capture confirm variable r5_annual_w5
+.     local has_r5w5 = (_rc == 0)
+.     capture confirm variable trust_others_2020
+.     local has_trust_p = (_rc == 0)
+. 
+.     if `has_r5w5' & `has_trust_p' {
+.         local wlist_p ""
+.         forvalues d = 2/10 {
+  2.             capture confirm variable wealth_d`d'
+  3.             if !_rc local wlist_p "`wlist_p' wealth_d`d'"
+  4.         }
+.         local age_var "age_bin"
+.         capture confirm variable age_bin_
+.         if !_rc local age_var "age_bin_"
+.         local cens_var "censreg"
+.         capture confirm variable censreg_
+.         if !_rc local cens_var "censreg_"
+. 
+.         eststo clear
+.         eststo excl_p1: reg r5_annual_w5 `ctrl_r5_p' depression `trust_spec_p' 
+> if !missing(r5_annual_w5) & !missing(trust_others_2020) & !missing(depression),
+>  vce(cluster hhidpn)
+
+Linear regression                               Number of obs     =      2,875
+                                                F(45, 571)        =     456.23
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0548
+                                                Root MSE          =     .39338
+
+                                 (Std. err. adjusted for 572 clusters in hhidpn)
+--------------------------------------------------------------------------------
+               |               Robust
+ r5_annual_w5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+      age_bin_ |
+           35  |   .7668235   .0461274    16.62   0.000     .6762234    .8574236
+           40  |   .3856969   .1935496     1.99   0.047     .0055409    .7658529
+           45  |   .5351369    .114883     4.66   0.000     .3094921    .7607817
+           50  |   .6185484   .0960629     6.44   0.000     .4298686    .8072283
+           55  |   .5884615   .0786301     7.48   0.000     .4340221     .742901
+           60  |   .6141906   .0740312     8.30   0.000      .468784    .7595972
+           65  |   .6216213   .0734237     8.47   0.000     .4774079    .7658348
+           70  |   .5593459   .0756865     7.39   0.000      .410688    .7080038
+           75  |   .5637086   .0744949     7.57   0.000     .4173911    .7100261
+           80  |   .5021199     .08066     6.23   0.000     .3436933    .6605465
+           85  |   .6095794   .0916251     6.65   0.000      .429616    .7895427
+           90  |   .7564131   .3549794     2.13   0.034     .0591885    1.453638
+               |
+      educ_yrs |  -.0090815   .0029315    -3.10   0.002    -.0148394   -.0033237
+      2.gender |   -.026935    .015344    -1.76   0.080    -.0570726    .0032026
+               |
+      race_eth |
+            2  |   .0496927   .0255899     1.94   0.053    -.0005691    .0999546
+            3  |  -.0122884   .0314314    -0.39   0.696    -.0740237     .049447
+            4  |   .0103858   .0355164     0.29   0.770     -.059373    .0801446
+               |
+       inlbrf_ |   .0282991   .0156787     1.80   0.072    -.0024959    .0590941
+      married_ |  -.0619064    .018772    -3.30   0.001     -.098777   -.0250358
+       born_us |   .0281295   .0216941     1.30   0.195    -.0144805    .0707394
+               |
+      censreg_ |
+            2  |   .0043298   .0231221     0.19   0.852     -.041085    .0497446
+            3  |   .0358455   .0229069     1.56   0.118    -.0091466    .0808376
+            4  |   .0486667   .0272187     1.79   0.074    -.0047942    .1021276
+               |
+          year |
+         2004  |  -.0030316   .0485185    -0.06   0.950    -.0983282     .092265
+         2006  |   .1100998   .0428517     2.57   0.010     .0259336     .194266
+         2008  |  -.0121308   .0439629    -0.28   0.783    -.0984794    .0742179
+         2010  |  -.0451103   .0424151    -1.06   0.288     -.128419    .0381985
+         2012  |   .0002707   .0403023     0.01   0.995    -.0788881    .0794296
+         2014  |   .0539644   .0402583     1.34   0.181    -.0251079    .1330368
+         2016  |   .0623386   .0428703     1.45   0.146    -.0218642    .1465414
+         2018  |   .0600914   .0387931     1.55   0.122    -.0161031    .1362859
+         2020  |   .0868165   .0390834     2.22   0.027     .0100517    .1635814
+         2022  |   .1904979   .0419101     4.55   0.000     .1081811    .2728146
+               |
+     wealth_d2 |  -.0703387   .0778346    -0.90   0.367    -.2232157    .0825383
+     wealth_d3 |    .063804   .0634791     1.01   0.315     -.060877     .188485
+     wealth_d4 |   .0399357   .0602547     0.66   0.508    -.0784123    .1582836
+     wealth_d5 |   .0681957   .0586406     1.16   0.245    -.0469818    .1833732
+     wealth_d6 |   .0703426   .0589455     1.19   0.233    -.0454339     .186119
+     wealth_d7 |   .0390555   .0593847     0.66   0.511    -.0775836    .1556946
+     wealth_d8 |   .0465322   .0575767     0.81   0.419    -.0665558    .1596202
+     wealth_d9 |   .0993098   .0577449     1.72   0.086    -.0141085    .2127282
+    wealth_d10 |   .1071985   .0584541     1.83   0.067    -.0076129    .2220098
+    depression |  -.0014003   .0045335    -0.31   0.758    -.0103047    .0075041
+trust_oth~2020 |   .0277009   .0092226     3.00   0.003     .0095865    .0458153
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0018668   .0007927    -2.35   0.019    -.0034238   -.0003098
+               |
+         _cons |  -.5296301   .0612941    -8.64   0.000    -.6500196   -.4092406
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec_p'
+.         estadd scalar p_joint_trust = r(p) : excl_p1
+.         capture testparm i.`age_var'
+.         if _rc == 0 estadd scalar p_joint_age_bin = r(p) : excl_p1
+.         else estadd scalar p_joint_age_bin = . : excl_p1
+.         quietly testparm `wlist_p'
+.         estadd scalar p_joint_wealth = r(p) : excl_p1
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_p1
+.         capture testparm i.`cens_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_p1
+.         else estadd scalar p_joint_censreg = . : excl_p1
+.         quietly testparm i.year
+.         estadd scalar p_joint_year = r(p) : excl_p1
+. 
+.         eststo excl_p2: reg r5_annual_w5 `ctrl_r5_p' depression_lag1 `trust_spe
+> c_p' if !missing(r5_annual_w5) & !missing(trust_others_2020) & !missing(depress
+> ion_lag1), vce(cluster hhidpn)
+
+Linear regression                               Number of obs     =      2,754
+                                                F(44, 572)        =     396.03
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0555
+                                                Root MSE          =     .39324
+
+                                 (Std. err. adjusted for 573 clusters in hhidpn)
+--------------------------------------------------------------------------------
+               |               Robust
+ r5_annual_w5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+      age_bin_ |
+           35  |   .7656481   .0464006    16.50   0.000     .6745118    .8567845
+           40  |   .3788101   .1919391     1.97   0.049     .0018186    .7558016
+           45  |   .4877816   .1094663     4.46   0.000     .2727766    .7027866
+           50  |   .6094801   .0964078     6.32   0.000     .4201236    .7988366
+           55  |   .5896598   .0773594     7.62   0.000     .4377167    .7416029
+           60  |    .606089   .0720312     8.41   0.000     .4646111     .747567
+           65  |   .6177067   .0717322     8.61   0.000     .4768161    .7585972
+           70  |    .559602   .0734346     7.62   0.000     .4153677    .7038364
+           75  |   .5607477   .0730087     7.68   0.000     .4173498    .7041457
+           80  |   .4984409   .0793881     6.28   0.000     .3425132    .6543685
+           85  |   .5957432   .0889898     6.69   0.000     .4209565    .7705299
+           90  |    .754627   .3611997     2.09   0.037     .0451875    1.464067
+               |
+      educ_yrs |  -.0087455   .0030488    -2.87   0.004    -.0147337   -.0027573
+      2.gender |  -.0296583   .0157177    -1.89   0.060    -.0605298    .0012131
+               |
+      race_eth |
+            2  |    .043033   .0269418     1.60   0.111    -.0098839    .0959499
+            3  |  -.0212137    .033898    -0.63   0.532    -.0877935    .0453662
+            4  |   .0045925   .0350123     0.13   0.896    -.0641758    .0733608
+               |
+       inlbrf_ |   .0327722    .016179     2.03   0.043     .0009947    .0645496
+      married_ |  -.0707921   .0193227    -3.66   0.000    -.1087441   -.0328401
+       born_us |    .030056   .0231004     1.30   0.194     -.015316    .0754279
+               |
+      censreg_ |
+            2  |   .0091085    .023373     0.39   0.697    -.0367989    .0550158
+            3  |   .0325513   .0233532     1.39   0.164    -.0133172    .0784198
+            4  |   .0478576   .0273268     1.75   0.080    -.0058155    .1015308
+               |
+          year |
+         2006  |   .1051182   .0446638     2.35   0.019     .0173932    .1928432
+         2008  |  -.0118097   .0399259    -0.30   0.767     -.090229    .0666096
+         2010  |  -.0350289    .040897    -0.86   0.392    -.1153555    .0452978
+         2012  |   .0086535   .0361109     0.24   0.811    -.0622726    .0795797
+         2014  |   .0605614   .0398039     1.52   0.129    -.0176183     .138741
+         2016  |    .068977   .0369293     1.87   0.062    -.0035565    .1415105
+         2018  |   .0671402   .0360083     1.86   0.063    -.0035844    .1378648
+         2020  |   .0928422     .03763     2.47   0.014     .0189323     .166752
+         2022  |   .1917627   .0398036     4.82   0.000     .1135836    .2699418
+               |
+     wealth_d2 |  -.0632034   .0787092    -0.80   0.422    -.2177976    .0913909
+     wealth_d3 |   .0686211   .0639584     1.07   0.284    -.0570008     .194243
+     wealth_d4 |   .0388415   .0587195     0.66   0.509    -.0764907    .1541737
+     wealth_d5 |   .0770855   .0578912     1.33   0.184    -.0366198    .1907907
+     wealth_d6 |   .0676336   .0578606     1.17   0.243    -.0460115    .1812786
+     wealth_d7 |    .035475    .058866     0.60   0.547    -.0801449    .1510948
+     wealth_d8 |    .044824   .0569015     0.79   0.431    -.0669374    .1565854
+     wealth_d9 |    .097272   .0573305     1.70   0.090     -.015332     .209876
+    wealth_d10 |   .1069307   .0578222     1.85   0.065     -.006639    .2205004
+depression_l~1 |   .0026791   .0049608     0.54   0.589    -.0070646    .0124227
+trust_oth~2020 |   .0295192   .0094663     3.12   0.002     .0109262    .0481122
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0021368   .0008073    -2.65   0.008    -.0037225    -.000551
+               |
+         _cons |   -.532982   .0613721    -8.68   0.000    -.6535242   -.4124399
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec_p'
+.         estadd scalar p_joint_trust = r(p) : excl_p2
+.         capture testparm i.`age_var'
+.         if _rc == 0 estadd scalar p_joint_age_bin = r(p) : excl_p2
+.         else estadd scalar p_joint_age_bin = . : excl_p2
+.         quietly testparm `wlist_p'
+.         estadd scalar p_joint_wealth = r(p) : excl_p2
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_p2
+.         capture testparm i.`cens_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_p2
+.         else estadd scalar p_joint_censreg = . : excl_p2
+.         quietly testparm i.year
+.         estadd scalar p_joint_year = r(p) : excl_p2
+. 
+.         eststo excl_p3: reg r5_annual_w5 `ctrl_r5_p' depression_lag1 depression
+> _lag2 `trust_spec_p' if !missing(r5_annual_w5) & !missing(trust_others_2020) & 
+> !missing(depression_lag1) & !missing(depression_lag2), vce(cluster hhidpn)
+
+Linear regression                               Number of obs     =      2,567
+                                                F(43, 556)        =          .
+                                                Prob > F          =          .
+                                                R-squared         =     0.0548
+                                                Root MSE          =     .39588
+
+                                 (Std. err. adjusted for 557 clusters in hhidpn)
+--------------------------------------------------------------------------------
+               |               Robust
+ r5_annual_w5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+      age_bin_ |
+           35  |   .7679091   .0490042    15.67   0.000     .6716531    .8641652
+           40  |    .472241   .2879016     1.64   0.102    -.0932668    1.037749
+           45  |   .5499905   .1073445     5.12   0.000     .3391401    .7608409
+           50  |   .6766813   .1084562     6.24   0.000     .4636473    .8897153
+           55  |   .6169814   .0813869     7.58   0.000      .457118    .7768448
+           60  |   .6318619   .0761112     8.30   0.000     .4823612    .7813627
+           65  |   .6362115   .0759033     8.38   0.000     .4871191    .7853038
+           70  |    .573128   .0778175     7.37   0.000     .4202758    .7259802
+           75  |   .5777436   .0766253     7.54   0.000     .4272331     .728254
+           80  |   .5105275   .0828712     6.16   0.000     .3477486    .6733064
+           85  |   .6147843   .0929098     6.62   0.000     .4322872    .7972814
+           90  |   .4143191   .2570724     1.61   0.108    -.0906327    .9192709
+               |
+      educ_yrs |  -.0092253   .0030568    -3.02   0.003    -.0152296    -.003221
+      2.gender |   -.029253   .0166139    -1.76   0.079    -.0618867    .0033807
+               |
+      race_eth |
+            2  |   .0393693   .0285265     1.38   0.168    -.0166636    .0954023
+            3  |   -.026589   .0337963    -0.79   0.432     -.092973     .039795
+            4  |   .0153374   .0359841     0.43   0.670     -.055344    .0860189
+               |
+       inlbrf_ |   .0296734   .0171982     1.73   0.085    -.0041079    .0634547
+      married_ |  -.0749377   .0200133    -3.74   0.000    -.1142486   -.0356269
+       born_us |   .0438001   .0242139     1.81   0.071    -.0037619     .091362
+               |
+      censreg_ |
+            2  |   .0129033   .0245137     0.53   0.599    -.0352474    .0610541
+            3  |   .0319097   .0241102     1.32   0.186    -.0154485     .079268
+            4  |    .049814   .0287606     1.73   0.084    -.0066788    .1063068
+               |
+          year |
+         2008  |  -.1195157   .0433119    -2.76   0.006    -.2045907   -.0344407
+         2010  |  -.1419341   .0387072    -3.67   0.000    -.2179643   -.0659039
+         2012  |  -.0992829   .0397466    -2.50   0.013    -.1773548    -.021211
+         2014  |  -.0459981   .0380818    -1.21   0.228    -.1207998    .0288037
+         2016  |  -.0410885   .0385384    -1.07   0.287    -.1167872    .0346101
+         2018  |  -.0364513   .0377099    -0.97   0.334    -.1105226    .0376199
+         2020  |  -.0166687   .0382397    -0.44   0.663    -.0917807    .0584433
+         2022  |   .0828583   .0411339     2.01   0.044     .0020615     .163655
+               |
+     wealth_d2 |  -.0519705   .0837359    -0.62   0.535    -.2164479    .1125069
+     wealth_d3 |     .06806   .0664863     1.02   0.306     -.062535    .1986549
+     wealth_d4 |   .0262821   .0606854     0.43   0.665    -.0929186    .1454828
+     wealth_d5 |   .0600968   .0607671     0.99   0.323    -.0592644     .179458
+     wealth_d6 |   .0475021   .0591692     0.80   0.422    -.0687204    .1637245
+     wealth_d7 |   .0252385   .0610772     0.41   0.680    -.0947318    .1452089
+     wealth_d8 |   .0324421   .0589863     0.55   0.583    -.0834212    .1483054
+     wealth_d9 |   .0895666   .0595512     1.50   0.133    -.0274063    .2065395
+    wealth_d10 |   .0998932   .0597702     1.67   0.095    -.0175099    .2172963
+depression_l~1 |   .0085349   .0063238     1.35   0.178    -.0038866    .0209565
+depression_l~2 |  -.0093308   .0057278    -1.63   0.104    -.0205816    .0019201
+trust_oth~2020 |   .0249119   .0100868     2.47   0.014      .005099    .0447248
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0018626   .0008591    -2.17   0.031    -.0035502   -.0001751
+               |
+         _cons |  -.4170259   .0633773    -6.58   0.000    -.5415141   -.2925377
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec_p'
+.         estadd scalar p_joint_trust = r(p) : excl_p3
+.         capture testparm i.`age_var'
+.         if _rc == 0 estadd scalar p_joint_age_bin = r(p) : excl_p3
+.         else estadd scalar p_joint_age_bin = . : excl_p3
+.         quietly testparm `wlist_p'
+.         estadd scalar p_joint_wealth = r(p) : excl_p3
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_p3
+.         capture testparm i.`cens_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_p3
+.         else estadd scalar p_joint_censreg = . : excl_p3
+.         quietly testparm i.year
+.         estadd scalar p_joint_year = r(p) : excl_p3
+. 
+.         eststo excl_p4: reg r5_annual_w5 `ctrl_r5_p' ever_depressed_p `trust_sp
+> ec_p' if !missing(r5_annual_w5) & !missing(trust_others_2020) & !missing(ever_d
+> epressed_p), vce(cluster hhidpn)
+
+Linear regression                               Number of obs     =      2,899
+                                                F(45, 572)        =     430.45
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0543
+                                                Root MSE          =     .39271
+
+                                 (Std. err. adjusted for 573 clusters in hhidpn)
+--------------------------------------------------------------------------------
+               |               Robust
+ r5_annual_w5_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+      age_bin_ |
+           35  |   .7667959   .0456178    16.81   0.000      .677197    .8563948
+           40  |   .3870058   .1917345     2.02   0.044     .0104162    .7635955
+           45  |   .5344594   .1138797     4.69   0.000      .310786    .7581328
+           50  |   .6178272   .0939942     6.57   0.000     .4332114    .8024431
+           55  |   .5866092   .0771883     7.60   0.000     .4350022    .7382162
+           60  |   .6130553    .072208     8.49   0.000     .4712301    .7548805
+           65  |   .6190229    .071774     8.62   0.000     .4780502    .7599956
+           70  |   .5577677   .0740239     7.53   0.000     .4123759    .7031596
+           75  |   .5617119   .0728825     7.71   0.000     .4185619    .7048619
+           80  |   .5005232   .0791339     6.33   0.000     .3450948    .6559516
+           85  |   .5976002   .0888939     6.72   0.000     .4230019    .7721985
+           90  |    .758645   .3558697     2.13   0.033     .0596743    1.457616
+               |
+      educ_yrs |  -.0091705   .0029249    -3.14   0.002    -.0149155   -.0034256
+      2.gender |  -.0256782   .0152342    -1.69   0.092       -.0556    .0042435
+               |
+      race_eth |
+            2  |   .0501589    .025651     1.96   0.051    -.0002228    .1005405
+            3  |  -.0100677   .0312061    -0.32   0.747    -.0713603    .0512249
+            4  |   .0129417   .0357761     0.36   0.718    -.0573268    .0832102
+               |
+       inlbrf_ |   .0290211   .0156556     1.85   0.064    -.0017283    .0597706
+      married_ |  -.0634077   .0187101    -3.39   0.001    -.1001566   -.0266589
+       born_us |   .0300556   .0219859     1.37   0.172    -.0131273    .0732386
+               |
+      censreg_ |
+            2  |   .0060152   .0228043     0.26   0.792    -.0387751    .0508055
+            3  |   .0372958   .0224533     1.66   0.097    -.0068052    .0813969
+            4  |   .0488221   .0268294     1.82   0.069     -.003874    .1015182
+               |
+          year |
+         2004  |  -.0015678   .0473344    -0.03   0.974    -.0945383    .0914028
+         2006  |    .111706   .0424555     2.63   0.009     .0283184    .1950937
+         2008  |  -.0087524   .0433968    -0.20   0.840    -.0939889    .0764841
+         2010  |  -.0357197   .0422542    -0.85   0.398     -.118712    .0472727
+         2012  |   .0047423     .03985     0.12   0.905    -.0735279    .0830124
+         2014  |    .060475   .0398848     1.52   0.130    -.0178635    .1388134
+         2016  |   .0670954   .0425389     1.58   0.115    -.0164562    .1506469
+         2018  |    .064381   .0384978     1.67   0.095    -.0112333    .1399954
+         2020  |   .0911177   .0389179     2.34   0.020     .0146782    .1675571
+         2022  |   .1910343   .0415506     4.60   0.000      .109424    .2726446
+               |
+     wealth_d2 |  -.0746214    .077341    -0.96   0.335    -.2265283    .0772855
+     wealth_d3 |   .0656121    .062886     1.04   0.297    -.0579036    .1891278
+     wealth_d4 |   .0402084   .0593678     0.68   0.499    -.0763971    .1568139
+     wealth_d5 |   .0702803   .0578694     1.21   0.225    -.0433822    .1839428
+     wealth_d6 |   .0722317    .057976     1.25   0.213    -.0416402    .1861036
+     wealth_d7 |   .0397551   .0583119     0.68   0.496    -.0747763    .1542866
+     wealth_d8 |   .0505377   .0565807     0.89   0.372    -.0605937     .161669
+     wealth_d9 |   .1030171   .0566863     1.82   0.070    -.0083217    .2143559
+    wealth_d10 |   .1118269   .0574552     1.95   0.052     -.001022    .2246758
+ever_depress~p |  -.0101774   .0196272    -0.52   0.604    -.0487276    .0283727
+trust_oth~2020 |   .0276911   .0092873     2.98   0.003     .0094497    .0459325
+               |
+            c. |
+trust_oth~2020#|
+            c. |
+trust_oth~2020 |  -.0018708   .0007962    -2.35   0.019    -.0034347   -.0003069
+               |
+         _cons |  -.5285273   .0644384    -8.20   0.000    -.6550921   -.4019625
+--------------------------------------------------------------------------------
+.         quietly testparm `trust_spec_p'
+.         estadd scalar p_joint_trust = r(p) : excl_p4
+.         capture testparm i.`age_var'
+.         if _rc == 0 estadd scalar p_joint_age_bin = r(p) : excl_p4
+.         else estadd scalar p_joint_age_bin = . : excl_p4
+.         quietly testparm `wlist_p'
+.         estadd scalar p_joint_wealth = r(p) : excl_p4
+.         quietly testparm i.race_eth
+.         estadd scalar p_joint_race = r(p) : excl_p4
+.         capture testparm i.`cens_var'
+.         if _rc == 0 estadd scalar p_joint_censreg = r(p) : excl_p4
+.         else estadd scalar p_joint_censreg = . : excl_p4
+.         quietly testparm i.year
+.         estadd scalar p_joint_year = r(p) : excl_p4
+. 
+.         * Drop age_bin, wealth, year, base levels (match 14/18)
+.         local drop_p "1.gender 1.race_eth"
+.         if "`cens_var'" != "" local drop_p "`drop_p' 1.`cens_var'"
+.         forvalues d = 2/10 {
+  2.             capture confirm variable wealth_d`d'
+  3.             if !_rc local drop_p "`drop_p' wealth_d`d'"
+  4.         }
+.         local order_p "2.gender educ_yrs 2.race_eth 3.race_eth 4.race_eth inlbr
+> f_ married_ born_us"
+.         if "`cens_var'" != "" local order_p "`order_p' 2.`cens_var' 3.`cens_var
+> ' 4.`cens_var'"
+.         local order_p "`order_p' depression depression_lag1 depression_lag2 eve
+> r_depressed_p trust_others_2020 c.trust_others_2020#c.trust_others_2020 _cons"
+.         local vl_p `"depression "Depression (no lag)" depression_lag1 "Depressi
+> on (lag 1)" depression_lag2 "Depression (lag 2)" ever_depressed_p "Ever depress
+> ed" trust_others_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust\$^
+> 2\$" educ_yrs "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.ra
+> ce_eth "Hispanic" 4.race_eth "NH Other" inlbrf_ "In labor force" married_ "Marr
+> ied" born_us "Born in U.S." _cons "Constant""'
+.         if "`cens_var'" != "" local vl_p `"`vl_p' 2.`cens_var' "Midwest" 3.`cen
+> s_var' "South" 4.`cens_var' "West""'
+.         esttab excl_p1 excl_p2 excl_p3 excl_p4 using "${REGRESSIONS}/2SLS/Predi
+> ctTrust/excl_restriction_r5_panel.tex", replace ///
+>             booktabs no gap ///
+>             title("Exclusion restriction: r5 panel (spec 1) on controls + depre
+> ssion + Trust + Trust\$^2\$") ///
+>             mtitles("No lag" "One lag" "Two lags" "Ever depressed") ///
+>             se star(* 0.10 ** 0.05 *** 0.01) ///
+>             b(2) se(2) label ///
+>             drop(`drop_p' *.age_bin *.age_bin_ *.year, relax) ///
+>             order(`order_p') ///
+>             varlabels(`vl_p') ///
+>             alignment(${LATEX_ALIGN}) width(0.85\hsize) ///
+>             stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_r
+> ace p_joint_censreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint
+>  test: Trust only p-value" "Joint test: Age bins p-value" "Joint test: Wealth d
+> eciles p-value" "Joint test: Race p-value" "Joint test: Region p-value" "Joint 
+> test: Year p-value")) ///
+>             addnotes(".") nonumbers nonotes
+estout excl_p1 excl_p2 excl_p3 excl_p4 using `"/Volumes/SSD PRO/Github-forks/Chp2
+> -TrustandReturns/Code/Regressions/2SLS/PredictTrust/excl_restriction_r5_panel.t
+> ex"' ,
+ cells(b(fmt(2) star) se(fmt(2) par))
+ drop(1.gender 1.race_eth 1.censreg_ wealth_d2 wealth_d3 wealth_d4 wealth_d5 weal
+> th_d6 wealth_d7 wealth_d8 wealth_d9 wealth_d10 *.age_bin *.age_bin_ *.year, rel
+> ax)
+ stats(N r2_a p_joint_trust p_joint_age_bin p_joint_wealth p_joint_race p_joint_c
+> ensreg p_joint_year, labels("Observations" "Adj. R-squared" "Joint test: Trust 
+> only p-value" "Joint test: Age bins p-value" "Joint test: Wealth deciles p-valu
+> e" "Joint test: Race p-value" "Joint test: Region p-value" "Joint test: Year p-
+> value"))
+ starlevels(`"\sym{*}"' 0.10 `"\sym{**}"' 0.05 `"\sym{***}"' 0.01, label(" \(p<@\
+> )"))
+ varwidth(20)
+ modelwidth(12)
+ delimiter(&)
+ end(\\)
+ title("Exclusion restriction: r5 panel (spec 1) on controls + depression + Trust
+>  + Trust$^2$")
+ prehead(`"\begin{table}[htbp]\centering"' `"\def\sym#1{\ifmmode^{#1}\else\(^{#1}
+> \)\fi}"' `"\caption{@title}"' `"\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep
+> \extracolsep\fill}l*{@E}{D{.}{.}{-1}}}"' `"\toprule"')
+ posthead("\midrule")
+ prefoot("\midrule")
+ postfoot(`"\bottomrule"' `"\multicolumn{@span}{l}{\footnotesize .}\\"' `"\end{ta
+> bular*}"' `"\end{table}"')
+ label
+ varlabels(depression "Depression (no lag)" depression_lag1 "Depression (lag 1)" 
+> depression_lag2 "Depression (lag 2)" ever_depressed_p "Ever depressed" trust_ot
+> hers_2020 "Trust" c.trust_others_2020#c.trust_others_2020 "Trust$^2$" educ_yrs 
+> "Years of education" 2.gender "Female" 2.race_eth "NH Black" 3.race_eth "Hispan
+> ic" 4.race_eth "NH Other" inlbrf_ "In labor force" married_ "Married" born_us "
+> Born in U.S." _cons "Constant" 2.censreg_ "Midwest" 3.censreg_ "South" 4.censre
+> g_ "West")
+ mlabels("No lag" "One lag" "Two lags" "Ever depressed", titles span prefix(\mult
+> icolumn{@span}{c}{) suffix(}))
+ nonumbers
+ collabels(none)
+ eqlabels(, begin("\midrule" "") nofirst)
+ substitute(_ \_ "\_cons " \_cons)
+ interaction(" $\times$ ")
+ notype
+ level(95)
+ style(esttab)
+ replace
+ order(2.gender educ_yrs 2.race_eth 3.race_eth 4.race_eth inlbrf_ married_ born_u
+> s 2.censreg_ 3.censreg_ 4.censreg_ depression depression_lag1 depression_lag2 e
+> ver_depressed_p trust_others_2020 c.trust_others_2020#c.trust_others_2020 _cons
+> )
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Regres
+> sions/2SLS/PredictTrust/excl_restriction_r5_panel.tex)
+.         display "Exclusion restriction table (r5 panel) saved: excl_restriction
+> _r5_panel.tex"
+Exclusion restriction table (r5 panel) saved: excl_restriction_r5_panel.tex
+.     }
+.     else {
+.         display "Panel exclusion restriction skipped: r5_annual_w5 or trust_oth
+> ers_2020 not found."
+.     }
+. }
+
+. else {
+.     display "Panel exclusion restriction skipped: analysis_final_long_unbalance
+> d.dta not found. Run pipeline 00-10."
+. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Summary: compare R², coefficient magnitude, significance across specs
+. * ----------------------------------------------------------------------
+. display _n "###################################################################
+> #####"
+
+########################################################################
+
+. display "Compare R², coefficient magnitude, and significance across steps."
+Compare R², coefficient magnitude, and significance across steps.
+
+. display "Stronger first-stage (depression predicts trust) supports IV relevance
+> ."
+Stronger first-stage (depression predicts trust) supports IV relevance.
+
+. display "######################################################################
+> ##"
+########################################################################
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/30_2sl
+> s_dep.log
+  log type:  text
+ closed on:   5 Mar 2026, 16:54:40
+---------------------------------------------------------------------------------

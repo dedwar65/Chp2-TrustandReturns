@@ -1,0 +1,879 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/38_m
+> ain_analysis_trust_ret.log
+  log type:  text
+ opened on:  12 Mar 2026, 19:42:12
+
+. 
+. capture which esttab
+
+. if _rc {
+.     display as error "38: esttab not found. Install estout (ssc install estou
+> t)."
+.     log close
+.     exit 198
+. }
+
+. 
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "38) MAIN ANALYSIS: r5 RETURNS + TRUST* TABLES"
+38) MAIN ANALYSIS: r5 RETURNS + TRUST* TABLES
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. 
+. * ======================================================================
+. * PART 1: CROSS-SECTION (AVG RETURNS) - TABLE 1
+. * ======================================================================
+. * Load wide data, build 35 and 37 control sets and samples
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. set showbaselevels off
+
+. 
+. capture confirm variable trust_others_2020
+
+. if _rc {
+.     display as error "38: trust_others_2020 not found. Exiting."
+.     log close
+.     exit 0
+. }
+
+. capture confirm variable r5_annual_avg_w5
+
+. if _rc {
+.     display as error "38: r5_annual_avg_w5 not found. Exiting."
+.     log close
+.     exit 0
+. }
+
+. 
+. capture drop trust_others_2020_sq
+
+. gen double trust_others_2020_sq = trust_others_2020 * trust_others_2020
+(44,334 missing values generated)
+
+. 
+. capture confirm variable age_bin
+
+. if _rc {
+.     capture confirm variable age_2020
+.     if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+. }
+
+. 
+. capture drop educ_cat
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     gen byte educ_cat = .
+(45,234 missing values generated)
+.     replace educ_cat = 1 if educ_yrs < 12
+(12,070 real changes made)
+.     replace educ_cat = 2 if educ_yrs == 12
+(13,611 real changes made)
+.     replace educ_cat = 3 if educ_yrs > 12 & educ_yrs < 16
+(9,674 real changes made)
+.     replace educ_cat = 4 if educ_yrs == 16
+(4,968 real changes made)
+.     replace educ_cat = 5 if educ_yrs > 16 & !missing(educ_yrs)
+(4,262 real changes made)
+.     capture label drop educ_lbl
+.     label define educ_lbl 1 "Less HS" 2 "HS Grad" 3 "Some College" 4 "College
+> " 5 "Postgrad"
+.     label values educ_cat educ_lbl
+. }
+
+. 
+. * 35 controls: wealth deciles, age, inlbrf, educ
+. local wealth_r5_vars ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wealth_r5_vars "`wealth_r5_vars' wealth_d`d'_2020"
+  4. }
+
+. local r5_ctrls_35 "`wealth_r5_vars' i.age_bin inlbrf_2020 i.educ_cat"
+
+. 
+. * 37 controls: + gender, race, region, born_us, married
+. local region_ctrl ""
+
+. capture confirm variable censreg
+
+. if !_rc local region_ctrl "i.censreg"
+
+. if "`region_ctrl'" == "" {
+.     capture confirm variable censreg_2020
+.     if !_rc local region_ctrl "i.censreg_2020"
+. }
+
+. local r5_ctrls_37 "`r5_ctrls_35' i.gender i.race_eth born_us `region_ctrl' ma
+> rried_2020"
+
+. 
+. * Common sample for 35 (r5, trust, trust², wealth, age, inlbrf, educ)
+. local corr_35 "r5_annual_avg_w5 trust_others_2020 trust_others_2020_sq `wealt
+> h_r5_vars'"
+
+. capture confirm variable age_bin
+
+. if !_rc local corr_35 "`corr_35' age_bin"
+
+. capture confirm variable inlbrf_2020
+
+. if !_rc local corr_35 "`corr_35' inlbrf_2020"
+
+. capture confirm variable educ_cat
+
+. if !_rc local corr_35 "`corr_35' educ_cat"
+
+. 
+. tempvar samp35
+
+. gen byte `samp35' = 1
+
+. markout `samp35' `corr_35'
+
+. quietly count if `samp35' == 1
+
+. local n35 = r(N)
+
+. 
+. * Common sample for 37 (+ gender, race, region, born_us, married)
+. local corr_37 "`corr_35'"
+
+. capture confirm variable gender
+
+. if !_rc local corr_37 "`corr_37' gender"
+
+. capture confirm variable race_eth
+
+. if !_rc local corr_37 "`corr_37' race_eth"
+
+. capture confirm variable born_us
+
+. if !_rc local corr_37 "`corr_37' born_us"
+
+. capture confirm variable censreg
+
+. if !_rc local corr_37 "`corr_37' censreg"
+
+. else {
+.     capture confirm variable censreg_2020
+.     if !_rc local corr_37 "`corr_37' censreg_2020"
+. }
+
+. capture confirm variable married_2020
+
+. if !_rc local corr_37 "`corr_37' married_2020"
+
+. 
+. tempvar samp37
+
+. gen byte `samp37' = 1
+
+. markout `samp37' `corr_37'
+
+. quietly count if `samp37' == 1
+
+. local n37 = r(N)
+
+. 
+. display _n "--- Table 1: Average returns (4 columns) ---"
+
+--- Table 1: Average returns (4 columns) ---
+
+. display "Regressions use listwise deletion; N may differ across columns."
+Regressions use listwise deletion; N may differ across columns.
+
+. 
+. * Col 1: Trust only
+. quietly regress r5_annual_avg_w5 trust_others_2020, vce(robust)
+
+. estimates store t1_c1
+
+. 
+. * Col 2: Trust + Trust²
+. quietly regress r5_annual_avg_w5 trust_others_2020 trust_others_2020_sq, vce(
+> robust)
+
+. estimates store t1_c2
+
+. 
+. * Col 3: Trust + Trust² + 35 controls
+. quietly regress r5_annual_avg_w5 c.trust_others_2020 c.trust_others_2020#c.tr
+> ust_others_2020 ///
+>     `r5_ctrls_35', vce(robust)
+
+. estimates store t1_c3
+
+. 
+. * Col 4: Trust + Trust² + 37 controls
+. quietly regress r5_annual_avg_w5 c.trust_others_2020 c.trust_others_2020#c.tr
+> ust_others_2020 ///
+>     `r5_ctrls_37', vce(robust)
+
+. estimates store t1_c4
+
+. 
+. * esttab Table 1
+. local drop_common "*.age_bin 1.gender 1.race_eth 1.censreg 1.censreg_2020"
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local drop_common "`drop_common' wealth_d`d'_2020"
+  4. }
+
+. 
+. esttab t1_c1 t1_c2 t1_c3 t1_c4 using "${BASE_PATH}/Code/Analysis/Tables/38_ta
+> ble1_avg_returns.tex", replace ///
+>     booktabs ///
+>     mtitles("Trust only" "Trust + Trust²" "35 controls" "37 controls") ///
+>     se star(* 0.10 ** 0.05 *** 0.01) b(2) se(2) label ///
+>     drop(`drop_common', relax) ///
+>     varlabels(trust_others_2020 "Trust" trust_others_2020_sq "Trust\$^2\$" c.
+> trust_others_2020#c.trust_others_2020 "Trust\$^2\$") ///
+>     stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+>     title("Average returns to net wealth on trust") ///
+>     alignment(${LATEX_ALIGN}) width(0.95\hsize) nonumbers nonotes
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Anal
+> ysis/Tables/38_table1_avg_returns.tex)
+
+. 
+. estimates clear
+
+. display "Saved: Code/Analysis/Tables/38_table1_avg_returns.tex"
+Saved: Code/Analysis/Tables/38_table1_avg_returns.tex
+
+. 
+. * ======================================================================
+. * PART 2: PANEL - TABLES 2-5
+. * ======================================================================
+. * Load long panel; use listwise deletion (like 14)
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. set showbaselevels off
+
+. xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+
+. 
+. capture confirm variable trust_others_2020
+
+. if _rc {
+.     display as error "38 panel: trust_others_2020 not found. Exiting."
+.     log close
+.     exit 0
+. }
+
+. capture drop trust_others_2020_sq
+
+. gen double trust_others_2020_sq = trust_others_2020 * trust_others_2020
+(532,008 missing values generated)
+
+. 
+. capture confirm variable r5_annual_w5
+
+. if _rc {
+.     display as error "38 panel: r5_annual_w5 not found. Exiting."
+.     log close
+.     exit 0
+. }
+
+. 
+. * Panel time-varying controls (same for 35 and 37)
+. local panel_wealth_vars ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local panel_wealth_vars "`panel_wealth_vars' wealth_d`d'"
+  4. }
+
+. local panel_tv_ctrls "`panel_wealth_vars' i.age_bin inlbrf i.year"
+
+. 
+. * 35 time-invariant: educ only
+. local panel_tinv_35 "educ_yrs"
+
+. 
+. * 37 time-invariant: full set
+. local panel_tinv_37 "educ_yrs i.gender i.race_eth born_us i.censreg married"
+
+. capture confirm variable censreg
+
+. if _rc {
+.     capture confirm variable censreg_2020
+.     if !_rc local panel_tinv_37 "educ_yrs i.gender i.race_eth born_us i.censr
+> eg_2020 married"
+. }
+
+. 
+. display "Panel uses listwise deletion; N may vary across models."
+Panel uses listwise deletion; N may vary across models.
+
+. 
+. * Mundlak means for CRE
+. local mundlak_means ""
+
+. foreach v of local panel_wealth_vars {
+  2.     capture drop m_`v'
+  3.     bysort hhidpn: egen double m_`v' = mean(`v')
+  4.     local mundlak_means "`mundlak_means' m_`v'"
+  5. }
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+
+. capture drop m_inlbrf
+
+. bysort hhidpn: egen double m_inlbrf = mean(inlbrf)
+(77,280 missing values generated)
+
+. local mundlak_means "`mundlak_means' m_inlbrf"
+
+. capture confirm variable age_bin
+
+. if !_rc {
+.     capture drop m_age_bin
+.     bysort hhidpn: egen double m_age_bin = mean(age_bin)
+(70,512 missing values generated)
+.     local mundlak_means "`mundlak_means' m_age_bin"
+. }
+
+. 
+. * --- Table 2: Pooled ---
+. quietly regress r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_
+> others_2020 ///
+>     `panel_tv_ctrls' `panel_tinv_35', vce(cluster hhidpn)
+
+. estimates store t2_35
+
+. quietly regress r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_
+> others_2020 ///
+>     `panel_tv_ctrls' `panel_tinv_37', vce(cluster hhidpn)
+
+. estimates store t2_37
+
+. esttab t2_35 t2_37 using "${BASE_PATH}/Code/Analysis/Tables/38_table2_pooled.
+> tex", replace ///
+>     booktabs mtitles("35 controls" "37 controls") se star(* 0.10 ** 0.05 *** 
+> 0.01) b(2) se(2) label ///
+>     drop(*.age_bin *.wealth_d* m_* 1.gender 1.race_eth 1.censreg 1.censreg_20
+> 20, relax) ///
+>     varlabels(c.trust_others_2020#c.trust_others_2020 "Trust\$^2\$") ///
+>     stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+>     title("Pooled: r5 on trust + trust²") alignment(${LATEX_ALIGN}) width(0.9
+> \hsize) nonumbers nonotes
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Anal
+> ysis/Tables/38_table2_pooled.tex)
+
+. 
+. * --- Table 3: FE second-step ---
+. * FE on tv only, then regress FE on tinv + trust + trust²
+. quietly xtreg r5_annual_w5 `panel_tv_ctrls', fe vce(cluster hhidpn)
+
+. predict double __fe35 if e(sample), u
+(439,914 missing values generated)
+
+. preserve
+
+. keep if !missing(__fe35)
+(439,914 observations deleted)
+
+. collapse (first) __fe35 trust_others_2020 trust_others_2020_sq educ_yrs, by(h
+> hidpn)
+
+. quietly regress __fe35 trust_others_2020 trust_others_2020_sq educ_yrs if !mi
+> ssing(trust_others_2020), vce(robust)
+
+. estimates store t3_35
+
+. restore
+
+. drop __fe35
+
+. 
+. quietly xtreg r5_annual_w5 `panel_tv_ctrls', fe vce(cluster hhidpn)
+
+. predict double __fe37 if e(sample), u
+(439,914 missing values generated)
+
+. preserve
+
+. keep if !missing(__fe37)
+(439,914 observations deleted)
+
+. local coll37 "__fe37 trust_others_2020 trust_others_2020_sq educ_yrs"
+
+. capture confirm variable gender
+
+. if !_rc local coll37 "`coll37' gender"
+
+. capture confirm variable race_eth
+
+. if !_rc local coll37 "`coll37' race_eth"
+
+. capture confirm variable born_us
+
+. if !_rc local coll37 "`coll37' born_us"
+
+. capture confirm variable censreg
+
+. if !_rc local coll37 "`coll37' censreg"
+
+. capture confirm variable married
+
+. if !_rc local coll37 "`coll37' married"
+
+. collapse (first) `coll37', by(hhidpn)
+
+. quietly regress __fe37 trust_others_2020 trust_others_2020_sq educ_yrs i.gend
+> er i.race_eth born_us i.censreg married if !missing(trust_others_2020), vce(r
+> obust)
+
+. estimates store t3_37
+
+. restore
+
+. capture drop __fe37
+
+. 
+. esttab t3_35 t3_37 using "${BASE_PATH}/Code/Analysis/Tables/38_table3_fe_2nd.
+> tex", replace ///
+>     booktabs mtitles("35 controls" "37 controls") se star(* 0.10 ** 0.05 *** 
+> 0.01) b(2) se(2) label ///
+>     drop(*.gender *.race_eth *.censreg *.censreg_2020, relax) ///
+>     varlabels(trust_others_2020_sq "Trust\$^2\$") ///
+>     stats(N r2_a, labels("Observations" "Adj. R-squared")) ///
+>     title("FE second-step: FE on trust + trust² + time-invariant") alignment(
+> ${LATEX_ALIGN}) width(0.9\hsize) nonumbers nonotes
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Anal
+> ysis/Tables/38_table3_fe_2nd.tex)
+
+. 
+. * --- Table 4: RE ---
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 ///
+>     `panel_tv_ctrls' `panel_tinv_35', re vce(cluster hhidpn)
+
+. estimates store t4_35
+
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 ///
+>     `panel_tv_ctrls' `panel_tinv_37', re vce(cluster hhidpn)
+
+. estimates store t4_37
+
+. esttab t4_35 t4_37 using "${BASE_PATH}/Code/Analysis/Tables/38_table4_re.tex"
+> , replace ///
+>     booktabs mtitles("35 controls" "37 controls") se star(* 0.10 ** 0.05 *** 
+> 0.01) b(2) se(2) label ///
+>     drop(*.age_bin *.wealth_d* 1.gender 1.race_eth 1.censreg 1.censreg_2020, 
+> relax) ///
+>     varlabels(c.trust_others_2020#c.trust_others_2020 "Trust\$^2\$") ///
+>     stats(N r2_w, labels("Observations" "Within R-squared")) ///
+>     title("RE: r5 on trust + trust²") alignment(${LATEX_ALIGN}) width(0.9\hsi
+> ze) nonumbers nonotes
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Anal
+> ysis/Tables/38_table4_re.tex)
+
+. 
+. * --- Table 5: CRE ---
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 ///
+>     `panel_tv_ctrls' `panel_tinv_35' `mundlak_means', re vce(cluster hhidpn)
+
+. estimates store t5_35
+
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 ///
+>     `panel_tv_ctrls' `panel_tinv_37' `mundlak_means', re vce(cluster hhidpn)
+
+. estimates store t5_37
+
+. esttab t5_35 t5_37 using "${BASE_PATH}/Code/Analysis/Tables/38_table5_cre.tex
+> ", replace ///
+>     booktabs mtitles("35 controls" "37 controls") se star(* 0.10 ** 0.05 *** 
+> 0.01) b(2) se(2) label ///
+>     drop(*.age_bin *.wealth_d* m_* 1.gender 1.race_eth 1.censreg 1.censreg_20
+> 20, relax) ///
+>     varlabels(c.trust_others_2020#c.trust_others_2020 "Trust\$^2\$") ///
+>     stats(N r2_w, labels("Observations" "Within R-squared")) ///
+>     title("CRE: r5 on trust + trust² + Mundlak") alignment(${LATEX_ALIGN}) wi
+> dth(0.9\hsize) nonumbers nonotes
+(output written to /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Code/Anal
+> ysis/Tables/38_table5_cre.tex)
+
+. 
+. * ======================================================================
+. * PART 3: TABLE 6 - TRUST* TURNING POINTS
+. * ======================================================================
+. * Collect tp from: avg_returns (35+37), pooled (35+37), re (35+37), cre (35+3
+> 7). No fe_2nd (no Trust* for second-step).
+. tempfile tpraw
+
+. postfile tpH str2 ctrl str12 model double N b1 b2 tp tp_se tp_p tp_lb tp_ub b
+> yte both_sig ///
+>     using "`tpraw'", replace
+(file /var/folders/17/1rg0y2kj74l9p9g301vbhhkw0000gn/T//S_47750.000004 not
+    found)
+
+. 
+. * Helper: post tp from last regression
+. capture program drop _post_tp
+
+. program define _post_tp
+  1.     args ctrl model
+  2.     capture confirm matrix e(b)
+  3.     if _rc exit
+  4.     local b1 .
+  5.     local b2 .
+  6.     capture local b1 = _b[c.trust_others_2020]
+  7.     if _rc capture local b1 = _b[trust_others_2020]
+  8.     capture local b2 = _b[c.trust_others_2020#c.trust_others_2020]
+  9.     if _rc capture local b2 = _b[trust_others_2020_sq]
+ 10.     if `b1' >= . | `b2' >= . exit
+ 11.     quietly test c.trust_others_2020 = 0
+ 12.     if _rc quietly test trust_others_2020 = 0
+ 13.     local p1 = r(p)
+ 14.     quietly test c.trust_others_2020#c.trust_others_2020 = 0
+ 15.     if _rc quietly test trust_others_2020_sq = 0
+ 16.     local p2 = r(p)
+ 17.     local both_sig = (`p1' < 0.10 & `p2' < 0.10)
+ 18.     local tp .
+ 19.     local tp_se .
+ 20.     local tp_p .
+ 21.     local tp_lb .
+ 22.     local tp_ub .
+ 23.     capture nlcom (tp: -_b[c.trust_others_2020]/(2*_b[c.trust_others_2020#
+> c.trust_others_2020]))
+ 24.     if _rc == 0 {
+ 25.         matrix T = r(table)
+ 26.         local tp    = T[1,1]
+ 27.         local tp_se = T[2,1]
+ 28.         local tp_p  = T[4,1]
+ 29.         local tp_lb = T[5,1]
+ 30.         local tp_ub = T[6,1]
+ 31.     }
+ 32.     if `tp' >= . {
+ 33.         capture nlcom (tp: -_b[trust_others_2020]/(2*_b[trust_others_2020_
+> sq]))
+ 34.         if _rc == 0 {
+ 35.             matrix T = r(table)
+ 36.             local tp    = T[1,1]
+ 37.             local tp_se = T[2,1]
+ 38.             local tp_p  = T[4,1]
+ 39.             local tp_lb = T[5,1]
+ 40.             local tp_ub = T[6,1]
+ 41.         }
+ 42.     }
+ 43.     post tpH ("`ctrl'") ("`model'") (e(N)) (`b1') (`b2') (`tp') (`tp_se') 
+> (`tp_p') (`tp_lb') (`tp_ub') (`both_sig')
+ 44. end
+
+. 
+. * Re-run and collect
+. use "${PROCESSED}/analysis_ready_processed.dta", clear
+
+. capture drop trust_others_2020_sq
+
+. gen double trust_others_2020_sq = trust_others_2020 * trust_others_2020
+(44,334 missing values generated)
+
+. capture confirm variable age_bin
+
+. if _rc capture confirm variable age_2020
+
+. if !_rc gen int age_bin = floor(age_2020/5)*5
+(29,511 missing values generated)
+
+. capture drop educ_cat
+
+. capture confirm variable educ_yrs
+
+. if !_rc {
+.     gen byte educ_cat = .
+(45,234 missing values generated)
+.     replace educ_cat = 1 if educ_yrs < 12
+(12,070 real changes made)
+.     replace educ_cat = 2 if educ_yrs == 12
+(13,611 real changes made)
+.     replace educ_cat = 3 if educ_yrs > 12 & educ_yrs < 16
+(9,674 real changes made)
+.     replace educ_cat = 4 if educ_yrs == 16
+(4,968 real changes made)
+.     replace educ_cat = 5 if educ_yrs > 16 & !missing(educ_yrs)
+(4,262 real changes made)
+.     capture label drop educ_lbl
+.     label define educ_lbl 1 "Less HS" 2 "HS Grad" 3 "Some College" 4 "College
+> " 5 "Postgrad"
+.     label values educ_cat educ_lbl
+. }
+
+. local wealth_r5 ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'_2020
+  3.     if !_rc local wealth_r5 "`wealth_r5' wealth_d`d'_2020"
+  4. }
+
+. local c35 "`wealth_r5' i.age_bin inlbrf_2020 i.educ_cat"
+
+. local region_ctrl ""
+
+. capture confirm variable censreg
+
+. if !_rc local region_ctrl "i.censreg"
+
+. if "`region_ctrl'" == "" {
+.     capture confirm variable censreg_2020
+.     if !_rc local region_ctrl "i.censreg_2020"
+. }
+
+. local c37 "`c35' i.gender i.race_eth born_us `region_ctrl' married_2020"
+
+. tempvar s35 s37
+
+. gen byte `s35' = 1
+
+. markout `s35' r5_annual_avg_w5 trust_others_2020 trust_others_2020_sq `wealth
+> _r5' age_bin inlbrf_2020 educ_cat
+
+. gen byte `s37' = 1
+
+. markout `s37' r5_annual_avg_w5 trust_others_2020 trust_others_2020_sq `wealth
+> _r5' age_bin inlbrf_2020 educ_cat gender race_eth born_us married_2020
+
+. capture confirm variable censreg
+
+. if !_rc markout `s37' censreg
+
+. else {
+.     capture confirm variable censreg_2020
+.     if !_rc markout `s37' censreg_2020
+. }
+
+. 
+. quietly regress r5_annual_avg_w5 c.trust_others_2020 c.trust_others_2020#c.tr
+> ust_others_2020 `c35', vce(robust)
+
+. _post_tp 35 avg_returns
+
+. quietly regress r5_annual_avg_w5 c.trust_others_2020 c.trust_others_2020#c.tr
+> ust_others_2020 `c37', vce(robust)
+
+. _post_tp 37 avg_returns
+
+. 
+. use "${PROCESSED}/analysis_final_long_unbalanced.dta", clear
+
+. xtset hhidpn year
+
+Panel variable: hhidpn (strongly balanced)
+ Time variable: year, 2000 to 2022, but with gaps
+         Delta: 1 unit
+
+. capture drop trust_others_2020_sq
+
+. gen double trust_others_2020_sq = trust_others_2020 * trust_others_2020
+(532,008 missing values generated)
+
+. local pwealth ""
+
+. forvalues d = 2/10 {
+  2.     capture confirm variable wealth_d`d'
+  3.     if !_rc local pwealth "`pwealth' wealth_d`d'"
+  4. }
+
+. local ptv "`pwealth' i.age_bin inlbrf i.year"
+
+. local ptinv35 "educ_yrs"
+
+. local ptinv37 "educ_yrs i.gender i.race_eth born_us i.censreg married"
+
+. 
+. quietly regress r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_
+> others_2020 `ptv' `ptinv35', vce(cluster hhidpn)
+
+. _post_tp 35 pooled
+
+. quietly regress r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_
+> others_2020 `ptv' `ptinv37', vce(cluster hhidpn)
+
+. _post_tp 37 pooled
+
+. 
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 `ptv' `ptinv35', re vce(cluster hhidpn)
+
+. _post_tp 35 re
+
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 `ptv' `ptinv37', re vce(cluster hhidpn)
+
+. _post_tp 37 re
+
+. 
+. local mund ""
+
+. foreach v of local pwealth {
+  2.     capture drop m_`v'
+  3.     bysort hhidpn: egen double m_`v' = mean(`v')
+  4.     local mund "`mund' m_`v'"
+  5. }
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+(218,832 missing values generated)
+
+. capture drop m_inlbrf
+
+. bysort hhidpn: egen double m_inlbrf = mean(inlbrf)
+(77,280 missing values generated)
+
+. local mund "`mund' m_inlbrf"
+
+. capture confirm variable age_bin
+
+. if !_rc {
+.     capture drop m_age_bin
+.     bysort hhidpn: egen double m_age_bin = mean(age_bin)
+(70,512 missing values generated)
+.     local mund "`mund' m_age_bin"
+. }
+
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 `ptv' `ptinv35' `mund', re vce(cluster hhidpn)
+
+. _post_tp 35 cre
+
+. quietly xtreg r5_annual_w5 c.trust_others_2020 c.trust_others_2020#c.trust_ot
+> hers_2020 `ptv' `ptinv37' `mund', re vce(cluster hhidpn)
+
+. _post_tp 37 cre
+
+. 
+. postclose tpH
+
+. use "`tpraw'", clear
+
+. 
+. * Reshape to one row per model (35 and 37 as columns)
+. keep if inlist(model, "avg_returns", "pooled", "re", "cre")
+(0 observations deleted)
+
+. reshape wide N b1 b2 tp tp_se tp_p tp_lb tp_ub both_sig, i(model) j(ctrl) str
+> ing
+(j = 35 37)
+
+Data                               Long   ->   Wide
+-----------------------------------------------------------------------------
+Number of observations                8   ->   4           
+Number of variables                  11   ->   19          
+j variable (2 values)              ctrl   ->   (dropped)
+xij variables:
+                                      N   ->   N35 N37
+                                     b1   ->   b135 b137
+                                     b2   ->   b235 b237
+                                     tp   ->   tp35 tp37
+                                  tp_se   ->   tp_se35 tp_se37
+                                   tp_p   ->   tp_p35 tp_p37
+                                  tp_lb   ->   tp_lb35 tp_lb37
+                                  tp_ub   ->   tp_ub35 tp_ub37
+                               both_sig   ->   both_sig35 both_sig37
+-----------------------------------------------------------------------------
+
+. * reshape creates N35 N37 b135 b137 b235 b237 tp35 tp37 etc.
+. gen int _order = 1 if model == "avg_returns"
+(3 missing values generated)
+
+. replace _order = 2 if model == "pooled"
+(1 real change made)
+
+. replace _order = 3 if model == "re"
+(1 real change made)
+
+. replace _order = 4 if model == "cre"
+(1 real change made)
+
+. sort _order
+
+. 
+. * Build Table 6: 2 cols (35 | 37), rows = avg_returns, pooled, re, cre (no fe
+> _2nd)
+. file open fh using "${BASE_PATH}/Code/Analysis/Tables/38_table6_trust_star.te
+> x", write replace
+
+. file write fh "\begin{table}[htbp]\centering\small" _n ///
+>     "\caption{Trust\(^*\) (maximal returns): 35 vs 37 controls}" _n ///
+>     "\label{tab:38_trust_star}" _n ///
+>     "\begin{tabular}{lcccccc}\toprule" _n ///
+>     "Model & N (35) & N (37) & \(\hat\beta_1\) (35) & \(\hat\beta_2\) (35) & 
+> \((\textit{Trust})^*\) (35) & \((\textit{Trust})^*\) (37) \\\\ \midrule" _n
+
+. 
+. forvalues i = 1/`=_N' {
+  2.     local m = model[`i']
+  3.     if "`m'" == "avg_returns" local lab "Avg returns"
+  4.     if "`m'" == "pooled" local lab "Pooled"
+  5.     if "`m'" == "re" local lab "RE"
+  6.     if "`m'" == "cre" local lab "CRE"
+  7.     local n35_s = string(N35[`i'], "%9.0fc")
+  8.     local n37_s = string(N37[`i'], "%9.0fc")
+  9.     local b1_s = string(b135[`i'], "%9.4f")
+ 10.     local b2_s = string(b235[`i'], "%9.4f")
+ 11.     local tp35_s = string(tp35[`i'], "%9.4f")
+ 12.     local tp37_s = string(tp37[`i'], "%9.4f")
+ 13.     file write fh "`lab' & `n35_s' & `n37_s' & `b1_s' & `b2_s' & `tp35_s' 
+> & `tp37_s' \\\\" _n
+ 14. }
+
+. file write fh "\bottomrule" _n "\end{tabular}" _n "\end{table}" _n
+
+. file close fh
+
+. 
+. display _n "#################################################################
+> #######"
+
+########################################################################
+
+. display "38_main_analysis_trust_ret: Completed. Tables in Code/Analysis/Table
+> s/"
+38_main_analysis_trust_ret: Completed. Tables in Code/Analysis/Tables/
+
+. display "####################################################################
+> ####"
+########################################################################
+
+. log close
+      name:  <unnamed>
+       log:  /Volumes/SSD PRO/Github-forks/Chp2-TrustandReturns/Notes/Logs/38_m
+> ain_analysis_trust_ret.log
+  log type:  text
+ closed on:  12 Mar 2026, 19:43:04
+-------------------------------------------------------------------------------

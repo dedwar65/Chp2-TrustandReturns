@@ -1,0 +1,53 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Exclusion restriction: r5 cross-section (2022) on controls + depression + Trust + Trust$^2$}
+\begin{tabular*}{0.85\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{No lag}&\multicolumn{1}{c}{One lag}&\multicolumn{1}{c}{Two lags}&\multicolumn{1}{c}{Ever depressed}\\
+\midrule
+Female              &       -0.09\sym{**} &       -0.07         &       -0.07         &       -0.10\sym{**} \\
+                    &      (0.04)         &      (0.04)         &      (0.05)         &      (0.04)         \\
+Years of education  &        0.02\sym{***}&        0.02\sym{**} &        0.02\sym{**} &        0.02\sym{***}\\
+                    &      (0.01)         &      (0.01)         &      (0.01)         &      (0.01)         \\
+Married             &        0.08         &        0.08         &        0.08         &        0.09\sym{*}  \\
+                    &      (0.05)         &      (0.05)         &      (0.05)         &      (0.05)         \\
+NH Black            &       -0.17\sym{**} &       -0.17\sym{**} &       -0.18\sym{***}&       -0.17\sym{**} \\
+                    &      (0.07)         &      (0.07)         &      (0.07)         &      (0.07)         \\
+Hispanic            &       -0.20\sym{***}&       -0.23\sym{***}&       -0.24\sym{***}&       -0.19\sym{***}\\
+                    &      (0.07)         &      (0.07)         &      (0.07)         &      (0.07)         \\
+NH Other            &       -0.12         &       -0.15         &       -0.15         &       -0.13         \\
+                    &      (0.13)         &      (0.14)         &      (0.14)         &      (0.13)         \\
+In labor force      &        0.13\sym{***}&        0.13\sym{**} &        0.12\sym{**} &        0.14\sym{***}\\
+                    &      (0.05)         &      (0.05)         &      (0.05)         &      (0.05)         \\
+Midwest             &       -0.06         &       -0.08         &       -0.07         &       -0.06         \\
+                    &      (0.07)         &      (0.07)         &      (0.08)         &      (0.07)         \\
+South               &        0.05         &        0.01         &        0.02         &        0.05         \\
+                    &      (0.06)         &      (0.06)         &      (0.07)         &      (0.06)         \\
+West                &        0.12\sym{*}  &        0.12         &        0.14\sym{*}  &        0.11         \\
+                    &      (0.07)         &      (0.08)         &      (0.08)         &      (0.07)         \\
+Depression (no lag) &        0.00         &                     &                     &                     \\
+                    &      (0.01)         &                     &                     &                     \\
+Depression (lag 1)  &                     &       -0.04\sym{***}&       -0.03\sym{*}  &                     \\
+                    &                     &      (0.01)         &      (0.02)         &                     \\
+Depression (lag 2)  &                     &                     &       -0.02         &                     \\
+                    &                     &                     &      (0.02)         &                     \\
+Ever depressed      &                     &                     &                     &        0.06         \\
+                    &                     &                     &                     &      (0.05)         \\
+Trust               &        0.03         &        0.04         &        0.03         &        0.04         \\
+                    &      (0.03)         &      (0.03)         &      (0.03)         &      (0.03)         \\
+Trust$^2$           &       -0.00         &       -0.00         &       -0.00         &       -0.00         \\
+                    &      (0.00)         &      (0.00)         &      (0.00)         &      (0.00)         \\
+Constant            &       -0.53\sym{**} &       -0.42\sym{**} &       -0.44\sym{**} &       -0.61\sym{***}\\
+                    &      (0.21)         &      (0.21)         &      (0.22)         &      (0.22)         \\
+\midrule
+Observations        &      405.00         &      384.00         &      380.00         &      405.00         \\
+Adj. R-squared      &        0.24         &        0.26         &        0.26         &        0.24         \\
+Joint test: Trust only p-value&        0.50         &        0.40         &        0.47         &        0.45         \\
+Joint test: Age bins p-value&        0.00         &        0.00         &        0.00         &        0.00         \\
+Joint test: Wealth deciles p-value&        0.00         &        0.00         &        0.00         &        0.00         \\
+Joint test: Race p-value&        0.01         &        0.00         &        0.00         &        0.01         \\
+Joint test: Region p-value&        0.09         &        0.08         &        0.06         &        0.09         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize .}\\
+\end{tabular*}
+\end{table}
